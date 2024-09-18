@@ -1,0 +1,162 @@
+@import url("https://fonts.googleapis.com/css2?family=Product+Sans");
+/* FILEPATH: /workspaces/SillyLittleFiles/docs/style.css */
+/* BEGIN: be15d9bcejpp */
+.red-border {
+  border: 2px solid red;
+  opacity: 0; /* Set initial opacity to 0 */
+  animation: fade-in 1s ease-in forwards; /* Apply fade-in animation */
+}
+.divider {
+  border: 1px solid #ffffff; /* Set line thickness and color */
+  margin: 10px 0; /* Add space above and below the line */
+  width: 200px; /* Set your desired fixed width */
+}
+.wrapper {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  background: linear-gradient(
+    45deg,
+    #ffef00,
+    #e69138,
+    #24aadb,
+    #27dbb1,
+    #ffdc18,
+    #ff3706
+  );
+  background-size: 600% 100%;
+  animation: gradient 16s linear infinite;
+  animation-direction: alternate;
+  overflow: scroll;
+}
+@keyframes fade-in {
+  from {
+    opacity: 0; /* Start with opacity 0 */
+  }
+  to {
+    opacity: 1; /* End with opacity 1 */
+  }
+}
+/* END: be15d9bcejpp */
+
+body {
+  font-family: "Product Sans", sans-serif;
+  animation: fade-in 1s ease-in forwards; /* Apply fade-in animation */
+  text-align: center;
+  color: white;
+}
+
+h1 {
+  font-family: "Product Sans", sans-serif;
+  font-size: 2em;
+  animation: fade-in 1s ease-in forwards; /* Apply fade-in animation */
+}
+.udate {
+  color: lightgrey;
+  font-style: italic;
+}
+p {
+  font-family: "Product Sans", sans-serif;
+  font-size: 1em;
+  color: #666;
+  animation: fade-in 1s ease-in forwards; /* Apply fade-in animation */
+}
+:root {
+  --glow-rgb: 239 42 201;
+}
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+@keyframes fade-in {
+  from {
+    opacity: 0; /* Start with opacity 0 */
+  }
+  to {
+    opacity: 1; /* End with opacity 1 */
+  }
+}
+a {
+  color: #a0d6e8;
+}
+a:hover {
+  color: green; /* Change the color to your desired color */
+  transition: color 0.5s; /* Add a transition to make it fade into the color */
+  transform: scale(1.1); /* Increase the size by 10% */
+}
+a:visited {
+  color: #c2c2f0;
+}
+.blockbtn {
+  display: inline-block;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  text-align: center;
+  text-decoration: none;
+  white-space: nowrap;
+  background-color: #e77828;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.blockbtnhover {
+  background-color: #f8c471;
+}
+.container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-gap: 10px;
+  justify-items: center;
+  align-items: center;
+  animation: flipIn 0.5s ease-in-out;
+}
+
+@keyframes flipIn {
+  0% {
+    transform: rotateY(-90deg);
+    opacity: 0;
+  }
+  100% {
+    transform: rotateY(0);
+    opacity: 1;
+  }
+}
+
+.flip-in {
+  animation: flipIn 0.5s ease-in-out;
+}
+@keyframes gradient {
+  0% {
+    background-position: 0%;
+  }
+  100% {
+    background-position: 100%;
+  }
+}
+.splashtool {
+  margin-top: 300px; /* Adjust margin as needed */
+  font-size: 29;
+}
+/* Dashed border */
+hr.dashed {
+  border-top: 3px dashed #bbb;
+}
+
+/* Dotted border */
+hr.dotted {
+  border-top: 3px dotted #bbb;
+}
+
+/* Solid border */
+hr.solid {
+  border-top: 3px solid #bbb;
+}
+
+/* Rounded border */
+hr.rounded {
+  border-top: 8px solid #bbb;
+  border-radius: 5px;
+}
