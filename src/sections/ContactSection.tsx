@@ -31,7 +31,7 @@ function ContactCard({
       />
       <div className="flex flex-col gap-8 md:flex-row">
         <ContactIntro copied={copied} onCopy={onCopy} />
-        <ContactForm 
+        <ContactForm
           prefersReducedMotion={prefersReducedMotion}
           errorMessage={errorMessage}
           onErrorChange={onErrorChange}
@@ -77,14 +77,18 @@ type ContactFormProps = {
   onErrorChange: (message: string | null) => void;
 };
 
-function ContactForm({ prefersReducedMotion, errorMessage, onErrorChange }: ContactFormProps) {
+function ContactForm({
+  prefersReducedMotion,
+  errorMessage,
+  onErrorChange,
+}: ContactFormProps) {
   const pageclipApiKey = import.meta.env.VITE_PAGECLIP_API_KEY;
 
   const handleSubmit = useCallback(
     (event: React.FormEvent<HTMLFormElement>) => {
       // Clear any existing error message
       onErrorChange(null);
-      
+
       // Prevent form submission if API key is missing
       if (!pageclipApiKey) {
         event.preventDefault();
@@ -131,9 +135,17 @@ function ContactForm({ prefersReducedMotion, errorMessage, onErrorChange }: Cont
       {/* Error notification */}
       {errorMessage && (
         <motion.div
-          initial={prefersReducedMotion ? false : { opacity: 0, y: -10, scale: 0.95 }}
-          animate={prefersReducedMotion ? undefined : { opacity: 1, y: 0, scale: 1 }}
-          exit={prefersReducedMotion ? undefined : { opacity: 0, y: -10, scale: 0.95 }}
+          initial={
+            prefersReducedMotion ? false : { opacity: 0, y: -10, scale: 0.95 }
+          }
+          animate={
+            prefersReducedMotion ? undefined : { opacity: 1, y: 0, scale: 1 }
+          }
+          exit={
+            prefersReducedMotion
+              ? undefined
+              : { opacity: 0, y: -10, scale: 0.95 }
+          }
           transition={{ duration: 0.3, ease: "easeOut" }}
           className="rounded-2xl border border-red-200 bg-red-50 p-4 dark:border-red-800/60 dark:bg-red-900/20"
         >
