@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { useMemo } from "react";
 import { useScrollSpy } from "../hooks/useScrollSpy";
 import { cn } from "../utils/cn";
 
@@ -12,7 +13,8 @@ interface ScrollSpyProps {
 }
 
 export function ScrollSpy({ sections }: ScrollSpyProps) {
-  const activeId = useScrollSpy(sections.map((section) => section.id));
+  const ids = useMemo(() => sections.map((section) => section.id), [sections]);
+  const activeId = useScrollSpy(ids);
 
   return (
     <nav
