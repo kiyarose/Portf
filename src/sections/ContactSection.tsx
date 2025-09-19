@@ -132,7 +132,11 @@ function ContactForm({
           let errorText;
           try {
             const errorData = await response.json();
-            errorText = JSON.stringify(errorData, null, 2);
+            // Only display a safe, user-friendly error message
+            errorText =
+              (typeof errorData === "object" && errorData !== null && typeof errorData.message === "string")
+                ? errorData.message
+                : "An unexpected error occurred. Please try again later.";
           } catch {
             errorText = await response.text();
           }
