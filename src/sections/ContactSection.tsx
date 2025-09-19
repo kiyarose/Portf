@@ -70,21 +70,29 @@ type ContactFormProps = {
 function ContactForm({ prefersReducedMotion }: ContactFormProps) {
   const handleSubmit = useCallback(
     (event: React.FormEvent<HTMLFormElement>) => {
-      event.preventDefault();
-      const form = new FormData(event.currentTarget);
-      const name = (form.get("name") as string) ?? "";
-      const message = (form.get("message") as string) ?? "";
-      const subject = encodeURIComponent(
-        `Hello from ${name || "a new contact"}`,
-      );
-      const body = encodeURIComponent(message);
-      window.location.href = `mailto:${EMAIL}?subject=${subject}&body=${body}`;
+      const form = event.currentTarget;
+      const formData = new FormData(form);
+      const name = (formData.get("name") as string) ?? "";
+      const subjectInput = form.elements.namedItem("subject") as
+        | HTMLInputElement
+        | null;
+
+      if (subjectInput) {
+        subjectInput.value = name
+          ? `Hello from ${name}`
+          : "Hello from a new contact";
+      }
     },
     [],
   );
 
   return (
-    <form className="flex-1 space-y-4" onSubmit={handleSubmit}>
+    <form
+      action="https://send.pageclip.co/YLDHAohhRJSQJX3izF30KRLNxy5NYhiz/Contact_Form"
+      className="pageclip-form flex-1 space-y-4"
+      method="post"
+      onSubmit={handleSubmit}
+    >
       <label className="block text-sm font-medium text-slate-600 dark:text-slate-300">
         <span>Name</span>
         <input
@@ -93,6 +101,21 @@ function ContactForm({ prefersReducedMotion }: ContactFormProps) {
           placeholder="How should I address you?"
         />
       </label>
+      <label className="block text-sm font-medium text-slate-600 dark:text-slate-300">
+        <span>Email</span>
+        <input
+          type="email"
+          name="email"
+          className="mt-1 w-full rounded-2xl border border-slate-200/60 bg-white/80 px-4 py-3 text-sm placeholder:text-slate-400 focus:border-accent focus:outline-none dark:border-slate-700/60 dark:bg-slate-900/70"
+          placeholder="Where can I reach you?"
+          required
+        />
+      </label>
+      <input
+        type="hidden"
+        name="subject"
+        defaultValue="Hello from a new contact"
+      />
       <label className="block text-sm font-medium text-slate-600 dark:text-slate-300">
         <span>Message</span>
         <textarea
@@ -104,11 +127,11 @@ function ContactForm({ prefersReducedMotion }: ContactFormProps) {
       </label>
       <motion.button
         type="submit"
-        className="w-full rounded-2xl bg-accent px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-accent/30 transition hover:shadow-xl"
+        className="pageclip-form__submit w-full rounded-2xl bg-accent px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-accent/30 transition hover:shadow-xl"
         whileHover={prefersReducedMotion ? undefined : { scale: 1.01 }}
         whileTap={prefersReducedMotion ? undefined : { scale: 0.97 }}
       >
-        Draft email
+        <span>Send message</span>
       </motion.button>
     </form>
   );
