@@ -23,7 +23,7 @@ export function ThemeProvider({ children }: PropsWithChildren) {
   }, [theme]);
 
   useEffect(function registerMediaPreferenceListener(): void | (() => void) {
-    if (typeof window === "undefined") return undefined;
+    if (typeof window === "undefined") return;
     const media = window.matchMedia("(prefers-color-scheme: dark)");
     const handler = (event: MediaQueryListEvent) => {
       setTheme(event.matches ? "dark" : "light");

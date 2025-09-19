@@ -75,7 +75,7 @@ function ContactForm({ prefersReducedMotion }: ContactFormProps) {
       encType="text/plain"
     >
       <label className="block text-sm font-medium text-slate-600 dark:text-slate-300">
-        Name
+        <span>Name</span>
         <input
           required
           name="name"
@@ -84,7 +84,7 @@ function ContactForm({ prefersReducedMotion }: ContactFormProps) {
         />
       </label>
       <label className="block text-sm font-medium text-slate-600 dark:text-slate-300">
-        Message
+        <span>Message</span>
         <textarea
           required
           name="message"

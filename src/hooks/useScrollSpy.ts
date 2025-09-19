@@ -8,12 +8,12 @@ export function useScrollSpy(
 
   useEffect(
     function registerScrollSpy(): void | (() => void) {
-      if (typeof window === "undefined") return undefined;
+      if (typeof window === "undefined") return () => {};
       const elements = sectionIds
         .map((id) => document.getElementById(id))
         .filter((el): el is HTMLElement => Boolean(el));
 
-      if (elements.length === 0) return;
+      if (elements.length === 0) return () => {};
 
       const observer = new IntersectionObserver(
         (entries) => {

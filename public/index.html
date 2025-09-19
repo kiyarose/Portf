@@ -1,167 +1,116 @@
 <!doctype html>
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Welcome to Firebase Hosting</title>
-
-    <!-- update the version number as needed -->
-    <script defer src="/__/firebase/12.3.0/firebase-app-compat.js"></script>
-    <!-- include only the Firebase features as you need -->
-    <script defer src="/__/firebase/12.3.0/firebase-auth-compat.js"></script>
-    <script
-      defer
-      src="/__/firebase/12.3.0/firebase-database-compat.js"
-    ></script>
-    <script
-      defer
-      src="/__/firebase/12.3.0/firebase-firestore-compat.js"
-    ></script>
-    <script
-      defer
-      src="/__/firebase/12.3.0/firebase-functions-compat.js"
-    ></script>
-    <script
-      defer
-      src="/__/firebase/12.3.0/firebase-messaging-compat.js"
-    ></script>
-    <script defer src="/__/firebase/12.3.0/firebase-storage-compat.js"></script>
-    <script
-      defer
-      src="/__/firebase/12.3.0/firebase-analytics-compat.js"
-    ></script>
-    <script
-      defer
-      src="/__/firebase/12.3.0/firebase-remote-config-compat.js"
-    ></script>
-    <script
-      defer
-      src="/__/firebase/12.3.0/firebase-performance-compat.js"
-    ></script>
-    <!-- 
-      initialize the SDK after all desired features are loaded, set useEmulator to false
-      to avoid connecting the SDK to running emulators.
-    -->
-    <script defer src="/__/firebase/init.js?useEmulator=true"></script>
-
-    <style media="screen">
+    <title>Something Went Wrong · Kiya Rose</title>
+    <meta
+      name="description"
+      content="Fallback page for the Kiya Rose portfolio when the main application cannot load."
+    />
+    <style>
+      :root {
+        color-scheme: light dark;
+      }
+      * {
+        box-sizing: border-box;
+      }
       body {
-        background: #eceff1;
-        color: rgba(0, 0, 0, 0.87);
-        font-family: Roboto, Helvetica, Arial, sans-serif;
         margin: 0;
-        padding: 0;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: radial-gradient(circle at top, #f6f8ff, #e2e8f0);
+        font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI',
+          sans-serif;
+        color: #1f2937;
+        padding: 2rem;
       }
-      #message {
-        background: white;
-        max-width: 360px;
-        margin: 100px auto 16px;
-        padding: 32px 24px;
-        border-radius: 3px;
-      }
-      #message h2 {
-        color: #ffa100;
-        font-weight: bold;
-        font-size: 16px;
-        margin: 0 0 8px;
-      }
-      #message h1 {
-        font-size: 22px;
-        font-weight: 300;
-        color: rgba(0, 0, 0, 0.6);
-        margin: 0 0 16px;
-      }
-      #message p {
-        line-height: 140%;
-        margin: 16px 0 24px;
-        font-size: 14px;
-      }
-      #message a {
-        display: block;
+      .card {
+        max-width: 420px;
+        width: 100%;
+        padding: 2.5rem 2rem;
+        border-radius: 1.5rem;
+        background: rgba(255, 255, 255, 0.92);
+        box-shadow: 0 24px 48px rgba(15, 23, 42, 0.18);
+        backdrop-filter: blur(12px);
         text-align: center;
-        background: #039be5;
-        text-transform: uppercase;
+        border: 1px solid rgba(148, 163, 184, 0.25);
+      }
+      h1 {
+        font-size: clamp(1.75rem, 2vw + 1rem, 2.4rem);
+        margin: 0 0 0.75rem;
+        color: #1e1b4b;
+      }
+      p {
+        margin: 0.5rem 0;
+        font-size: 0.95rem;
+        line-height: 1.6;
+        color: #475569;
+      }
+      .actions {
+        margin-top: 1.75rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+      }
+      a {
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
+        gap: 0.5rem;
         text-decoration: none;
-        color: white;
-        padding: 16px;
-        border-radius: 4px;
+        font-weight: 600;
+        border-radius: 999px;
+        padding: 0.75rem 1.5rem;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
       }
-      #message,
-      #message a {
-        box-shadow:
-          0 1px 3px rgba(0, 0, 0, 0.12),
-          0 1px 2px rgba(0, 0, 0, 0.24);
+      .primary {
+        background: linear-gradient(135deg, #6366f1, #8b5cf6);
+        color: #fff;
+        box-shadow: 0 15px 30px rgba(99, 102, 241, 0.35);
       }
-      #load {
-        color: rgba(0, 0, 0, 0.4);
-        text-align: center;
-        font-size: 13px;
+      .primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 18px 34px rgba(99, 102, 241, 0.4);
+      }
+      .secondary {
+        color: #4c1d95;
+        border: 1px solid rgba(99, 102, 241, 0.3);
+        background: rgba(236, 233, 255, 0.8);
+      }
+      .secondary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 20px rgba(148, 163, 184, 0.2);
+      }
+      small {
+        display: block;
+        margin-top: 1.25rem;
+        font-size: 0.8rem;
+        color: rgba(71, 85, 105, 0.8);
       }
       @media (max-width: 600px) {
-        body,
-        #message {
-          margin-top: 0;
-          background: white;
-          box-shadow: none;
-        }
         body {
-          border-top: 16px solid #ffa100;
+          padding: 1.5rem;
+          background: linear-gradient(180deg, #f8fafc, #e0e7ff);
+        }
+        .card {
+          padding: 2rem 1.5rem;
         }
       }
     </style>
   </head>
   <body>
-    <div id="message">
-      <h2>Welcome</h2>
-      <h1>Firebase Hosting Setup Complete</h1>
-      <p>
-        You're seeing this because you've successfully setup Firebase Hosting.
-        Now it's time to go build something extraordinary!
-      </p>
-      <a target="_blank" href="https://firebase.google.com/docs/hosting/"
-        >Open Hosting Documentation</a
-      >
-    </div>
-    <p id="load">Firebase SDK Loading&hellip;</p>
-
-    <script>
-      document.addEventListener("DOMContentLoaded", function () {
-        const loadEl = document.querySelector("#load");
-        // // 🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥
-        // // The Firebase SDK is initialized and available here!
-        //
-        // firebase.auth().onAuthStateChanged(user => { });
-        // firebase.database().ref('/path/to/ref').on('value', snapshot => { });
-        // firebase.firestore().doc('/foo/bar').get().then(() => { });
-        // firebase.functions().httpsCallable('yourFunction')().then(() => { });
-        // firebase.messaging().requestPermission().then(() => { });
-        // firebase.storage().ref('/path/to/ref').getDownloadURL().then(() => { });
-        // firebase.analytics(); // call to activate
-        // firebase.analytics().logEvent('tutorial_completed');
-        // firebase.performance(); // call to activate
-        //
-        // // 🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥
-
-        try {
-          let app = firebase.app();
-          let features = [
-            "auth",
-            "database",
-            "firestore",
-            "functions",
-            "messaging",
-            "storage",
-            "analytics",
-            "remoteConfig",
-            "performance",
-          ].filter((feature) => typeof app[feature] === "function");
-          loadEl.textContent = `Firebase SDK loaded with ${features.join(", ")}`;
-        } catch (e) {
-          console.error(e);
-          loadEl.textContent =
-            "Error loading the Firebase SDK, check the console.";
-        }
-      });
-    </script>
+    <main class="card" role="alert" aria-live="polite">
+      <h1>We hit a snag</h1>
+      <p>The main site had trouble loading. You can refresh the page or try again later.</p>
+      <p>If you continue to see this message, feel free to reach out so I can take a look.</p>
+      <div class="actions">
+        <a class="primary" href="/">Reload my portfolio</a>
+        <a class="secondary" href="mailto:kiya.rose@sillylittle.tech">Email Kiya</a>
+      </div>
+      <small>Reference: fallback served by Firebase Hosting</small>
+    </main>
   </body>
 </html>

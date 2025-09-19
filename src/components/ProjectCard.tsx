@@ -84,7 +84,7 @@ export function ProjectCard({ project }: ProjectCardProps) {
           rel="noopener noreferrer"
           className="inline-flex items-center gap-2 text-sm font-medium text-accent"
         >
-          View project
+          <span>View project</span>
           <span aria-hidden="true">→</span>
         </a>
       ) : (
