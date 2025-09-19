@@ -10,20 +10,7 @@ My Personal Portfolio. I put things here, hopefully it looks good.
 - **@dnd-kit** for drag-and-drop skill reordering with localStorage persistence
 - **Firebase Hosting** via GitHub Actions for automated deploys
 
-## Development Setup
-
-1. Clone the repository
-2. Install dependencies: `npm install`
-3. Copy the environment template: `cp .env.example .env.local`
-4. Set your Pageclip API key in `.env.local`:
-   ```
-   VITE_PAGECLIP_API_KEY=your_actual_api_key_here
-   ```
-5. Start the development server: `npm run dev`
-
-## Environment Variables
-
-- `VITE_PAGECLIP_API_KEY` - Required for the contact form to work. Get your API key from [Pageclip](https://pageclip.co/).
+- `VITE_PAGECLIP_API_KEY` - Required for the contact form to work. API key from [Pageclip](https://pageclip.co/).
 
 ## Deployment
 
