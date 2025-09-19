@@ -84,7 +84,7 @@ function ContactForm({
   onErrorChange,
 }: ContactFormProps) {
   // Use the env var (public key) to build the Pageclip URL.
-  const pageclipApiKey = import.meta.env.VITE_PAGECLIP_API_KEY as
+  const pageclipApiKey = "YLDHAohhRJSQJX3izF30KRLNxy5NYhiz" as
     | string
     | undefined;
   const pageclipFormName = "Contact_Me_Form";
