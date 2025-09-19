@@ -68,7 +68,7 @@ type ContactFormProps = {
 };
 
 function ContactForm({ prefersReducedMotion }: ContactFormProps) {
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = useCallback((event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const form = new FormData(event.currentTarget);
     const name = (form.get("name") as string) ?? "";
@@ -76,7 +76,7 @@ function ContactForm({ prefersReducedMotion }: ContactFormProps) {
     const subject = encodeURIComponent(`Hello from ${name || "a new contact"}`);
     const body = encodeURIComponent(message);
     window.location.href = `mailto:${EMAIL}?subject=${subject}&body=${body}`;
-  };
+  }, []);
 
   return (
     <form className="flex-1 space-y-4" onSubmit={handleSubmit}>

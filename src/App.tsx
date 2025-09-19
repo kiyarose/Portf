@@ -68,38 +68,7 @@ export default function App() {
   return (
     <div className="relative min-h-screen overflow-hidden">
       <DecorativeBackground />
-      <header className="sticky top-0 z-20 border-b border-white/10 bg-white/75 backdrop-blur-xl transition dark:bg-slate-950/70">
-        <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-4 px-4 py-4">
-          <a
-            href="#hero"
-            className="flex items-center gap-3 text-sm font-semibold uppercase tracking-[0.2em] text-slate-600 dark:text-slate-300"
-          >
-            <Icon
-              icon="material-symbols:apps-rounded"
-              className="text-2xl text-accent"
-              aria-hidden="true"
-            />
-            <span className="font-kiya">Kiya Rose</span>
-          </a>
-          <nav className="hidden items-center gap-2 rounded-full bg-white/70 px-2 py-1.5 shadow-md backdrop-blur dark:bg-slate-900/70 md:flex">
-            {sections.map((section) => (
-              <a
-                key={section.id}
-                href={`#${section.id}`}
-                className="flex items-center gap-2 rounded-full px-3 py-2 text-sm font-medium text-slate-600 transition hover:bg-accent/10 hover:text-accent dark:text-slate-300"
-              >
-                <Icon
-                  icon={section.icon}
-                  className="text-lg"
-                  aria-hidden="true"
-                />
-                {section.label}
-              </a>
-            ))}
-          </nav>
-          <ThemeToggle />
-        </div>
-      </header>
+      <SiteHeader />
       <ScrollSpy sections={sections} />
       <main className="relative mx-auto flex w-full max-w-6xl flex-col gap-12 px-4 pb-16 pt-6">
         <HeroSection />
@@ -110,10 +79,61 @@ export default function App() {
         <SkillsSection />
         <ContactSection />
       </main>
-      <footer className="border-t border-white/10 bg-white/50 py-6 text-center text-sm text-slate-500 backdrop-blur dark:bg-slate-950/70 dark:text-slate-400">
-        <span className="font-kiya">Kiya Rose</span>. Crafted with React,
-        Tailwind CSS, and Firebase.
-      </footer>
+      <SiteFooter />
     </div>
+  );
+}
+
+function SiteHeader() {
+  return (
+    <header className="sticky top-0 z-20 border-b border-white/10 bg-white/75 backdrop-blur-xl transition dark:bg-slate-950/70">
+      <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-4 px-4 py-4">
+        <LogoLink />
+        <PrimaryNav />
+        <ThemeToggle />
+      </div>
+    </header>
+  );
+}
+
+function LogoLink() {
+  return (
+    <a
+      href="#hero"
+      className="flex items-center gap-3 text-sm font-semibold uppercase tracking-[0.2em] text-slate-600 dark:text-slate-300"
+    >
+      <Icon
+        icon="material-symbols:apps-rounded"
+        className="text-2xl text-accent"
+        aria-hidden="true"
+      />
+      <span className="font-kiya">Kiya Rose</span>
+    </a>
+  );
+}
+
+function PrimaryNav() {
+  return (
+    <nav className="hidden items-center gap-2 rounded-full bg-white/70 px-2 py-1.5 shadow-md backdrop-blur dark:bg-slate-900/70 md:flex">
+      {sections.map((section) => (
+        <a
+          key={section.id}
+          href={`#${section.id}`}
+          className="flex items-center gap-2 rounded-full px-3 py-2 text-sm font-medium text-slate-600 transition hover:bg-accent/10 hover:text-accent dark:text-slate-300"
+        >
+          <Icon icon={section.icon} className="text-lg" aria-hidden="true" />
+          {section.label}
+        </a>
+      ))}
+    </nav>
+  );
+}
+
+function SiteFooter() {
+  return (
+    <footer className="border-t border-white/10 bg-white/50 py-6 text-center text-sm text-slate-500 backdrop-blur dark:bg-slate-950/70 dark:text-slate-400">
+      <span className="font-kiya">Kiya Rose</span>. Crafted with React,
+      Tailwind CSS, and Firebase.
+    </footer>
   );
 }

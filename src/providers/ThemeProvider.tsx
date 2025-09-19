@@ -22,17 +22,19 @@ export function ThemeProvider({ children }: PropsWithChildren) {
     window.localStorage.setItem(THEME_STORAGE_KEY, theme);
   }, [theme]);
 
-  useEffect(() => {
-    if (typeof window === "undefined") return;
+  function registerMediaPreferenceListener() {
+    if (typeof window === "undefined") return undefined;
     const media = window.matchMedia("(prefers-color-scheme: dark)");
     const handler = (event: MediaQueryListEvent) => {
       setTheme(event.matches ? "dark" : "light");
     };
     media.addEventListener("change", handler);
-    return function cleanupMediaListener() {
+    return () => {
       media.removeEventListener("change", handler);
     };
-  }, []);
+  }
+
+  useEffect(registerMediaPreferenceListener, []);
 
   const value = useMemo(
     () => ({

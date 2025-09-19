@@ -6,6 +6,7 @@
 - Tailwind styles live in `src/index.css`, utilities in `src/utils/`, and global config in `tailwind.config.js`, `postcss.config.js`, and `vite.config.ts`.
 - `npm run build` outputs to `dist/`, which Firebase Hosting serves via `firebase.json`.
 - `.github/workflows/` houses CI/CD pipelines—update them when scripts or deploy behavior changes.
+- Top-level layout pieces (`SiteHeader`, `PrimaryNav`, `SiteFooter`) live in `src/App.tsx`; keep large JSX trees broken into helpers to satisfy lint rules.
 
 ## Build, Test, and Development Commands
 
@@ -24,15 +25,20 @@
 ## Design & Interaction Guidelines
 
 - Maintain the sleek, minimal aesthetic with rounded Material-style cards and soft shadows.
+- Accent palette leans warm orange and pink (`accent.DEFAULT` `#f97316`, `accent.muted` `#ec4899`); dark mode remains deep slate—match those tones across new UI.
 - Use rounded Material Symbols icons for navigation, social chips, and headers to keep iconography consistent.
-- Drive animations with Framer Motion; always respect `prefers-reduced-motion` and provide sensible fallbacks.
-- Ensure the light/dark mode toggle retains the animated sun/moon icons and that both themes meet contrast guidelines.
+- Drive animations with Framer Motion; always respect `prefers-reduced-motion` and provide sensible fallbacks (toggle animation uses short fade/slide, not full spins).
+- The custom `.font-kiya` (Patrick Hand) highlights the name “Kiya Rose”; apply it consistently when the name appears in new sections.
+- Developing skills use a dotted accent pill—follow the existing `isDeveloping` pattern in `SkillsSection` when adding new skills.
+- The contact form generates a `mailto:` draft; keep it client-only (no POST handlers) and preserve the copy-to-clipboard CTA.
+- The fallback page in `public/index.html` should mirror the warm accent palette; update gradients/buttons there when the brand colors change.
 
 ## Testing Guidelines
 
 - Co-locate tests beside components as `<name>.test.tsx` or under `src/tests/`.
 - Once tests exist, wire them to `npm test` and enforce them in CI before `npm run build`.
 - Capture Lighthouse or visual diffs for UI-heavy changes and attach them to PRs.
+- Tests should confirm mailto generation/utility behavior when touching the Contact section’s form logic.
 
 ## Commit & Pull Request Guidelines
 
