@@ -15,7 +15,10 @@ interface ErrorBoundaryProps extends PropsWithChildren {
 /**
  * Error boundary that catches React errors and displays a sanitized fallback UI
  */
-export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
+export class ErrorBoundary extends Component<
+  ErrorBoundaryProps,
+  ErrorBoundaryState
+> {
   constructor(props: ErrorBoundaryProps) {
     super(props);
     this.state = { hasError: false, errorId: "" };
@@ -31,7 +34,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
     // Log sanitized error information
     const sanitizedMessage = sanitizeErrorMessage(error);
     console.error("React Error Boundary caught an error:", sanitizedMessage);
-    
+
     // Call custom error handler if provided
     this.props.onError?.(error, errorInfo);
 
@@ -52,9 +55,9 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
     if (this.state.hasError) {
       const FallbackComponent = this.props.fallback || DefaultErrorFallback;
       return (
-        <FallbackComponent 
-          errorId={this.state.errorId} 
-          onRetry={this.handleRetry} 
+        <FallbackComponent
+          errorId={this.state.errorId}
+          onRetry={this.handleRetry}
         />
       );
     }

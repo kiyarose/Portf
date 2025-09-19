@@ -68,7 +68,7 @@ function sanitizeText(text: string, aggressive: boolean): string {
     // More aggressive sanitization for production
     // Remove any remaining potentially dangerous characters that could be used for injection
     sanitized = sanitized.replace(/[<>'"&]/g, "");
-    
+
     // Limit message length to prevent information leakage
     if (sanitized.length > 100) {
       sanitized = sanitized.substring(0, 97) + "...";
@@ -89,7 +89,7 @@ function sanitizeText(text: string, aggressive: boolean): string {
     ];
 
     const detectedType = commonErrors.find((type) =>
-      text.toLowerCase().includes(type)
+      text.toLowerCase().includes(type),
     );
 
     if (detectedType) {
@@ -119,8 +119,10 @@ export function safeConsoleError(message: string, error?: unknown): void {
  * Generic error messages for common scenarios
  */
 export const GENERIC_ERROR_MESSAGES = {
-  NETWORK: "A network error occurred. Please check your connection and try again.",
-  STORAGE: "Unable to access local storage. Please check your browser settings.",
+  NETWORK:
+    "A network error occurred. Please check your connection and try again.",
+  STORAGE:
+    "Unable to access local storage. Please check your browser settings.",
   CLIPBOARD: "Unable to access clipboard. Please try copying manually.",
   FORM_SUBMISSION: "Unable to submit form. Please try again later.",
   PERMISSION: "Permission denied. Please check your browser settings.",

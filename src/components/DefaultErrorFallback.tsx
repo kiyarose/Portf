@@ -8,9 +8,9 @@ interface DefaultErrorFallbackProps {
 /**
  * Default error fallback component with safe, user-friendly messaging
  */
-export function DefaultErrorFallback({ 
-  errorId, 
-  onRetry 
+export function DefaultErrorFallback({
+  errorId,
+  onRetry,
 }: DefaultErrorFallbackProps) {
   return (
     <div className="card-surface mx-auto max-w-md space-y-4 text-center">
@@ -22,7 +22,7 @@ export function DefaultErrorFallback({
           {GENERIC_ERROR_MESSAGES.UNKNOWN}
         </p>
       </div>
-      
+
       <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
         <button
           onClick={onRetry}
@@ -37,7 +37,7 @@ export function DefaultErrorFallback({
           Reload page
         </button>
       </div>
-      
+
       {import.meta.env.DEV && (
         <details className="mt-4 text-left">
           <summary className="cursor-pointer text-xs text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-300">
