@@ -1,8 +1,8 @@
 name: Restyled
 
 on:
-  pull_request:
-    types: [opened, reopened, synchronize]
+  # Disabled from automatic execution; trigger manually if needed.
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -13,6 +13,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: restyled-io/restyler@v2
+      - uses: restyled-io/restyler@v3
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
