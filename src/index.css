@@ -1,0 +1,36 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply bg-surface-light text-slate-900 dark:bg-surface-dark dark:text-slate-100 font-sans antialiased selection:bg-accent/20 selection:text-accent;
+}
+
+a {
+  @apply text-accent transition-colors duration-200 hover:text-accent-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface-light dark:focus-visible:ring-offset-surface-dark;
+}
+
+button {
+  @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface-light dark:focus-visible:ring-offset-surface-dark;
+}
+
+* {
+  @apply box-border;
+}
+
+@layer utilities {
+  .card-surface {
+    @apply rounded-3xl bg-white/80 p-8 shadow-card backdrop-blur-sm dark:bg-slate-900/70 dark:shadow-lg border border-slate-200/60 dark:border-slate-700/60;
+  }
+  .chip {
+    @apply inline-flex items-center gap-2 rounded-full bg-white/80 px-4 py-2 shadow-md transition-all duration-300 hover:shadow-lg dark:bg-slate-800/80 dark:shadow-md border border-slate-200/60 dark:border-slate-700/60;
+  }
+}
