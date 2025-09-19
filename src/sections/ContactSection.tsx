@@ -83,7 +83,14 @@ function ContactForm({
   errorMessage,
   onErrorChange,
 }: ContactFormProps) {
-  const pageclipApiKey = import.meta.env.VITE_PAGECLIP_API_KEY;
+  // Use the env var (public key) to build the Pageclip URL.
+  const pageclipApiKey = import.meta.env.VITE_PAGECLIP_API_KEY as
+    | string
+    | undefined;
+  const pageclipFormName = "Contact_Me_Form";
+  const pageclipUrl = pageclipApiKey
+    ? `https://send.pageclip.co/${pageclipApiKey}/${pageclipFormName}`
+    : null;
 
   const handleDismissError = useCallback(() => {
     onErrorChange(null);
@@ -91,81 +98,92 @@ function ContactForm({
 
   const handleSubmit = useCallback(
     async (event: React.FormEvent<HTMLFormElement>) => {
-      event.preventDefault(); // Always prevent default form submission
+      event.preventDefault();
 
-      // Clear any existing error message
       onErrorChange(null);
 
-      // Check for missing API key first
-      if (!pageclipApiKey) {
-        const errorMsg =
-          "VITE_PAGECLIP_API_KEY environment variable is not set";
-        console.error("Cannot submit form:", errorMsg);
+      if (!pageclipApiKey || !pageclipUrl) {
+        const errorMsg = "VITE_PAGECLIP_API_KEY is missing or invalid.";
+        safeConsoleError(`Cannot submit form: ${errorMsg}`);
         onErrorChange(`Configuration Error: ${errorMsg}`);
         return;
       }
 
       const form = event.currentTarget;
-      const formData = new FormData(form);
-      const name = (formData.get("name") as string) ?? "";
+
+      // Read fields from the form
+      const name =
+        (form.elements.namedItem("name") as HTMLInputElement | null)?.value ??
+        "";
+      const email =
+        (form.elements.namedItem("email") as HTMLInputElement | null)?.value ??
+        "";
+      const message =
+        (form.elements.namedItem("message") as HTMLTextAreaElement | null)
+          ?.value ?? "";
+
+      // Keep your subject auto-fill behavior
       const subjectInput = form.elements.namedItem(
         "subject",
       ) as HTMLInputElement | null;
+      const subject = name ? `Hello from ${name}` : "Hello from a new contact";
+      if (subjectInput) subjectInput.value = subject;
 
-      if (subjectInput) {
-        subjectInput.value = name
-          ? `Hello from ${name}`
-          : "Hello from a new contact";
-      }
+      // IMPORTANT: URL-encoded body (not multipart). No custom headers.
+      const body = new URLSearchParams();
+      body.set("name", name);
+      body.set("email", email);
+      body.set("message", message);
+      body.set("subject", subject);
 
-      // Submit form data to Pageclip API and capture any errors
       try {
-        const response = await fetch(
-          "https://send.pageclip.co/YLDHAohhRJSQJX3izF30KRLNxy5NYhiz/Contact_Me_Form",
-          {
-            method: "POST",
-            body: formData,
-          },
-        );
+        const response = await fetch(pageclipUrl, {
+          method: "POST",
+          body, // application/x-www-form-urlencoded (browser sets header)
+          mode: "cors", // ensures the browser sends Origin
+          // DO NOT add headers (Content-Type, Authorization, etc.)
+          // DO NOT set referrerPolicy to "no-referrer"
+        });
 
         if (!response.ok) {
-          // Try to get the error response body
-          let errorText;
+          let errorText: string;
           try {
-            const errorData = await response.json();
-            // Only display a safe, user-friendly error message
-            errorText =
-              typeof errorData === "object" &&
-              errorData !== null &&
-              typeof errorData.message === "string"
-                ? errorData.message
-                : "An unexpected error occurred. Please try again later.";
+            const data = await response.json();
+            // Normalize various Pageclip error shapes
+            if (data?.message && typeof data.message === "string") {
+              errorText = data.message;
+            } else if (Array.isArray(data?.errors) && data.errors[0]?.message) {
+              errorText = String(data.errors[0].message);
+            } else {
+              errorText =
+                "An unexpected error occurred. Please try again later.";
+            }
           } catch {
             errorText = await response.text();
           }
-
           onErrorChange(
             `API Error (${response.status} ${response.statusText}): ${errorText}`,
           );
           return;
         }
 
-        // Handle successful submission
-        await response.json(); // Parse response but don't log user data
-        // Log success without exposing potentially unsafe user data
-        console.log("Form submitted successfully");
-
-        // Reset form on success
+        // Success — parse (don’t log PII), reset form
+        try {
+          await response.json();
+        } catch {
+          // If no JSON body, ignore
+        }
         form.reset();
         onErrorChange(null);
+        // Optional: toast/snackbar could go here
       } catch (error) {
-        console.error("Network error:", error);
+        safeConsoleError("Network error while submitting contact form", error);
         onErrorChange(
           `Network Error: ${error instanceof Error ? error.message : String(error)}`,
         );
       }
     },
-    [pageclipApiKey, onErrorChange],
+    [pageclipApiKey, pageclipUrl, onErrorChange],
   );
 
   if (!pageclipApiKey) {
