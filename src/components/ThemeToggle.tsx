@@ -1,6 +1,5 @@
 import { Icon } from "@iconify/react";
 import { motion, useReducedMotion } from "framer-motion";
-import { useMemo } from "react";
 import { useTheme } from "../hooks/useTheme";
 import { cn } from "../utils/cn";
 
@@ -8,13 +7,7 @@ export function ThemeToggle({ className }: { className?: string }) {
   const { theme, toggleTheme } = useTheme();
   const prefersReducedMotion = useReducedMotion();
 
-  const variants = useMemo(
-    () => ({
-      light: { rotate: prefersReducedMotion ? 0 : 360, scale: 1 },
-      dark: { rotate: prefersReducedMotion ? 0 : -360, scale: 1 },
-    }),
-    [prefersReducedMotion],
-  );
+  const isLight = theme === "light";
 
   return (
     <button
@@ -28,17 +21,19 @@ export function ThemeToggle({ className }: { className?: string }) {
       aria-label="Toggle light or dark theme"
     >
       <motion.span
-        animate={theme}
-        variants={variants}
-        transition={{
-          type: "spring",
-          duration: prefersReducedMotion ? 0 : 0.9,
-        }}
+        key={theme}
+        initial={
+          prefersReducedMotion
+            ? { opacity: 1, y: 0 }
+            : { opacity: 0, y: -6, scale: 0.95 }
+        }
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        transition={{ duration: prefersReducedMotion ? 0 : 0.25, ease: "easeOut" }}
         className="flex items-center gap-2"
       >
         <Icon
           icon={
-            theme === "light"
+            isLight
               ? "material-symbols:dark-mode-rounded"
               : "material-symbols:light-mode-rounded"
           }
@@ -46,7 +41,7 @@ export function ThemeToggle({ className }: { className?: string }) {
           aria-hidden="true"
         />
         <span className="text-sm font-medium uppercase tracking-wide text-slate-600 dark:text-slate-300">
-          {theme === "light" ? "Dark" : "Light"} mode
+          {isLight ? "Dark" : "Light"} mode
         </span>
       </motion.span>
     </button>

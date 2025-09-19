@@ -29,7 +29,7 @@ export function ThemeProvider({ children }: PropsWithChildren) {
       setTheme(event.matches ? "dark" : "light");
     };
     media.addEventListener("change", handler);
-    return () => {
+    return function cleanupMediaListener() {
       media.removeEventListener("change", handler);
     };
   }, []);

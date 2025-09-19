@@ -9,14 +9,14 @@ export function useScrollSpy(
   useEffect(
     function registerScrollSpy(): (() => void) | undefined {
       if (typeof window === "undefined") {
-        return () => undefined;
+        return cleanupNoop;
       }
       const elements = sectionIds
         .map((id) => document.getElementById(id))
         .filter((el): el is HTMLElement => Boolean(el));
 
       if (elements.length === 0) {
-        return () => undefined;
+        return cleanupNoop;
       }
 
       const observer = new IntersectionObserver(
@@ -43,4 +43,8 @@ export function useScrollSpy(
   );
 
   return activeId;
+}
+
+function cleanupNoop(): void {
+  // intentionally empty
 }

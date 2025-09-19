@@ -61,7 +61,7 @@ export function ProjectCard({ project }: ProjectCardProps) {
           {project.title}
         </h3>
         <span className="rounded-full bg-accent/10 px-4 py-1 text-xs font-medium uppercase tracking-wide text-accent">
-          Featured
+          Hobby Build
         </span>
       </div>
       <p className="text-sm text-slate-600 dark:text-slate-300">

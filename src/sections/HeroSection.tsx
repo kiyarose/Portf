@@ -17,15 +17,15 @@ function HeroCard({ prefersReducedMotion }: HeroCardProps) {
         className="flex flex-col gap-6"
       >
         <span className="chip !bg-accent/15 !text-accent dark:!bg-accent/20 text-sm font-medium uppercase tracking-wide">
-          Hello, I’m Kiya Rose
+          Hello, I’m <span className="font-kiya">Kiya Rose</span>! 👋
         </span>
         <div className="space-y-4">
           <h1 className="text-4xl font-semibold tracking-tight text-slate-900 dark:text-white md:text-6xl">
-            IT Professional Pursuing Medical Billing and Coding
+            Health IT & Support Pro in Training
           </h1>
           <p className="max-w-2xl text-lg text-slate-600 dark:text-slate-300">
-            I build thoughtful digital experiences, blending technical support,
-            customer care, and emerging medical administration skills.
+            I spend my free time building code projects while preparing to help
+            teams full time across health IT and tech support.
           </p>
         </div>
         <div className="flex flex-wrap gap-3">

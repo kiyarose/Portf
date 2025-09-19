@@ -42,8 +42,7 @@ function ContactIntro({ copied, onCopy }: ContactIntroProps) {
   return (
     <div className="flex-1 space-y-4">
       <p className="text-base text-slate-600 dark:text-slate-300">
-        Have an opportunity or just want to say hello? Copy my email or drop a
-        note using the form. I respond within two business days.
+        Send me an email with any questions or if you just want to say hi.
       </p>
       <button
         type="button"
@@ -57,7 +56,9 @@ function ContactIntro({ copied, onCopy }: ContactIntroProps) {
         />
         {copied ? "Copied!" : "Copy my email"}
       </button>
-      <p className="text-sm text-slate-500 dark:text-slate-400">{EMAIL}</p>
+      <p className="text-base font-semibold text-slate-700 dark:text-slate-200">
+        {EMAIL}
+      </p>
     </div>
   );
 }
@@ -67,17 +68,21 @@ type ContactFormProps = {
 };
 
 function ContactForm({ prefersReducedMotion }: ContactFormProps) {
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const form = new FormData(event.currentTarget);
+    const name = (form.get("name") as string) ?? "";
+    const message = (form.get("message") as string) ?? "";
+    const subject = encodeURIComponent(`Hello from ${name || "a new contact"}`);
+    const body = encodeURIComponent(message);
+    window.location.href = `mailto:${EMAIL}?subject=${subject}&body=${body}`;
+  };
+
   return (
-    <form
-      className="flex-1 space-y-4"
-      action={`mailto:${EMAIL}`}
-      method="post"
-      encType="text/plain"
-    >
+    <form className="flex-1 space-y-4" onSubmit={handleSubmit}>
       <label className="block text-sm font-medium text-slate-600 dark:text-slate-300">
         <span>Name</span>
         <input
-          required
           name="name"
           className="mt-1 w-full rounded-2xl border border-slate-200/60 bg-white/80 px-4 py-3 text-sm placeholder:text-slate-400 focus:border-accent focus:outline-none dark:border-slate-700/60 dark:bg-slate-900/70"
           placeholder="How should I address you?"
@@ -86,7 +91,6 @@ function ContactForm({ prefersReducedMotion }: ContactFormProps) {
       <label className="block text-sm font-medium text-slate-600 dark:text-slate-300">
         <span>Message</span>
         <textarea
-          required
           name="message"
           rows={4}
           className="mt-1 w-full rounded-2xl border border-slate-200/60 bg-white/80 px-4 py-3 text-sm placeholder:text-slate-400 focus:border-accent focus:outline-none dark:border-slate-700/60 dark:bg-slate-900/70"
@@ -99,7 +103,7 @@ function ContactForm({ prefersReducedMotion }: ContactFormProps) {
         whileHover={prefersReducedMotion ? undefined : { scale: 1.01 }}
         whileTap={prefersReducedMotion ? undefined : { scale: 0.97 }}
       >
-        Send email
+        Draft email
       </motion.button>
     </form>
   );

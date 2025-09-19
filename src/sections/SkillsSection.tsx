@@ -23,7 +23,15 @@ import { defaultSkills } from "../data/skills";
 import { useLocalStorage } from "../hooks/useLocalStorage";
 import { cn } from "../utils/cn";
 
-function SortableSkill({ id, label }: { id: string; label: string }) {
+function SortableSkill({
+  id,
+  label,
+  isDeveloping,
+}: {
+  id: string;
+  label: string;
+  isDeveloping?: boolean;
+}) {
   const {
     attributes,
     listeners,
@@ -45,7 +53,11 @@ function SortableSkill({ id, label }: { id: string; label: string }) {
       {...attributes}
       {...listeners}
       className={cn(
-        "select-none rounded-full bg-white/80 px-5 py-2 text-sm font-medium text-slate-700 shadow-md dark:bg-slate-800/70 dark:text-slate-200",
+        "select-none rounded-full px-5 py-2 text-sm font-medium shadow-md transition-colors",
+        "bg-white/80 text-slate-700 dark:bg-slate-800/70 dark:text-slate-200",
+        isDeveloping
+          ? "border-2 border-dashed border-accent/60 bg-accent/10 text-accent dark:border-accent/60 dark:bg-accent/20 dark:text-accent"
+          : "border border-slate-200/60 dark:border-slate-700/60",
         isDragging && "ring-2 ring-accent",
       )}
     >
@@ -67,6 +79,10 @@ function SkillsBoard({
   sensors,
   onDragEnd,
 }: SkillsBoardProps) {
+  const developingSkills = new Set([
+    "Gaining Med Admin skills",
+  ]);
+
   return (
     <DndContext
       sensors={sensors}
@@ -80,7 +96,12 @@ function SkillsBoard({
           transition={{ staggerChildren: prefersReducedMotion ? 0 : 0.05 }}
         >
           {skills.map((skill) => (
-            <SortableSkill key={skill} id={skill} label={skill} />
+            <SortableSkill
+              key={skill}
+              id={skill}
+              label={skill}
+              isDeveloping={developingSkills.has(skill)}
+            />
           ))}
         </motion.ul>
       </SortableContext>
@@ -125,10 +146,6 @@ export function SkillsSection() {
           label="Skills"
           eyebrow="Strengths"
         />
-        <p className="text-sm text-slate-600 dark:text-slate-300">
-          Drag to reorder the skills. Your layout stays saved locally so you can
-          keep the focus on what matters for each conversation.
-        </p>
         <SkillsBoard
           skills={skills}
           prefersReducedMotion={prefersReducedMotion}

@@ -10,8 +10,8 @@ export function ProjectsSection() {
         <SectionHeader
           id="projects"
           icon="material-symbols:rocket-launch-rounded"
-          label="Projects"
-          eyebrow="Case Studies"
+          label="Hobby Builds"
+          eyebrow="Personal Wins"
         />
         <div className="grid gap-6 md:grid-cols-2">
           {projects.map((project) => (
