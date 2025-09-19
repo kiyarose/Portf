@@ -16,7 +16,9 @@ const reactTsConfig = {
       ...(reactHooksConfig.languageOptions?.globals ?? {}),
       ...(reactRefreshConfig.languageOptions?.globals ?? {})
     },
-    parser: reactHooksConfig.languageOptions?.parser ?? reactRefreshConfig.languageOptions?.parser,
+    parser:
+      reactHooksConfig.languageOptions?.parser ??
+      reactRefreshConfig.languageOptions?.parser,
     parserOptions: {
       ...(reactHooksConfig.languageOptions?.parserOptions ?? {}),
       ...(reactRefreshConfig.languageOptions?.parserOptions ?? {})
