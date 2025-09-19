@@ -23,18 +23,24 @@ export function ScrollSpy({ sections }: ScrollSpyProps) {
             key={section.id}
             href={`#${section.id}`}
             className={cn(
-              'relative inline-flex h-3 w-3 items-center justify-center rounded-full bg-slate-300/60 transition focus-visible:ring-2 focus-visible:ring-accent',
-              isActive && 'bg-accent'
+              'relative inline-flex h-6 w-6 items-center justify-center rounded-full focus-visible:ring-2 focus-visible:ring-accent transition',
             )}
             aria-label={`Jump to ${section.label}`}
           >
-            {isActive && (
-              <motion.span
-                layoutId="scroll-indicator"
-                className="absolute inset-0 rounded-full bg-accent"
-                transition={{ type: 'spring', stiffness: 400, damping: 35 }}
-              />
-            )}
+            <span
+              className={cn(
+                'relative h-3 w-3 rounded-full bg-slate-300/60 transition',
+                isActive && 'bg-accent'
+              )}
+            >
+              {isActive && (
+                <motion.span
+                  layoutId="scroll-indicator"
+                  className="absolute inset-0 rounded-full bg-accent"
+                  transition={{ type: 'spring', stiffness: 400, damping: 35 }}
+                />
+              )}
+            </span>
           </a>
         )
       })}
