@@ -160,7 +160,7 @@ function DetailsCard({
           {entry.dates}
         </p>
         <p className="mt-4 text-sm text-slate-600 dark:text-slate-300">
-          Use the selector to revisit different chapters in my academic path.
+          Use the selector to review different programmes taken.
         </p>
       </motion.div>
     </div>
