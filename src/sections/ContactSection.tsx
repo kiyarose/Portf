@@ -87,13 +87,14 @@ function ContactForm({
   const handleSubmit = useCallback(
     async (event: React.FormEvent<HTMLFormElement>) => {
       event.preventDefault(); // Always prevent default form submission
-      
+
       // Clear any existing error message
       onErrorChange(null);
 
       // Check for missing API key first
       if (!pageclipApiKey) {
-        const errorMsg = "VITE_PAGECLIP_API_KEY environment variable is not set";
+        const errorMsg =
+          "VITE_PAGECLIP_API_KEY environment variable is not set";
         console.error("Cannot submit form:", errorMsg);
         onErrorChange(`Configuration Error: ${errorMsg}`);
         return;
@@ -119,7 +120,7 @@ function ContactForm({
           {
             method: "POST",
             body: formData,
-          }
+          },
         );
 
         if (!response.ok) {
@@ -131,9 +132,9 @@ function ContactForm({
           } catch {
             errorText = await response.text();
           }
-          
+
           onErrorChange(
-            `API Error (${response.status} ${response.statusText}): ${errorText}`
+            `API Error (${response.status} ${response.statusText}): ${errorText}`,
           );
           return;
         }
@@ -141,14 +142,15 @@ function ContactForm({
         // Handle successful submission
         const result = await response.json();
         console.log("Form submitted successfully:", result);
-        
+
         // Reset form on success
         form.reset();
         onErrorChange(null);
-        
       } catch (error) {
         console.error("Network error:", error);
-        onErrorChange(`Network Error: ${error instanceof Error ? error.message : String(error)}`);
+        onErrorChange(
+          `Network Error: ${error instanceof Error ? error.message : String(error)}`,
+        );
       }
     },
     [pageclipApiKey, onErrorChange],
@@ -159,10 +161,7 @@ function ContactForm({
   }
 
   return (
-    <form
-      className="pageclip-form flex-1 space-y-4"
-      onSubmit={handleSubmit}
-    >
+    <form className="pageclip-form flex-1 space-y-4" onSubmit={handleSubmit}>
       {/* Error notification */}
       {errorMessage && (
         <motion.div
