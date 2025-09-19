@@ -1,7 +1,7 @@
-import { SectionContainer } from '../components/SectionContainer'
-import { SectionHeader } from '../components/SectionHeader'
-import { ProjectCard } from '../components/ProjectCard'
-import { projects } from '../data/projects'
+import { SectionContainer } from "../components/SectionContainer";
+import { SectionHeader } from "../components/SectionHeader";
+import { ProjectCard } from "../components/ProjectCard";
+import { projects } from "../data/projects";
 
 export function ProjectsSection() {
   return (
@@ -20,5 +20,5 @@ export function ProjectsSection() {
         </div>
       </div>
     </SectionContainer>
-  )
+  );
 }

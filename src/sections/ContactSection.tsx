@@ -1,25 +1,25 @@
-import { Icon } from '@iconify/react'
-import { motion, useReducedMotion } from 'framer-motion'
-import { useState } from 'react'
-import { SectionContainer } from '../components/SectionContainer'
-import { SectionHeader } from '../components/SectionHeader'
+import { Icon } from "@iconify/react";
+import { motion, useReducedMotion } from "framer-motion";
+import { useState } from "react";
+import { SectionContainer } from "../components/SectionContainer";
+import { SectionHeader } from "../components/SectionHeader";
 
-const EMAIL = 'kiya.rose@sillylittle.tech'
+const EMAIL = "kiya.rose@sillylittle.tech";
 
 export function ContactSection() {
-  const [copied, setCopied] = useState(false)
-  const prefersReducedMotion = useReducedMotion()
+  const [copied, setCopied] = useState(false);
+  const prefersReducedMotion = useReducedMotion();
 
   const handleCopy = async () => {
     try {
-      await navigator.clipboard.writeText(EMAIL)
-      setCopied(true)
-      setTimeout(() => setCopied(false), 2500)
+      await navigator.clipboard.writeText(EMAIL);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2500);
     } catch (error) {
-      console.warn('Clipboard copy failed', error)
-      setCopied(false)
+      console.warn("Clipboard copy failed", error);
+      setCopied(false);
     }
-  }
+  };
 
   return (
     <SectionContainer id="contact" className="pb-28">
@@ -33,17 +33,24 @@ export function ContactSection() {
         <div className="flex flex-col gap-8 md:flex-row">
           <div className="flex-1 space-y-4">
             <p className="text-base text-slate-600 dark:text-slate-300">
-              Have an opportunity or just want to say hello? Copy my email or drop a note using the form. I respond within two business days.
+              Have an opportunity or just want to say hello? Copy my email or
+              drop a note using the form. I respond within two business days.
             </p>
             <button
               type="button"
               onClick={handleCopy}
               className="chip !bg-accent !text-white hover:translate-y-[-2px] hover:shadow-lg"
             >
-              <Icon icon="material-symbols:content-copy-rounded" className="text-lg" aria-hidden="true" />
-              {copied ? 'Copied!' : 'Copy my email'}
+              <Icon
+                icon="material-symbols:content-copy-rounded"
+                className="text-lg"
+                aria-hidden="true"
+              />
+              {copied ? "Copied!" : "Copy my email"}
             </button>
-            <p className="text-sm text-slate-500 dark:text-slate-400">{EMAIL}</p>
+            <p className="text-sm text-slate-500 dark:text-slate-400">
+              {EMAIL}
+            </p>
           </div>
           <form
             className="flex-1 space-y-4"
@@ -82,5 +89,5 @@ export function ContactSection() {
         </div>
       </div>
     </SectionContainer>
-  )
+  );
 }

@@ -1,22 +1,22 @@
-import { Icon } from '@iconify/react'
-import { motion, useReducedMotion } from 'framer-motion'
-import { cn } from '../utils/cn'
+import { Icon } from "@iconify/react";
+import { motion, useReducedMotion } from "framer-motion";
+import { cn } from "../utils/cn";
 
 interface SocialChipProps {
-  href: string
-  label: string
-  icon: string
+  href: string;
+  label: string;
+  icon: string;
 }
 
 export function SocialChip({ href, label, icon }: SocialChipProps) {
-  const prefersReducedMotion = useReducedMotion()
+  const prefersReducedMotion = useReducedMotion();
 
   return (
     <motion.a
       href={href}
       target="_blank"
       rel="noopener noreferrer"
-      className={cn('chip group')}
+      className={cn("chip group")}
       whileHover={prefersReducedMotion ? undefined : { y: -4, scale: 1.02 }}
       whileTap={prefersReducedMotion ? undefined : { scale: 0.98 }}
     >
@@ -25,5 +25,5 @@ export function SocialChip({ href, label, icon }: SocialChipProps) {
         {label}
       </span>
     </motion.a>
-  )
+  );
 }
