@@ -9,7 +9,7 @@
 - Respect `prefers-reduced-motion`, keeping Framer Motion animations subtle (short fade/slide transitions) and providing fallbacks for reduced motion preferences.
 - Maintain the light/dark theme toggle with animated sun/moon icons and ensure contrast targets accessibility best practices.
 - Apply the `.font-kiya` (Patrick Hand) accent whenever “Kiya Rose” appears in UI copy.
-- Everything should be in Canadian English or French English when possible, when there are conflicting versions of a singular term use the more specific one. (For example cheque instead of check) 
+- Everything should be in Canadian English or French English when possible, when there are conflicting versions of a singular term use the more specific one. (For example cheque instead of check)
 
 ## Quality Expectations
 
