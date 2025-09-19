@@ -1,3 +1,4 @@
+import { useCallback } from "react";
 import { GENERIC_ERROR_MESSAGES } from "../utils/errorSanitizer";
 
 interface DefaultErrorFallbackProps {
@@ -12,6 +13,10 @@ export function DefaultErrorFallback({
   errorId,
   onRetry,
 }: DefaultErrorFallbackProps) {
+  const handleReload = useCallback(() => {
+    window.location.reload();
+  }, []);
+
   return (
     <div className="card-surface mx-auto max-w-md space-y-4 text-center">
       <div className="space-y-2">
@@ -31,7 +36,7 @@ export function DefaultErrorFallback({
           Try again
         </button>
         <button
-          onClick={() => window.location.reload()}
+          onClick={handleReload}
           className="rounded-2xl border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-800"
         >
           Reload page
