@@ -1,6 +1,6 @@
 import { motion, useReducedMotion } from "framer-motion";
-import { useMemo, useState } from "react";
-import type { KeyboardEvent } from "react";
+import { useCallback, useMemo, useState } from "react";
+import type { FocusEvent, KeyboardEvent, MouseEvent } from "react";
 import { SectionContainer } from "../components/SectionContainer";
 import { SectionHeader } from "../components/SectionHeader";
 import { educationTimeline } from "../data/education";
@@ -19,7 +19,7 @@ export function EducationSection() {
     [],
   );
 
-  const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+  const handleKeyDown = useCallback((event: KeyboardEvent<HTMLDivElement>) => {
     if (event.key === "ArrowRight" || event.key === "ArrowDown") {
       event.preventDefault();
       setActiveIndex((prev) => (prev + 1) % educationTimeline.length);
@@ -31,7 +31,40 @@ export function EducationSection() {
           (prev - 1 + educationTimeline.length) % educationTimeline.length,
       );
     }
-  };
+  }, []);
+
+  const assignFromDataset = useCallback(
+    (target: EventTarget & { dataset?: DOMStringMap }) => {
+      const raw = target.dataset?.index;
+      if (raw == null) return;
+      const next = Number(raw);
+      if (!Number.isNaN(next)) {
+        setActiveIndex(next);
+      }
+    },
+    [],
+  );
+
+  const handleMouseEnter = useCallback(
+    (event: MouseEvent<HTMLButtonElement>) => {
+      assignFromDataset(event.currentTarget);
+    },
+    [assignFromDataset],
+  );
+
+  const handleFocus = useCallback(
+    (event: FocusEvent<HTMLButtonElement>) => {
+      assignFromDataset(event.currentTarget);
+    },
+    [assignFromDataset],
+  );
+
+  const handleClick = useCallback(
+    (event: MouseEvent<HTMLButtonElement>) => {
+      assignFromDataset(event.currentTarget);
+    },
+    [assignFromDataset],
+  );
 
   const timelineItems = educationTimeline.map((item, index) => {
     const isActive = index === activeIndex;
@@ -44,9 +77,10 @@ export function EducationSection() {
           "relative flex items-center gap-4 rounded-2xl border border-slate-200/60 bg-white/50 px-4 py-4 text-left transition dark:border-slate-700/60 dark:bg-slate-900/60",
           isActive && "border-accent/60 shadow-card shadow-accent/20",
         )}
-        onMouseEnter={() => setActiveIndex(index)}
-        onFocus={() => setActiveIndex(index)}
-        onClick={() => setActiveIndex(index)}
+        data-index={index}
+        onMouseEnter={handleMouseEnter}
+        onFocus={handleFocus}
+        onClick={handleClick}
       >
         <span
           className={cn(

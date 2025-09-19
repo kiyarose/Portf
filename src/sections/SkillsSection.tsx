@@ -16,6 +16,7 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { motion, useReducedMotion } from "framer-motion";
+import { useCallback } from "react";
 import { SectionContainer } from "../components/SectionContainer";
 import { SectionHeader } from "../components/SectionHeader";
 import { defaultSkills } from "../data/skills";
@@ -66,17 +67,20 @@ export function SkillsSection() {
     }),
   );
 
-  const handleDragEnd = (event: DragEndEvent) => {
-    const { active, over } = event;
-    if (!over || active.id === over.id) return;
+  const handleDragEnd = useCallback(
+    (event: DragEndEvent) => {
+      const { active, over } = event;
+      if (!over || active.id === over.id) return;
 
-    setSkills((current) => {
-      const oldIndex = current.indexOf(active.id as string);
-      const newIndex = current.indexOf(over.id as string);
-      if (oldIndex === -1 || newIndex === -1) return current;
-      return arrayMove(current, oldIndex, newIndex);
-    });
-  };
+      setSkills((current) => {
+        const oldIndex = current.indexOf(active.id as string);
+        const newIndex = current.indexOf(over.id as string);
+        if (oldIndex === -1 || newIndex === -1) return current;
+        return arrayMove(current, oldIndex, newIndex);
+      });
+    },
+    [setSkills],
+  );
 
   return (
     <SectionContainer id="skills" className="pb-20">

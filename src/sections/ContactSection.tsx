@@ -1,6 +1,6 @@
 import { Icon } from "@iconify/react";
 import { motion, useReducedMotion } from "framer-motion";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { SectionContainer } from "../components/SectionContainer";
 import { SectionHeader } from "../components/SectionHeader";
 
@@ -10,7 +10,7 @@ export function ContactSection() {
   const [copied, setCopied] = useState(false);
   const prefersReducedMotion = useReducedMotion();
 
-  const handleCopy = async () => {
+  const handleCopy = useCallback(async () => {
     try {
       await navigator.clipboard.writeText(EMAIL);
       setCopied(true);
@@ -19,7 +19,7 @@ export function ContactSection() {
       console.warn("Clipboard copy failed", error);
       setCopied(false);
     }
-  };
+  }, []);
 
   return (
     <SectionContainer id="contact" className="pb-28">
