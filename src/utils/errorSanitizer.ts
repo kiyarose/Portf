@@ -71,7 +71,7 @@ function sanitizeText(text: string, aggressive: boolean): string {
 
     // Limit message length to prevent information leakage
     if (sanitized.length > 100) {
-      sanitized = sanitized.substring(0, 97) + "...";
+      sanitized = `${sanitized.substring(0, 97)}...`;
     }
   }
 
