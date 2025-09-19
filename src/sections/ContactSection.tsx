@@ -199,7 +199,7 @@ function ContactForm({
         if (likelyCorsError) {
           // For CORS errors, the form might have been submitted successfully
           // but we can't read the response. Reset the form optimistically.
-          safeConsoleWarn("Possible CORS error after form submission", error);
+          safeConsoleError("Possible CORS error after form submission", error);
           form.reset();
           onErrorChange(null);
           // Could show a success message here, but we'll be conservative
