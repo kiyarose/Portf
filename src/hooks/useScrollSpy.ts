@@ -7,13 +7,17 @@ export function useScrollSpy(
   const [activeId, setActiveId] = useState(sectionIds[0] ?? "");
 
   useEffect(
-    function registerScrollSpy(): void | (() => void) {
-      if (typeof window === "undefined") return () => {};
+    function registerScrollSpy(): (() => void) | undefined {
+      if (typeof window === "undefined") {
+        return () => undefined;
+      }
       const elements = sectionIds
         .map((id) => document.getElementById(id))
         .filter((el): el is HTMLElement => Boolean(el));
 
-      if (elements.length === 0) return () => {};
+      if (elements.length === 0) {
+        return () => undefined;
+      }
 
       const observer = new IntersectionObserver(
         (entries) => {
