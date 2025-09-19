@@ -36,8 +36,7 @@ export function EducationSection() {
       <button
         key={item.school}
         type="button"
-        role="option"
-        aria-selected={isActive}
+        aria-current={isActive ? "true" : undefined}
         className={cn(
           'relative flex items-center gap-4 rounded-2xl border border-slate-200/60 bg-white/50 px-4 py-4 text-left transition dark:border-slate-700/60 dark:bg-slate-900/60',
           isActive && 'border-accent/60 shadow-card shadow-accent/20'
