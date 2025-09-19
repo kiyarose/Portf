@@ -18,8 +18,6 @@ export function ThemeProvider({ children }: PropsWithChildren) {
   useEffect(() => {
     if (typeof document === 'undefined') return
     const root = document.documentElement
-    root.classList.remove(theme === 'light' ? 'dark' : 'light')
-    root.classList.add(theme)
     root.classList.toggle('dark', theme === 'dark')
     window.localStorage.setItem(THEME_STORAGE_KEY, theme)
   }, [theme])
