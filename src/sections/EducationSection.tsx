@@ -69,7 +69,6 @@ export function EducationSection() {
         <div
           className="flex flex-col gap-6 md:flex-row md:gap-10"
           onKeyDown={handleKeyDown}
-          role="listbox"
           aria-label="Education timeline"
           tabIndex={0}
         >
