@@ -6,8 +6,19 @@ const THEME_STORAGE_KEY = "kiya-theme";
 
 function getPreferredTheme(): Theme {
   if (typeof window === "undefined") return "light";
-  const stored = window.localStorage.getItem(THEME_STORAGE_KEY) as Theme | null;
-  if (stored === "light" || stored === "dark") return stored;
+
+  try {
+    const stored = window.localStorage.getItem(
+      THEME_STORAGE_KEY,
+    ) as Theme | null;
+    if (stored === "light" || stored === "dark") return stored;
+  } catch (error) {
+    console.warn(
+      `Failed to read localStorage key "${THEME_STORAGE_KEY}"`,
+      error,
+    );
+  }
+
   const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
   return prefersDark ? "dark" : "light";
 }
@@ -19,7 +30,15 @@ export function ThemeProvider({ children }: PropsWithChildren) {
     if (typeof document === "undefined") return;
     const root = document.documentElement;
     root.classList.toggle("dark", theme === "dark");
-    window.localStorage.setItem(THEME_STORAGE_KEY, theme);
+
+    try {
+      window.localStorage.setItem(THEME_STORAGE_KEY, theme);
+    } catch (error) {
+      console.warn(
+        `Failed to write localStorage key "${THEME_STORAGE_KEY}"`,
+        error,
+      );
+    }
   }, [theme]);
 
   function registerMediaPreferenceListener() {
