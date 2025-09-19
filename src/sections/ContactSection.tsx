@@ -73,9 +73,7 @@ function ContactForm({ prefersReducedMotion }: ContactFormProps) {
       const form = event.currentTarget;
       const formData = new FormData(form);
       const name = (formData.get("name") as string) ?? "";
-      const subjectInput = form.elements.namedItem(
-        "subject",
-      ) as HTMLInputElement | null;
+      const subjectInput = form.elements.namedItem("subject") as HTMLInputElement | null;
 
       if (subjectInput) {
         subjectInput.value = name
