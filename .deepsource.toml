@@ -1,0 +1,32 @@
+version = 1
+
+[[analyzers]]
+name = "secrets"
+
+[[analyzers]]
+name = "python"
+
+  [analyzers.meta]
+  runtime_version = "3.x.x"
+
+[[analyzers]]
+name = "shell"
+
+[[analyzers]]
+name = "javascript"
+
+  [analyzers.meta]
+  plugins = [
+    "react",
+    "vue"
+  ]
+  environment = [
+    "nodejs",
+    "browser"
+  ]
+
+[[transformers]]
+name = "prettier"
+
+[[transformers]]
+name = "standardjs"
