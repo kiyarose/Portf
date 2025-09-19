@@ -180,21 +180,22 @@ function ContactForm({
       } catch (error) {
         // Check if this is likely a CORS error after successful submission
         // or an actual network failure
-        const errorMessage = error instanceof Error ? error.message : String(error);
-        
+        const errorMessage =
+          error instanceof Error ? error.message : String(error);
+
         // Common patterns that indicate the request was sent but response reading failed
         const corsLikePatterns = [
-          'Load failed',
-          'Failed to fetch',
-          'CORS',
-          'Cross-Origin',
-          'Opaque response'
+          "Load failed",
+          "Failed to fetch",
+          "CORS",
+          "Cross-Origin",
+          "Opaque response",
         ];
-        
-        const likelyCorsError = corsLikePatterns.some(pattern => 
-          errorMessage.toLowerCase().includes(pattern.toLowerCase())
+
+        const likelyCorsError = corsLikePatterns.some((pattern) =>
+          errorMessage.toLowerCase().includes(pattern.toLowerCase()),
         );
-        
+
         if (likelyCorsError) {
           // For CORS errors, the form might have been submitted successfully
           // but we can't read the response. Reset the form optimistically.
@@ -205,10 +206,11 @@ function ContactForm({
           // and just not show an error since the submission likely succeeded
         } else {
           // This appears to be an actual network error
-          safeConsoleError("Network error while submitting contact form", error);
-          onErrorChange(
-            `Network Error: ${errorMessage}`,
+          safeConsoleError(
+            "Network error while submitting contact form",
+            error,
           );
+          onErrorChange(`Network Error: ${errorMessage}`);
         }
       }
     },
