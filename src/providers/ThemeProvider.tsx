@@ -22,14 +22,14 @@ export function ThemeProvider({ children }: PropsWithChildren) {
     window.localStorage.setItem(THEME_STORAGE_KEY, theme);
   }, [theme]);
 
-  useEffect(function registerMediaPreferenceListener() {
-    if (typeof window === "undefined") return;
+  useEffect(function registerMediaPreferenceListener(): void | (() => void) {
+    if (typeof window === "undefined") return undefined;
     const media = window.matchMedia("(prefers-color-scheme: dark)");
     const handler = (event: MediaQueryListEvent) => {
       setTheme(event.matches ? "dark" : "light");
     };
     media.addEventListener("change", handler);
-    function cleanupMediaListener() {
+    function cleanupMediaListener(): void {
       media.removeEventListener("change", handler);
     }
     return cleanupMediaListener;
