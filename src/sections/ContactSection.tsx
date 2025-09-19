@@ -7,6 +7,39 @@ import { safeConsoleWarn, safeConsoleError } from "../utils/errorSanitizer";
 
 const EMAIL = "kiya.rose@sillylittle.tech";
 
+const STRICT_CORS_PATTERNS = ["cors", "cross-origin", "opaque response"];
+const GENERIC_CORS_PATTERNS = ["load failed", "failed to fetch"];
+
+const isLikelyCorsError = (error: unknown): boolean => {
+  const message =
+    error instanceof Error
+      ? error.message
+      : typeof error === "string"
+      ? error
+      : "";
+  const normalizedMessage = message.toLowerCase();
+
+  if (STRICT_CORS_PATTERNS.some((pattern) => normalizedMessage.includes(pattern))) {
+    return true;
+  }
+
+  const errorName =
+    error instanceof Error
+      ? error.name
+      : typeof error === "object" && error !== null && "name" in error
+      ? String((error as { name?: unknown }).name ?? "")
+      : "";
+  const isTypeError = errorName.toLowerCase().includes("typeerror");
+
+  if (!isTypeError) {
+    return false;
+  }
+
+  return GENERIC_CORS_PATTERNS.some((pattern) =>
+    normalizedMessage.includes(pattern),
+  );
+};
+
 type ContactCardProps = {
   copied: boolean;
   onCopy: () => Promise<void>;
@@ -178,34 +211,22 @@ function ContactForm({
         onErrorChange(null);
         // Optional: toast/snackbar could go here
       } catch (error) {
-        // Check if this is likely a CORS error after successful submission
-        // or an actual network failure
-        const errorMessage =
-          error instanceof Error ? error.message : String(error);
-
-        // Common patterns that indicate the request was sent but response reading failed
-        const corsLikePatterns = [
-          "Load failed",
-          "Failed to fetch",
-          "CORS",
-          "Cross-Origin",
-          "Opaque response",
-        ];
-
-        const likelyCorsError = corsLikePatterns.some((pattern) =>
-          errorMessage.toLowerCase().includes(pattern.toLowerCase()),
-        );
+        // Check if this is a CORS/opaque response issue or a genuine network failure
+        const isOffline =
+          typeof navigator !== "undefined" && navigator.onLine === false;
+        const likelyCorsError = !isOffline && isLikelyCorsError(error);
 
         if (likelyCorsError) {
-          // For CORS errors, the form might have been submitted successfully
-          // but we can't read the response. Reset the form optimistically.
-          safeConsoleError("Possible CORS error after form submission", error);
+          // We likely hit a CORS/read issue, but connectivity is intact.
+          // Treat it as a success: reset the form silently to avoid resubmits.
+          safeConsoleWarn("Possible CORS error after form submission", error);
           form.reset();
           onErrorChange(null);
-          // Could show a success message here, but we'll be conservative
-          // and just not show an error since the submission likely succeeded
+          return;
         } else {
           // This appears to be an actual network error
+          const errorMessage =
+            error instanceof Error ? error.message : String(error);
           safeConsoleError(
             "Network error while submitting contact form",
             error,
