@@ -15,11 +15,13 @@ const isLikelyCorsError = (error: unknown): boolean => {
     error instanceof Error
       ? error.message
       : typeof error === "string"
-      ? error
-      : "";
+        ? error
+        : "";
   const normalizedMessage = message.toLowerCase();
 
-  if (STRICT_CORS_PATTERNS.some((pattern) => normalizedMessage.includes(pattern))) {
+  if (
+    STRICT_CORS_PATTERNS.some((pattern) => normalizedMessage.includes(pattern))
+  ) {
     return true;
   }
 
@@ -27,8 +29,8 @@ const isLikelyCorsError = (error: unknown): boolean => {
     error instanceof Error
       ? error.name
       : typeof error === "object" && error !== null && "name" in error
-      ? String((error as { name?: unknown }).name ?? "")
-      : "";
+        ? String((error as { name?: unknown }).name ?? "")
+        : "";
   const isTypeError = errorName.toLowerCase().includes("typeerror");
 
   if (!isTypeError) {
