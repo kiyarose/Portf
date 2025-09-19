@@ -27,7 +27,7 @@ export function useScrollSpy(
 
     elements.forEach((element) => observer.observe(element));
 
-    return () => {
+    return function cleanupObserver() {
       elements.forEach((element) => observer.unobserve(element));
       observer.disconnect();
     };

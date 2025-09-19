@@ -152,46 +152,79 @@ function EducationCard({
       />
 
       <div className="flex flex-col gap-6 md:flex-row md:gap-10">
-        <div className="relative flex flex-col gap-4 md:w-1/2">
-          <span
-            className="absolute left-4 top-2 hidden h-[calc(100%-1rem)] w-0.5 bg-accent/30 md:block"
-            aria-hidden="true"
-          />
-          <div
-            className="space-y-4"
-            onKeyDown={handleKeyDown}
-            aria-label="Education timeline"
-            role="listbox"
-            aria-activedescendant={activeOptionId}
-            tabIndex={0}
-          >
-            {timelineItems}
-          </div>
-        </div>
-
-        <div className="flex-1">
-          <motion.div
-            key={activeItem.school}
-            initial={prefersReducedMotion ? false : "enter"}
-            animate="center"
-            variants={prefersReducedMotion ? undefined : variants}
-            transition={{ duration: 0.5, ease: "easeOut" }}
-            className="rounded-2xl bg-accent/10 p-6 text-slate-700 dark:bg-accent/15 dark:text-slate-200"
-          >
-            <h3 className="text-2xl font-semibold text-slate-900 dark:text-white">
-              {activeItem.school}
-            </h3>
-            <p className="mt-2 text-base">{activeItem.program}</p>
-            <p className="mt-4 text-sm font-medium uppercase tracking-wide text-slate-500 dark:text-slate-300">
-              {activeItem.dates}
-            </p>
-            <p className="mt-4 text-sm text-slate-600 dark:text-slate-300">
-              Use the arrow keys to explore the timeline and learn more about my
-              academic journey.
-            </p>
-          </motion.div>
-        </div>
+        <TimelineColumn
+          handleKeyDown={handleKeyDown}
+          timelineItems={timelineItems}
+          activeOptionId={activeOptionId}
+        />
+        <DetailsCard
+          prefersReducedMotion={prefersReducedMotion}
+          activeItem={activeItem}
+          variants={variants}
+        />
       </div>
+    </div>
+  );
+}
+
+type TimelineColumnProps = {
+  handleKeyDown: (event: KeyboardEvent<HTMLDivElement>) => void;
+  timelineItems: ReactNode;
+  activeOptionId: string;
+};
+
+function TimelineColumn({ handleKeyDown, timelineItems, activeOptionId }: TimelineColumnProps) {
+  return (
+    <div className="relative flex flex-col gap-4 md:w-1/2">
+      <span
+        className="absolute left-4 top-2 hidden h-[calc(100%-1rem)] w-0.5 bg-accent/30 md:block"
+        aria-hidden="true"
+      />
+      <div
+        className="space-y-4"
+        onKeyDown={handleKeyDown}
+        aria-label="Education timeline"
+        role="listbox"
+        aria-activedescendant={activeOptionId}
+        tabIndex={0}
+      >
+        {timelineItems}
+      </div>
+    </div>
+  );
+}
+
+type DetailsCardProps = {
+  prefersReducedMotion: boolean;
+  activeItem: (typeof educationTimeline)[number];
+  variants: {
+    enter: { opacity: number; y: number };
+    center: { opacity: number; y: number };
+  };
+};
+
+function DetailsCard({ prefersReducedMotion, activeItem, variants }: DetailsCardProps) {
+  return (
+    <div className="flex-1">
+      <motion.div
+        key={activeItem.school}
+        initial={prefersReducedMotion ? false : "enter"}
+        animate="center"
+        variants={prefersReducedMotion ? undefined : variants}
+        transition={{ duration: 0.5, ease: "easeOut" }}
+        className="rounded-2xl bg-accent/10 p-6 text-slate-700 dark:bg-accent/15 dark:text-slate-200"
+      >
+        <h3 className="text-2xl font-semibold text-slate-900 dark:text-white">
+          {activeItem.school}
+        </h3>
+        <p className="mt-2 text-base">{activeItem.program}</p>
+        <p className="mt-4 text-sm font-medium uppercase tracking-wide text-slate-500 dark:text-slate-300">
+          {activeItem.dates}
+        </p>
+        <p className="mt-4 text-sm text-slate-600 dark:text-slate-300">
+          Use the arrow keys to explore the timeline and learn more about my academic journey.
+        </p>
+      </motion.div>
     </div>
   );
 }
