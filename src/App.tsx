@@ -41,7 +41,7 @@ function DecorativeBackground() {
   return (
     <>
       <motion.div
-        className="pointer-events-none absolute inset-x-0 -top-40 mx-auto h-[520px] w-[520px] rounded-full bg-accent/20 blur-3xl dark:bg-accent/30"
+        className="pointer-events-none absolute inset-x-0 -top-40 mx-auto h-[520px] w-[520px] rounded-full bg-orange-400/30 blur-3xl dark:bg-accent/30"
         animate={
           prefersReducedMotion ? undefined : { opacity: [0.35, 0.6, 0.35] }
         }
@@ -52,7 +52,7 @@ function DecorativeBackground() {
         }}
       />
       <motion.div
-        className="pointer-events-none absolute bottom-10 left-[10%] h-64 w-64 rounded-full bg-indigo-500/10 blur-3xl dark:bg-indigo-500/20"
+        className="pointer-events-none absolute bottom-10 left-[10%] h-64 w-64 rounded-full bg-rose-400/20 blur-3xl dark:bg-indigo-500/20"
         animate={prefersReducedMotion ? undefined : { y: [0, -12, 0] }}
         transition={{
           repeat: prefersReducedMotion ? 0 : Infinity,
@@ -111,7 +111,6 @@ export default function App() {
         <ContactSection />
       </main>
       <footer className="border-t border-white/10 bg-white/50 py-6 text-center text-sm text-slate-500 backdrop-blur dark:bg-slate-950/70 dark:text-slate-400">
-        © {new Date().getFullYear()}{" "}
         <span className="font-kiya">Kiya Rose</span>. Crafted with React,
         Tailwind CSS, and Firebase.
       </footer>

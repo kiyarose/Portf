@@ -87,11 +87,7 @@ export function ProjectCard({ project }: ProjectCardProps) {
           <span>View project</span>
           <span aria-hidden="true">→</span>
         </a>
-      ) : (
-        <p className="text-xs text-slate-500 dark:text-slate-400">
-          Hosted link coming soon.
-        </p>
-      )}
+      ) : null}
     </motion.div>
   );
 }

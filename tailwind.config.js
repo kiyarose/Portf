@@ -15,8 +15,8 @@ export default {
           dark: '#111827'
         },
         accent: {
-          DEFAULT: '#6366f1',
-          muted: '#a855f7'
+          DEFAULT: '#f97316',
+          muted: '#ec4899'
         }
       },
       boxShadow: {

@@ -9,7 +9,7 @@ type HeroCardProps = {
 
 function HeroCard({ prefersReducedMotion }: HeroCardProps) {
   return (
-    <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-white/90 via-white/70 to-accent/10 p-10 shadow-card backdrop-blur-lg dark:from-slate-900/90 dark:via-slate-900/70 dark:to-indigo-500/10">
+    <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-white/90 via-[#ffe9f2]/80 to-accent/15 p-10 shadow-card backdrop-blur-lg dark:from-slate-900/90 dark:via-slate-900/70 dark:to-indigo-500/10">
       <motion.div
         initial={prefersReducedMotion ? undefined : { opacity: 0, y: 24 }}
         animate={prefersReducedMotion ? undefined : { opacity: 1, y: 0 }}
@@ -35,7 +35,7 @@ function HeroCard({ prefersReducedMotion }: HeroCardProps) {
         </div>
       </motion.div>
       <motion.div
-        className="absolute -right-10 -top-10 hidden h-48 w-48 rounded-full bg-accent/20 blur-3xl md:block dark:bg-accent/30"
+        className="absolute -right-10 -top-10 hidden h-48 w-48 rounded-full bg-accent/30 blur-3xl md:block dark:bg-accent/30"
         animate={prefersReducedMotion ? undefined : { scale: [1, 1.1, 1] }}
         transition={{
           repeat: prefersReducedMotion ? 0 : Infinity,
