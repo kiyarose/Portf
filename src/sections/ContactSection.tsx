@@ -86,9 +86,15 @@ function ContactForm({ prefersReducedMotion }: ContactFormProps) {
     [],
   );
 
+  const pageclipApiKey = import.meta.env.VITE_PAGECLIP_API_KEY;
+
+  if (!pageclipApiKey) {
+    console.error("VITE_PAGECLIP_API_KEY environment variable is not set");
+  }
+
   return (
     <form
-      action="https://send.pageclip.co/YLDHAohhRJSQJX3izF30KRLNxy5NYhiz/Contact_Form"
+      action={`https://send.pageclip.co/${pageclipApiKey}/Contact_Form`}
       className="pageclip-form flex-1 space-y-4"
       method="post"
       onSubmit={handleSubmit}
