@@ -44,7 +44,7 @@ function HeroCard({ prefersReducedMotion }: HeroCardProps) {
 }
 
 export function HeroSection() {
-  const prefersReducedMotion = useReducedMotion();
+  const prefersReducedMotion = useReducedMotion() ?? false;
 
   return (
     <SectionContainer id="hero" className="pt-32 pb-20">

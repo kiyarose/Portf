@@ -94,7 +94,7 @@ function ContactForm({ prefersReducedMotion }: ContactFormProps) {
 
 export function ContactSection() {
   const [copied, setCopied] = useState(false);
-  const prefersReducedMotion = useReducedMotion();
+  const prefersReducedMotion = useReducedMotion() ?? false;
 
   const handleCopy = useCallback(async () => {
     try {

@@ -1,6 +1,6 @@
 import { motion, useReducedMotion } from "framer-motion";
 import { useCallback, useMemo, useState } from "react";
-import type { FocusEvent, KeyboardEvent, MouseEvent } from "react";
+import type { FocusEvent, KeyboardEvent, MouseEvent, ReactNode } from "react";
 import { SectionContainer } from "../components/SectionContainer";
 import { SectionHeader } from "../components/SectionHeader";
 import { educationTimeline } from "../data/education";
@@ -8,7 +8,7 @@ import { cn } from "../utils/cn";
 
 export function EducationSection() {
   const [activeIndex, setActiveIndex] = useState(0);
-  const prefersReducedMotion = useReducedMotion();
+  const prefersReducedMotion = useReducedMotion() ?? false;
   const activeItem = educationTimeline[activeIndex];
 
   const variants = useMemo(

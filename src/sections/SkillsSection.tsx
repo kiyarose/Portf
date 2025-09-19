@@ -83,7 +83,7 @@ export function SkillsSection() {
   const [skills, setSkills] = useLocalStorage<string[]>("kiya-skills-order", [
     ...defaultSkills,
   ]);
-  const prefersReducedMotion = useReducedMotion();
+  const prefersReducedMotion = useReducedMotion() ?? false;
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
