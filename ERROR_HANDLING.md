@@ -5,9 +5,11 @@ This document outlines the error handling and security practices implemented in 
 ## Error Sanitization
 
 ### Overview
+
 All error messages are sanitized before being logged or displayed to prevent sensitive information exposure such as:
+
 - API keys and tokens
-- File system paths  
+- File system paths
 - URLs with sensitive parameters
 - Email addresses
 - Stack traces with internal details
@@ -16,11 +18,13 @@ All error messages are sanitized before being logged or displayed to prevent sen
 ### Implementation
 
 #### Core Utilities (`src/utils/errorSanitizer.ts`)
+
 - `sanitizeErrorMessage(error)` - Main function for sanitizing any error object/string
 - `safeConsoleWarn()` and `safeConsoleError()` - Replacements for console logging
 - `GENERIC_ERROR_MESSAGES` - Pre-defined safe error messages
 
 #### Error Boundary (`src/components/ErrorBoundary.tsx`)
+
 - Catches React component errors
 - Logs sanitized error information
 - Displays user-friendly fallback UI
@@ -29,8 +33,9 @@ All error messages are sanitized before being logged or displayed to prevent sen
 ### Usage Guidelines
 
 #### ✅ Do - Use Safe Logging
+
 ```typescript
-import { safeConsoleWarn, safeConsoleError } from '../utils/errorSanitizer';
+import { safeConsoleWarn, safeConsoleError } from "../utils/errorSanitizer";
 
 try {
   // risky operation
@@ -40,6 +45,7 @@ try {
 ```
 
 #### ❌ Don't - Raw Error Logging
+
 ```typescript
 // DON'T DO THIS - exposes sensitive data
 console.error("API call failed:", error);
@@ -49,11 +55,13 @@ console.warn(`Failed to access ${apiKey}:`, error.message);
 ### Development vs Production
 
 **Development Mode:**
+
 - Less aggressive sanitization for debugging
 - Error IDs and debug information visible
 - Component stack traces available
 
 **Production Mode:**
+
 - Strict sanitization removes all sensitive patterns
 - Generic user-friendly messages
 - No internal debugging information exposed
@@ -79,6 +87,7 @@ The application is wrapped in an ErrorBoundary component that:
 ## Contact Form Security
 
 The contact form implements additional protections:
+
 - API key exposure prevention (logs generic message instead of environment variable name)
 - Clipboard operation error sanitization
 - Form validation error sanitization
@@ -103,7 +112,8 @@ To test the error handling:
 ## Compliance
 
 This implementation helps meet security requirements for:
+
 - Information disclosure prevention
-- XSS attack mitigation  
+- XSS attack mitigation
 - User privacy protection
 - Debugging information security
