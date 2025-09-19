@@ -75,8 +75,12 @@ function ContactForm({ prefersReducedMotion }: ContactFormProps) {
       // Prevent form submission if API key is missing
       if (!pageclipApiKey) {
         event.preventDefault();
-        console.error("Cannot submit form: VITE_PAGECLIP_API_KEY environment variable is not set");
-        alert("Sorry, the contact form is not properly configured. Please try emailing me directly at kiya.rose@sillylittle.tech");
+        console.error(
+          "Cannot submit form: VITE_PAGECLIP_API_KEY environment variable is not set",
+        );
+        alert(
+          "Sorry, the contact form is not properly configured. Please try emailing me directly at kiya.rose@sillylittle.tech",
+        );
         return;
       }
 
@@ -102,7 +106,11 @@ function ContactForm({ prefersReducedMotion }: ContactFormProps) {
 
   return (
     <form
-      action={pageclipApiKey ? `https://send.pageclip.co/${pageclipApiKey}/Contact_Me_Form` : "#"}
+      action={
+        pageclipApiKey
+          ? `https://send.pageclip.co/${pageclipApiKey}/Contact_Me_Form`
+          : "#"
+      }
       className="pageclip-form flex-1 space-y-4"
       method="post"
       onSubmit={handleSubmit}
