@@ -94,7 +94,7 @@ function ContactForm({ prefersReducedMotion }: ContactFormProps) {
 
   return (
     <form
-      action={`https://send.pageclip.co/${pageclipApiKey}/Contact_Form`}
+      action={`https://send.pageclip.co/${pageclipApiKey}/Contact_Me_Form`}
       className="pageclip-form flex-1 space-y-4"
       method="post"
       onSubmit={handleSubmit}
