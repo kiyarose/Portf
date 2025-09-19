@@ -85,19 +85,17 @@ function ContactForm({
   const pageclipApiKey = import.meta.env.VITE_PAGECLIP_API_KEY;
 
   const handleSubmit = useCallback(
-    (event: React.FormEvent<HTMLFormElement>) => {
+    async (event: React.FormEvent<HTMLFormElement>) => {
+      event.preventDefault(); // Always prevent default form submission
+      
       // Clear any existing error message
       onErrorChange(null);
 
-      // Prevent form submission if API key is missing
+      // Check for missing API key first
       if (!pageclipApiKey) {
-        event.preventDefault();
-        console.error(
-          "Cannot submit form: VITE_PAGECLIP_API_KEY environment variable is not set",
-        );
-        onErrorChange(
-          "Sorry, the contact form is not properly configured. Please try emailing me directly at kiya.rose@sillylittle.tech",
-        );
+        const errorMsg = "VITE_PAGECLIP_API_KEY environment variable is not set";
+        console.error("Cannot submit form:", errorMsg);
+        onErrorChange(`Configuration Error: ${errorMsg}`);
         return;
       }
 
@@ -113,6 +111,45 @@ function ContactForm({
           ? `Hello from ${name}`
           : "Hello from a new contact";
       }
+
+      // Submit form data to Pageclip API and capture any errors
+      try {
+        const response = await fetch(
+          `https://send.pageclip.co/${pageclipApiKey}/Contact_Me_Form`,
+          {
+            method: "POST",
+            body: formData,
+          }
+        );
+
+        if (!response.ok) {
+          // Try to get the error response body
+          let errorText;
+          try {
+            const errorData = await response.json();
+            errorText = JSON.stringify(errorData, null, 2);
+          } catch {
+            errorText = await response.text();
+          }
+          
+          onErrorChange(
+            `API Error (${response.status} ${response.statusText}): ${errorText}`
+          );
+          return;
+        }
+
+        // Handle successful submission
+        const result = await response.json();
+        console.log("Form submitted successfully:", result);
+        
+        // Reset form on success
+        form.reset();
+        onErrorChange(null);
+        
+      } catch (error) {
+        console.error("Network error:", error);
+        onErrorChange(`Network Error: ${error instanceof Error ? error.message : String(error)}`);
+      }
     },
     [pageclipApiKey, onErrorChange],
   );
@@ -123,13 +160,7 @@ function ContactForm({
 
   return (
     <form
-      action={
-        pageclipApiKey
-          ? `https://send.pageclip.co/${pageclipApiKey}/Contact_Me_Form`
-          : "#"
-      }
       className="pageclip-form flex-1 space-y-4"
-      method="post"
       onSubmit={handleSubmit}
     >
       {/* Error notification */}
@@ -156,9 +187,9 @@ function ContactForm({
               aria-hidden="true"
             />
             <div className="flex-1">
-              <p className="text-sm text-red-800 dark:text-red-200">
+              <pre className="text-sm text-red-800 dark:text-red-200 whitespace-pre-wrap font-mono max-h-40 overflow-y-auto">
                 {errorMessage}
-              </p>
+              </pre>
               <button
                 type="button"
                 onClick={() => onErrorChange(null)}
