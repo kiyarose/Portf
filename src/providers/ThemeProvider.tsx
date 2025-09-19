@@ -29,9 +29,10 @@ export function ThemeProvider({ children }: PropsWithChildren) {
       setTheme(event.matches ? "dark" : "light");
     };
     media.addEventListener("change", handler);
-    return function cleanupMediaListener() {
+    function cleanupMediaListener() {
       media.removeEventListener("change", handler);
-    };
+    }
+    return cleanupMediaListener;
   }, []);
 
   const value = useMemo(

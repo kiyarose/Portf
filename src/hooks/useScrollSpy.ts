@@ -27,10 +27,12 @@ export function useScrollSpy(
 
     elements.forEach((element) => observer.observe(element));
 
-    return function cleanupObserver() {
+    function cleanupObserver() {
       elements.forEach((element) => observer.unobserve(element));
       observer.disconnect();
-    };
+    }
+
+    return cleanupObserver;
   }, [rootMargin, sectionIds]);
 
   return activeId;
