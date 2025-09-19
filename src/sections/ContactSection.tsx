@@ -68,8 +68,18 @@ type ContactFormProps = {
 };
 
 function ContactForm({ prefersReducedMotion }: ContactFormProps) {
+  const pageclipApiKey = import.meta.env.VITE_PAGECLIP_API_KEY;
+
   const handleSubmit = useCallback(
     (event: React.FormEvent<HTMLFormElement>) => {
+      // Prevent form submission if API key is missing
+      if (!pageclipApiKey) {
+        event.preventDefault();
+        console.error("Cannot submit form: VITE_PAGECLIP_API_KEY environment variable is not set");
+        alert("Sorry, the contact form is not properly configured. Please try emailing me directly at kiya.rose@sillylittle.tech");
+        return;
+      }
+
       const form = event.currentTarget;
       const formData = new FormData(form);
       const name = (formData.get("name") as string) ?? "";
@@ -83,10 +93,8 @@ function ContactForm({ prefersReducedMotion }: ContactFormProps) {
           : "Hello from a new contact";
       }
     },
-    [],
+    [pageclipApiKey],
   );
-
-  const pageclipApiKey = import.meta.env.VITE_PAGECLIP_API_KEY;
 
   if (!pageclipApiKey) {
     console.error("VITE_PAGECLIP_API_KEY environment variable is not set");
@@ -94,7 +102,7 @@ function ContactForm({ prefersReducedMotion }: ContactFormProps) {
 
   return (
     <form
-      action={`https://send.pageclip.co/${pageclipApiKey}/Contact_Me_Form`}
+      action={pageclipApiKey ? `https://send.pageclip.co/${pageclipApiKey}/Contact_Me_Form` : "#"}
       className="pageclip-form flex-1 space-y-4"
       method="post"
       onSubmit={handleSubmit}
