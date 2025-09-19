@@ -3,6 +3,7 @@ import { motion, useReducedMotion } from "framer-motion";
 import { useCallback, useState } from "react";
 import { SectionContainer } from "../components/SectionContainer";
 import { SectionHeader } from "../components/SectionHeader";
+import { safeConsoleWarn, safeConsoleError } from "../utils/errorSanitizer";
 
 const EMAIL = "kiya.rose@sillylittle.tech";
 
@@ -168,7 +169,7 @@ function ContactForm({
   );
 
   if (!pageclipApiKey) {
-    console.error("VITE_PAGECLIP_API_KEY environment variable is not set");
+    safeConsoleError("Contact form configuration error: API key not found");
   }
 
   return (
@@ -266,7 +267,7 @@ export function ContactSection() {
       setCopied(true);
       setTimeout(() => setCopied(false), 2500);
     } catch (error) {
-      console.warn("Clipboard copy failed", error);
+      safeConsoleWarn("Clipboard operation failed", error);
       setCopied(false);
     }
   }, []);
