@@ -12,7 +12,11 @@ type ContactCardProps = {
   prefersReducedMotion: boolean;
 };
 
-function ContactCard({ copied, onCopy, prefersReducedMotion }: ContactCardProps) {
+function ContactCard({
+  copied,
+  onCopy,
+  prefersReducedMotion,
+}: ContactCardProps) {
   return (
     <div className="card-surface space-y-8">
       <SectionHeader
@@ -38,15 +42,19 @@ function ContactIntro({ copied, onCopy }: ContactIntroProps) {
   return (
     <div className="flex-1 space-y-4">
       <p className="text-base text-slate-600 dark:text-slate-300">
-        Have an opportunity or just want to say hello? Copy my email or drop a note using the form. I respond within two
-        business days.
+        Have an opportunity or just want to say hello? Copy my email or drop a
+        note using the form. I respond within two business days.
       </p>
       <button
         type="button"
         onClick={onCopy}
         className="chip !bg-accent !text-white hover:translate-y-[-2px] hover:shadow-lg"
       >
-        <Icon icon="material-symbols:content-copy-rounded" className="text-lg" aria-hidden="true" />
+        <Icon
+          icon="material-symbols:content-copy-rounded"
+          className="text-lg"
+          aria-hidden="true"
+        />
         {copied ? "Copied!" : "Copy my email"}
       </button>
       <p className="text-sm text-slate-500 dark:text-slate-400">{EMAIL}</p>
@@ -60,7 +68,12 @@ type ContactFormProps = {
 
 function ContactForm({ prefersReducedMotion }: ContactFormProps) {
   return (
-    <form className="flex-1 space-y-4" action={`mailto:${EMAIL}`} method="post" encType="text/plain">
+    <form
+      className="flex-1 space-y-4"
+      action={`mailto:${EMAIL}`}
+      method="post"
+      encType="text/plain"
+    >
       <label className="block text-sm font-medium text-slate-600 dark:text-slate-300">
         Name
         <input
@@ -109,7 +122,11 @@ export function ContactSection() {
 
   return (
     <SectionContainer id="contact" className="pb-28">
-      <ContactCard copied={copied} onCopy={handleCopy} prefersReducedMotion={prefersReducedMotion} />
+      <ContactCard
+        copied={copied}
+        onCopy={handleCopy}
+        prefersReducedMotion={prefersReducedMotion}
+      />
     </SectionContainer>
   );
 }

@@ -37,7 +37,11 @@ function HeroCard({ prefersReducedMotion }: HeroCardProps) {
       <motion.div
         className="absolute -right-10 -top-10 hidden h-48 w-48 rounded-full bg-accent/20 blur-3xl md:block dark:bg-accent/30"
         animate={prefersReducedMotion ? undefined : { scale: [1, 1.1, 1] }}
-        transition={{ repeat: prefersReducedMotion ? 0 : Infinity, duration: 10, ease: "easeInOut" }}
+        transition={{
+          repeat: prefersReducedMotion ? 0 : Infinity,
+          duration: 10,
+          ease: "easeInOut",
+        }}
       />
     </div>
   );
