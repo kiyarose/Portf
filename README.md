@@ -10,6 +10,8 @@ My Personal Portfolio. I put things here, hopefully it looks good.
 - **@dnd-kit** for drag-and-drop skill reordering with localStorage persistence
 - **Firebase Hosting** via GitHub Actions for automated deploys
 
+- `VITE_PAGECLIP_API_KEY` - Required for the contact form to work. API key from [Pageclip](https://pageclip.co/).
+
 ## Deployment
 
 - Pull requests trigger a Firebase Hosting preview channel through `FirebaseExtended/action-hosting-deploy`, expiring after seven days.
