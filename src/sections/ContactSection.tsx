@@ -84,7 +84,9 @@ function ContactForm({
   onErrorChange,
 }: ContactFormProps) {
   // Use the env var (public key) to build the Pageclip URL.
-  const pageclipApiKey = import.meta.env.VITE_PAGECLIP_API_KEY as string | undefined;
+  const pageclipApiKey = import.meta.env.VITE_PAGECLIP_API_KEY as
+    | string
+    | undefined;
   const pageclipFormName = "Contact_Me_Form";
   const pageclipUrl = pageclipApiKey
     ? `https://send.pageclip.co/${pageclipApiKey}/${pageclipFormName}`
@@ -110,14 +112,20 @@ function ContactForm({
       const form = event.currentTarget;
 
       // Read fields from the form
-      const name = (form.elements.namedItem("name") as HTMLInputElement | null)?.value ?? "";
+      const name =
+        (form.elements.namedItem("name") as HTMLInputElement | null)?.value ??
+        "";
       const email =
-        (form.elements.namedItem("email") as HTMLInputElement | null)?.value ?? "";
+        (form.elements.namedItem("email") as HTMLInputElement | null)?.value ??
+        "";
       const message =
-        (form.elements.namedItem("message") as HTMLTextAreaElement | null)?.value ?? "";
+        (form.elements.namedItem("message") as HTMLTextAreaElement | null)
+          ?.value ?? "";
 
       // Keep your subject auto-fill behavior
-      const subjectInput = form.elements.namedItem("subject") as HTMLInputElement | null;
+      const subjectInput = form.elements.namedItem(
+        "subject",
+      ) as HTMLInputElement | null;
       const subject = name ? `Hello from ${name}` : "Hello from a new contact";
       if (subjectInput) subjectInput.value = subject;
 
@@ -131,8 +139,8 @@ function ContactForm({
       try {
         const response = await fetch(pageclipUrl, {
           method: "POST",
-          body,          // application/x-www-form-urlencoded (browser sets header)
-          mode: "cors",  // ensures the browser sends Origin
+          body, // application/x-www-form-urlencoded (browser sets header)
+          mode: "cors", // ensures the browser sends Origin
           // DO NOT add headers (Content-Type, Authorization, etc.)
           // DO NOT set referrerPolicy to "no-referrer"
         });
@@ -147,12 +155,15 @@ function ContactForm({
             } else if (Array.isArray(data?.errors) && data.errors[0]?.message) {
               errorText = String(data.errors[0].message);
             } else {
-              errorText = "An unexpected error occurred. Please try again later.";
+              errorText =
+                "An unexpected error occurred. Please try again later.";
             }
           } catch {
             errorText = await response.text();
           }
-          onErrorChange(`API Error (${response.status} ${response.statusText}): ${errorText}`);
+          onErrorChange(
+            `API Error (${response.status} ${response.statusText}): ${errorText}`,
+          );
           return;
         }
 
@@ -168,7 +179,7 @@ function ContactForm({
       } catch (error) {
         safeConsoleError("Network error while submitting contact form", error);
         onErrorChange(
-          `Network Error: ${error instanceof Error ? error.message : String(error)}`
+          `Network Error: ${error instanceof Error ? error.message : String(error)}`,
         );
       }
     },
