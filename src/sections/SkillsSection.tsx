@@ -61,9 +61,18 @@ type SkillsBoardProps = {
   onDragEnd: (event: DragEndEvent) => void;
 };
 
-function SkillsBoard({ skills, prefersReducedMotion, sensors, onDragEnd }: SkillsBoardProps) {
+function SkillsBoard({
+  skills,
+  prefersReducedMotion,
+  sensors,
+  onDragEnd,
+}: SkillsBoardProps) {
   return (
-    <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={onDragEnd}>
+    <DndContext
+      sensors={sensors}
+      collisionDetection={closestCenter}
+      onDragEnd={onDragEnd}
+    >
       <SortableContext items={skills} strategy={horizontalListSortingStrategy}>
         <motion.ul
           layout
