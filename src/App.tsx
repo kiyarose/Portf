@@ -132,8 +132,8 @@ function PrimaryNav() {
 function SiteFooter() {
   return (
     <footer className="border-t border-white/10 bg-white/50 py-6 text-center text-sm text-slate-500 backdrop-blur dark:bg-slate-950/70 dark:text-slate-400">
-      <span className="font-kiya">Kiya Rose</span>. Crafted with React,
-      Tailwind CSS, and Firebase.
+      <span className="font-kiya">Kiya Rose</span>. Crafted with React, Tailwind
+      CSS, and Firebase.
     </footer>
   );
 }
