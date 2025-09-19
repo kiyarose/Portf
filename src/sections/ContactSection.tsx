@@ -84,9 +84,9 @@ function ContactForm({
 }: ContactFormProps) {
   const pageclipApiKey = import.meta.env.VITE_PAGECLIP_API_KEY;
 
-  const handleDismissError = useCallback(() => {
+  function handleDismissError() {
     onErrorChange(null);
-  }, [onErrorChange]);
+  }
 
   const handleSubmit = useCallback(
     async (event: React.FormEvent<HTMLFormElement>) => {
