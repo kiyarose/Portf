@@ -6,11 +6,12 @@ export function useScrollSpy(
 ) {
   const [activeId, setActiveId] = useState(sectionIds[0] ?? "");
 
-  useEffect(function registerScrollSpy(): void | (() => void) {
-    if (typeof window === "undefined") return undefined;
-    const elements = sectionIds
-      .map((id) => document.getElementById(id))
-      .filter((el): el is HTMLElement => Boolean(el));
+  useEffect(
+    function registerScrollSpy(): void | (() => void) {
+      if (typeof window === "undefined") return undefined;
+      const elements = sectionIds
+        .map((id) => document.getElementById(id))
+        .filter((el): el is HTMLElement => Boolean(el));
 
       if (elements.length === 0) return;
 
@@ -27,10 +28,10 @@ export function useScrollSpy(
 
       elements.forEach((element) => observer.observe(element));
 
-    function cleanupObserver(): void {
-      elements.forEach((element) => observer.unobserve(element));
-      observer.disconnect();
-    }
+      function cleanupObserver(): void {
+        elements.forEach((element) => observer.unobserve(element));
+        observer.disconnect();
+      }
 
       return cleanupObserver;
     },
