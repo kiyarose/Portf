@@ -28,7 +28,10 @@ export function ThemeToggle({ className }: { className?: string }) {
             : { opacity: 0, y: -6, scale: 0.95 }
         }
         animate={{ opacity: 1, y: 0, scale: 1 }}
-        transition={{ duration: prefersReducedMotion ? 0 : 0.25, ease: "easeOut" }}
+        transition={{
+          duration: prefersReducedMotion ? 0 : 0.25,
+          ease: "easeOut",
+        }}
         className="flex items-center gap-2"
       >
         <Icon

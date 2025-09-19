@@ -14,7 +14,8 @@ export function AboutSection() {
         <p className="text-base leading-relaxed text-slate-600 dark:text-slate-300">
           I am an IT professional looking to gain office administration
           experience as I pursue my Billing and Coding Certificate. I love
-          single player story games and overthinking. I also like to write sometimes :3
+          single player story games and overthinking. I also like to write
+          sometimes :3
         </p>
       </div>
     </SectionContainer>

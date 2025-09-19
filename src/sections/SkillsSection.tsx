@@ -79,9 +79,7 @@ function SkillsBoard({
   sensors,
   onDragEnd,
 }: SkillsBoardProps) {
-  const developingSkills = new Set([
-    "Gaining Med Admin skills",
-  ]);
+  const developingSkills = new Set(["Gaining Med Admin skills"]);
 
   return (
     <DndContext

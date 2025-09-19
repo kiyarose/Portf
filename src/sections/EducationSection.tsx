@@ -121,8 +121,8 @@ function TimelineColumn({
         </select>
       </label>
       <p className="text-xs text-slate-500 dark:text-slate-400">
-        These studies have boosted my networking foundations, customer-first support
-        skills, and upcoming training in medical coding best practices.
+        These studies have boosted my networking foundations, customer-first
+        support skills, and upcoming training in medical coding best practices.
       </p>
     </div>
   );

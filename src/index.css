@@ -39,7 +39,7 @@ button {
     @apply inline-flex items-center gap-2 rounded-full bg-white/80 px-4 py-2 shadow-md transition-all duration-300 hover:shadow-lg dark:bg-slate-800/80 dark:shadow-md border border-slate-200/60 dark:border-slate-700/60;
   }
   .font-kiya {
-    font-family: 'Playfair Display', 'Inter', serif;
+    font-family: "Playfair Display", "Inter", serif;
     letter-spacing: 0.08em;
     font-weight: 600;
   }
