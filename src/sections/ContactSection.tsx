@@ -10,12 +10,16 @@ type ContactCardProps = {
   copied: boolean;
   onCopy: () => Promise<void>;
   prefersReducedMotion: boolean;
+  errorMessage: string | null;
+  onErrorChange: (message: string | null) => void;
 };
 
 function ContactCard({
   copied,
   onCopy,
   prefersReducedMotion,
+  errorMessage,
+  onErrorChange,
 }: ContactCardProps) {
   return (
     <div className="card-surface space-y-8">
@@ -27,7 +31,11 @@ function ContactCard({
       />
       <div className="flex flex-col gap-8 md:flex-row">
         <ContactIntro copied={copied} onCopy={onCopy} />
-        <ContactForm prefersReducedMotion={prefersReducedMotion} />
+        <ContactForm 
+          prefersReducedMotion={prefersReducedMotion}
+          errorMessage={errorMessage}
+          onErrorChange={onErrorChange}
+        />
       </div>
     </div>
   );
@@ -65,20 +73,25 @@ function ContactIntro({ copied, onCopy }: ContactIntroProps) {
 
 type ContactFormProps = {
   prefersReducedMotion: boolean;
+  errorMessage: string | null;
+  onErrorChange: (message: string | null) => void;
 };
 
-function ContactForm({ prefersReducedMotion }: ContactFormProps) {
+function ContactForm({ prefersReducedMotion, errorMessage, onErrorChange }: ContactFormProps) {
   const pageclipApiKey = import.meta.env.VITE_PAGECLIP_API_KEY;
 
   const handleSubmit = useCallback(
     (event: React.FormEvent<HTMLFormElement>) => {
+      // Clear any existing error message
+      onErrorChange(null);
+      
       // Prevent form submission if API key is missing
       if (!pageclipApiKey) {
         event.preventDefault();
         console.error(
           "Cannot submit form: VITE_PAGECLIP_API_KEY environment variable is not set",
         );
-        alert(
+        onErrorChange(
           "Sorry, the contact form is not properly configured. Please try emailing me directly at kiya.rose@sillylittle.tech",
         );
         return;
@@ -97,7 +110,7 @@ function ContactForm({ prefersReducedMotion }: ContactFormProps) {
           : "Hello from a new contact";
       }
     },
-    [pageclipApiKey],
+    [pageclipApiKey, onErrorChange],
   );
 
   if (!pageclipApiKey) {
@@ -115,6 +128,36 @@ function ContactForm({ prefersReducedMotion }: ContactFormProps) {
       method="post"
       onSubmit={handleSubmit}
     >
+      {/* Error notification */}
+      {errorMessage && (
+        <motion.div
+          initial={prefersReducedMotion ? false : { opacity: 0, y: -10, scale: 0.95 }}
+          animate={prefersReducedMotion ? undefined : { opacity: 1, y: 0, scale: 1 }}
+          exit={prefersReducedMotion ? undefined : { opacity: 0, y: -10, scale: 0.95 }}
+          transition={{ duration: 0.3, ease: "easeOut" }}
+          className="rounded-2xl border border-red-200 bg-red-50 p-4 dark:border-red-800/60 dark:bg-red-900/20"
+        >
+          <div className="flex items-start gap-3">
+            <Icon
+              icon="material-symbols:error-rounded"
+              className="mt-0.5 text-lg text-red-600 dark:text-red-400"
+              aria-hidden="true"
+            />
+            <div className="flex-1">
+              <p className="text-sm text-red-800 dark:text-red-200">
+                {errorMessage}
+              </p>
+              <button
+                type="button"
+                onClick={() => onErrorChange(null)}
+                className="mt-2 text-xs font-medium text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
+              >
+                Dismiss
+              </button>
+            </div>
+          </div>
+        </motion.div>
+      )}
       <label className="block text-sm font-medium text-slate-600 dark:text-slate-300">
         <span>Name</span>
         <input
@@ -161,6 +204,7 @@ function ContactForm({ prefersReducedMotion }: ContactFormProps) {
 
 export function ContactSection() {
   const [copied, setCopied] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const prefersReducedMotion = useReducedMotion() ?? false;
 
   const handleCopy = useCallback(async () => {
@@ -180,6 +224,8 @@ export function ContactSection() {
         copied={copied}
         onCopy={handleCopy}
         prefersReducedMotion={prefersReducedMotion}
+        errorMessage={errorMessage}
+        onErrorChange={setErrorMessage}
       />
     </SectionContainer>
   );
