@@ -173,7 +173,11 @@ type TimelineColumnProps = {
   activeOptionId: string;
 };
 
-function TimelineColumn({ handleKeyDown, timelineItems, activeOptionId }: TimelineColumnProps) {
+function TimelineColumn({
+  handleKeyDown,
+  timelineItems,
+  activeOptionId,
+}: TimelineColumnProps) {
   return (
     <div className="relative flex flex-col gap-4 md:w-1/2">
       <span
@@ -203,7 +207,11 @@ type DetailsCardProps = {
   };
 };
 
-function DetailsCard({ prefersReducedMotion, activeItem, variants }: DetailsCardProps) {
+function DetailsCard({
+  prefersReducedMotion,
+  activeItem,
+  variants,
+}: DetailsCardProps) {
   return (
     <div className="flex-1">
       <motion.div
@@ -222,7 +230,8 @@ function DetailsCard({ prefersReducedMotion, activeItem, variants }: DetailsCard
           {activeItem.dates}
         </p>
         <p className="mt-4 text-sm text-slate-600 dark:text-slate-300">
-          Use the arrow keys to explore the timeline and learn more about my academic journey.
+          Use the arrow keys to explore the timeline and learn more about my
+          academic journey.
         </p>
       </motion.div>
     </div>
