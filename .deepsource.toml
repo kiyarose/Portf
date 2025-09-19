@@ -20,4 +20,13 @@ name = "javascript"
     "react",
     "vue"
   ]
-  environment = ["nodejs"]
+  environment = [
+    "nodejs",
+    "browser"
+  ]
+
+[[transformers]]
+name = "prettier"
+
+[[transformers]]
+name = "standardjs"
