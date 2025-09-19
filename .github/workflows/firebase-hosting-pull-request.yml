@@ -20,6 +20,8 @@ jobs:
       - run: npm ci
       - run: npm run lint -- --max-warnings=0
       - run: npm run build
+        env:
+          VITE_PAGECLIP_API_KEY: ${{ secrets.VITE_PAGECLIP_API_KEY }}
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
