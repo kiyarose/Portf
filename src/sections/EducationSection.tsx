@@ -91,7 +91,11 @@ type TimelineColumnProps = {
   onChange: (event: ChangeEvent<HTMLSelectElement>) => void;
 };
 
-function TimelineColumn({ options, activeIndex, onChange }: TimelineColumnProps) {
+function TimelineColumn({
+  options,
+  activeIndex,
+  onChange,
+}: TimelineColumnProps) {
   const selectSize = Math.min(Math.max(options.length, 3), 6);
 
   return (
@@ -132,7 +136,11 @@ type DetailsCardProps = {
   };
 };
 
-function DetailsCard({ entry, prefersReducedMotion, variants }: DetailsCardProps) {
+function DetailsCard({
+  entry,
+  prefersReducedMotion,
+  variants,
+}: DetailsCardProps) {
   return (
     <div className="flex-1">
       <motion.div
