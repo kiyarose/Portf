@@ -7,6 +7,41 @@ import { safeConsoleWarn, safeConsoleError } from "../utils/errorSanitizer";
 
 const EMAIL = "kiya.rose@sillylittle.tech";
 
+const STRICT_CORS_PATTERNS = ["cors", "cross-origin", "opaque response"];
+const GENERIC_CORS_PATTERNS = ["load failed", "failed to fetch"];
+
+const isLikelyCorsError = (error: unknown): boolean => {
+  const message =
+    error instanceof Error
+      ? error.message
+      : typeof error === "string"
+        ? error
+        : "";
+  const normalizedMessage = message.toLowerCase();
+
+  if (
+    STRICT_CORS_PATTERNS.some((pattern) => normalizedMessage.includes(pattern))
+  ) {
+    return true;
+  }
+
+  const errorName =
+    error instanceof Error
+      ? error.name
+      : typeof error === "object" && error !== null && "name" in error
+        ? String((error as { name?: unknown }).name ?? "")
+        : "";
+  const isTypeError = errorName.toLowerCase().includes("typeerror");
+
+  if (!isTypeError) {
+    return false;
+  }
+
+  return GENERIC_CORS_PATTERNS.some((pattern) =>
+    normalizedMessage.includes(pattern),
+  );
+};
+
 type ContactCardProps = {
   copied: boolean;
   onCopy: () => Promise<void>;
@@ -171,16 +206,35 @@ function ContactForm({
         try {
           await response.json();
         } catch {
-          // If no JSON body, ignore
+          // If no JSON body, ignore CORS/response reading errors
+          // The form submission was successful if we reach this point
         }
         form.reset();
         onErrorChange(null);
         // Optional: toast/snackbar could go here
       } catch (error) {
-        safeConsoleError("Network error while submitting contact form", error);
-        onErrorChange(
-          `Network Error: ${error instanceof Error ? error.message : String(error)}`,
-        );
+        // Check if this is a CORS/opaque response issue or a genuine network failure
+        const isOffline =
+          typeof navigator !== "undefined" && navigator.onLine === false;
+        const likelyCorsError = !isOffline && isLikelyCorsError(error);
+
+        if (likelyCorsError) {
+          // We likely hit a CORS/read issue, but connectivity is intact.
+          // Treat it as a success: reset the form silently to avoid resubmits.
+          safeConsoleWarn("Possible CORS error after form submission", error);
+          form.reset();
+          onErrorChange(null);
+          return;
+        } else {
+          // This appears to be an actual network error
+          const errorMessage =
+            error instanceof Error ? error.message : String(error);
+          safeConsoleError(
+            "Network error while submitting contact form",
+            error,
+          );
+          onErrorChange(`Network Error: ${errorMessage}`);
+        }
       }
     },
     [pageclipApiKey, pageclipUrl, onErrorChange],
