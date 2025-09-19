@@ -6,7 +6,7 @@ export function useScrollSpy(
 ) {
   const [activeId, setActiveId] = useState(sectionIds[0] ?? "");
 
-  useEffect(() => {
+  useEffect(function registerScrollSpy() {
     if (typeof window === "undefined") return;
     const elements = sectionIds
       .map((id) => document.getElementById(id))

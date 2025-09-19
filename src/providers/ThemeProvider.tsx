@@ -22,7 +22,7 @@ export function ThemeProvider({ children }: PropsWithChildren) {
     window.localStorage.setItem(THEME_STORAGE_KEY, theme);
   }, [theme]);
 
-  useEffect(() => {
+  useEffect(function registerMediaPreferenceListener() {
     if (typeof window === "undefined") return;
     const media = window.matchMedia("(prefers-color-scheme: dark)");
     const handler = (event: MediaQueryListEvent) => {
