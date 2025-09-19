@@ -19,7 +19,7 @@ export const socials = [
   },
   {
     id: 'bluesky',
-    label: 'BlueSky',
+    label: 'Bluesky',
     href: 'https://bsky.app/profile/sillylittle.tech',
     icon: 'material-symbols:cloud-rounded',
   },
