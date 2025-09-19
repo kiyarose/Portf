@@ -29,7 +29,9 @@ export function ThemeProvider({ children }: PropsWithChildren) {
       setTheme(event.matches ? "dark" : "light");
     };
     media.addEventListener("change", handler);
-    return () => media.removeEventListener("change", handler);
+    return () => {
+      media.removeEventListener("change", handler);
+    };
   }, []);
 
   const value = useMemo(

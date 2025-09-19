@@ -54,6 +54,31 @@ function SortableSkill({ id, label }: { id: string; label: string }) {
   );
 }
 
+type SkillsBoardProps = {
+  skills: string[];
+  prefersReducedMotion: boolean;
+  sensors: ReturnType<typeof useSensors>;
+  onDragEnd: (event: DragEndEvent) => void;
+};
+
+function SkillsBoard({ skills, prefersReducedMotion, sensors, onDragEnd }: SkillsBoardProps) {
+  return (
+    <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={onDragEnd}>
+      <SortableContext items={skills} strategy={horizontalListSortingStrategy}>
+        <motion.ul
+          layout
+          className="flex flex-wrap gap-3"
+          transition={{ staggerChildren: prefersReducedMotion ? 0 : 0.05 }}
+        >
+          {skills.map((skill) => (
+            <SortableSkill key={skill} id={skill} label={skill} />
+          ))}
+        </motion.ul>
+      </SortableContext>
+    </DndContext>
+  );
+}
+
 export function SkillsSection() {
   const [skills, setSkills] = useLocalStorage<string[]>("kiya-skills-order", [
     ...defaultSkills,
@@ -95,26 +120,12 @@ export function SkillsSection() {
           Drag to reorder the skills. Your layout stays saved locally so you can
           keep the focus on what matters for each conversation.
         </p>
-        <DndContext
+        <SkillsBoard
+          skills={skills}
+          prefersReducedMotion={prefersReducedMotion}
           sensors={sensors}
-          collisionDetection={closestCenter}
           onDragEnd={handleDragEnd}
-        >
-          <SortableContext
-            items={skills}
-            strategy={horizontalListSortingStrategy}
-          >
-            <motion.ul
-              layout
-              className="flex flex-wrap gap-3"
-              transition={{ staggerChildren: prefersReducedMotion ? 0 : 0.05 }}
-            >
-              {skills.map((skill) => (
-                <SortableSkill key={skill} id={skill} label={skill} />
-              ))}
-            </motion.ul>
-          </SortableContext>
-        </DndContext>
+        />
       </div>
     </SectionContainer>
   );

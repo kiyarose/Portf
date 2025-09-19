@@ -4,7 +4,13 @@ import "./index.css";
 import App from "./App.tsx";
 import { ThemeProvider } from "./providers/ThemeProvider";
 
-createRoot(document.getElementById("root")!).render(
+const container = document.getElementById("root");
+
+if (!container) {
+  throw new Error("Root container element not found");
+}
+
+createRoot(container).render(
   <StrictMode>
     <ThemeProvider>
       <App />
