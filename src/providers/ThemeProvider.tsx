@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import type { PropsWithChildren } from "react";
 import { ThemeContext, type Theme } from "./theme-context";
+import { safeConsoleWarn } from "../utils/errorSanitizer";
 
 const THEME_STORAGE_KEY = "kiya-theme";
 
@@ -13,10 +14,7 @@ function getPreferredTheme(): Theme {
     ) as Theme | null;
     if (stored === "light" || stored === "dark") return stored;
   } catch (error) {
-    console.warn(
-      `Failed to read localStorage key "${THEME_STORAGE_KEY}"`,
-      error,
-    );
+    safeConsoleWarn("Failed to read theme from localStorage", error);
   }
 
   const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
@@ -34,10 +32,7 @@ export function ThemeProvider({ children }: PropsWithChildren) {
     try {
       window.localStorage.setItem(THEME_STORAGE_KEY, theme);
     } catch (error) {
-      console.warn(
-        `Failed to write localStorage key "${THEME_STORAGE_KEY}"`,
-        error,
-      );
+      safeConsoleWarn("Failed to save theme to localStorage", error);
     }
   }, [theme]);
 

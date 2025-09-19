@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { safeConsoleWarn } from "../utils/errorSanitizer";
 
 export function useLocalStorage<T>(key: string, initialValue: T) {
   const [value, setValue] = useState<T>(() => {
@@ -8,7 +9,7 @@ export function useLocalStorage<T>(key: string, initialValue: T) {
       const item = window.localStorage.getItem(key);
       return item ? (JSON.parse(item) as T) : initialValue;
     } catch (error) {
-      console.warn(`Failed to read localStorage key "${key}"`, error);
+      safeConsoleWarn("Failed to read from localStorage", error);
       return initialValue;
     }
   });
@@ -19,7 +20,7 @@ export function useLocalStorage<T>(key: string, initialValue: T) {
     try {
       window.localStorage.setItem(key, JSON.stringify(value));
     } catch (error) {
-      console.warn(`Failed to write localStorage key "${key}"`, error);
+      safeConsoleWarn("Failed to write to localStorage", error);
     }
   }, [key, value]);
 
