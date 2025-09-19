@@ -84,6 +84,10 @@ function ContactForm({
 }: ContactFormProps) {
   const pageclipApiKey = import.meta.env.VITE_PAGECLIP_API_KEY;
 
+  const handleDismissError = useCallback(() => {
+    onErrorChange(null);
+  }, [onErrorChange]);
+
   const handleSubmit = useCallback(
     async (event: React.FormEvent<HTMLFormElement>) => {
       event.preventDefault(); // Always prevent default form submission
@@ -140,8 +144,9 @@ function ContactForm({
         }
 
         // Handle successful submission
-        const result = await response.json();
-        console.log("Form submitted successfully:", result);
+        await response.json(); // Parse response but don't log user data
+        // Log success without exposing potentially unsafe user data
+        console.log("Form submitted successfully");
 
         // Reset form on success
         form.reset();
@@ -191,7 +196,7 @@ function ContactForm({
               </pre>
               <button
                 type="button"
-                onClick={() => onErrorChange(null)}
+                onClick={handleDismissError}
                 className="mt-2 text-xs font-medium text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
               >
                 Dismiss
