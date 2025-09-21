@@ -30,7 +30,11 @@ export function MobileNav({ sections }: MobileNavProps) {
         aria-expanded={isOpen}
       >
         <Icon
-          icon={isOpen ? "material-symbols:close-rounded" : "material-symbols:menu-rounded"}
+          icon={
+            isOpen
+              ? "material-symbols:close-rounded"
+              : "material-symbols:menu-rounded"
+          }
           className="text-xl text-slate-600 dark:text-slate-300"
         />
       </motion.button>
@@ -48,9 +52,21 @@ export function MobileNav({ sections }: MobileNavProps) {
             {/* Mobile Menu Panel */}
             <motion.nav
               className="absolute right-4 top-20 rounded-3xl border border-white/20 bg-white/90 p-4 shadow-2xl backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/90"
-              initial={prefersReducedMotion ? undefined : { opacity: 0, scale: 0.95, y: -10 }}
-              animate={prefersReducedMotion ? undefined : { opacity: 1, scale: 1, y: 0 }}
-              exit={prefersReducedMotion ? undefined : { opacity: 0, scale: 0.95, y: -10 }}
+              initial={
+                prefersReducedMotion
+                  ? undefined
+                  : { opacity: 0, scale: 0.95, y: -10 }
+              }
+              animate={
+                prefersReducedMotion
+                  ? undefined
+                  : { opacity: 1, scale: 1, y: 0 }
+              }
+              exit={
+                prefersReducedMotion
+                  ? undefined
+                  : { opacity: 0, scale: 0.95, y: -10 }
+              }
               transition={{ duration: 0.2, ease: "easeOut" }}
               onClick={(e) => e.stopPropagation()}
             >
@@ -62,7 +78,11 @@ export function MobileNav({ sections }: MobileNavProps) {
                       onClick={closeMenu}
                       className="flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-medium text-slate-600 transition hover:bg-accent/10 hover:text-accent dark:text-slate-300"
                     >
-                      <Icon icon={section.icon} className="text-lg" aria-hidden="true" />
+                      <Icon
+                        icon={section.icon}
+                        className="text-lg"
+                        aria-hidden="true"
+                      />
                       {section.label}
                     </a>
                   </li>
