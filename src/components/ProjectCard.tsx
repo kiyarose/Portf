@@ -56,11 +56,11 @@ export function ProjectCard({ project }: ProjectCardProps) {
       style={prefersReducedMotion ? undefined : { rotateX, rotateY }}
       whileHover={prefersReducedMotion ? undefined : { translateY: -6 }}
     >
-      <div className="flex items-center justify-between">
-        <h3 className="text-xl font-semibold text-slate-900 dark:text-slate-100">
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+        <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100 sm:text-xl">
           {project.title}
         </h3>
-        <span className="rounded-full bg-accent/10 px-4 py-1 text-xs font-medium uppercase tracking-wide text-accent">
+        <span className="self-start rounded-full bg-accent/10 px-3 py-1 text-xs font-medium uppercase tracking-wide text-accent sm:px-4">
           Hobby Build
         </span>
       </div>

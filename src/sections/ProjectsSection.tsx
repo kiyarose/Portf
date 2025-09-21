@@ -13,7 +13,7 @@ export function ProjectsSection() {
           label="Hobby Projects"
           eyebrow="Cool things I did!"
         />
-        <div className="grid gap-6 md:grid-cols-2">
+        <div className="grid gap-4 sm:gap-6 md:grid-cols-2">
           {projects.map((project) => (
             <ProjectCard key={project.title} project={project} />
           ))}

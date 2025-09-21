@@ -15,11 +15,11 @@ export function CertificationsSection() {
           label="Certifications"
           eyebrow="Validated Skills"
         />
-        <div className="grid gap-6 md:grid-cols-2">
+        <div className="grid gap-4 sm:gap-6 md:grid-cols-2">
           {certifications.map((cert, index) => (
             <motion.div
               key={cert.name}
-              className="rounded-3xl border border-slate-200/60 bg-white/60 p-6 shadow-card dark:border-slate-700/60 dark:bg-slate-900/60"
+              className="rounded-3xl border border-slate-200/60 bg-white/60 p-4 shadow-card dark:border-slate-700/60 dark:bg-slate-900/60 sm:p-6"
               initial={prefersReducedMotion ? undefined : { opacity: 0, y: 12 }}
               whileInView={
                 prefersReducedMotion ? undefined : { opacity: 1, y: 0 }
@@ -33,10 +33,10 @@ export function CertificationsSection() {
               <span className="chip !bg-accent/15 !text-accent dark:!bg-accent/20">
                 {cert.issuer}
               </span>
-              <h3 className="mt-4 text-xl font-semibold text-slate-900 dark:text-slate-50">
+              <h3 className="mt-3 text-lg font-semibold text-slate-900 dark:text-slate-50 sm:mt-4 sm:text-xl">
                 {cert.name}
               </h3>
-              <p className="mt-2 text-sm text-slate-500 dark:text-slate-300">
+              <p className="mt-1 text-sm text-slate-500 dark:text-slate-300 sm:mt-2">
                 Issued {cert.date}
               </p>
             </motion.div>
