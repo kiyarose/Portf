@@ -5,13 +5,15 @@ const PREFIX_LENGTH = 4;
 function createRandomSegment(length: number) {
   if (typeof crypto !== "undefined" && "getRandomValues" in crypto) {
     const randomValues = crypto.getRandomValues(new Uint32Array(length));
-    return Array.from(randomValues, (value) =>
-      RANDOM_CHARS[value % RANDOM_CHARS.length]
+    return Array.from(
+      randomValues,
+      (value) => RANDOM_CHARS[value % RANDOM_CHARS.length],
     ).join("");
   }
 
-  return Array.from({ length }, () =>
-    RANDOM_CHARS[Math.floor(Math.random() * RANDOM_CHARS.length)]
+  return Array.from(
+    { length },
+    () => RANDOM_CHARS[Math.floor(Math.random() * RANDOM_CHARS.length)],
   ).join("");
 }
 
@@ -77,7 +79,7 @@ function loadOrCreatePrefix(signature: string) {
   try {
     window.localStorage.setItem(
       PREFIX_STORAGE_KEY,
-      JSON.stringify({ signature, prefix: nextPrefix })
+      JSON.stringify({ signature, prefix: nextPrefix }),
     );
   } catch (error) {
     // Swallow storage write errors and fall back to ephemeral prefix.
