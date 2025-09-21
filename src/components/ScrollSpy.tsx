@@ -44,16 +44,22 @@ export function ScrollSpy({ sections }: ScrollSpyProps) {
 
   const handleBackToTop = useCallback((): void => {
     if (typeof window === "undefined") return;
-    window.scrollTo({ top: 0, behavior: prefersReducedMotion ? "auto" : "smooth" });
-  }, [prefersReducedMotion]);
 
-  const buttonAnimate = isAtBottom && !prefersReducedMotion
-    ? { opacity: 1, y: 0, rotate: [0, -6, 6, -6, 0], scale: [1, 1.08, 1] }
-    : { opacity: 1, y: 0, rotate: 0, scale: 1 };
+    window.scrollTo({
+      top: 0,
+      behavior: prefersReducedMotion ? "auto" : "smooth",
+    });
+  }
 
-  const buttonTransition = isAtBottom && !prefersReducedMotion
-    ? { duration: 0.9, repeat: Infinity, repeatDelay: 1.6 }
-    : { duration: 0.2 };
+  const buttonAnimate =
+    isAtBottom && !prefersReducedMotion
+      ? { opacity: 1, y: 0, rotate: [0, -6, 6, -6, 0], scale: [1, 1.08, 1] }
+      : { opacity: 1, y: 0, rotate: 0, scale: 1 };
+
+  const buttonTransition =
+    isAtBottom && !prefersReducedMotion
+      ? { duration: 0.9, repeat: Infinity, repeatDelay: 1.6 }
+      : { duration: 0.2 };
 
   return (
     <nav
@@ -102,12 +108,17 @@ export function ScrollSpy({ sections }: ScrollSpyProps) {
         className={cn(
           "relative mt-6 inline-flex h-10 w-10 items-center justify-center rounded-full border border-slate-300/60 bg-white/80 text-slate-600 shadow-sm backdrop-blur-md transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent dark:border-slate-700/60 dark:bg-slate-900/70 dark:text-slate-100",
           !showBackToTop && "pointer-events-none opacity-0",
-          isAtBottom && showBackToTop && "border-transparent bg-rose-500 text-white shadow-lg",
+          isAtBottom &&
+            showBackToTop &&
+            "border-transparent bg-rose-500 text-white shadow-lg",
         )}
         transition={showBackToTop ? buttonTransition : { duration: 0.2 }}
         aria-label="Back to top"
       >
-        <Icon icon="material-symbols:arrow-upward-rounded" className="text-xl" />
+        <Icon
+          icon="material-symbols:arrow-upward-rounded"
+          className="text-xl"
+        />
       </motion.button>
     </nav>
   );
