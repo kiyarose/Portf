@@ -19,7 +19,10 @@ export function MobileNav({ sections }: MobileNavProps) {
 
   const toggleMenu = useCallback(() => setIsOpen(!isOpen), [isOpen]);
   const closeMenu = useCallback(() => setIsOpen(false), []);
-  const handleStopPropagation = useCallback((e: MouseEvent) => e.stopPropagation(), []);
+  const handleStopPropagation = useCallback(
+    (e: MouseEvent) => e.stopPropagation(),
+    [],
+  );
 
   return (
     <div className="md:hidden">
