@@ -9,6 +9,7 @@
 - Respect `prefers-reduced-motion`, keeping Framer Motion animations subtle (short fade/slide transitions) and providing fallbacks for reduced motion preferences.
 - Maintain the light/dark theme toggle with animated sun/moon icons and ensure contrast targets accessibility best practices.
 - Apply the `.font-kiya` (Patrick Hand) accent whenever “Kiya Rose” appears in UI copy.
+- Keep the footer’s legal line consistent: dynamic current year, typographic © symbol, `.font-kiya` "Kiya Rose", and the “Crafted with React, Tailwind CSS, and Firebase.” tag.
 - Everything should be in Canadian English or French English when possible, when there are conflicting versions of a singular term use the more specific one. (For example cheque instead of check)
 
 ## Quality Expectations
@@ -17,6 +18,7 @@
 - When you touch code, scan the surrounding logic for latent bugs or smells and address them when feasible.
 - Align fixes with the guidance used by DeepSource, CodeFactor, and SonarQube: eliminate dead code, handle edge cases, simplify complex conditionals, and tighten null/undefined guards.
 - Preserve Firebase secrets by loading them from environment configuration—never commit credentials or hard-coded API keys.
+- Ensure licensing references match the BSD 3-Clause notice in the project root `LICENSE` (copyright © 2025, Kiya Rose).
 - Honor existing lint rules (avoid inline arrow handlers in JSX, limit nesting by extracting helpers, etc.).
 
 ## Collaboration Notes
@@ -26,3 +28,4 @@
 - Use the existing `isDeveloping` styling in the Skills section when introducing new abilities (dashed border for in-progress skills).
 - Keep the fallback page (`public/index.html`) visually aligned with the main palette when adjusting colors.
 - Run `npm run lint` and (when relevant) `npm run build`; clean up generated `dist/` outputs if you run the build locally.
+- Keep the build label helper in `src/data/build.ts` intact: it persists a random prefix per build signature in `localStorage`, so only adjust it if that behaviour breaks, and retain the accent tooltip that explains the two segments.
