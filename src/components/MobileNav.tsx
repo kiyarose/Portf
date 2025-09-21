@@ -1,6 +1,7 @@
 import { Icon } from "@iconify/react";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
-import { useState } from "react";
+import { useState, useCallback } from "react";
+import type { MouseEvent } from "react";
 
 type Section = {
   id: string;
@@ -16,8 +17,9 @@ export function MobileNav({ sections }: MobileNavProps) {
   const [isOpen, setIsOpen] = useState(false);
   const prefersReducedMotion = useReducedMotion();
 
-  const toggleMenu = () => setIsOpen(!isOpen);
-  const closeMenu = () => setIsOpen(false);
+  const toggleMenu = useCallback(() => setIsOpen(!isOpen), [isOpen]);
+  const closeMenu = useCallback(() => setIsOpen(false), []);
+  const handleStopPropagation = useCallback((e: MouseEvent) => e.stopPropagation(), []);
 
   return (
     <div className="md:hidden">
@@ -68,7 +70,7 @@ export function MobileNav({ sections }: MobileNavProps) {
                   : { opacity: 0, scale: 0.95, y: -10 }
               }
               transition={{ duration: 0.2, ease: "easeOut" }}
-              onClick={(e) => e.stopPropagation()}
+              onClick={handleStopPropagation}
             >
               <ul className="flex flex-col space-y-2">
                 {sections.map((section) => (
