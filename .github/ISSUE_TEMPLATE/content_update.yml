@@ -1,0 +1,45 @@
+name: "Content Update Brief"
+description: "Plan copy, imagery, and structure tweaks with all reference materials in one place."
+title: "content: <short summary>"
+labels:
+  - Content Heavy
+  - Format Heavy
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Capture the purpose of the content change so it stays aligned with the brand voice and warm accent palette.
+  - type: textarea
+    id: objective
+    attributes:
+      label: "Objective"
+      description: "Why is this update needed?"
+      placeholder: "Feature the new Firebase release and hero gradient refresh."
+    validations:
+      required: true
+  - type: textarea
+    id: affected
+    attributes:
+      label: "Affected pages or sections"
+      description: "List routes, components, or assets that need updates."
+      placeholder: "Home hero copy, About bio, public/index.html gradient."
+    validations:
+      required: true
+  - type: textarea
+    id: messaging
+    attributes:
+      label: "Key messaging"
+      description: "Draft headlines, body copy, or bullet points."
+  - type: textarea
+    id: assets
+    attributes:
+      label: "Assets & references"
+      description: "Link creative briefs, figma frames, or imagery sources."
+  - type: checkboxes
+    id: approvals
+    attributes:
+      label: "Approvals & tracking"
+      options:
+        - label: "Update related documentation once published."
+        - label: "Review for accessibility (contrast, semantics, alt text)."
+        - label: "Confirm gradients/icons align with accent palette."
