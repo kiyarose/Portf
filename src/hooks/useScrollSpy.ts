@@ -30,7 +30,9 @@ export function useScrollSpy(
             return;
           }
 
-          const exiting = entries.find((entry) => entry.intersectionRatio === 0);
+          const exiting = entries.find(
+            (entry) => entry.intersectionRatio === 0,
+          );
           if (!exiting) return;
 
           const exitingIndex = elements.findIndex(
