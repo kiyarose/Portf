@@ -91,7 +91,11 @@ type TimelineColumnProps = {
   onChange: (event: ChangeEvent<HTMLSelectElement>) => void;
 };
 
-function TimelineColumn({ options, activeIndex, onChange }: TimelineColumnProps) {
+function TimelineColumn({
+  options,
+  activeIndex,
+  onChange,
+}: TimelineColumnProps) {
   return (
     <div className="flex flex-col gap-2 min-w-[180px]">
       <select
@@ -123,12 +127,16 @@ function TimelineColumn({ options, activeIndex, onChange }: TimelineColumnProps)
                   ? "text-accent"
                   : "text-slate-700 dark:text-slate-300 hover:text-accent"
               }`}
-              onClick={() => onChange({ target: { value: String(idx) } } as any)}
+              onClick={() =>
+                onChange({ target: { value: String(idx) } } as any)
+              }
               aria-label={`View experience at ${entry.company}`}
             >
               {entry.company}
             </button>
-            <div className="text-xs text-slate-500 dark:text-slate-400">{entry.dates}</div>
+            <div className="text-xs text-slate-500 dark:text-slate-400">
+              {entry.dates}
+            </div>
           </li>
         ))}
       </ol>
@@ -137,7 +145,7 @@ function TimelineColumn({ options, activeIndex, onChange }: TimelineColumnProps)
 }
 
 type DetailsCardProps = {
-  entry: typeof experienceTimeline[number];
+  entry: (typeof experienceTimeline)[number];
   prefersReducedMotion: boolean;
   variants: {
     enter: { opacity: number; y: number };
@@ -145,7 +153,11 @@ type DetailsCardProps = {
   };
 };
 
-function DetailsCard({ entry, prefersReducedMotion, variants }: DetailsCardProps) {
+function DetailsCard({
+  entry,
+  prefersReducedMotion,
+  variants,
+}: DetailsCardProps) {
   return (
     <motion.div
       key={entry.company + entry.role}
@@ -159,16 +171,28 @@ function DetailsCard({ entry, prefersReducedMotion, variants }: DetailsCardProps
       <div className="mb-1 text-base font-semibold text-slate-800 dark:text-slate-100">
         {entry.company}
       </div>
-      <div className="mb-2 text-sm text-slate-500 dark:text-slate-400">{entry.dates}</div>
+      <div className="mb-2 text-sm text-slate-500 dark:text-slate-400">
+        {entry.dates}
+      </div>
       {entry.tech && entry.tech.length > 0 && (
         <div className="mb-2">
-          <div className="mb-1 text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-300">Skills</div>
+          <div className="mb-1 text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-300">
+            Skills
+          </div>
           <div className="flex flex-wrap gap-2">
             {entry.tech.map((item) => {
               // Link to skills section if the skill matches a main skill
-              const mainSkills = ["Information Technology Skills", "Customer Service", "Gaining Med Admin skills"];
+              const mainSkills = [
+                "Information Technology Skills",
+                "Customer Service",
+                "Gaining Med Admin skills",
+              ];
               const normalized = item.toLowerCase();
-              const match = mainSkills.find((s) => s.toLowerCase().includes(normalized) || normalized.includes(s.toLowerCase()));
+              const match = mainSkills.find(
+                (s) =>
+                  s.toLowerCase().includes(normalized) ||
+                  normalized.includes(s.toLowerCase()),
+              );
               return match ? (
                 <a
                   key={item}
@@ -191,7 +215,9 @@ function DetailsCard({ entry, prefersReducedMotion, variants }: DetailsCardProps
         </div>
       )}
       {entry.description && (
-        <div className="text-base text-slate-700 dark:text-slate-300">{entry.description}</div>
+        <div className="text-base text-slate-700 dark:text-slate-300">
+          {entry.description}
+        </div>
       )}
     </motion.div>
   );

@@ -84,14 +84,14 @@ export default function App() {
       <SiteHeader />
       <ScrollSpy sections={sections} />
       <main className="relative mx-auto flex w-full max-w-6xl flex-col gap-8 px-4 pb-16 pt-6 sm:gap-12">
-  <HeroSection />
-  <AboutSection />
-  <ExperienceSection />
-  <EducationSection />
-  <CertificationsSection />
-  <ProjectsSection />
-  <SkillsSection />
-  <ContactSection />
+        <HeroSection />
+        <AboutSection />
+        <ExperienceSection />
+        <EducationSection />
+        <CertificationsSection />
+        <ProjectsSection />
+        <SkillsSection />
+        <ContactSection />
       </main>
       <SiteFooter />
     </div>

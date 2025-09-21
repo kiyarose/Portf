@@ -161,7 +161,9 @@ function DetailsCard({
         </p>
         {entry.tech && entry.tech.length > 0 && (
           <div className="mt-4">
-            <div className="mb-1 text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-300">Focus</div>
+            <div className="mb-1 text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-300">
+              Focus
+            </div>
             <div className="flex flex-wrap gap-2">
               {entry.tech.map((item) => (
                 <span

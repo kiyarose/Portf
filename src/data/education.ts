@@ -1,4 +1,3 @@
-
 export type EducationEntry = {
   school: string;
   program: string;
