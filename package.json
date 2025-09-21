@@ -7,7 +7,9 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "css:watch": "postcss src/index.css --config . --output dist/style.css --watch",
+    "css:build": "postcss src/index.css --config . --output dist/style.css"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",
@@ -31,7 +33,8 @@
     "eslint-plugin-react-refresh": "^0.4.20",
     "globals": "^16.4.0",
     "postcss": "^8.5.6",
-    "tailwindcss": "^4.1.13",
+    "tailwindcss": "^4.1.13",=
+    "postcss-cli": "^11.0.1",
     "typescript": "~5.9.2",
     "typescript-eslint": "^8.43.0",
     "vite": "^7.1.6"
