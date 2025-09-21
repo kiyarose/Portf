@@ -97,7 +97,7 @@ export function ScrollSpy({ sections }: ScrollSpyProps) {
             </a>
           );
         })}
-        
+
         {/* Back to Top Button - Desktop */}
         <motion.button
           type="button"
@@ -126,7 +126,7 @@ export function ScrollSpy({ sections }: ScrollSpyProps) {
           />
         </motion.button>
       </nav>
-      
+
       {/* Mobile-only Back to Top Button */}
       <motion.button
         type="button"
