@@ -20,7 +20,7 @@ export const projects: Project[] = [
   },
   {
     // Placeholder (etc.)
-    title: "...And Hopefully More",
+      description: "Hopefully I will gain more cool things to show off once I progress my career.",
     descriptions:
       "Hopefully I will gain more cool things to show off once I progress my career.",
     tech: ["Hope", "Dreams", "Passion", "Love"],
