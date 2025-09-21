@@ -13,15 +13,12 @@ export const projects: Project[] = [
     tech: ["ProtonVPN", "OpenVPN", "JavaScript"],
   },
   {
-    title: "2025 Class Project",
-    description:
-    tech: ["HPE", "Windows Server", "VMware", "iLO"],
+    description: "A class project involving enterprise hardware and virtualization.",
+    tech: ["HPE", "Windows Server", "VMWare", "ILO"],
   },
   {
-    // Placeholder (etc.)
-      description: "Hopefully I will gain more cool things to show off once I progress my career.",
-    descriptions:
-      "Hopefully I will gain more cool things to show off once I progress my career.",
+    title: "Placeholder",
+    description: "Hopefully I will gain more cool things to show off once I progress my career.",
     tech: ["Hope", "Dreams", "Passion", "Love"],
   },
 ];
