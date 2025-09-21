@@ -45,8 +45,9 @@ npx postcss src/index.css --use tailwindcss --use autoprefixer --output dist/sty
 ## Compatibility
 
 This addition is fully compatible with the existing setup:
+
 - ✅ Existing build process works unchanged
-- ✅ Vite integration works unchanged  
+- ✅ Vite integration works unchanged
 - ✅ All linting passes
 - ✅ All Tailwind CSS features work as expected
 - ✅ Custom Tailwind configuration is respected
