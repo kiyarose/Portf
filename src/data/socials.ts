@@ -3,7 +3,7 @@ export const socials = [
     id: "github",
     label: "GitHub",
     href: "https://github.com/kiyarose",
-    icon: "material-symbols:code-rounded",
+    icon: "material-symbols:hub-rounded",
   },
   {
     id: "instagram",
@@ -15,12 +15,12 @@ export const socials = [
     id: "linkedin",
     label: "LinkedIn",
     href: "https://linkedin.com/in/kiyarose",
-    icon: "material-symbols:work-rounded",
+    icon: "material-symbols:business-center-rounded",
   },
   {
     id: "bluesky",
     label: "Bluesky",
     href: "https://bsky.app/profile/sillylittle.tech",
-    icon: "material-symbols:cloud-rounded",
+    icon: "material-symbols:cloud-queue-rounded",
   },
 ] as const;
