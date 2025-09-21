@@ -21,13 +21,29 @@ export function useScrollSpy(
 
       const observer = new IntersectionObserver(
         (entries) => {
-          entries.forEach((entry) => {
-            if (entry.isIntersecting) {
-              setActiveId(entry.target.id);
-            }
-          });
+          const visibleEntries = entries
+            .filter((entry) => entry.isIntersecting)
+            .sort((a, b) => b.intersectionRatio - a.intersectionRatio);
+
+          if (visibleEntries[0]) {
+            setActiveId(visibleEntries[0].target.id);
+            return;
+          }
+
+          const exiting = entries.find((entry) => entry.intersectionRatio === 0);
+          if (!exiting) return;
+
+          const exitingIndex = elements.findIndex(
+            (element) => element.id === exiting.target.id,
+          );
+          if (exitingIndex <= 0) return;
+
+          const previousElement = elements[exitingIndex - 1];
+          if (previousElement) {
+            setActiveId(previousElement.id);
+          }
         },
-        { rootMargin, threshold: 0.4 },
+        { rootMargin, threshold: [0, 0.25, 0.5, 0.75] },
       );
 
       elements.forEach((element) => observer.observe(element));
