@@ -32,7 +32,9 @@ export function ScrollSpy({ sections }: ScrollSpyProps) {
       const scrollHeight = document.documentElement.scrollHeight;
 
       setShowBackToTop(scrollY > SHOW_BACK_TO_TOP_OFFSET);
-      setIsAtBottom(viewportHeight + scrollY >= scrollHeight - BOTTOM_PROXIMITY_OFFSET);
+      setIsAtBottom(
+        viewportHeight + scrollY >= scrollHeight - BOTTOM_PROXIMITY_OFFSET,
+      );
     }
 
     handleScroll();
