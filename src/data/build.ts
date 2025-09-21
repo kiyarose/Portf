@@ -40,10 +40,7 @@ function getCodeSignature() {
     const url = new URL(import.meta.url);
     return `${url.pathname}${url.search}`;
   } catch (error) {
-<<<<<<< Updated upstream
-=======
     logDebug("Failed to derive code signature", error);
->>>>>>> Stashed changes
     return import.meta.url;
   }
 }
@@ -76,10 +73,7 @@ function loadOrCreatePrefix(signature: string) {
     }
   } catch (error) {
     // Ignore storage errors (incognito / storage-disabled environments).
-<<<<<<< Updated upstream
-=======
     logDebug("Failed to read build prefix from storage", error);
->>>>>>> Stashed changes
   }
 
   const nextPrefix = createRandomSegment(PREFIX_LENGTH);
@@ -91,10 +85,7 @@ function loadOrCreatePrefix(signature: string) {
     );
   } catch (error) {
     // Swallow storage write errors and fall back to ephemeral prefix.
-<<<<<<< Updated upstream
-=======
     logDebug("Failed to persist build prefix", error);
->>>>>>> Stashed changes
   }
 
   memoizedPrefix = nextPrefix;
@@ -111,12 +102,9 @@ export function generateBuildLabel() {
 
   return `Build ${stablePrefix}-${renderSuffix}`;
 }
-<<<<<<< Updated upstream
-=======
 
 function logDebug(context: string, error: unknown) {
   if (typeof console !== "undefined" && import.meta.env.DEV) {
     console.warn(`[build-label] ${context}`, error);
   }
 }
->>>>>>> Stashed changes
