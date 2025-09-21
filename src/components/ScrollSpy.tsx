@@ -49,7 +49,7 @@ export function ScrollSpy({ sections }: ScrollSpyProps) {
       top: 0,
       behavior: prefersReducedMotion ? "auto" : "smooth",
     });
-  }
+  }, [prefersReducedMotion]);
 
   const buttonAnimate =
     isAtBottom && !prefersReducedMotion
