@@ -140,7 +140,7 @@ export function SkillsSection() {
       <div className="card-surface space-y-8">
         <SectionHeader
           id="skills"
-          icon="material-symbols:sparkles-rounded"
+          icon="material-symbols:auto-awesome-rounded"
           label="Skills"
           eyebrow="Strengths"
         />

@@ -28,7 +28,11 @@ const sections = [
     label: "Hobby Builds",
     icon: "material-symbols:rocket-launch-rounded",
   },
-  { id: "skills", label: "Skills", icon: "material-symbols:sparkles-rounded" },
+  {
+    id: "skills",
+    label: "Skills",
+    icon: "material-symbols:auto-awesome-rounded",
+  },
   {
     id: "contact",
     label: "Contact",
