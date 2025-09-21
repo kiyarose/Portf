@@ -13,6 +13,7 @@ export const projects: Project[] = [
     tech: ["ProtonVPN", "OpenVPN", "JavaScript"],
   },
   {
+    title: "Enterprise Virtualization Project",
     description:
       "A class project involving enterprise hardware and virtualization.",
     tech: ["HPE", "Windows Server", "VMWare", "ILO"],
