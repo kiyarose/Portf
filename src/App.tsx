@@ -147,6 +147,7 @@ function SiteFooter() {
 
   return (
     <footer className="border-t border-white/10 bg-white/50 py-6 text-center text-sm text-slate-500 backdrop-blur dark:bg-slate-950/70 dark:text-slate-400">
+<<<<<<< Updated upstream
       <div className="flex flex-col items-center justify-center gap-1 sm:flex-row sm:flex-wrap sm:gap-3">
         <span className="inline-flex items-center gap-1 text-slate-600 dark:text-slate-300">
           <span className="text-base text-accent">©</span>
@@ -179,6 +180,85 @@ function SiteFooter() {
           </span>
         </span>
       </div>
+=======
+      <FooterContent
+        currentYear={currentYear}
+        buildLabel={buildLabel}
+        tooltipId={buildTooltipId}
+      />
+>>>>>>> Stashed changes
     </footer>
+  );
+}
+
+type FooterContentProps = {
+  currentYear: number;
+  buildLabel: string;
+  tooltipId: string;
+};
+
+function FooterContent({ currentYear, buildLabel, tooltipId }: FooterContentProps) {
+  return (
+    <div className="flex flex-col items-center justify-center gap-1 sm:flex-row sm:flex-wrap sm:gap-3">
+      <FooterBranding currentYear={currentYear} />
+      <FooterAttribution />
+      <FooterBuildLabel label={buildLabel} tooltipId={tooltipId} />
+    </div>
+  );
+}
+
+function FooterBranding({ currentYear }: { currentYear: number }) {
+  return (
+    <span className="inline-flex items-center gap-1 text-slate-600 dark:text-slate-300">
+      <span className="text-base text-accent">©</span>
+      <span>{currentYear}</span>
+      <span className="font-kiya">Kiya Rose</span>
+    </span>
+  );
+}
+
+function FooterAttribution() {
+  return (
+    <span className="text-slate-500 dark:text-slate-400">
+      Crafted with React, Tailwind CSS, and Firebase.
+    </span>
+  );
+}
+
+function FooterBuildLabel({
+  label,
+  tooltipId,
+}: {
+  label: string;
+  tooltipId: string;
+}) {
+  return (
+    <button
+      type="button"
+      className="group relative inline-flex cursor-help border-0 bg-transparent p-0 outline-none"
+      aria-describedby={tooltipId}
+    >
+      <span className="text-xs uppercase tracking-[0.3em] text-slate-400 transition group-hover:text-accent group-focus-visible:text-accent dark:text-slate-500">
+        {label}
+      </span>
+      <FooterBuildTooltip tooltipId={tooltipId} />
+    </button>
+  );
+}
+
+function FooterBuildTooltip({ tooltipId }: { tooltipId: string }) {
+  return (
+    <span
+      id={tooltipId}
+      role="tooltip"
+      className="pointer-events-none absolute bottom-full left-1/2 hidden w-max -translate-x-1/2 -translate-y-3 rounded-2xl bg-white/90 px-3 py-2 text-[11px] font-medium text-slate-600 shadow-lg ring-1 ring-black/5 backdrop-blur group-hover:flex group-focus-visible:flex dark:bg-slate-900/90 dark:text-slate-200 dark:ring-white/10"
+    >
+      <span className="font-semibold text-accent">Prefix</span>
+      <span className="mx-1 text-slate-400">|</span>
+      <span className="font-semibold text-rose-400">Suffix</span>
+      <span className="ml-1 text-slate-500 dark:text-slate-300">
+        Last update · Latest refresh
+      </span>
+    </span>
   );
 }
