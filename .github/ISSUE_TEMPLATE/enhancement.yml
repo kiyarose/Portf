@@ -1,0 +1,57 @@
+name: "Enhancement Proposal"
+description: "Track improvements, polish, and UX ideas before they land in code."
+title: "enhancement: <short summary>"
+labels:
+  - enhancement
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Outline the problem and desired outcome. Future-you will thank you for the clarity.
+  - type: textarea
+    id: problem
+    attributes:
+      label: "What problem are we solving?"
+      description: "Describe the friction or opportunity."
+      placeholder: "Visitors miss the Skills section badge that indicates work-in-progress skills."
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: "Proposed solution"
+      description: "Share the core idea, potential UI changes, and technical notes."
+      placeholder: "Introduce a subtle pulsing accent on WIP skills using Framer Motion and respect prefers-reduced-motion."
+    validations:
+      required: true
+  - type: textarea
+    id: scope
+    attributes:
+      label: "Scope & constraints"
+      description: "List what’s in/out of scope, dependencies, and risks."
+  - type: dropdown
+    id: focus
+    attributes:
+      label: "Focus area"
+      description: "Helps triage priority and follow-up labels."
+      options:
+        - "Foundational"
+        - "UX/UI"
+        - "Stylistic"
+        - "Format Heavy"
+        - "Meta"
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: "Acceptance criteria"
+      description: "Bullet the conditions for done."
+      placeholder: "- Theme toggle announced via aria-label
+- Animations respect prefers-reduced-motion"
+  - type: checkboxes
+    id: followup
+    attributes:
+      label: "Next steps"
+      description: "Flag what happens after scoping."
+      options:
+        - label: "Add supporting tasks or documentation notes."
+        - label: "Schedule follow-up design exploration."

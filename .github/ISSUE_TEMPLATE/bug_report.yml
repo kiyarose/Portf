@@ -1,0 +1,55 @@
+name: "Bug Report"
+description: "Report a bug or regression to keep the portfolio running smoothly."
+title: "bug: <short summary>"
+labels:
+  - bug
+  - details
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for logging a bug! Fill out the details below so future-you can knock it out fast.
+  - type: input
+    id: scope
+    attributes:
+      label: "Impacted area"
+      description: "Where does this bug surface? (Component, section, workflow, etc.)"
+      placeholder: "Contact form"
+  - type: textarea
+    id: description
+    attributes:
+      label: "What happened?"
+      description: "Describe the bug. Screenshots are welcome if they clarify the issue."
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: "Steps to reproduce"
+      description: "List the exact steps to hit the bug."
+      placeholder: |
+        1. Go to …
+        2. Click …
+        3. See …
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: "Expected behavior"
+      description: "What should happen instead?"
+      placeholder: "The contact form mailto link should populate."
+    validations:
+      required: true
+  - type: textarea
+    id: notes
+    attributes:
+      label: "Notes & environment"
+      description: "Browser/device, console errors, related issues, or theories."
+  - type: checkboxes
+    id: preflight
+    attributes:
+      label: "Pre-flight checks"
+      options:
+        - label: "I reproduced this on the latest revision of `main`."
+        - label: "I searched existing issues (open and closed) for duplicates."
