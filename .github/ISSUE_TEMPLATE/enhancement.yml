@@ -46,7 +46,7 @@ body:
       label: "Acceptance criteria"
       description: "Bullet the conditions for done."
       placeholder: "- Theme toggle announced via aria-label
-- Animations respect prefers-reduced-motion"
+  - Animations respect prefers-reduced-motion"
   - type: checkboxes
     id: followup
     attributes:
