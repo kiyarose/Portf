@@ -162,7 +162,11 @@ type FooterContentProps = {
   tooltipId: string;
 };
 
-function FooterContent({ currentYear, buildLabel, tooltipId }: FooterContentProps) {
+function FooterContent({
+  currentYear,
+  buildLabel,
+  tooltipId,
+}: FooterContentProps) {
   return (
     <div className="flex flex-col items-center justify-center gap-1 sm:flex-row sm:flex-wrap sm:gap-3">
       <FooterBranding currentYear={currentYear} />
