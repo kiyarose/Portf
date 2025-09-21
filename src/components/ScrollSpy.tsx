@@ -1,8 +1,11 @@
 import { motion, useReducedMotion } from "framer-motion";
 import { Icon } from "@iconify/react";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useScrollSpy } from "../hooks/useScrollSpy";
 import { cn } from "../utils/cn";
+
+const SHOW_BACK_TO_TOP_OFFSET = 480;
+const BOTTOM_PROXIMITY_OFFSET = 120;
 
 interface ScrollSpySection {
   id: string;
@@ -21,26 +24,28 @@ export function ScrollSpy({ sections }: ScrollSpyProps) {
   const [isAtBottom, setIsAtBottom] = useState(false);
 
   useEffect(() => {
-    if (typeof window === "undefined") return;
+    if (typeof window === "undefined") return undefined;
 
     function handleScroll() {
       const scrollY = window.scrollY || document.documentElement.scrollTop;
       const viewportHeight = window.innerHeight;
       const scrollHeight = document.documentElement.scrollHeight;
 
-      setShowBackToTop(scrollY > 480);
-      setIsAtBottom(viewportHeight + scrollY >= scrollHeight - 120);
+      setShowBackToTop(scrollY > SHOW_BACK_TO_TOP_OFFSET);
+      setIsAtBottom(viewportHeight + scrollY >= scrollHeight - BOTTOM_PROXIMITY_OFFSET);
     }
 
     handleScroll();
     window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
   }, []);
 
-  function handleBackToTop(): void {
+  const handleBackToTop = useCallback((): void => {
     if (typeof window === "undefined") return;
     window.scrollTo({ top: 0, behavior: prefersReducedMotion ? "auto" : "smooth" });
-  }
+  }, [prefersReducedMotion]);
 
   const buttonAnimate = isAtBottom && !prefersReducedMotion
     ? { opacity: 1, y: 0, rotate: [0, -6, 6, -6, 0], scale: [1, 1.08, 1] }
