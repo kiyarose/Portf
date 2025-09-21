@@ -33,7 +33,7 @@ button {
 
 @layer utilities {
   .card-surface {
-    @apply rounded-3xl bg-white/80 p-8 shadow-card backdrop-blur-sm dark:bg-slate-900/70 dark:shadow-lg border border-slate-200/60 dark:border-slate-700/60;
+    @apply rounded-3xl bg-white/80 p-6 shadow-card backdrop-blur-sm dark:bg-slate-900/70 dark:shadow-lg border border-slate-200/60 dark:border-slate-700/60 sm:p-8;
   }
   .chip {
     @apply inline-flex items-center gap-2 rounded-full bg-white/80 px-4 py-2 shadow-md transition-all duration-300 hover:shadow-lg dark:bg-slate-800/80 dark:shadow-md border border-slate-200/60 dark:border-slate-700/60;

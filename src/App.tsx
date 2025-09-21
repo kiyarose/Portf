@@ -2,6 +2,7 @@ import { Icon } from "@iconify/react";
 import { motion, useReducedMotion } from "framer-motion";
 import { ScrollSpy } from "./components/ScrollSpy";
 import { ThemeToggle } from "./components/ThemeToggle";
+import { MobileNav } from "./components/MobileNav";
 import { AboutSection } from "./sections/AboutSection";
 import { CertificationsSection } from "./sections/CertificationsSection";
 import { ContactSection } from "./sections/ContactSection";
@@ -74,7 +75,7 @@ export default function App() {
       <DecorativeBackground />
       <SiteHeader />
       <ScrollSpy sections={sections} />
-      <main className="relative mx-auto flex w-full max-w-6xl flex-col gap-12 px-4 pb-16 pt-6">
+      <main className="relative mx-auto flex w-full max-w-6xl flex-col gap-8 px-4 pb-16 pt-6 sm:gap-12">
         <HeroSection />
         <AboutSection />
         <EducationSection />
@@ -91,10 +92,13 @@ export default function App() {
 function SiteHeader() {
   return (
     <header className="sticky top-0 z-20 border-b border-white/10 bg-white/75 backdrop-blur-xl transition dark:bg-slate-950/70">
-      <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-4 px-4 py-4">
+      <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-2 px-4 py-3 sm:gap-4 sm:py-4">
         <LogoLink />
-        <PrimaryNav />
-        <ThemeToggle />
+        <div className="flex items-center gap-4">
+          <PrimaryNav />
+          <MobileNav sections={sections} />
+          <ThemeToggle />
+        </div>
       </div>
     </header>
   );
@@ -104,11 +108,11 @@ function LogoLink() {
   return (
     <a
       href="#hero"
-      className="flex items-center gap-3 text-sm font-semibold uppercase tracking-[0.2em] text-slate-600 dark:text-slate-300"
+      className="flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.2em] text-slate-600 dark:text-slate-300 sm:gap-3"
     >
       <Icon
         icon="material-symbols:apps-rounded"
-        className="text-2xl text-accent"
+        className="text-xl text-accent sm:text-2xl"
         aria-hidden="true"
       />
       <span className="font-kiya">Kiya Rose</span>
