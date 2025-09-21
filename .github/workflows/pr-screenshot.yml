@@ -1,0 +1,66 @@
+name: PW_Screenshot_Commit
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  screenshot:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps
+
+      - name: Build project
+        run: npm run build
+
+      - name: Start server
+        run: npm run preview &
+
+      - name: Wait for server
+        run: npx wait-on http://localhost:4173
+
+      - name: Take screenshot
+        run: npx playwright screenshot http://localhost:4173 screenshot.png
+
+      - name: Upload screenshot artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: pr-screenshot
+          path: screenshot.png
+
+      - name: Find old screenshot comments
+        id: find_comments
+        uses: peter-evans/find-comment@v3
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          comment-author: 'github-actions[bot]'
+          body-includes: 'PR Screenshot'
+
+      - name: Mark old screenshot comments as outdated
+        if: steps.find_comments.outputs.comment-ids != ''
+        run: |
+          for id in ${{ steps.find_comments.outputs.comment-ids }}; do
+            gh pr comment ${{ github.event.pull_request.number }} --comment-id $id --body "[OUTDATED]"
+          done
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Post screenshot as PR comment
+        uses: peter-evans/create-or-update-comment@v4
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          body: |
+            **PR Screenshot**
+            ![Screenshot](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts/pr-screenshot/screenshot.png)
