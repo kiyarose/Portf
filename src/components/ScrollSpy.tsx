@@ -64,38 +64,70 @@ export function ScrollSpy({ sections }: ScrollSpyProps) {
       : { duration: 0.2 };
 
   return (
-    <nav
-      aria-label="Section navigation"
-      className="fixed right-6 top-1/2 hidden -translate-y-1/2 flex-col items-center gap-4 md:flex"
-    >
-      {sections.map((section) => {
-        const isActive = section.id === activeId;
-        return (
-          <a
-            key={section.id}
-            href={`#${section.id}`}
-            className={cn(
-              "relative inline-flex h-6 w-6 items-center justify-center rounded-full focus-visible:ring-2 focus-visible:ring-accent transition",
-            )}
-            aria-label={`Jump to ${section.label}`}
-          >
-            <span
+    <>
+      <nav
+        aria-label="Section navigation"
+        className="fixed right-4 top-1/2 hidden -translate-y-1/2 flex-col items-center gap-4 md:right-6 md:flex"
+      >
+        {sections.map((section) => {
+          const isActive = section.id === activeId;
+          return (
+            <a
+              key={section.id}
+              href={`#${section.id}`}
               className={cn(
-                "relative h-3 w-3 rounded-full bg-slate-300/60 transition",
-                isActive && "bg-accent",
+                "relative inline-flex h-6 w-6 items-center justify-center rounded-full focus-visible:ring-2 focus-visible:ring-accent transition",
               )}
+              aria-label={`Jump to ${section.label}`}
             >
-              {isActive && (
-                <motion.span
-                  layoutId="scroll-indicator"
-                  className="absolute inset-0 rounded-full bg-accent"
-                  transition={{ type: "spring", stiffness: 400, damping: 35 }}
-                />
-              )}
-            </span>
-          </a>
-        );
-      })}
+              <span
+                className={cn(
+                  "relative h-3 w-3 rounded-full bg-slate-300/60 transition",
+                  isActive && "bg-accent",
+                )}
+              >
+                {isActive && (
+                  <motion.span
+                    layoutId="scroll-indicator"
+                    className="absolute inset-0 rounded-full bg-accent"
+                    transition={{ type: "spring", stiffness: 400, damping: 35 }}
+                  />
+                )}
+              </span>
+            </a>
+          );
+        })}
+        
+        {/* Back to Top Button - Desktop */}
+        <motion.button
+          type="button"
+          onClick={handleBackToTop}
+          initial={{ opacity: 0, y: 8 }}
+          animate={
+            showBackToTop
+              ? buttonAnimate
+              : { opacity: 0, y: 8, rotate: 0, scale: 0.9 }
+          }
+          whileHover={prefersReducedMotion ? undefined : { scale: 1.08 }}
+          whileTap={prefersReducedMotion ? undefined : { scale: 0.96 }}
+          className={cn(
+            "relative mt-6 inline-flex h-10 w-10 items-center justify-center rounded-full border border-slate-300/60 bg-white/80 text-slate-600 shadow-sm backdrop-blur-md transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent dark:border-slate-700/60 dark:bg-slate-900/70 dark:text-slate-100",
+            !showBackToTop && "pointer-events-none opacity-0",
+            isAtBottom &&
+              showBackToTop &&
+              "border-transparent bg-rose-500 text-white shadow-lg dark:bg-rose-400",
+          )}
+          transition={showBackToTop ? buttonTransition : { duration: 0.2 }}
+          aria-label="Back to top"
+        >
+          <Icon
+            icon="material-symbols:arrow-upward-rounded"
+            className="text-xl"
+          />
+        </motion.button>
+      </nav>
+      
+      {/* Mobile-only Back to Top Button */}
       <motion.button
         type="button"
         onClick={handleBackToTop}
@@ -108,11 +140,11 @@ export function ScrollSpy({ sections }: ScrollSpyProps) {
         whileHover={prefersReducedMotion ? undefined : { scale: 1.08 }}
         whileTap={prefersReducedMotion ? undefined : { scale: 0.96 }}
         className={cn(
-          "relative mt-6 inline-flex h-10 w-10 items-center justify-center rounded-full border border-slate-300/60 bg-white/80 text-slate-600 shadow-sm backdrop-blur-md transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent dark:border-slate-700/60 dark:bg-slate-900/70 dark:text-slate-100",
+          "fixed bottom-6 right-4 z-10 inline-flex h-12 w-12 items-center justify-center rounded-full border border-slate-300/60 bg-white/80 text-slate-600 shadow-lg backdrop-blur-md transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent dark:border-slate-700/60 dark:bg-slate-900/70 dark:text-slate-100 md:hidden",
           !showBackToTop && "pointer-events-none opacity-0",
           isAtBottom &&
             showBackToTop &&
-            "border-transparent bg-rose-500 text-white shadow-lg",
+            "border-transparent bg-rose-500 text-white shadow-xl dark:bg-rose-400",
         )}
         transition={showBackToTop ? buttonTransition : { duration: 0.2 }}
         aria-label="Back to top"
@@ -122,6 +154,6 @@ export function ScrollSpy({ sections }: ScrollSpyProps) {
           className="text-xl"
         />
       </motion.button>
-    </nav>
+    </>
   );
 }
