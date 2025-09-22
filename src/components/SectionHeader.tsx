@@ -17,11 +17,7 @@ export function SectionHeader({
   eyebrow,
 }: SectionHeaderProps) {
   const { theme } = useTheme();
-  const eyebrowSurface = themedClass(
-    theme,
-    "!bg-accent/10",
-    "!bg-accent/20",
-  );
+  const eyebrowSurface = themedClass(theme, "!bg-accent/10", "!bg-accent/20");
   return (
     <div className="mb-6 flex items-center gap-4">
       <span className={cn("chip !text-accent", eyebrowSurface)}>

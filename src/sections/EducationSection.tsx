@@ -186,10 +186,7 @@ function DetailsCard({
         animate="center"
         variants={prefersReducedMotion ? undefined : variants}
         transition={{ duration: 0.5, ease: "easeOut" }}
-        className={cn(
-          "rounded-2xl p-6",
-          containerSurface,
-        )}
+        className={cn("rounded-2xl p-6", containerSurface)}
       >
         <h3 className={cn("text-2xl font-semibold", headingColor)}>
           {entry.school}

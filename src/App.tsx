@@ -54,11 +54,7 @@ const sections = [
 
 function DecorativeBackground({ theme }: { theme: Theme }) {
   const prefersReducedMotion = useReducedMotion();
-  const topGlowClass = themedClass(
-    theme,
-    "bg-orange-400/30",
-    "bg-accent/30",
-  );
+  const topGlowClass = themedClass(theme, "bg-orange-400/30", "bg-accent/30");
   const bottomGlowClass = themedClass(
     theme,
     "bg-rose-400/20",
@@ -113,11 +109,7 @@ export default function App() {
 }
 
 function SiteHeader({ theme }: { theme: Theme }) {
-  const headerSurface = themedClass(
-    theme,
-    "bg-white/75",
-    "bg-slate-950/70",
-  );
+  const headerSurface = themedClass(theme, "bg-white/75", "bg-slate-950/70");
   return (
     <header
       className={`sticky top-0 z-20 border-b border-white/10 ${headerSurface} backdrop-blur-xl transition`}
@@ -135,11 +127,7 @@ function SiteHeader({ theme }: { theme: Theme }) {
 }
 
 function LogoLink({ theme }: { theme: Theme }) {
-  const labelColor = themedClass(
-    theme,
-    "text-slate-600",
-    "text-slate-300",
-  );
+  const labelColor = themedClass(theme, "text-slate-600", "text-slate-300");
   return (
     <a
       href="#hero"
@@ -156,11 +144,7 @@ function LogoLink({ theme }: { theme: Theme }) {
 }
 
 function PrimaryNav({ theme }: { theme: Theme }) {
-  const navSurface = themedClass(
-    theme,
-    "bg-white/70",
-    "bg-slate-900/70",
-  );
+  const navSurface = themedClass(theme, "bg-white/70", "bg-slate-900/70");
   const linkColor = themedClass(theme, "text-slate-600", "text-slate-300");
   return (
     <nav
@@ -221,7 +205,11 @@ function FooterContent({
     <div className="flex flex-col items-center justify-center gap-1 sm:flex-row sm:flex-wrap sm:gap-3">
       <FooterBranding currentYear={currentYear} theme={theme} />
       <FooterAttribution theme={theme} />
-      <FooterBuildLabel label={buildLabel} tooltipId={tooltipId} theme={theme} />
+      <FooterBuildLabel
+        label={buildLabel}
+        tooltipId={tooltipId}
+        theme={theme}
+      />
     </div>
   );
 }
@@ -233,11 +221,7 @@ function FooterBranding({
   currentYear: number;
   theme: Theme;
 }) {
-  const brandingColor = themedClass(
-    theme,
-    "text-slate-600",
-    "text-slate-300",
-  );
+  const brandingColor = themedClass(theme, "text-slate-600", "text-slate-300");
   return (
     <span className={`inline-flex items-center gap-1 ${brandingColor}`}>
       <span className="text-base text-accent">©</span>
@@ -269,11 +253,7 @@ function FooterBuildLabel({
   tooltipId: string;
   theme: Theme;
 }) {
-  const labelColor = themedClass(
-    theme,
-    "text-slate-400",
-    "text-slate-500",
-  );
+  const labelColor = themedClass(theme, "text-slate-400", "text-slate-500");
   return (
     <button
       type="button"
@@ -313,9 +293,7 @@ function FooterBuildTooltip({
       <span className="font-semibold text-accent">Prefix</span>
       <span className={`mx-1 ${dividerColor}`}>|</span>
       <span className="font-semibold text-rose-400">Suffix</span>
-      <span className={`ml-1 ${metaColor}`}>
-        Last update · Latest refresh
-      </span>
+      <span className={`ml-1 ${metaColor}`}>Last update · Latest refresh</span>
     </span>
   );
 }

@@ -106,9 +106,7 @@ function ContactIntro({ copied, onCopy }: ContactIntroProps) {
         />
         {copied ? "Copied!" : "Copy my email"}
       </button>
-      <p className={cn("text-base font-semibold", emailColor)}>
-        {EMAIL}
-      </p>
+      <p className={cn("text-base font-semibold", emailColor)}>{EMAIL}</p>
     </div>
   );
 }
@@ -300,7 +298,11 @@ function ContactForm({
                 onClick={handleDismissError}
                 className={cn(
                   "mt-2 text-xs font-medium transition-colors",
-                  themedClass(theme, "text-red-600 hover:text-red-700", "text-red-400 hover:text-red-300"),
+                  themedClass(
+                    theme,
+                    "text-red-600 hover:text-red-700",
+                    "text-red-400 hover:text-red-300",
+                  ),
                 )}
               >
                 Dismiss

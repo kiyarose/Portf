@@ -13,11 +13,7 @@ interface SocialChipProps {
 export function SocialChip({ href, label, icon }: SocialChipProps) {
   const prefersReducedMotion = useReducedMotion();
   const { theme } = useTheme();
-  const labelColor = themedClass(
-    theme,
-    "text-slate-700",
-    "text-slate-200",
-  );
+  const labelColor = themedClass(theme, "text-slate-700", "text-slate-200");
 
   return (
     <motion.a

@@ -20,11 +20,7 @@ export function MobileNav({ sections }: MobileNavProps) {
   const [isOpen, setIsOpen] = useState(false);
   const prefersReducedMotion = useReducedMotion();
   const { theme } = useTheme();
-  const buttonSurface = themedClass(
-    theme,
-    "bg-white/70",
-    "bg-slate-900/70",
-  );
+  const buttonSurface = themedClass(theme, "bg-white/70", "bg-slate-900/70");
   const iconColor = themedClass(theme, "text-slate-600", "text-slate-300");
   const panelSurface = themedClass(
     theme,

@@ -52,12 +52,7 @@ function HeroCard({ prefersReducedMotion, theme }: HeroCardProps) {
           >
             Health IT & Support Pro in Training
           </h1>
-          <p
-            className={cn(
-              "max-w-2xl text-lg",
-              blurbColor,
-            )}
-          >
+          <p className={cn("max-w-2xl text-lg", blurbColor)}>
             I spend my free time building code projects while preparing to help
             teams full time across health IT and tech support.
           </p>

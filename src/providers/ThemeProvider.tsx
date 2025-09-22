@@ -25,8 +25,9 @@ function applyTheme(theme: Theme, userHasSetTheme: boolean) {
     body.classList.add(theme);
   }
 
-  const colorSchemeMeta =
-    document.querySelector<HTMLMetaElement>("meta[name=\"color-scheme\"]");
+  const colorSchemeMeta = document.querySelector<HTMLMetaElement>(
+    'meta[name="color-scheme"]',
+  );
   if (colorSchemeMeta) {
     colorSchemeMeta.content = colorSchemes;
   } else {
