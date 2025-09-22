@@ -95,7 +95,7 @@ async function ensureTheme(page: Page, theme: "light" | "dark") {
       name: /toggle light or dark theme/i,
     });
     await toggle.click();
-    await page.waitForTimeout(250);
+    await page.waitForTimeout(600);
   }
 
   const finalTheme = await getCurrentTheme();
@@ -112,7 +112,7 @@ test("homepage full-page screenshot", async ({ page }) => {
     await page.setViewportSize(viewport);
     await page.goto("/", { waitUntil: "networkidle" });
     await ensureTheme(page, theme);
-    await page.waitForTimeout(150);
+    await page.waitForTimeout(theme === "dark" ? 600 : 200);
     await waitForFonts(page);
     await scrollPage(page);
     await page.waitForTimeout(200);
