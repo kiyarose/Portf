@@ -33,7 +33,8 @@ async function scrollPage(page: Page) {
       const delay = 60;
 
       const step = () => {
-        const reachedBottom = window.innerHeight + window.scrollY >= root.scrollHeight;
+        const reachedBottom =
+          window.innerHeight + window.scrollY >= root.scrollHeight;
         const elapsed = performance.now() - start;
 
         if (reachedBottom || elapsed >= timeoutMs) {
