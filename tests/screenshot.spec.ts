@@ -32,7 +32,8 @@ async function scrollPage(page: Page) {
           return;
         }
         window.scrollBy(0, distance);
-        const reachedBottom = window.innerHeight + window.scrollY >= root.scrollHeight;
+        const reachedBottom =
+          window.innerHeight + window.scrollY >= root.scrollHeight;
         if (reachedBottom) {
           resolve();
           return;
