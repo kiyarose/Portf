@@ -98,5 +98,5 @@ jobs:
         if: steps.find_comments.outputs.comment-ids != ''
         uses: peter-evans/create-or-update-comment@v4
         with:
-          comment-id: ${{ fromJSON(steps.find_comments.outputs.comment-ids)[0] }}
+          comment-id: ${{ steps.find_comments.outputs.comment-ids.split(' ')[0] }}
           body: '[OUTDATED] See the latest comment above.'
