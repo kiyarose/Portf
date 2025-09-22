@@ -111,7 +111,7 @@ function TimelineColumn({
           </option>
         ))}
       </select>
-      // JSX Props should not use arrow function
+      // Something keeps ignoring this file in the latest SHA
       <ol className="relative border-l border-slate-200 dark:border-slate-700 ml-4 mt-2">
         {options.map((entry, idx) => (
           <li key={entry.company + entry.role} className="mb-6 ml-2">
