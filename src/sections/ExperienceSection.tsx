@@ -219,7 +219,8 @@ function DetailsCard({
                   s.toLowerCase().includes(normalized) ||
                   normalized.includes(s.toLowerCase()),
               );
-              const iconName = skillIcons[item] ?? (match ? skillIcons[match] : undefined);
+              const iconName =
+                skillIcons[item] ?? (match ? skillIcons[match] : undefined);
               return match ? (
                 <a
                   key={item}
@@ -228,7 +229,11 @@ function DetailsCard({
                   title={`See more about ${match}`}
                 >
                   {iconName && (
-                    <Icon icon={iconName} className="text-sm" aria-hidden="true" />
+                    <Icon
+                      icon={iconName}
+                      className="text-sm"
+                      aria-hidden="true"
+                    />
                   )}
                   {item}
                 </a>
@@ -238,7 +243,11 @@ function DetailsCard({
                   className="chip flex items-center gap-2 !bg-slate-100/80 !px-3 !py-1 text-xs font-medium text-slate-600 dark:!bg-slate-800/80 dark:text-slate-200"
                 >
                   {iconName && (
-                    <Icon icon={iconName} className="text-sm" aria-hidden="true" />
+                    <Icon
+                      icon={iconName}
+                      className="text-sm"
+                      aria-hidden="true"
+                    />
                   )}
                   {item}
                 </span>

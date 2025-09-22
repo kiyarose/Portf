@@ -76,7 +76,11 @@ export function ProjectCard({ project }: ProjectCardProps) {
             className="chip flex items-center gap-2 !bg-slate-100/80 !px-3 !py-1 text-xs font-medium text-slate-600 dark:!bg-slate-800/80 dark:text-slate-200"
           >
             {skillIcons[item] && (
-              <Icon icon={skillIcons[item]} className="text-sm" aria-hidden="true" />
+              <Icon
+                icon={skillIcons[item]}
+                className="text-sm"
+                aria-hidden="true"
+              />
             )}
             {item}
           </span>

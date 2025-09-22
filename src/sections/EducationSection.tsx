@@ -166,24 +166,24 @@ function DetailsCard({
             <div className="mb-1 text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-300">
               Focus
             </div>
-              <div className="flex flex-wrap gap-2">
-                {entry.tech.map((item) => (
-                  <span
-                    key={item}
-                    className="chip flex items-center gap-2 !bg-slate-100/80 !px-3 !py-1 text-xs font-medium text-slate-600 dark:!bg-slate-800/80 dark:text-slate-200"
-                  >
-                    {skillIcons[item] && (
-                      <Icon
-                        icon={skillIcons[item]}
-                        className="text-sm"
-                        aria-hidden="true"
-                      />
-                    )}
-                    {item}
-                  </span>
-                ))}
-              </div>
+            <div className="flex flex-wrap gap-2">
+              {entry.tech.map((item) => (
+                <span
+                  key={item}
+                  className="chip flex items-center gap-2 !bg-slate-100/80 !px-3 !py-1 text-xs font-medium text-slate-600 dark:!bg-slate-800/80 dark:text-slate-200"
+                >
+                  {skillIcons[item] && (
+                    <Icon
+                      icon={skillIcons[item]}
+                      className="text-sm"
+                      aria-hidden="true"
+                    />
+                  )}
+                  {item}
+                </span>
+              ))}
             </div>
+          </div>
         )}
         <p className="mt-4 text-sm text-slate-600 dark:text-slate-300">
           Use the selector to review different programmes taken.
