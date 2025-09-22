@@ -10,8 +10,10 @@ export default {
         sans: ['"Inter"', ...defaultTheme.fontFamily.sans]
       },
       colors: {
-        'surface-light': '#f7f8fc',
-        'surface-dark': '#111827',
+        surface: {
+          light: '#f7f8fc',
+          dark: '#111827'
+        },
         accent: {
           DEFAULT: '#f97316',
           muted: '#ec4899'
