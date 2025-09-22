@@ -92,7 +92,7 @@ function ContactIntro({ copied, onCopy }: ContactIntroProps) {
   const copyButtonSurface = themedClass(
     theme,
     "!bg-white !text-accent border border-accent hover:bg-accent/10",
-    "!bg-accent !text-white border border-accent/30 hover:bg-accent/90"
+    "!bg-accent !text-white border border-accent/30 hover:bg-accent/90",
   );
   return (
     <div className="flex-1 space-y-4">
@@ -147,7 +147,7 @@ function ContactForm({
   const sendButtonSurface = themedClass(
     theme,
     "bg-white text-accent border border-accent hover:bg-accent/10 shadow-md",
-    "bg-accent text-white border border-accent/40 hover:bg-accent/90 shadow-lg shadow-accent/40"
+    "bg-accent text-white border border-accent/40 hover:bg-accent/90 shadow-lg shadow-accent/40",
   );
 
   const handleSubmit = useCallback(

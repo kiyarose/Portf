@@ -92,11 +92,7 @@ export function ScrollSpy({ sections }: ScrollSpyProps) {
                         "bg-accent shadow-[0_0_0_3px_rgba(148,163,184,0.25)]",
                         "bg-accent shadow-[0_0_0_3px_rgba(15,23,42,0.45)] ring-2 ring-white/60",
                       )
-                    : themedClass(
-                        theme,
-                        "bg-slate-300/80",
-                        "bg-slate-400/60",
-                      ),
+                    : themedClass(theme, "bg-slate-300/80", "bg-slate-400/60"),
                 )}
               />
             </a>
