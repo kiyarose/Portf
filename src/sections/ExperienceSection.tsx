@@ -52,7 +52,7 @@ function ExperienceCard({
   onChange,
   prefersReducedMotion,
   variants,
-}: ExperienceCardProps) {
+}: Readonly<ExperienceCardProps>) {
   const activeItem = options[activeIndex];
 
   return (
@@ -90,7 +90,7 @@ function TimelineColumn({
   options,
   activeIndex,
   onChange,
-}: TimelineColumnProps) {
+}: Readonly<TimelineColumnProps>) {
   return (
     <div className="flex flex-col gap-2 min-w-[180px]">
       <select
@@ -150,7 +150,7 @@ function DetailsCard({
   entry,
   prefersReducedMotion,
   variants,
-}: DetailsCardProps) {
+}: Readonly<DetailsCardProps>) {
   return (
     <motion.div
       key={entry.company + entry.role}
