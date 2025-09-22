@@ -27,7 +27,11 @@ jobs:
               per_page: 100,
             });
             const sonarComments = issueComments
-              .filter((comment) => comment.user?.login === 'sonarqubecloud[bot]')
+              .filter((comment) => {
+                const body = comment.body?.trim() ?? '';
+                return body.startsWith('## [![Quality Gate Passed]') ||
+                  body.startsWith('## [![Quality Gate Failed]');
+              })
               .map((comment) => ({
                 id: comment.id,
                 node_id: comment.node_id,
