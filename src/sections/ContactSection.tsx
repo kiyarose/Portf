@@ -4,6 +4,9 @@ import { useCallback, useState } from "react";
 import { SectionContainer } from "../components/SectionContainer";
 import { SectionHeader } from "../components/SectionHeader";
 import { safeConsoleWarn, safeConsoleError } from "../utils/errorSanitizer";
+import { useTheme } from "../hooks/useTheme";
+import { themedClass } from "../utils/themeClass";
+import { cn } from "../utils/cn";
 
 const EMAIL = "kiya.rose@sillylittle.tech";
 
@@ -83,9 +86,12 @@ type ContactIntroProps = {
 };
 
 function ContactIntro({ copied, onCopy }: ContactIntroProps) {
+  const { theme } = useTheme();
+  const introCopyColor = themedClass(theme, "text-slate-600", "text-slate-300");
+  const emailColor = themedClass(theme, "text-slate-700", "text-slate-200");
   return (
     <div className="flex-1 space-y-4">
-      <p className="text-base text-slate-600 dark:text-slate-300">
+      <p className={cn("text-base", introCopyColor)}>
         Send me an email with any questions or if you just want to say hi.
       </p>
       <button
@@ -100,7 +106,7 @@ function ContactIntro({ copied, onCopy }: ContactIntroProps) {
         />
         {copied ? "Copied!" : "Copy my email"}
       </button>
-      <p className="text-base font-semibold text-slate-700 dark:text-slate-200">
+      <p className={cn("text-base font-semibold", emailColor)}>
         {EMAIL}
       </p>
     </div>
@@ -118,6 +124,7 @@ function ContactForm({
   errorMessage,
   onErrorChange,
 }: ContactFormProps) {
+  const { theme } = useTheme();
   // Use the env var (public key) to build the Pageclip URL.
   const pageclipApiKey = import.meta.env.VITE_PAGECLIP_API_KEY as
     | string
@@ -261,22 +268,40 @@ function ContactForm({
               : { opacity: 0, y: -10, scale: 0.95 }
           }
           transition={{ duration: 0.3, ease: "easeOut" }}
-          className="rounded-2xl border border-red-200 bg-red-50 p-4 dark:border-red-800/60 dark:bg-red-900/20"
+          className={cn(
+            "rounded-2xl border p-4",
+            themedClass(
+              theme,
+              "border-red-200 bg-red-50",
+              "border-red-800/60 bg-red-900/20",
+            ),
+          )}
         >
           <div className="flex items-start gap-3">
             <Icon
               icon="material-symbols:error-rounded"
-              className="mt-0.5 text-lg text-red-600 dark:text-red-400"
+              className={cn(
+                "mt-0.5 text-lg",
+                themedClass(theme, "text-red-600", "text-red-400"),
+              )}
               aria-hidden="true"
             />
             <div className="flex-1">
-              <pre className="text-sm text-red-800 dark:text-red-200 whitespace-pre-wrap font-mono max-h-40 overflow-y-auto">
+              <pre
+                className={cn(
+                  "max-h-40 overflow-y-auto whitespace-pre-wrap font-mono text-sm",
+                  themedClass(theme, "text-red-800", "text-red-200"),
+                )}
+              >
                 {errorMessage}
               </pre>
               <button
                 type="button"
                 onClick={handleDismissError}
-                className="mt-2 text-xs font-medium text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
+                className={cn(
+                  "mt-2 text-xs font-medium transition-colors",
+                  themedClass(theme, "text-red-600 hover:text-red-700", "text-red-400 hover:text-red-300"),
+                )}
               >
                 Dismiss
               </button>
@@ -284,20 +309,44 @@ function ContactForm({
           </div>
         </motion.div>
       )}
-      <label className="block text-sm font-medium text-slate-600 dark:text-slate-300">
+      <label
+        className={cn(
+          "block text-sm font-medium",
+          themedClass(theme, "text-slate-600", "text-slate-300"),
+        )}
+      >
         <span>Name</span>
         <input
           name="name"
-          className="mt-1 w-full rounded-2xl border border-slate-200/60 bg-white/80 px-4 py-3 text-sm placeholder:text-slate-400 focus:border-accent focus:outline-none dark:border-slate-700/60 dark:bg-slate-900/70"
+          className={cn(
+            "mt-1 w-full rounded-2xl border px-4 py-3 text-sm placeholder:text-slate-400 focus:border-accent focus:outline-none",
+            themedClass(
+              theme,
+              "border-slate-200/60 bg-white/80",
+              "border-slate-700/60 bg-slate-900/70",
+            ),
+          )}
           placeholder="How should I address you?"
         />
       </label>
-      <label className="block text-sm font-medium text-slate-600 dark:text-slate-300">
+      <label
+        className={cn(
+          "block text-sm font-medium",
+          themedClass(theme, "text-slate-600", "text-slate-300"),
+        )}
+      >
         <span>Email</span>
         <input
           type="email"
           name="email"
-          className="mt-1 w-full rounded-2xl border border-slate-200/60 bg-white/80 px-4 py-3 text-sm placeholder:text-slate-400 focus:border-accent focus:outline-none dark:border-slate-700/60 dark:bg-slate-900/70"
+          className={cn(
+            "mt-1 w-full rounded-2xl border px-4 py-3 text-sm placeholder:text-slate-400 focus:border-accent focus:outline-none",
+            themedClass(
+              theme,
+              "border-slate-200/60 bg-white/80",
+              "border-slate-700/60 bg-slate-900/70",
+            ),
+          )}
           placeholder="Where can I reach you?"
           required
         />
@@ -307,12 +356,24 @@ function ContactForm({
         name="subject"
         defaultValue="Hello from a new contact"
       />
-      <label className="block text-sm font-medium text-slate-600 dark:text-slate-300">
+      <label
+        className={cn(
+          "block text-sm font-medium",
+          themedClass(theme, "text-slate-600", "text-slate-300"),
+        )}
+      >
         <span>Message</span>
         <textarea
           name="message"
           rows={4}
-          className="mt-1 w-full rounded-2xl border border-slate-200/60 bg-white/80 px-4 py-3 text-sm placeholder:text-slate-400 focus:border-accent focus:outline-none dark:border-slate-700/60 dark:bg-slate-900/70"
+          className={cn(
+            "mt-1 w-full rounded-2xl border px-4 py-3 text-sm placeholder:text-slate-400 focus:border-accent focus:outline-none",
+            themedClass(
+              theme,
+              "border-slate-200/60 bg-white/80",
+              "border-slate-700/60 bg-slate-900/70",
+            ),
+          )}
           placeholder="Let me know how I can help."
         />
       </label>

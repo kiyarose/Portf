@@ -1,5 +1,8 @@
 import { Icon } from "@iconify/react";
 import type { ReactNode } from "react";
+import { useTheme } from "../hooks/useTheme";
+import { themedClass } from "../utils/themeClass";
+import { cn } from "../utils/cn";
 interface SectionHeaderProps {
   id: string;
   icon: string;
@@ -13,9 +16,15 @@ export function SectionHeader({
   label,
   eyebrow,
 }: SectionHeaderProps) {
+  const { theme } = useTheme();
+  const eyebrowSurface = themedClass(
+    theme,
+    "!bg-accent/10",
+    "!bg-accent/20",
+  );
   return (
     <div className="mb-6 flex items-center gap-4">
-      <span className="chip !bg-accent/10 !text-accent dark:!bg-accent/20">
+      <span className={cn("chip !text-accent", eyebrowSurface)}>
         <Icon icon={icon} className="text-xl" aria-hidden="true" />
         <span className="font-medium">{eyebrow}</span>
       </span>

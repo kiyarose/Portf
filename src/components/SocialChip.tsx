@@ -1,6 +1,8 @@
 import { Icon } from "@iconify/react";
 import { motion, useReducedMotion } from "framer-motion";
 import { cn } from "../utils/cn";
+import { useTheme } from "../hooks/useTheme";
+import { themedClass } from "../utils/themeClass";
 
 interface SocialChipProps {
   href: string;
@@ -10,6 +12,12 @@ interface SocialChipProps {
 
 export function SocialChip({ href, label, icon }: SocialChipProps) {
   const prefersReducedMotion = useReducedMotion();
+  const { theme } = useTheme();
+  const labelColor = themedClass(
+    theme,
+    "text-slate-700",
+    "text-slate-200",
+  );
 
   return (
     <motion.a
@@ -21,7 +29,12 @@ export function SocialChip({ href, label, icon }: SocialChipProps) {
       whileTap={prefersReducedMotion ? undefined : { scale: 0.98 }}
     >
       <Icon icon={icon} className="text-lg text-accent" aria-hidden="true" />
-      <span className="text-sm font-medium text-slate-700 transition-colors duration-200 group-hover:text-accent dark:text-slate-200">
+      <span
+        className={cn(
+          "text-sm font-medium transition-colors duration-200 group-hover:text-accent",
+          labelColor,
+        )}
+      >
         {label}
       </span>
     </motion.a>

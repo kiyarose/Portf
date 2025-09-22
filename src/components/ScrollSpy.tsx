@@ -2,7 +2,9 @@ import { motion, useReducedMotion } from "framer-motion";
 import { Icon } from "@iconify/react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useScrollSpy } from "../hooks/useScrollSpy";
+import { useTheme } from "../hooks/useTheme";
 import { cn } from "../utils/cn";
+import { themedClass } from "../utils/themeClass";
 
 const SHOW_BACK_TO_TOP_OFFSET = 480;
 const BOTTOM_PROXIMITY_OFFSET = 120;
@@ -22,6 +24,7 @@ export function ScrollSpy({ sections }: ScrollSpyProps) {
   const prefersReducedMotion = useReducedMotion() ?? false;
   const [showBackToTop, setShowBackToTop] = useState(false);
   const [isAtBottom, setIsAtBottom] = useState(false);
+  const { theme } = useTheme();
 
   useEffect(() => {
     if (typeof window === "undefined") return undefined;
@@ -111,11 +114,23 @@ export function ScrollSpy({ sections }: ScrollSpyProps) {
           whileHover={prefersReducedMotion ? undefined : { scale: 1.08 }}
           whileTap={prefersReducedMotion ? undefined : { scale: 0.96 }}
           className={cn(
-            "relative mt-6 inline-flex h-10 w-10 items-center justify-center rounded-full border border-slate-300/60 bg-white/80 text-slate-600 shadow-sm backdrop-blur-md transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent dark:border-slate-700/60 dark:bg-slate-900/70 dark:text-slate-100",
+            "relative mt-6 inline-flex h-10 w-10 items-center justify-center rounded-full border shadow-sm backdrop-blur-md transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent",
+            themedClass(
+              theme,
+              "border-slate-300/60 bg-white/80 text-slate-600",
+              "border-slate-700/60 bg-slate-900/70 text-slate-100",
+            ),
             !showBackToTop && "pointer-events-none opacity-0",
             isAtBottom &&
               showBackToTop &&
-              "border-transparent bg-rose-500 text-white shadow-lg dark:bg-rose-400",
+              cn(
+                "border-transparent",
+                themedClass(
+                  theme,
+                  "bg-rose-500 text-white shadow-lg",
+                  "bg-rose-400 text-white shadow-lg",
+                ),
+              ),
           )}
           transition={showBackToTop ? buttonTransition : { duration: 0.2 }}
           aria-label="Back to top"
@@ -140,11 +155,23 @@ export function ScrollSpy({ sections }: ScrollSpyProps) {
         whileHover={prefersReducedMotion ? undefined : { scale: 1.08 }}
         whileTap={prefersReducedMotion ? undefined : { scale: 0.96 }}
         className={cn(
-          "fixed bottom-6 right-4 z-10 inline-flex h-12 w-12 items-center justify-center rounded-full border border-slate-300/60 bg-white/80 text-slate-600 shadow-lg backdrop-blur-md transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent dark:border-slate-700/60 dark:bg-slate-900/70 dark:text-slate-100 md:hidden",
+          "fixed bottom-6 right-4 z-10 inline-flex h-12 w-12 items-center justify-center rounded-full border shadow-lg backdrop-blur-md transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent md:hidden",
+          themedClass(
+            theme,
+            "border-slate-300/60 bg-white/80 text-slate-600",
+            "border-slate-700/60 bg-slate-900/70 text-slate-100",
+          ),
           !showBackToTop && "pointer-events-none opacity-0",
           isAtBottom &&
             showBackToTop &&
-            "border-transparent bg-rose-500 text-white shadow-xl dark:bg-rose-400",
+            cn(
+              "border-transparent",
+              themedClass(
+                theme,
+                "bg-rose-500 text-white shadow-xl",
+                "bg-rose-400 text-white shadow-xl",
+              ),
+            ),
         )}
         transition={showBackToTop ? buttonTransition : { duration: 0.2 }}
         aria-label="Back to top"

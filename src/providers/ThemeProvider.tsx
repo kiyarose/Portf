@@ -1,10 +1,47 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useState } from "react";
 import type { PropsWithChildren } from "react";
 import { ThemeContext, type Theme } from "./theme-context";
 import { safeConsoleWarn } from "../utils/errorSanitizer";
 
 const THEME_STORAGE_KEY = "kiya-theme";
 const USER_PREFERENCE_KEY = "kiya-theme-user-set";
+
+function applyTheme(theme: Theme, userHasSetTheme: boolean) {
+  if (typeof document === "undefined") return;
+
+  const root = document.documentElement;
+  const body = document.body;
+  const colorSchemes = theme === "dark" ? "dark light" : "light dark";
+
+  // Snap both root and body into the requested theme so Tailwind's dark: variants
+  // and UA-tinted controls switch immediately, even when OS preference differs.
+  root.classList.remove("light", "dark");
+  root.classList.add(theme);
+  root.dataset.theme = theme;
+  root.style.colorScheme = colorSchemes;
+
+  if (body) {
+    body.classList.remove("light", "dark");
+    body.classList.add(theme);
+  }
+
+  const colorSchemeMeta =
+    document.querySelector<HTMLMetaElement>("meta[name=\"color-scheme\"]");
+  if (colorSchemeMeta) {
+    colorSchemeMeta.content = colorSchemes;
+  } else {
+    const meta = document.createElement("meta");
+    meta.name = "color-scheme";
+    meta.content = colorSchemes;
+    document.head.appendChild(meta);
+  }
+
+  if (!userHasSetTheme) {
+    root.removeAttribute("data-user-theme");
+  } else {
+    root.dataset.userTheme = theme;
+  }
+}
 
 function getPreferredTheme(): Theme {
   if (typeof window === "undefined") return "light";
@@ -39,15 +76,17 @@ export function ThemeProvider({ children }: PropsWithChildren) {
     hasUserSetTheme(),
   );
 
-  useEffect(() => {
-    if (typeof document === "undefined") return;
-    const root = document.documentElement;
-    root.classList.toggle("dark", theme === "dark");
+  useLayoutEffect(() => {
+    applyTheme(theme, userHasSetTheme);
+  }, [theme, userHasSetTheme]);
 
+  useEffect(() => {
     try {
       window.localStorage.setItem(THEME_STORAGE_KEY, theme);
       if (userHasSetTheme) {
         window.localStorage.setItem(USER_PREFERENCE_KEY, "true");
+      } else {
+        window.localStorage.removeItem(USER_PREFERENCE_KEY);
       }
     } catch (error) {
       safeConsoleWarn("Failed to save theme to localStorage", error);

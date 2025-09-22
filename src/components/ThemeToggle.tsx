@@ -2,6 +2,7 @@ import { Icon } from "@iconify/react";
 import { motion, useReducedMotion } from "framer-motion";
 import { useTheme } from "../hooks/useTheme";
 import { cn } from "../utils/cn";
+import { themedClass } from "../utils/themeClass";
 
 export function ThemeToggle({ className }: { className?: string }) {
   const { theme, toggleTheme } = useTheme();
@@ -14,7 +15,8 @@ export function ThemeToggle({ className }: { className?: string }) {
       type="button"
       onClick={toggleTheme}
       className={cn(
-        "chip !bg-white/70 !px-3 !py-1.5 dark:!bg-slate-800/80",
+        "chip !px-3 !py-1.5",
+        themedClass(theme, "!bg-white/70", "!bg-slate-800/80"),
         "shadow-card backdrop-blur",
         className,
       )}
@@ -43,7 +45,12 @@ export function ThemeToggle({ className }: { className?: string }) {
           className="text-xl text-accent"
           aria-hidden="true"
         />
-        <span className="text-sm font-medium uppercase tracking-wide text-slate-600 dark:text-slate-300">
+        <span
+          className={cn(
+            "text-sm font-medium uppercase tracking-wide",
+            themedClass(theme, "text-slate-600", "text-slate-300"),
+          )}
+        >
           {isLight ? "Dark" : "Light"} mode
         </span>
       </motion.span>

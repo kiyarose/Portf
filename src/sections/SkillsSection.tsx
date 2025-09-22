@@ -21,7 +21,9 @@ import { SectionContainer } from "../components/SectionContainer";
 import { SectionHeader } from "../components/SectionHeader";
 import { defaultSkills } from "../data/skills";
 import { useLocalStorage } from "../hooks/useLocalStorage";
+import { useTheme } from "../hooks/useTheme";
 import { cn } from "../utils/cn";
+import { themedClass } from "../utils/themeClass";
 
 function SortableSkill({
   id,
@@ -44,6 +46,22 @@ function SortableSkill({
     transform: CSS.Transform.toString(transform),
     transition,
   };
+  const { theme } = useTheme();
+  const surfaceClass = themedClass(
+    theme,
+    "bg-white/80 text-slate-700",
+    "bg-slate-800/70 text-slate-200",
+  );
+  const developingClass = themedClass(
+    theme,
+    "border-2 border-dashed border-accent/60 bg-accent/10 text-accent",
+    "border-2 border-dashed border-accent/60 bg-accent/20 text-accent",
+  );
+  const stableBorderClass = themedClass(
+    theme,
+    "border border-slate-200/60",
+    "border border-slate-700/60",
+  );
 
   return (
     <motion.li
@@ -54,10 +72,8 @@ function SortableSkill({
       {...listeners}
       className={cn(
         "select-none rounded-full px-5 py-2 text-sm font-medium shadow-md transition-colors",
-        "bg-white/80 text-slate-700 dark:bg-slate-800/70 dark:text-slate-200",
-        isDeveloping
-          ? "border-2 border-dashed border-accent/60 bg-accent/10 text-accent dark:border-accent/60 dark:bg-accent/20 dark:text-accent"
-          : "border border-slate-200/60 dark:border-slate-700/60",
+        surfaceClass,
+        isDeveloping ? developingClass : stableBorderClass,
         isDragging && "ring-2 ring-accent",
       )}
     >
