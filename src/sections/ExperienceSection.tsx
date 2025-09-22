@@ -99,7 +99,9 @@ function TimelineColumn({
       onChange(idx);
     }
   }
-  function handleSelectChange(event: React.ChangeEvent<HTMLSelectElement>): void {
+  function handleSelectChange(
+    event: React.ChangeEvent<HTMLSelectElement>,
+  ): void {
     const idx = Number(event.target.value);
     if (!Number.isNaN(idx)) {
       onChange(idx);
@@ -115,7 +117,7 @@ function TimelineColumn({
       >
         {options.map((entry, idx) => (
           <option key={entry.company + entry.role} value={idx}>
-        {entry.company}
+            {entry.company}
           </option>
         ))}
       </select>
