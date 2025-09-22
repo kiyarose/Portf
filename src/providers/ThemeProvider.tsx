@@ -24,7 +24,7 @@ function getPreferredTheme(): Theme {
 
 function hasUserSetTheme(): boolean {
   if (typeof window === "undefined") return false;
-  
+
   try {
     return window.localStorage.getItem(USER_PREFERENCE_KEY) === "true";
   } catch (error) {
@@ -35,7 +35,9 @@ function hasUserSetTheme(): boolean {
 
 export function ThemeProvider({ children }: PropsWithChildren) {
   const [theme, setTheme] = useState<Theme>(() => getPreferredTheme());
-  const [userHasSetTheme, setUserHasSetTheme] = useState<boolean>(() => hasUserSetTheme());
+  const [userHasSetTheme, setUserHasSetTheme] = useState<boolean>(() =>
+    hasUserSetTheme(),
+  );
 
   useEffect(() => {
     if (typeof document === "undefined") return;

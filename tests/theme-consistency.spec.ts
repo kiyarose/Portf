@@ -19,12 +19,12 @@ test.describe("Theme Consistency", () => {
     // Get initial theme state
     const getTheme = () =>
       page.evaluate(() =>
-        document.documentElement.classList.contains("dark") ? "dark" : "light"
+        document.documentElement.classList.contains("dark") ? "dark" : "light",
       );
 
     const getUserSetFlag = () =>
-      page.evaluate(() =>
-        window.localStorage.getItem("kiya-theme-user-set") === "true"
+      page.evaluate(
+        () => window.localStorage.getItem("kiya-theme-user-set") === "true",
       );
 
     // Initially, user should not have set theme manually
@@ -90,7 +90,7 @@ test.describe("Theme Consistency", () => {
 
     const getTheme = () =>
       page.evaluate(() =>
-        document.documentElement.classList.contains("dark") ? "dark" : "light"
+        document.documentElement.classList.contains("dark") ? "dark" : "light",
       );
 
     const themeAfterToggle = await getTheme();
@@ -103,7 +103,7 @@ test.describe("Theme Consistency", () => {
 
     // User preference flag should also persist
     const userSetFlag = await page.evaluate(() =>
-      window.localStorage.getItem("kiya-theme-user-set")
+      window.localStorage.getItem("kiya-theme-user-set"),
     );
     expect(userSetFlag).toBe("true");
   });
