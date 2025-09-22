@@ -7,9 +7,38 @@ type ViewportSize = {
   height: number;
 };
 
-const variants: Array<{ fileName: string; viewport: ViewportSize }> = [
-  { fileName: "portfolio-working.png", viewport: { width: 1440, height: 900 } },
-  { fileName: "portfolio-mobile.png", viewport: { width: 390, height: 844 } },
+type SnapshotVariant = {
+  fileName: string;
+  viewport: ViewportSize;
+  theme: "light" | "dark";
+  device: "web" | "mobile";
+};
+
+const variants: SnapshotVariant[] = [
+  {
+    fileName: "portfolio-web-light.png",
+    viewport: { width: 1440, height: 900 },
+    theme: "light",
+    device: "web",
+  },
+  {
+    fileName: "portfolio-web-dark.png",
+    viewport: { width: 1440, height: 900 },
+    theme: "dark",
+    device: "web",
+  },
+  {
+    fileName: "portfolio-mobile-light.png",
+    viewport: { width: 390, height: 844 },
+    theme: "light",
+    device: "mobile",
+  },
+  {
+    fileName: "portfolio-mobile-dark.png",
+    viewport: { width: 390, height: 844 },
+    theme: "dark",
+    device: "mobile",
+  },
 ];
 
 async function waitForFonts(page: Page) {
@@ -51,13 +80,43 @@ async function scrollPage(page: Page) {
   }, 20_000);
 }
 
+async function ensureTheme(page: Page, theme: "light" | "dark") {
+  const getCurrentTheme = () =>
+    page.evaluate(() =>
+      document.documentElement.classList.contains("dark") ? "dark" : "light",
+    );
+
+  for (let attempt = 0; attempt < 2; attempt += 1) {
+    const current = await getCurrentTheme();
+    if (current === theme) {
+      await page.evaluate((nextTheme) => {
+        window.localStorage.setItem("kiya-theme", nextTheme);
+      }, theme);
+      return;
+    }
+
+    const toggle = page.getByRole("button", {
+      name: /toggle light or dark theme/i,
+    });
+    await toggle.click();
+    await page.waitForTimeout(250);
+  }
+
+  const finalTheme = await getCurrentTheme();
+  if (finalTheme !== theme) {
+    throw new Error(`Unable to set theme to ${theme}`);
+  }
+}
+
 test("homepage full-page screenshot", async ({ page }) => {
   const outDir = path.join(process.cwd(), "playwright-logs");
   fs.mkdirSync(outDir, { recursive: true });
 
-  for (const { fileName, viewport } of variants) {
+  for (const { fileName, viewport, theme } of variants) {
     await page.setViewportSize(viewport);
     await page.goto("/", { waitUntil: "networkidle" });
+    await ensureTheme(page, theme);
+    await page.waitForTimeout(150);
     await waitForFonts(page);
     await scrollPage(page);
     await page.waitForTimeout(200);
