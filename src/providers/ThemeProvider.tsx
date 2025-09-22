@@ -4,6 +4,7 @@ import { ThemeContext, type Theme } from "./theme-context";
 import { safeConsoleWarn } from "../utils/errorSanitizer";
 
 const THEME_STORAGE_KEY = "kiya-theme";
+const USER_PREFERENCE_KEY = "kiya-theme-user-set";
 
 function getPreferredTheme(): Theme {
   if (typeof window === "undefined") return "light";
@@ -21,8 +22,20 @@ function getPreferredTheme(): Theme {
   return prefersDark ? "dark" : "light";
 }
 
+function hasUserSetTheme(): boolean {
+  if (typeof window === "undefined") return false;
+  
+  try {
+    return window.localStorage.getItem(USER_PREFERENCE_KEY) === "true";
+  } catch (error) {
+    safeConsoleWarn("Failed to read user preference from localStorage", error);
+    return false;
+  }
+}
+
 export function ThemeProvider({ children }: PropsWithChildren) {
   const [theme, setTheme] = useState<Theme>(() => getPreferredTheme());
+  const [userHasSetTheme, setUserHasSetTheme] = useState<boolean>(() => hasUserSetTheme());
 
   useEffect(() => {
     if (typeof document === "undefined") return;
@@ -31,16 +44,22 @@ export function ThemeProvider({ children }: PropsWithChildren) {
 
     try {
       window.localStorage.setItem(THEME_STORAGE_KEY, theme);
+      if (userHasSetTheme) {
+        window.localStorage.setItem(USER_PREFERENCE_KEY, "true");
+      }
     } catch (error) {
       safeConsoleWarn("Failed to save theme to localStorage", error);
     }
-  }, [theme]);
+  }, [theme, userHasSetTheme]);
 
   function registerMediaPreferenceListener() {
     if (typeof window === "undefined") return undefined;
     const media = window.matchMedia("(prefers-color-scheme: dark)");
     const handler = (event: MediaQueryListEvent) => {
-      setTheme(event.matches ? "dark" : "light");
+      // Only auto-switch themes if user hasn't manually set a preference
+      if (!userHasSetTheme) {
+        setTheme(event.matches ? "dark" : "light");
+      }
     };
     media.addEventListener("change", handler);
     return () => {
@@ -48,13 +67,15 @@ export function ThemeProvider({ children }: PropsWithChildren) {
     };
   }
 
-  useEffect(registerMediaPreferenceListener, []);
+  useEffect(registerMediaPreferenceListener, [userHasSetTheme]);
 
   const value = useMemo(
     () => ({
       theme,
-      toggleTheme: () =>
-        setTheme((prev) => (prev === "light" ? "dark" : "light")),
+      toggleTheme: () => {
+        setUserHasSetTheme(true);
+        setTheme((prev) => (prev === "light" ? "dark" : "light"));
+      },
     }),
     [theme],
   );
