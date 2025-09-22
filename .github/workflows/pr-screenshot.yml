@@ -1,4 +1,6 @@
 name: e2e-screenshot
+permissions:
+  contents: read
 
 on:
   push:
