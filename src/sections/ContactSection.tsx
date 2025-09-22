@@ -89,6 +89,11 @@ function ContactIntro({ copied, onCopy }: ContactIntroProps) {
   const { theme } = useTheme();
   const introCopyColor = themedClass(theme, "text-slate-600", "text-slate-300");
   const emailColor = themedClass(theme, "text-slate-700", "text-slate-200");
+  const copyButtonSurface = themedClass(
+    theme,
+    "!bg-white !text-accent border border-accent hover:bg-accent/10",
+    "!bg-accent !text-white border border-accent/30 hover:bg-accent/90"
+  );
   return (
     <div className="flex-1 space-y-4">
       <p className={cn("text-base", introCopyColor)}>
@@ -97,7 +102,10 @@ function ContactIntro({ copied, onCopy }: ContactIntroProps) {
       <button
         type="button"
         onClick={onCopy}
-        className="chip !bg-accent !text-white hover:translate-y-[-2px] hover:shadow-lg"
+        className={cn(
+          "chip transition hover:translate-y-[-2px]",
+          copyButtonSurface,
+        )}
       >
         <Icon
           icon="material-symbols:content-copy-rounded"
@@ -135,6 +143,12 @@ function ContactForm({
   const handleDismissError = useCallback(() => {
     onErrorChange(null);
   }, [onErrorChange]);
+
+  const sendButtonSurface = themedClass(
+    theme,
+    "bg-white text-accent border border-accent hover:bg-accent/10 shadow-md",
+    "bg-accent text-white border border-accent/40 hover:bg-accent/90 shadow-lg shadow-accent/40"
+  );
 
   const handleSubmit = useCallback(
     async (event: React.FormEvent<HTMLFormElement>) => {
@@ -381,7 +395,10 @@ function ContactForm({
       </label>
       <motion.button
         type="submit"
-        className="pageclip-form__submit w-full rounded-2xl bg-accent px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-accent/30 transition hover:shadow-xl"
+        className={cn(
+          "pageclip-form__submit w-full rounded-2xl px-6 py-3 text-sm font-semibold transition",
+          sendButtonSurface,
+        )}
         whileHover={prefersReducedMotion ? undefined : { scale: 1.01 }}
         whileTap={prefersReducedMotion ? undefined : { scale: 0.97 }}
       >

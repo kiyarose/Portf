@@ -85,18 +85,20 @@ export function ScrollSpy({ sections }: ScrollSpyProps) {
             >
               <span
                 className={cn(
-                  "relative h-3 w-3 rounded-full bg-slate-300/60 transition",
-                  isActive && "bg-accent",
+                  "relative h-3 w-3 rounded-full transition",
+                  isActive
+                    ? themedClass(
+                        theme,
+                        "bg-accent shadow-[0_0_0_3px_rgba(148,163,184,0.25)]",
+                        "bg-accent shadow-[0_0_0_3px_rgba(15,23,42,0.45)] ring-2 ring-white/60",
+                      )
+                    : themedClass(
+                        theme,
+                        "bg-slate-300/80",
+                        "bg-slate-400/60",
+                      ),
                 )}
-              >
-                {isActive && (
-                  <motion.span
-                    layoutId="scroll-indicator"
-                    className="absolute inset-0 rounded-full bg-accent"
-                    transition={{ type: "spring", stiffness: 400, damping: 35 }}
-                  />
-                )}
-              </span>
+              />
             </a>
           );
         })}
