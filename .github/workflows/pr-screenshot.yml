@@ -308,7 +308,7 @@ jobs:
             if (webFound) {
               const webLightUrl = `${siteBaseUrl}/screenshots/${runId}/portfolio-web-light.png`;
               const webDarkUrl = `${siteBaseUrl}/screenshots/${runId}/portfolio-web-dark.png`;
-              const webContent: string[] = [];
+              const webContent = [];
 
               if (webLightFound || webDarkFound) {
                 webContent.push('<table><tr>');
@@ -339,7 +339,7 @@ jobs:
             if (mobileFound) {
               const mobileLightUrl = `${siteBaseUrl}/screenshots/${runId}/portfolio-mobile-light.png`;
               const mobileDarkUrl = `${siteBaseUrl}/screenshots/${runId}/portfolio-mobile-dark.png`;
-              const mobileContent: string[] = [];
+              const mobileContent = [];
 
               if (mobileLightFound || mobileDarkFound) {
                 mobileContent.push('<table><tr>');
