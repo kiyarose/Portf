@@ -1,27 +1,38 @@
-import { test } from "@playwright/test";
+import { test, type Page } from "@playwright/test";
 import fs from "node:fs";
 import path from "node:path";
 
-test("homepage full-page screenshot", async ({ page }) => {
-  const outDir = path.join(process.cwd(), "playwright-logs");
-  fs.mkdirSync(outDir, { recursive: true });
+type ViewportSize = {
+  width: number;
+  height: number;
+};
 
-  await page.goto("/", { waitUntil: "networkidle" });
+const variants: Array<{ fileName: string; viewport: ViewportSize }> = [
+  { fileName: "portfolio-working.png", viewport: { width: 1440, height: 900 } },
+  { fileName: "portfolio-mobile.png", viewport: { width: 390, height: 844 } },
+];
+
+async function waitForFonts(page: Page) {
   await page.evaluate(async () => {
-    // Wait for all fonts/stylesheets to finish loading before capturing the screenshot.
     if (document.fonts?.status !== "loaded") {
       await document.fonts.ready;
     }
   });
+}
+
+async function scrollPage(page: Page) {
   await page.evaluate(async () => {
-    // Auto-scroll to trigger lazy-loaded sections before capturing the full-page image.
     await new Promise<void>((resolve) => {
       const distance = 400;
       const delay = 60;
       const step = () => {
-        const { scrollHeight } = document.scrollingElement ?? document.body;
+        const root = document.scrollingElement ?? document.body;
+        if (!root) {
+          resolve();
+          return;
+        }
         window.scrollBy(0, distance);
-        const reachedBottom = window.innerHeight + window.scrollY >= scrollHeight;
+        const reachedBottom = window.innerHeight + window.scrollY >= root.scrollHeight;
         if (reachedBottom) {
           resolve();
           return;
@@ -32,11 +43,23 @@ test("homepage full-page screenshot", async ({ page }) => {
     });
     window.scrollTo({ top: 0, behavior: "auto" });
   });
-  await page.waitForTimeout(200);
-  await page.screenshot({
-    fullPage: true,
-    path: path.join(outDir, "portfolio-working.png"),
-    scale: "css",
-    type: "png",
-  });
+}
+
+test("homepage full-page screenshot", async ({ page }) => {
+  const outDir = path.join(process.cwd(), "playwright-logs");
+  fs.mkdirSync(outDir, { recursive: true });
+
+  for (const { fileName, viewport } of variants) {
+    await page.setViewportSize(viewport);
+    await page.goto("/", { waitUntil: "networkidle" });
+    await waitForFonts(page);
+    await scrollPage(page);
+    await page.waitForTimeout(200);
+    await page.screenshot({
+      fullPage: true,
+      path: path.join(outDir, fileName),
+      scale: "css",
+      type: "png",
+    });
+  }
 });
