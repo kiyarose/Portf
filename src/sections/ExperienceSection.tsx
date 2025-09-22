@@ -97,21 +97,26 @@ function TimelineColumn({
       onChange(idx);
     }
   }
+  function handleSelectChange(event: React.ChangeEvent<HTMLSelectElement>): void {
+    const idx = Number(event.target.value);
+    if (!Number.isNaN(idx)) {
+      onChange(idx);
+    }
+  }
   return (
     <div className="flex flex-col gap-2 min-w-[180px]">
       <select
         className="rounded-xl border border-slate-200 dark:border-slate-700 bg-transparent px-3 py-2 text-base focus:outline-accent font-semibold"
         value={activeIndex}
-        onChange={(e) => onChange(Number(e.target.value))}
+        onChange={handleSelectChange}
         aria-label="Select experience entry"
       >
         {options.map((entry, idx) => (
           <option key={entry.company + entry.role} value={idx}>
-            {entry.company}
+        {entry.company}
           </option>
         ))}
       </select>
-      // Something keeps ignoring this file in the latest SHA
       <ol className="relative border-l border-slate-200 dark:border-slate-700 ml-4 mt-2">
         {options.map((entry, idx) => (
           <li key={entry.company + entry.role} className="mb-6 ml-2">
@@ -129,6 +134,7 @@ function TimelineColumn({
                 ? "text-accent"
                 : "text-slate-700 dark:text-slate-300 hover:text-accent"
               }`}
+              data-idx={idx}
               onClick={handleClick}
               aria-label={`View experience at ${entry.company}`}
             >
