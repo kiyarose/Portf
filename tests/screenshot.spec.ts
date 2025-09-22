@@ -54,30 +54,26 @@ async function scrollPage(page: Page) {
     const root = document.scrollingElement ?? document.body;
     if (!root) return;
 
-    const distance = Math.max(200, Math.floor(window.innerHeight * 0.75));
     const wait = (ms: number) =>
       new Promise<void>((resolve) => window.setTimeout(resolve, ms));
     const start = performance.now();
+    let stationaryTicks = 0;
 
-    // Scroll until bottom is reached or the timeout elapses.
-    while (performance.now() - start < timeoutMs) {
-      const { scrollHeight } = root;
-      window.scrollBy(0, distance);
-      await wait(80);
+    while (performance.now() - start < timeoutMs && stationaryTicks < 4) {
+      const currentHeight = root.scrollHeight;
+      window.scrollTo({ top: currentHeight, behavior: "auto" });
+      await wait(200);
 
-      const atBottom = window.innerHeight + window.scrollY >= scrollHeight;
-      if (atBottom) {
-        // Allow lazy content to expand; continue if height grows.
-        await wait(200);
-        const newHeight = root.scrollHeight;
-        if (newHeight <= scrollHeight) {
-          break;
-        }
+      const newHeight = root.scrollHeight;
+      if (newHeight <= currentHeight + 2) {
+        stationaryTicks += 1;
+      } else {
+        stationaryTicks = 0;
       }
     }
 
     window.scrollTo({ top: 0, behavior: "auto" });
-  }, 20_000);
+  }, 18_000);
 }
 
 async function ensureTheme(page: Page, theme: "light" | "dark") {
