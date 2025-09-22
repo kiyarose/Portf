@@ -91,22 +91,25 @@ function TimelineColumn({
   activeIndex,
   onChange,
 }: Readonly<TimelineColumnProps>) {
-  function handleClick(
-    event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
-  ): void {
-    const idx = Number(event.currentTarget.getAttribute("data-idx"));
-    if (!Number.isNaN(idx)) {
-      onChange(idx);
-    }
-  }
-  function handleSelectChange(
-    event: React.ChangeEvent<HTMLSelectElement>,
-  ): void {
-    const idx = Number(event.target.value);
-    if (!Number.isNaN(idx)) {
-      onChange(idx);
-    }
-  }
+  const handleClick = useCallback(
+    (event: React.MouseEvent<HTMLButtonElement, MouseEvent>): void => {
+      const idx = Number(event.currentTarget.getAttribute("data-idx"));
+      if (!Number.isNaN(idx)) {
+        onChange(idx);
+      }
+    },
+    [onChange],
+  );
+
+  const handleSelectChange = useCallback(
+    (event: React.ChangeEvent<HTMLSelectElement>): void => {
+      const idx = Number(event.target.value);
+      if (!Number.isNaN(idx)) {
+        onChange(idx);
+      }
+    },
+    [onChange],
+  );
   return (
     <div className="flex flex-col gap-2 min-w-[180px]">
       <select
