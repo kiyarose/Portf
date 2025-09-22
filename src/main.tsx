@@ -36,7 +36,8 @@ if (!container) {
   heading.textContent = "Unable to Load";
 
   const message = document.createElement("p");
-  message.style.cssText = "margin: 0 0 1.5rem 0; color: #4a5568; line-height: 1.6;";
+  message.style.cssText =
+    "margin: 0 0 1.5rem 0; color: #4a5568; line-height: 1.6;";
   message.textContent = GENERIC_ERROR_MESSAGES.UNKNOWN;
 
   const reloadButton = document.createElement("button");
