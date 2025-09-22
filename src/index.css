@@ -1,6 +1,4 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
 :root {
   color-scheme: light;
@@ -15,28 +13,113 @@ html {
     scroll-behavior: auto;
   }
 }
-body {
-  @apply bg-surface-light text-slate-900 dark:bg-surface-dark dark:text-slate-100 font-sans antialiased selection:bg-accent/20 selection:text-accent;
-}
+@layer base {
+  body {
+    font-family:
+      "Inter", "-apple-system", "BlinkMacSystemFont", "Segoe UI",
+      "Helvetica Neue", sans-serif;
+    color: #0f172a;
+    background-color: #f7f8fc;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
 
-a {
-  @apply text-accent transition-colors duration-200 hover:text-accent-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface-light dark:focus-visible:ring-offset-surface-dark;
-}
+  .dark body {
+    color: #f1f5f9;
+    background-color: #111827;
+  }
 
-button {
-  @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface-light dark:focus-visible:ring-offset-surface-dark;
-}
+  body::selection {
+    background-color: rgba(249, 115, 22, 0.2);
+    color: #f97316;
+  }
 
-* {
-  @apply box-border;
+  a {
+    color: #f97316;
+    transition: color 0.2s ease-in-out;
+  }
+
+  a:hover {
+    color: #ec4899;
+  }
+
+  a:focus-visible {
+    outline: none;
+    box-shadow:
+      0 0 0 2px rgba(249, 115, 22, 0.75),
+      0 0 0 4px #f7f8fc;
+  }
+
+  .dark a:focus-visible {
+    box-shadow:
+      0 0 0 2px rgba(249, 115, 22, 0.75),
+      0 0 0 4px #111827;
+  }
+
+  button {
+    outline: none;
+  }
+
+  button:focus-visible {
+    box-shadow:
+      0 0 0 2px rgba(249, 115, 22, 0.75),
+      0 0 0 4px #f7f8fc;
+  }
+
+  .dark button:focus-visible {
+    box-shadow:
+      0 0 0 2px rgba(249, 115, 22, 0.75),
+      0 0 0 4px #111827;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
 }
 
 @layer utilities {
   .card-surface {
-    @apply rounded-3xl bg-white/80 p-6 shadow-card backdrop-blur-sm dark:bg-slate-900/70 dark:shadow-lg border border-slate-200/60 dark:border-slate-700/60 sm:p-8;
+    border-radius: 1.5rem;
+    background-color: rgba(255, 255, 255, 0.8);
+    padding: 1.5rem;
+    box-shadow: 0 20px 45px rgba(15, 23, 42, 0.12);
+    backdrop-filter: blur(4px);
+    border: 1px solid rgba(226, 232, 240, 0.6);
+  }
+
+  .dark .card-surface {
+    background-color: rgba(15, 23, 42, 0.7);
+    box-shadow: 0 18px 40px rgba(15, 23, 42, 0.35);
+    border-color: rgba(51, 65, 85, 0.6);
+  }
+
+  @media (min-width: 640px) {
+    .card-surface {
+      padding: 2rem;
+    }
   }
   .chip {
-    @apply inline-flex items-center gap-2 rounded-full bg-white/80 px-4 py-2 shadow-md transition-all duration-300 hover:shadow-lg dark:bg-slate-800/80 dark:shadow-md border border-slate-200/60 dark:border-slate-700/60;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    border-radius: 9999px;
+    background-color: rgba(255, 255, 255, 0.8);
+    padding: 0.5rem 1rem;
+    box-shadow:
+      0 4px 6px -1px rgba(15, 23, 42, 0.1),
+      0 2px 4px -2px rgba(15, 23, 42, 0.1);
+    transition: all 0.3s ease;
+    border: 1px solid rgba(226, 232, 240, 0.6);
+  }
+
+  .chip:hover {
+    box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.25);
+  }
+
+  .dark .chip {
+    background-color: rgba(30, 41, 59, 0.8);
+    box-shadow: 0 4px 12px -2px rgba(15, 23, 42, 0.4);
+    border-color: rgba(51, 65, 85, 0.6);
   }
   .font-kiya {
     font-family: "Patrick Hand", "Inter", sans-serif;

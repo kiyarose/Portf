@@ -1,0 +1,275 @@
+client:
+  name: basic
+  file-system: device-agnostic
+tools: {}
+targets:
+  "DashboardApp-x86_64-apple-macosx15.0-debug.exe":
+    ["<DashboardApp-x86_64-apple-macosx15.0-debug.exe>"]
+  "DashboardApp-x86_64-apple-macosx15.0-debug.module":
+    ["<DashboardApp-x86_64-apple-macosx15.0-debug.module>"]
+  "PackageStructure": ["<PackageStructure>"]
+  "main":
+    [
+      "<DashboardApp-x86_64-apple-macosx15.0-debug.exe>",
+      "<DashboardApp-x86_64-apple-macosx15.0-debug.module>",
+    ]
+  "test":
+    [
+      "<DashboardApp-x86_64-apple-macosx15.0-debug.exe>",
+      "<DashboardApp-x86_64-apple-macosx15.0-debug.module>",
+    ]
+default: "main"
+nodes:
+  "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/Sources/DashboardApp/":
+    is-directory-structure: true
+    content-exclusion-patterns: [".git", ".build"]
+  "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/.build/x86_64-apple-macosx/debug/DashboardApp":
+    is-mutated: true
+commands:
+  "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/.build/x86_64-apple-macosx/debug/DashboardApp-entitlement.plist":
+    tool: write-auxiliary-file
+    inputs: ["<entitlement-plist>", "<com.apple.security.get-task-allow>"]
+    outputs:
+      [
+        "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/.build/x86_64-apple-macosx/debug/DashboardApp-entitlement.plist",
+      ]
+    description: "Write auxiliary file /Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/.build/x86_64-apple-macosx/debug/DashboardApp-entitlement.plist"
+
+  "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/.build/x86_64-apple-macosx/debug/DashboardApp.build/sources":
+    tool: write-auxiliary-file
+    inputs:
+      [
+        "<sources-file-list>",
+        "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/Sources/DashboardApp/ContentView.swift",
+        "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/Sources/DashboardApp/DashboardApp.swift",
+        "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/Sources/DashboardApp/DashboardViewModel.swift",
+        "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/Sources/DashboardApp/ProcessController.swift",
+      ]
+    outputs:
+      [
+        "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/.build/x86_64-apple-macosx/debug/DashboardApp.build/sources",
+      ]
+    description: "Write auxiliary file /Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/.build/x86_64-apple-macosx/debug/DashboardApp.build/sources"
+
+  "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/.build/x86_64-apple-macosx/debug/DashboardApp.product/Objects.LinkFileList":
+    tool: write-auxiliary-file
+    inputs:
+      [
+        "<link-file-list>",
+        "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/.build/x86_64-apple-macosx/debug/DashboardApp.build/ContentView.swift.o",
+        "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/.build/x86_64-apple-macosx/debug/DashboardApp.build/DashboardApp.swift.o",
+        "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/.build/x86_64-apple-macosx/debug/DashboardApp.build/DashboardViewModel.swift.o",
+        "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/.build/x86_64-apple-macosx/debug/DashboardApp.build/ProcessController.swift.o",
+      ]
+    outputs:
+      [
+        "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/.build/x86_64-apple-macosx/debug/DashboardApp.product/Objects.LinkFileList",
+      ]
+    description: "Write auxiliary file /Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/.build/x86_64-apple-macosx/debug/DashboardApp.product/Objects.LinkFileList"
+
+  "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/.build/x86_64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt":
+    tool: write-auxiliary-file
+    inputs:
+      [
+        "<swift-get-version>",
+        "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      ]
+    outputs:
+      [
+        "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/.build/x86_64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt",
+      ]
+    always-out-of-date: "true"
+    description: "Write auxiliary file /Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/.build/x86_64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt"
+
+  "<DashboardApp-x86_64-apple-macosx15.0-debug.exe>":
+    tool: phony
+    inputs: ["<DashboardApp-x86_64-apple-macosx15.0-debug.exe-CodeSigning>"]
+    outputs: ["<DashboardApp-x86_64-apple-macosx15.0-debug.exe>"]
+
+  "<DashboardApp-x86_64-apple-macosx15.0-debug.module>":
+    tool: phony
+    inputs:
+      [
+        "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/.build/x86_64-apple-macosx/debug/DashboardApp.build/ContentView.swift.o",
+        "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/.build/x86_64-apple-macosx/debug/DashboardApp.build/DashboardApp.swift.o",
+        "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/.build/x86_64-apple-macosx/debug/DashboardApp.build/DashboardViewModel.swift.o",
+        "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/.build/x86_64-apple-macosx/debug/DashboardApp.build/ProcessController.swift.o",
+        "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/.build/x86_64-apple-macosx/debug/Modules/DashboardApp.swiftmodule",
+      ]
+    outputs: ["<DashboardApp-x86_64-apple-macosx15.0-debug.module>"]
+
+  "C.DashboardApp-x86_64-apple-macosx15.0-debug.exe":
+    tool: shell
+    inputs:
+      [
+        "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/.build/x86_64-apple-macosx/debug/DashboardApp.build/ContentView.swift.o",
+        "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/.build/x86_64-apple-macosx/debug/DashboardApp.build/DashboardApp.swift.o",
+        "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/.build/x86_64-apple-macosx/debug/DashboardApp.build/DashboardViewModel.swift.o",
+        "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/.build/x86_64-apple-macosx/debug/DashboardApp.build/ProcessController.swift.o",
+        "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/.build/x86_64-apple-macosx/debug/DashboardApp.product/Objects.LinkFileList",
+      ]
+    outputs:
+      [
+        "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/.build/x86_64-apple-macosx/debug/DashboardApp",
+      ]
+    description: "Linking /Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/.build/x86_64-apple-macosx/debug/DashboardApp"
+    args:
+      [
+        "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+        "-L",
+        "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/.build/x86_64-apple-macosx/debug",
+        "-o",
+        "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/.build/x86_64-apple-macosx/debug/DashboardApp",
+        "-module-name",
+        "DashboardApp",
+        "-Xlinker",
+        "-no_warn_duplicate_libraries",
+        "-emit-executable",
+        "-Xlinker",
+        "-alias",
+        "-Xlinker",
+        "_DashboardApp_main",
+        "-Xlinker",
+        "_main",
+        "-Xlinker",
+        "-rpath",
+        "-Xlinker",
+        "@loader_path",
+        "@/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/.build/x86_64-apple-macosx/debug/DashboardApp.product/Objects.LinkFileList",
+        "-target",
+        "x86_64-apple-macosx13.0",
+        "-Xlinker",
+        "-add_ast_path",
+        "-Xlinker",
+        "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/.build/x86_64-apple-macosx/debug/Modules/DashboardApp.swiftmodule",
+        "-sdk",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk",
+        "-F",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+        "-F",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+        "-I",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+        "-L",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+        "-g",
+      ]
+
+  "C.DashboardApp-x86_64-apple-macosx15.0-debug.exe-entitlements":
+    tool: shell
+    inputs:
+      [
+        "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/.build/x86_64-apple-macosx/debug/DashboardApp",
+        "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/.build/x86_64-apple-macosx/debug/DashboardApp-entitlement.plist",
+      ]
+    outputs: ["<DashboardApp-x86_64-apple-macosx15.0-debug.exe-CodeSigning>"]
+    description: "Applying debug entitlements to /Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/.build/x86_64-apple-macosx/debug/DashboardApp"
+    args:
+      [
+        "codesign",
+        "--force",
+        "--sign",
+        "-",
+        "--entitlements",
+        "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/.build/x86_64-apple-macosx/debug/DashboardApp-entitlement.plist",
+        "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/.build/x86_64-apple-macosx/debug/DashboardApp",
+      ]
+
+  "C.DashboardApp-x86_64-apple-macosx15.0-debug.module":
+    tool: shell
+    inputs:
+      [
+        "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/Sources/DashboardApp/ContentView.swift",
+        "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/Sources/DashboardApp/DashboardApp.swift",
+        "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/Sources/DashboardApp/DashboardViewModel.swift",
+        "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/Sources/DashboardApp/ProcessController.swift",
+        "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/.build/x86_64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt",
+        "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/.build/x86_64-apple-macosx/debug/DashboardApp.build/sources",
+      ]
+    outputs:
+      [
+        "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/.build/x86_64-apple-macosx/debug/DashboardApp.build/ContentView.swift.o",
+        "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/.build/x86_64-apple-macosx/debug/DashboardApp.build/DashboardApp.swift.o",
+        "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/.build/x86_64-apple-macosx/debug/DashboardApp.build/DashboardViewModel.swift.o",
+        "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/.build/x86_64-apple-macosx/debug/DashboardApp.build/ProcessController.swift.o",
+        "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/.build/x86_64-apple-macosx/debug/Modules/DashboardApp.swiftmodule",
+      ]
+    description: "Compiling Swift Module 'DashboardApp' (4 sources)"
+    args:
+      [
+        "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+        "-module-name",
+        "DashboardApp",
+        "-emit-dependencies",
+        "-emit-module",
+        "-emit-module-path",
+        "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/.build/x86_64-apple-macosx/debug/Modules/DashboardApp.swiftmodule",
+        "-output-file-map",
+        "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/.build/x86_64-apple-macosx/debug/DashboardApp.build/output-file-map.json",
+        "-incremental",
+        "-c",
+        "@/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/.build/x86_64-apple-macosx/debug/DashboardApp.build/sources",
+        "-I",
+        "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/.build/x86_64-apple-macosx/debug/Modules",
+        "-target",
+        "x86_64-apple-macosx13.0",
+        "-enable-batch-mode",
+        "-index-store-path",
+        "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/.build/x86_64-apple-macosx/debug/index/store",
+        "-Onone",
+        "-enable-testing",
+        "-j8",
+        "-DSWIFT_PACKAGE",
+        "-DDEBUG",
+        "-module-cache-path",
+        "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/.build/x86_64-apple-macosx/debug/ModuleCache",
+        "-parseable-output",
+        "-Xfrontend",
+        "-entry-point-function-name",
+        "-Xfrontend",
+        "DashboardApp_main",
+        "-color-diagnostics",
+        "-swift-version",
+        "5",
+        "-sdk",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk",
+        "-F",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+        "-F",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+        "-I",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+        "-L",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+        "-g",
+        "-Xcc",
+        "-isysroot",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk",
+        "-Xcc",
+        "-F",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+        "-Xcc",
+        "-F",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+        "-Xcc",
+        "-fPIC",
+        "-Xcc",
+        "-g",
+        "-package-name",
+        "_dashcam_",
+      ]
+
+  "PackageStructure":
+    tool: package-structure-tool
+    inputs:
+      [
+        "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/Sources/DashboardApp/",
+        "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/Package.swift",
+        "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/Package.resolved",
+      ]
+    outputs: ["<PackageStructure>"]
+    description: "Planning build"
+    allow-missing-inputs: true

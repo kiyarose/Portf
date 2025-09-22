@@ -1,0 +1,29 @@
+name: Swift Dashboard Build
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '$DashCam!/**'
+      - '.github/workflows/swift-dashboard-build.yml'
+  pull_request:
+    paths:
+      - '$DashCam!/**'
+      - '.github/workflows/swift-dashboard-build.yml'
+
+jobs:
+  build:
+    runs-on: macos-13
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Select Xcode
+        run: sudo xcode-select --switch /Applications/Xcode.app
+
+      - name: Build Dashboard App
+        run: |
+          cd "$GITHUB_WORKSPACE"
+          cd '$DashCam!'
+          swift build --configuration release

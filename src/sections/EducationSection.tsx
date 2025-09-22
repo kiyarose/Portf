@@ -159,6 +159,23 @@ function DetailsCard({
         <p className="mt-4 text-sm font-medium uppercase tracking-wide text-slate-500 dark:text-slate-300">
           {entry.dates}
         </p>
+        {entry.tech && entry.tech.length > 0 && (
+          <div className="mt-4">
+            <div className="mb-1 text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-300">
+              Focus
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {entry.tech.map((item) => (
+                <span
+                  key={item}
+                  className="chip !bg-slate-100/80 !px-3 !py-1 text-xs font-medium text-slate-600 dark:!bg-slate-800/80 dark:text-slate-200"
+                >
+                  {item}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
         <p className="mt-4 text-sm text-slate-600 dark:text-slate-300">
           Use the selector to review different programmes taken.
         </p>
