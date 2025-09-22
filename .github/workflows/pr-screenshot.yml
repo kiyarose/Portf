@@ -78,7 +78,7 @@ jobs:
           publish_dir: _screenshot_publish
           keep_files: true
           allow_empty_commit: false
-          commit_message: docs(screenshot): ${{ github.run_id }}
+          commit_message: "docs(screenshot): ${{ github.run_id }}"
 
       # Comment inline (same-repo PRs only)
       - name: Comment on PR with inline screenshot (gh-pages URL)
