@@ -2,6 +2,8 @@ name: e2e-screenshot
 
 permissions:
   contents: write       # needed to push to gh-pages
+  pages: write          # deploy with actions/deploy-pages
+  id-token: write       # required by actions/deploy-pages
   pull-requests: write
   issues: write
 
@@ -69,28 +71,56 @@ jobs:
             echo "found=false" >> "$GITHUB_OUTPUT"
           fi
 
-      # Publish screenshot to gh-pages for same-repo runs/PRs
-      - name: Publish screenshot to gh-pages
+      # Publish screenshot via GitHub Pages for same-repo runs/PRs
+      - name: Configure GitHub Pages
         if: steps.prep_pages.outputs.found == 'true' && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.fork == false)
-        uses: peaceiris/actions-gh-pages@v3
+        uses: actions/configure-pages@v4
+
+      - name: Upload screenshot to Pages artifact
+        if: steps.prep_pages.outputs.found == 'true' && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.fork == false)
+        uses: actions/upload-pages-artifact@v2
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: _screenshot_publish
-          keep_files: true
-          allow_empty_commit: false
-          commit_message: "docs(screenshot): ${{ github.run_id }}"
+          path: _screenshot_publish
+
+      - name: Deploy GitHub Pages site
+        id: deploy
+        if: steps.prep_pages.outputs.found == 'true' && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.fork == false)
+        uses: actions/deploy-pages@v4
+        with:
+          preview: ${{ github.event_name == 'pull_request' }}
+
+      - name: Add GitHub Pages link to job summary
+        if: steps.prep_pages.outputs.found == 'true' && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.fork == false)
+        run: |
+          page_url="${{ steps.deploy.outputs.preview_url }}"
+          if [ -z "$page_url" ]; then
+            page_url="${{ steps.deploy.outputs.page_url }}"
+          fi
+
+          if [ -n "$page_url" ]; then
+            {
+              echo "### GitHub Pages Screenshot"
+              echo
+              echo "[View published image](${page_url%/}/screenshots/${{ github.run_id }}/portfolio-working.png)"
+            } >> "$GITHUB_STEP_SUMMARY"
+          fi
 
       # Comment inline (same-repo PRs only)
-      - name: Comment on PR with inline screenshot (gh-pages URL)
+      - name: Comment on PR with inline screenshot (Pages URL)
         if: steps.prep_pages.outputs.found == 'true' && github.event_name == 'pull_request' && github.event.pull_request.head.repo.fork == false
         uses: actions/github-script@v7
+        env:
+          PAGE_URL: ${{ steps.deploy.outputs.page_url }}
+          PREVIEW_URL: ${{ steps.deploy.outputs.preview_url }}
         with:
           script: |
-            const owner = context.repo.owner;
-            const repo = context.repo.repo;
             const runId = process.env.GITHUB_RUN_ID;
-            const imageUrl = `https://${owner}.github.io/${repo}/screenshots/${runId}/portfolio-working.png`;
-
+            const baseUrl = (process.env.PREVIEW_URL || process.env.PAGE_URL || '').replace(/\/$/, '');
+            if (!baseUrl) {
+              core.info('Pages URL missing; skipping comment.');
+              return;
+            }
+            const imageUrl = `${baseUrl}/screenshots/${runId}/portfolio-working.png`;
             const body = [
               '**Automated Playwright Screenshot**',
               '',
@@ -100,8 +130,8 @@ jobs:
             ].join('\n');
 
             await github.rest.issues.createComment({
-              owner,
-              repo,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
               issue_number: context.issue.number,
               body
             });
