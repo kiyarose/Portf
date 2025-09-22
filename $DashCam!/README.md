@@ -15,7 +15,7 @@ The app surfaces the latest log output for each process, allows clearing logs, a
 ## Getting Started
 
 1. Open the `macos-dashboard` folder in Xcode (`open macos-dashboard/Package.swift`).
-2. Choose the *DashboardApp* scheme and press **⌘R** to build and run.
+2. Choose the _DashboardApp_ scheme and press **⌘R** to build and run.
 3. Confirm the "Project Directory" points at your repo (defaults to `~/Documents/GitStuff/Portf`).
 4. Use the Start/Stop/Restart controls for either task. The status chips and logs update in real time.
 5. Adjust the Playwright port if your dev server is running on a different localhost port.
