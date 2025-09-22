@@ -6,6 +6,14 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		C23427382E8188F700C1AF73 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C23427322E8188F700C1AF73 /* ContentView.swift */; };
+		C23427392E8188F700C1AF73 /* DashboardViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C23427342E8188F700C1AF73 /* DashboardViewModel.swift */; };
+		C234273A2E8188F700C1AF73 /* ProcessController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C23427352E8188F700C1AF73 /* ProcessController.swift */; };
+		C234273B2E8188F700C1AF73 /* DashboardApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C23427332E8188F700C1AF73 /* DashboardApp.swift */; };
+		C234273C2E8188F700C1AF73 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C23427312E8188F700C1AF73 /* Assets.xcassets */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		C23427152E81884C00C1AF73 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -27,25 +35,16 @@
 		C23427042E81884800C1AF73 /* DashCam.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DashCam.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C23427142E81884C00C1AF73 /* DashCamTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DashCamTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		C234271E2E81884C00C1AF73 /* DashCamUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DashCamUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		C23427312E8188F700C1AF73 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		C23427322E8188F700C1AF73 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		C23427332E8188F700C1AF73 /* DashboardApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardApp.swift; sourceTree = "<group>"; };
+		C23427342E8188F700C1AF73 /* DashboardViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardViewModel.swift; sourceTree = "<group>"; };
+		C23427352E8188F700C1AF73 /* ProcessController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessController.swift; sourceTree = "<group>"; };
+		C234273D2E81890300C1AF73 /* Package.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Package.swift; sourceTree = "<group>"; };
+		C234273E2E81890A00C1AF73 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		C23427402E818A6B00C1AF73 /* DashCam.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = DashCam.entitlements; sourceTree = "<group>"; };
+		C23427412E818B2800C1AF73 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
-
-/* Begin PBXFileSystemSynchronizedRootGroup section */
-		C23427062E81884800C1AF73 /* DashCam */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = DashCam;
-			sourceTree = "<group>";
-		};
-		C23427172E81884C00C1AF73 /* DashCamTests */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = DashCamTests;
-			sourceTree = "<group>";
-		};
-		C23427212E81884C00C1AF73 /* DashCamUITests */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = DashCamUITests;
-			sourceTree = "<group>";
-		};
-/* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		C23427012E81884800C1AF73 /* Frameworks */ = {
@@ -75,9 +74,11 @@
 		C23426FB2E81884800C1AF73 = {
 			isa = PBXGroup;
 			children = (
-				C23427062E81884800C1AF73 /* DashCam */,
-				C23427172E81884C00C1AF73 /* DashCamTests */,
-				C23427212E81884C00C1AF73 /* DashCamUITests */,
+				C23427402E818A6B00C1AF73 /* DashCam.entitlements */,
+				C23427412E818B2800C1AF73 /* Info.plist */,
+				C234273D2E81890300C1AF73 /* Package.swift */,
+				C234273E2E81890A00C1AF73 /* README.md */,
+				C23427372E8188F700C1AF73 /* Sources */,
 				C23427052E81884800C1AF73 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -90,6 +91,26 @@
 				C234271E2E81884C00C1AF73 /* DashCamUITests.xctest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		C23427362E8188F700C1AF73 /* DashboardApp */ = {
+			isa = PBXGroup;
+			children = (
+				C23427312E8188F700C1AF73 /* Assets.xcassets */,
+				C23427322E8188F700C1AF73 /* ContentView.swift */,
+				C23427332E8188F700C1AF73 /* DashboardApp.swift */,
+				C23427342E8188F700C1AF73 /* DashboardViewModel.swift */,
+				C23427352E8188F700C1AF73 /* ProcessController.swift */,
+			);
+			path = DashboardApp;
+			sourceTree = "<group>";
+		};
+		C23427372E8188F700C1AF73 /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				C23427362E8188F700C1AF73 /* DashboardApp */,
+			);
+			path = Sources;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -106,9 +127,6 @@
 			buildRules = (
 			);
 			dependencies = (
-			);
-			fileSystemSynchronizedGroups = (
-				C23427062E81884800C1AF73 /* DashCam */,
 			);
 			name = DashCam;
 			packageProductDependencies = (
@@ -130,9 +148,6 @@
 			dependencies = (
 				C23427162E81884C00C1AF73 /* PBXTargetDependency */,
 			);
-			fileSystemSynchronizedGroups = (
-				C23427172E81884C00C1AF73 /* DashCamTests */,
-			);
 			name = DashCamTests;
 			packageProductDependencies = (
 			);
@@ -152,9 +167,6 @@
 			);
 			dependencies = (
 				C23427202E81884C00C1AF73 /* PBXTargetDependency */,
-			);
-			fileSystemSynchronizedGroups = (
-				C23427212E81884C00C1AF73 /* DashCamUITests */,
 			);
 			name = DashCamUITests;
 			packageProductDependencies = (
@@ -212,6 +224,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C234273C2E8188F700C1AF73 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -236,6 +249,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C23427382E8188F700C1AF73 /* ContentView.swift in Sources */,
+				C23427392E8188F700C1AF73 /* DashboardViewModel.swift in Sources */,
+				C234273A2E8188F700C1AF73 /* ProcessController.swift in Sources */,
+				C234273B2E8188F700C1AF73 /* DashboardApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -393,8 +410,11 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				"ASSETCATALOG_COMPILER_APPICON_NAME[sdk=macosx*]" = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = DashCam/DashCam.entitlements;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
+				CODE_SIGN_ENTITLEMENTS = DashCam.entitlements;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
@@ -402,6 +422,7 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -421,8 +442,11 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				"ASSETCATALOG_COMPILER_APPICON_NAME[sdk=macosx*]" = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = DashCam/DashCam.entitlements;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
+				CODE_SIGN_ENTITLEMENTS = DashCam.entitlements;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
@@ -430,6 +454,7 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
