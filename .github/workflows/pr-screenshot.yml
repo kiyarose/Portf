@@ -308,63 +308,63 @@ jobs:
             if (webFound) {
               const webLightUrl = `${siteBaseUrl}/screenshots/${runId}/portfolio-web-light.png`;
               const webDarkUrl = `${siteBaseUrl}/screenshots/${runId}/portfolio-web-dark.png`;
-              sections.push('### Web', '');
+              const webContent: string[] = [];
 
-              const webCells = [];
-              if (webLightFound) {
-                webCells.push(
-                  `<td style="padding:0 8px 16px; text-align:center;">` +
-                    `<div><strong>Light</strong></div>` +
-                    `<img src="${webLightUrl}" alt="Playwright screenshot of the portfolio (web · light)" width="320" />` +
-                  `</td>`
-                );
-              }
-
-              if (webDarkFound) {
-                webCells.push(
-                  `<td style="padding:0 8px 16px; text-align:center;">` +
-                    `<div><strong>Dark</strong></div>` +
-                    `<img src="${webDarkUrl}" alt="Playwright screenshot of the portfolio (web · dark)" width="320" />` +
-                  `</td>`
-                );
-              }
-
-              if (webCells.length) {
-                sections.push('<table><tr>', webCells.join(''), '</tr></table>', '');
+              if (webLightFound || webDarkFound) {
+                webContent.push('<table><tr>');
+                if (webLightFound) {
+                  webContent.push(
+                    `<td style="padding:0 8px 16px; text-align:center;">` +
+                      `<div><strong>Light</strong></div>` +
+                      `<img src="${webLightUrl}" alt="Playwright screenshot of the portfolio (web · light)" width="320" />` +
+                    `</td>`
+                  );
+                }
+                if (webDarkFound) {
+                  webContent.push(
+                    `<td style="padding:0 8px 16px; text-align:center;">` +
+                      `<div><strong>Dark</strong></div>` +
+                      `<img src="${webDarkUrl}" alt="Playwright screenshot of the portfolio (web · dark)" width="320" />` +
+                    `</td>`
+                  );
+                }
+                webContent.push('</tr></table>', '');
               } else {
-                sections.push('_Web render unavailable for this run._', '');
+                webContent.push('_Web render unavailable for this run._', '');
               }
+
+              sections.push('<details>', '<summary>View Web</summary>', '', ...webContent, '</details>', '');
             }
 
             if (mobileFound) {
               const mobileLightUrl = `${siteBaseUrl}/screenshots/${runId}/portfolio-mobile-light.png`;
               const mobileDarkUrl = `${siteBaseUrl}/screenshots/${runId}/portfolio-mobile-dark.png`;
-              sections.push('### Mobile', '');
+              const mobileContent: string[] = [];
 
-              const mobileCells = [];
-              if (mobileLightFound) {
-                mobileCells.push(
-                  `<td style="padding:0 8px 16px; text-align:center;">` +
-                    `<div><strong>Light</strong></div>` +
-                    `<img src="${mobileLightUrl}" alt="Playwright screenshot of the portfolio (mobile · light)" width="240" />` +
-                  `</td>`
-                );
-              }
-
-              if (mobileDarkFound) {
-                mobileCells.push(
-                  `<td style="padding:0 8px 16px; text-align:center;">` +
-                    `<div><strong>Dark</strong></div>` +
-                    `<img src="${mobileDarkUrl}" alt="Playwright screenshot of the portfolio (mobile · dark)" width="240" />` +
-                  `</td>`
-                );
-              }
-
-              if (mobileCells.length) {
-                sections.push('<table><tr>', mobileCells.join(''), '</tr></table>', '');
+              if (mobileLightFound || mobileDarkFound) {
+                mobileContent.push('<table><tr>');
+                if (mobileLightFound) {
+                  mobileContent.push(
+                    `<td style="padding:0 8px 16px; text-align:center;">` +
+                      `<div><strong>Light</strong></div>` +
+                      `<img src="${mobileLightUrl}" alt="Playwright screenshot of the portfolio (mobile · light)" width="240" />` +
+                    `</td>`
+                  );
+                }
+                if (mobileDarkFound) {
+                  mobileContent.push(
+                    `<td style="padding:0 8px 16px; text-align:center;">` +
+                      `<div><strong>Dark</strong></div>` +
+                      `<img src="${mobileDarkUrl}" alt="Playwright screenshot of the portfolio (mobile · dark)" width="240" />` +
+                    `</td>`
+                  );
+                }
+                mobileContent.push('</tr></table>', '');
               } else {
-                sections.push('_Mobile render unavailable for this run._', '');
+                mobileContent.push('_Mobile render unavailable for this run._', '');
               }
+
+              sections.push('<details>', '<summary>View Mobile</summary>', '', ...mobileContent, '</details>', '');
             }
 
             if (!webFound && !mobileFound) {
