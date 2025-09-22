@@ -1,6 +1,6 @@
 import { motion, useReducedMotion } from "framer-motion";
 import { useCallback, useMemo, useState } from "react";
-import type { ChangeEvent } from "react";
+
 import { SectionContainer } from "../components/SectionContainer";
 import { SectionHeader } from "../components/SectionHeader";
 import { experienceTimeline } from "../data/experience";
@@ -17,22 +17,18 @@ export function ExperienceSection() {
     [],
   );
 
-  const handleSelectChange = useCallback(
-    (event: ChangeEvent<HTMLSelectElement>) => {
-      const next = Number(event.target.value);
-      if (!Number.isNaN(next)) {
-        setActiveIndex(next);
-      }
-    },
-    [],
-  );
+  const handleIndexChange = useCallback((next: number) => {
+    if (!Number.isNaN(next)) {
+      setActiveIndex(next);
+    }
+  }, []);
 
   return (
     <SectionContainer id="experience" className="pb-20">
       <ExperienceCard
         options={experienceTimeline}
         activeIndex={activeIndex}
-        onChange={handleSelectChange}
+        onChange={handleIndexChange}
         prefersReducedMotion={prefersReducedMotion}
         variants={variants}
       />
@@ -43,14 +39,13 @@ export function ExperienceSection() {
 type ExperienceCardProps = {
   options: typeof experienceTimeline;
   activeIndex: number;
-  onChange: (event: ChangeEvent<HTMLSelectElement>) => void;
+  onChange: (index: number) => void;
   prefersReducedMotion: boolean;
   variants: {
     enter: { opacity: number; y: number };
     center: { opacity: number; y: number };
   };
 };
-
 function ExperienceCard({
   options,
   activeIndex,
@@ -88,7 +83,7 @@ function ExperienceCard({
 type TimelineColumnProps = {
   options: typeof experienceTimeline;
   activeIndex: number;
-  onChange: (event: ChangeEvent<HTMLSelectElement>) => void;
+  onChange: (index: number) => void;
 };
 
 function TimelineColumn({
@@ -101,7 +96,7 @@ function TimelineColumn({
       <select
         className="rounded-xl border border-slate-200 dark:border-slate-700 bg-transparent px-3 py-2 text-base focus:outline-accent font-semibold"
         value={activeIndex}
-        onChange={onChange}
+        onChange={e => onChange(Number(e.target.value))}
         aria-label="Select experience entry"
       >
         {options.map((entry, idx) => (
@@ -127,9 +122,7 @@ function TimelineColumn({
                   ? "text-accent"
                   : "text-slate-700 dark:text-slate-300 hover:text-accent"
               }`}
-              onClick={() =>
-                onChange({ target: { value: String(idx) } } as any)
-              }
+              onClick={() => onChange(idx)}
               aria-label={`View experience at ${entry.company}`}
             >
               {entry.company}
