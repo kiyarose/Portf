@@ -21,7 +21,8 @@ test("homepage full-page screenshot", async ({ page }) => {
       const step = () => {
         const { scrollHeight } = document.scrollingElement ?? document.body;
         window.scrollBy(0, distance);
-        const reachedBottom = window.innerHeight + window.scrollY >= scrollHeight;
+        const reachedBottom =
+          window.innerHeight + window.scrollY >= scrollHeight;
         if (reachedBottom) {
           resolve();
           return;

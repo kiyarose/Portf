@@ -15,7 +15,9 @@ html {
 }
 @layer base {
   body {
-    font-family: "Inter", "-apple-system", "BlinkMacSystemFont", "Segoe UI", "Helvetica Neue", sans-serif;
+    font-family:
+      "Inter", "-apple-system", "BlinkMacSystemFont", "Segoe UI",
+      "Helvetica Neue", sans-serif;
     color: #0f172a;
     background-color: #f7f8fc;
     -webkit-font-smoothing: antialiased;
@@ -43,11 +45,15 @@ html {
 
   a:focus-visible {
     outline: none;
-    box-shadow: 0 0 0 2px rgba(249, 115, 22, 0.75), 0 0 0 4px #f7f8fc;
+    box-shadow:
+      0 0 0 2px rgba(249, 115, 22, 0.75),
+      0 0 0 4px #f7f8fc;
   }
 
   .dark a:focus-visible {
-    box-shadow: 0 0 0 2px rgba(249, 115, 22, 0.75), 0 0 0 4px #111827;
+    box-shadow:
+      0 0 0 2px rgba(249, 115, 22, 0.75),
+      0 0 0 4px #111827;
   }
 
   button {
@@ -55,11 +61,15 @@ html {
   }
 
   button:focus-visible {
-    box-shadow: 0 0 0 2px rgba(249, 115, 22, 0.75), 0 0 0 4px #f7f8fc;
+    box-shadow:
+      0 0 0 2px rgba(249, 115, 22, 0.75),
+      0 0 0 4px #f7f8fc;
   }
 
   .dark button:focus-visible {
-    box-shadow: 0 0 0 2px rgba(249, 115, 22, 0.75), 0 0 0 4px #111827;
+    box-shadow:
+      0 0 0 2px rgba(249, 115, 22, 0.75),
+      0 0 0 4px #111827;
   }
 
   * {
@@ -95,7 +105,9 @@ html {
     border-radius: 9999px;
     background-color: rgba(255, 255, 255, 0.8);
     padding: 0.5rem 1rem;
-    box-shadow: 0 4px 6px -1px rgba(15, 23, 42, 0.1), 0 2px 4px -2px rgba(15, 23, 42, 0.1);
+    box-shadow:
+      0 4px 6px -1px rgba(15, 23, 42, 0.1),
+      0 2px 4px -2px rgba(15, 23, 42, 0.1);
     transition: all 0.3s ease;
     border: 1px solid rgba(226, 232, 240, 0.6);
   }
