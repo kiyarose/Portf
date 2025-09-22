@@ -91,6 +91,12 @@ function TimelineColumn({
   activeIndex,
   onChange,
 }: Readonly<TimelineColumnProps>) {
+  function handleClick(event: React.MouseEvent<HTMLButtonElement, MouseEvent>): void {
+    const idx = Number(event.currentTarget.getAttribute("data-idx"));
+    if (!Number.isNaN(idx)) {
+      onChange(idx);
+    }
+  }
   return (
     <div className="flex flex-col gap-2 min-w-[180px]">
       <select
@@ -118,11 +124,11 @@ function TimelineColumn({
             />
             <button
               className={`text-left font-semibold transition-colors ${
-                idx === activeIndex
-                  ? "text-accent"
-                  : "text-slate-700 dark:text-slate-300 hover:text-accent"
+              idx === activeIndex
+                ? "text-accent"
+                : "text-slate-700 dark:text-slate-300 hover:text-accent"
               }`}
-              onClick={() => onChange(idx)}
+              onClick={handleClick}
               aria-label={`View experience at ${entry.company}`}
             >
               {entry.company}
