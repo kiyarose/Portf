@@ -1,9 +1,11 @@
+import { Icon } from "@iconify/react";
 import { motion, useReducedMotion } from "framer-motion";
 import { useCallback, useMemo, useState } from "react";
 
 import { SectionContainer } from "../components/SectionContainer";
 import { SectionHeader } from "../components/SectionHeader";
 import { experienceTimeline } from "../data/experience";
+import { companyIcons, skillIcons } from "../utils/icons";
 
 export function ExperienceSection() {
   const [activeIndex, setActiveIndex] = useState(0);
@@ -136,7 +138,7 @@ function TimelineColumn({
               aria-current={idx === activeIndex ? "step" : undefined}
             />
             <button
-              className={`text-left font-semibold transition-colors ${
+              className={`flex items-center gap-2 text-left font-semibold transition-colors ${
                 idx === activeIndex
                   ? "text-accent"
                   : "text-slate-700 dark:text-slate-300 hover:text-accent"
@@ -145,7 +147,14 @@ function TimelineColumn({
               onClick={handleClick}
               aria-label={`View experience at ${entry.company}`}
             >
-              {entry.company}
+              {companyIcons[entry.company] && (
+                <Icon
+                  icon={companyIcons[entry.company]!}
+                  className="text-base opacity-80"
+                  aria-hidden="true"
+                />
+              )}
+              <span>{entry.company}</span>
             </button>
             <div className="text-xs text-slate-500 dark:text-slate-400">
               {entry.dates}
@@ -171,6 +180,7 @@ function DetailsCard({
   prefersReducedMotion,
   variants,
 }: Readonly<DetailsCardProps>) {
+  const companyIcon = companyIcons[entry.company];
   return (
     <motion.div
       key={entry.company + entry.role}
@@ -181,8 +191,11 @@ function DetailsCard({
       className="flex-1 min-w-0"
     >
       <div className="mb-2 text-lg font-bold text-accent">{entry.role}</div>
-      <div className="mb-1 text-base font-semibold text-slate-800 dark:text-slate-100">
-        {entry.company}
+      <div className="mb-1 flex items-center gap-2 text-base font-semibold text-slate-800 dark:text-slate-100">
+        {companyIcon && (
+          <Icon icon={companyIcon} className="text-lg" aria-hidden="true" />
+        )}
+        <span>{entry.company}</span>
       </div>
       <div className="mb-2 text-sm text-slate-500 dark:text-slate-400">
         {entry.dates}
@@ -206,20 +219,27 @@ function DetailsCard({
                   s.toLowerCase().includes(normalized) ||
                   normalized.includes(s.toLowerCase()),
               );
+              const iconName = skillIcons[item] ?? (match ? skillIcons[match] : undefined);
               return match ? (
                 <a
                   key={item}
                   href="#skills"
-                  className="chip !bg-accent/20 !px-3 !py-1 text-xs font-medium text-accent underline-offset-2 hover:underline dark:!bg-accent/30"
+                  className="chip flex items-center gap-2 !bg-accent/20 !px-3 !py-1 text-xs font-medium text-accent underline-offset-2 hover:underline dark:!bg-accent/30"
                   title={`See more about ${match}`}
                 >
+                  {iconName && (
+                    <Icon icon={iconName} className="text-sm" aria-hidden="true" />
+                  )}
                   {item}
                 </a>
               ) : (
                 <span
                   key={item}
-                  className="chip !bg-slate-100/80 !px-3 !py-1 text-xs font-medium text-slate-600 dark:!bg-slate-800/80 dark:text-slate-200"
+                  className="chip flex items-center gap-2 !bg-slate-100/80 !px-3 !py-1 text-xs font-medium text-slate-600 dark:!bg-slate-800/80 dark:text-slate-200"
                 >
+                  {iconName && (
+                    <Icon icon={iconName} className="text-sm" aria-hidden="true" />
+                  )}
                   {item}
                 </span>
               );

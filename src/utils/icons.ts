@@ -1,16 +1,5 @@
-import { addCollection } from "@iconify/react";
-
-// Import icon sets
-import materialSymbols from "@iconify/json/json/material-symbols.json";
-import mdi from "@iconify/json/json/mdi.json";
-import simpleIcons from "@iconify/json/json/simple-icons.json";
-
-export function initializeIcons() {
-  // Add icon collections
-  addCollection(materialSymbols);
-  addCollection(mdi);
-  addCollection(simpleIcons);
-}
+// Icons are lazy-loaded from Iconify CDN by default; keep hook for future use
+export function initializeIcons() {}
 
 // Skill icon mapping
 export const skillIcons: Record<string, string> = {
@@ -24,4 +13,43 @@ export const skillIcons: Record<string, string> = {
   Advocacy: "material-symbols:campaign",
   Sales: "material-symbols:sell",
   Logistics: "material-symbols:inventory",
+  Leadership: "mdi:account-tie",
+  Retail: "mdi:store",
+  "Order Picking": "mdi:clipboard-check",
+  "Product Substitutions": "mdi:swap-horizontal",
+  "Order Staging": "mdi:warehouse",
+  "Order Dispensing": "mdi:tray-arrow-up",
+  Picking: "mdi:hand-back-right",
+  Packing: "mdi:package-variant-closed",
+  Stowing: "mdi:archive-arrow-down",
+  Unloading: "mdi:truck-delivery-outline",
+  "Voter Registration": "mdi:clipboard-text",
+  Canvassing: "mdi:account-voice",
+  "Community Engagement": "mdi:account-group",
+  Networking: "mdi:lan",
+  Windows: "mdi:microsoft-windows",
+  "Windows Server": "mdi:microsoft-windows",
+  Cisco: "simple-icons:cisco",
+  Linux: "simple-icons:linux",
+  "Medical Coding": "material-symbols:medical-information-rounded",
+  "Health Informatics": "material-symbols:monitoring-rounded",
+  Excel: "simple-icons:microsoftexcel",
+  ProtonVPN: "simple-icons:protonvpn",
+  OpenVPN: "simple-icons:openvpn",
+  JavaScript: "simple-icons:javascript",
+  HPE: "simple-icons:hewlettpackardenterprise",
+  VMWare: "simple-icons:vmware",
+  ILO: "mdi:server",
+  Hope: "mdi:star-four-points",
+  Dreams: "mdi:moon-waning-crescent",
+  Passion: "mdi:fire",
+  Love: "mdi:heart",
+};
+
+export const companyIcons: Record<string, string> = {
+  "YRAB/CAYAH Research Board": "mdi:account-group",
+  Walmart: "simple-icons:walmart",
+  Amazon: "simple-icons:amazon",
+  "Shawmut Services LLC (Contract)": "mdi:handshake",
+  "Google (Contract)": "simple-icons:google",
 };
