@@ -102,7 +102,7 @@ function TimelineColumn({
       <select
         className="rounded-xl border border-slate-200 dark:border-slate-700 bg-transparent px-3 py-2 text-base focus:outline-accent font-semibold"
         value={activeIndex}
-        onChange={e => onChange(Number(e.target.value))}
+        onChange={(e) => onChange(Number(e.target.value))}
         aria-label="Select experience entry"
       >
         {options.map((entry, idx) => (
