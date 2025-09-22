@@ -22,24 +22,29 @@ async function waitForFonts(page: Page) {
 
 async function scrollPage(page: Page) {
   await page.evaluate(async () => {
+    const root = document.scrollingElement ?? document.body;
+    if (!root) return;
+
+    const timeoutMs = 5_000;
+    const start = performance.now();
+
     await new Promise<void>((resolve) => {
       const distance = 400;
       const delay = 60;
+
       const step = () => {
-        const root = document.scrollingElement ?? document.body;
-        if (!root) {
+        const reachedBottom = window.innerHeight + window.scrollY >= root.scrollHeight;
+        const elapsed = performance.now() - start;
+
+        if (reachedBottom || elapsed >= timeoutMs) {
           resolve();
           return;
         }
+
         window.scrollBy(0, distance);
-        const reachedBottom =
-          window.innerHeight + window.scrollY >= root.scrollHeight;
-        if (reachedBottom) {
-          resolve();
-          return;
-        }
         window.setTimeout(step, delay);
       };
+
       step();
     });
     window.scrollTo({ top: 0, behavior: "auto" });
