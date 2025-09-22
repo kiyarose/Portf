@@ -66,10 +66,10 @@ function SortableSkill({
       )}
     >
       {skillIcon && (
-        <Icon 
-          icon={skillIcon} 
-          className="text-base flex-shrink-0" 
-          aria-hidden="true" 
+        <Icon
+          icon={skillIcon}
+          className="text-base flex-shrink-0"
+          aria-hidden="true"
         />
       )}
       {label}
@@ -126,9 +126,11 @@ export function SkillsSection() {
 
   // Migrate skills: ensure all default skills are included
   React.useEffect(() => {
-    const missingSkills = defaultSkills.filter(skill => !skills.includes(skill));
+    const missingSkills = defaultSkills.filter(
+      (skill) => !skills.includes(skill),
+    );
     if (missingSkills.length > 0) {
-      setSkills(current => [...current, ...missingSkills]);
+      setSkills((current) => [...current, ...missingSkills]);
     }
   }, [skills, setSkills]);
 

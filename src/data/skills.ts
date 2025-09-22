@@ -3,7 +3,7 @@ export const defaultSkills = [
   "Customer Service",
   "Gaining Med Admin skills",
   "Technical Leadership",
-  "Team Leadership", 
+  "Team Leadership",
   "Administration",
   "Research",
   "Advocacy",
