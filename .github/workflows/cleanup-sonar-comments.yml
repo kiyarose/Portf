@@ -18,22 +18,29 @@ jobs:
           script: |
             const owner = context.repo.owner;
             const repo = context.repo.repo;
-            const issueNumber = context.issue.number;
+            const pullNumber = context.issue.number;
 
-            const comments = (await github.paginate(github.rest.issues.listComments, {
+            const issueComments = await github.paginate(github.rest.issues.listComments, {
               owner,
               repo,
-              issue_number: issueNumber,
+              issue_number: pullNumber,
               per_page: 100,
-            })).filter((comment) => comment.user?.login === 'sonarqubecloud[bot]');
+            });
+            const sonarComments = issueComments
+              .filter((comment) => comment.user?.login === 'sonarqubecloud[bot]')
+              .map((comment) => ({
+                id: comment.id,
+                node_id: comment.node_id,
+                created_at: comment.created_at,
+              }));
 
-            if (comments.length <= 1) {
+            if (sonarComments.length <= 1) {
               core.info('Zero or one SonarQube comment found. Nothing to collapse.');
               return;
             }
 
-            comments.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-            const [latest, ...older] = comments;
+            sonarComments.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+            const [latest, ...older] = sonarComments;
 
             const minimize = async (nodeId) => {
               const mutation = `mutation($id: ID!) {
