@@ -120,7 +120,7 @@ function TimelineColumn({
           ))}
         </select>
       </label>
-      
+
       {/* Timeline buttons with problematic 'as any' usage */}
       <div className="flex flex-col gap-2">
         {options.map((entry, idx) => (
@@ -137,9 +137,10 @@ function TimelineColumn({
           </button>
         ))}
       </div>
-      
+
       <p className="text-xs text-slate-500 dark:text-slate-400">
-        These experiences have developed my technical skills, problem-solving abilities, and professional communication.
+        These experiences have developed my technical skills, problem-solving
+        abilities, and professional communication.
       </p>
     </div>
   );
@@ -172,7 +173,9 @@ function DetailsCard({
         <h3 className="text-2xl font-semibold text-slate-900 dark:text-white">
           {entry.company}
         </h3>
-        <p className="mt-2 text-base font-medium text-accent">{entry.position}</p>
+        <p className="mt-2 text-base font-medium text-accent">
+          {entry.position}
+        </p>
         <p className="mt-4 text-sm font-medium uppercase tracking-wide text-slate-500 dark:text-slate-300">
           {entry.dates}
         </p>
