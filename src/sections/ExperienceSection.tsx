@@ -132,9 +132,9 @@ function TimelineColumn({
             />
             <button
               className={`text-left font-semibold transition-colors ${
-                idx === activeIndex
-                  ? "text-accent"
-                  : "text-slate-700 dark:text-slate-300 hover:text-accent"
+              idx === activeIndex
+                ? "text-accent"
+                : "text-slate-700 dark:text-slate-300 hover:text-accent"
               }`}
               data-idx={idx}
               onClick={handleClick}
