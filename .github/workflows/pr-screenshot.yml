@@ -41,7 +41,6 @@ jobs:
           path: |
             playwright-logs/portfolio-working.png
             playwright-report/**
-        if-no-files-found: warn
 
       - name: Comment on PR with inline screenshot
         if: github.event_name == 'pull_request'
