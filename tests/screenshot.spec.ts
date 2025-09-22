@@ -21,34 +21,34 @@ async function waitForFonts(page: Page) {
 }
 
 async function scrollPage(page: Page) {
-  await page.evaluate(async () => {
+  await page.evaluate(async (timeoutMs) => {
     const root = document.scrollingElement ?? document.body;
     if (!root) return;
 
-    const timeoutMs = 5_000;
+    const distance = Math.max(200, Math.floor(window.innerHeight * 0.75));
+    const wait = (ms: number) =>
+      new Promise<void>((resolve) => window.setTimeout(resolve, ms));
     const start = performance.now();
 
-    await new Promise<void>((resolve) => {
-      const distance = 400;
-      const delay = 60;
+    // Scroll until bottom is reached or the timeout elapses.
+    while (performance.now() - start < timeoutMs) {
+      const { scrollHeight } = root;
+      window.scrollBy(0, distance);
+      await wait(80);
 
-      const step = () => {
-        const reachedBottom = window.innerHeight + window.scrollY >= root.scrollHeight;
-        const elapsed = performance.now() - start;
-
-        if (reachedBottom || elapsed >= timeoutMs) {
-          resolve();
-          return;
+      const atBottom = window.innerHeight + window.scrollY >= scrollHeight;
+      if (atBottom) {
+        // Allow lazy content to expand; continue if height grows.
+        await wait(200);
+        const newHeight = root.scrollHeight;
+        if (newHeight <= scrollHeight) {
+          break;
         }
+      }
+    }
 
-        window.scrollBy(0, distance);
-        window.setTimeout(step, delay);
-      };
-
-      step();
-    });
     window.scrollTo({ top: 0, behavior: "auto" });
-  });
+  }, 20_000);
 }
 
 test("homepage full-page screenshot", async ({ page }) => {
