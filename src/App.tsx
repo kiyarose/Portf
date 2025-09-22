@@ -8,6 +8,7 @@ import { AboutSection } from "./sections/AboutSection";
 import { CertificationsSection } from "./sections/CertificationsSection";
 import { ContactSection } from "./sections/ContactSection";
 import { EducationSection } from "./sections/EducationSection";
+import { ExperienceSection } from "./sections/ExperienceSection";
 import { HeroSection } from "./sections/HeroSection";
 import { ProjectsSection } from "./sections/ProjectsSection";
 import { SkillsSection } from "./sections/SkillsSection";
@@ -16,6 +17,11 @@ import { generateBuildLabel } from "./data/build";
 const sections = [
   { id: "hero", label: "Home", icon: "material-symbols:home-rounded" },
   { id: "about", label: "About", icon: "material-symbols:person-rounded" },
+  {
+    id: "experience",
+    label: "Experience",
+    icon: "material-symbols:work-rounded",
+  },
   {
     id: "education",
     label: "Education",
@@ -80,6 +86,7 @@ export default function App() {
       <main className="relative mx-auto flex w-full max-w-6xl flex-col gap-8 px-4 pb-16 pt-6 sm:gap-12">
         <HeroSection />
         <AboutSection />
+        <ExperienceSection />
         <EducationSection />
         <CertificationsSection />
         <ProjectsSection />

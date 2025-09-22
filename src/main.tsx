@@ -10,45 +10,57 @@ const container = document.getElementById("root");
 
 if (!container) {
   // Display a user-friendly error instead of throwing a raw error
-  document.body.innerHTML = `
-    <div style="
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-      padding: 2rem;
-      font-family: system-ui, sans-serif;
-      background: linear-gradient(135deg, #f8f9fa, #e9ecef);
-    ">
-      <div style="
-        max-width: 400px;
-        padding: 2rem;
-        background: white;
-        border-radius: 1rem;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        text-align: center;
-      ">
-        <h1 style="margin: 0 0 1rem 0; color: #2d3748;">Unable to Load</h1>
-        <p style="margin: 0 0 1.5rem 0; color: #4a5568; line-height: 1.6;">
-          ${GENERIC_ERROR_MESSAGES.UNKNOWN}
-        </p>
-        <button 
-          onclick="window.location.reload()" 
-          style="
-            background: #f56565;
-            color: white;
-            border: none;
-            padding: 0.75rem 1.5rem;
-            border-radius: 0.5rem;
-            cursor: pointer;
-            font-weight: 500;
-          "
-        >
-          Reload Page
-        </button>
-      </div>
-    </div>
+  const errorContainer = document.createElement("div");
+  errorContainer.style.cssText = `
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 2rem;
+    font-family: system-ui, sans-serif;
+    background: linear-gradient(135deg, #f8f9fa, #e9ecef);
   `;
+
+  const errorCard = document.createElement("div");
+  errorCard.style.cssText = `
+    max-width: 400px;
+    padding: 2rem;
+    background: white;
+    border-radius: 1rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    text-align: center;
+  `;
+
+  const heading = document.createElement("h1");
+  heading.style.cssText = "margin: 0 0 1rem 0; color: #2d3748;";
+  heading.textContent = "Unable to Load";
+
+  const message = document.createElement("p");
+  message.style.cssText =
+    "margin: 0 0 1.5rem 0; color: #4a5568; line-height: 1.6;";
+  message.textContent = GENERIC_ERROR_MESSAGES.UNKNOWN;
+
+  const reloadButton = document.createElement("button");
+  reloadButton.style.cssText = `
+    background: #f56565;
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    font-weight: 500;
+  `;
+  reloadButton.textContent = "Reload Page";
+  reloadButton.addEventListener("click", () => {
+    window.location.reload();
+  });
+
+  errorCard.appendChild(heading);
+  errorCard.appendChild(message);
+  errorCard.appendChild(reloadButton);
+  errorContainer.appendChild(errorCard);
+  document.body.appendChild(errorContainer);
+
   throw new Error("Application container not found");
 }
 
