@@ -59,7 +59,7 @@ function ExperienceCard({
     <div className="card-surface space-y-8">
       <SectionHeader
         id="experience"
-        icon="material-symbols:work-rounded"
+        icon="material-symbols:work"
         label="Experience"
         eyebrow="Timeline"
       />
