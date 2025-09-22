@@ -44,6 +44,50 @@ jobs:
             playwright-report/**
           if-no-files-found: warn
 
+      - name: Upload screenshot for inline display
+        if: github.event_name == 'pull_request'
+        id: upload-screenshot
+        run: |
+          if [ -f "playwright-logs/portfolio-working.png" ]; then
+            echo "Uploading screenshot for inline display..."
+            
+            # Method 1: Try GitHub Gist (most reliable for larger images)
+            gist_url=$(gh gist create playwright-logs/portfolio-working.png --public 2>/dev/null || echo "")
+            
+            if [[ "$gist_url" =~ ^https://gist.github.com/.* ]]; then
+              # Convert gist URL to raw image URL
+              gist_id=$(echo "$gist_url" | sed 's|.*github.com/[^/]*/||')
+              raw_url="https://gist.githubusercontent.com/${{ github.actor }}/$gist_id/raw/portfolio-working.png"
+              echo "image_url=$raw_url" >> $GITHUB_OUTPUT
+              echo "method=gist" >> $GITHUB_OUTPUT
+              echo "success=true" >> $GITHUB_OUTPUT
+              echo "Screenshot uploaded to gist: $raw_url"
+            else
+              # Method 2: Base64 fallback for small images
+              echo "Gist upload failed, trying base64..."
+              base64_image=$(base64 -w 0 playwright-logs/portfolio-working.png)
+              base64_size=$(echo "$base64_image" | wc -c)
+              
+              if [ "$base64_size" -lt 30000 ]; then
+                data_url="data:image/png;base64,$base64_image"
+                echo "image_url=$data_url" >> $GITHUB_OUTPUT
+                echo "method=base64" >> $GITHUB_OUTPUT
+                echo "success=true" >> $GITHUB_OUTPUT
+                echo "Using base64 encoding (size: $base64_size chars)"
+              else
+                echo "success=false" >> $GITHUB_OUTPUT
+                echo "method=artifact" >> $GITHUB_OUTPUT
+                echo "Image too large for inline display ($base64_size chars)"
+              fi
+            fi
+          else
+            echo "success=false" >> $GITHUB_OUTPUT
+            echo "method=none" >> $GITHUB_OUTPUT
+            echo "Screenshot file not found"
+          fi
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Comment on PR with screenshot
         if: github.event_name == 'pull_request'
         uses: peter-evans/create-or-update-comment@v4
@@ -52,11 +96,7 @@ jobs:
           body: |
             **Web Preview:**
             
-            📸 Portfolio screenshot has been captured! 
-            
-            **[📁 Download Screenshot](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})**
-            
-            > Click the link above → Scroll to "Artifacts" section → Download `portfolio-screenshot` → View `portfolio-working.png`
+            ${{ steps.upload-screenshot.outputs.success == 'true' && format('![Portfolio Screenshot]({0})', steps.upload-screenshot.outputs.image_url) || format('📸 Portfolio screenshot captured! [Download from artifacts](https://github.com/{0}/actions/runs/{1}) to view the image.', github.repository, github.run_id) }}
 
       - name: Mark old screenshot comments as outdated
         if: github.event_name == 'pull_request'
