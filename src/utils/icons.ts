@@ -11,3 +11,17 @@ export function initializeIcons() {
   addCollection(mdi);
   addCollection(simpleIcons);
 }
+
+// Skill icon mapping
+export const skillIcons: Record<string, string> = {
+  "Information Technology Skills": "material-symbols:computer",
+  "Customer Service": "material-symbols:support",
+  "Gaining Med Admin skills": "material-symbols:admin-meds",
+  "Technical Leadership": "material-symbols:psychology",
+  "Team Leadership": "material-symbols:group",
+  "Administration": "material-symbols:business-center", 
+  "Research": "material-symbols:biotech",
+  "Advocacy": "material-symbols:campaign",
+  "Sales": "material-symbols:sell",
+  "Logistics": "material-symbols:inventory",
+};
