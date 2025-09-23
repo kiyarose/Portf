@@ -1,6 +1,7 @@
 // Icons are lazy-loaded from Iconify CDN by default; keep hook for future use
 // Skill icon mapping
 export function initializeIcons() {
+  // Iconify loads icons on demand in the browser; nothing to preload yet.
   if (typeof window === "undefined") return;
 }
 export const skillIcons: Record<string, string> = {
@@ -57,4 +58,6 @@ export const projectIcons: Record<string, string> = {
   ProtonVPN: "simple-icons:protonvpn",
   OpenVPN: "simple-icons:openvpn",
   JavaScript: "simple-icons:javascript",
+  HPE: "simple-icons:hewlettpackardenterprise",
+  VMWare: "simple-icons:vmware",
 };
