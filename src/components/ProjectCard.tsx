@@ -1,3 +1,4 @@
+import { Icon } from "@iconify/react";
 import {
   motion,
   useMotionValue,
@@ -8,6 +9,7 @@ import {
 import { useCallback } from "react";
 import type { MouseEvent } from "react";
 import type { Project } from "../data/projects";
+import { getSkillIcon } from "../data/skills";
 import { cn } from "../utils/cn";
 import { useTheme } from "../hooks/useTheme";
 import { themedClass } from "../utils/themeClass";
@@ -21,6 +23,14 @@ export function ProjectCard({ project }: ProjectCardProps) {
   const { theme } = useTheme();
   const x = useMotionValue(0);
   const y = useMotionValue(0);
+  const techChipClass = cn(
+    "chip flex items-center gap-2 !px-3 !py-1 text-xs font-medium",
+    themedClass(
+      theme,
+      "!bg-slate-100/80 text-slate-600",
+      "!bg-slate-800/80 text-slate-200",
+    ),
+  );
 
   const springX = useSpring(x, { stiffness: 150, damping: 12 });
   const springY = useSpring(y, { stiffness: 150, damping: 12 });
@@ -82,21 +92,21 @@ export function ProjectCard({ project }: ProjectCardProps) {
         {project.description}
       </p>
       <div className="flex flex-wrap gap-2">
-        {project.tech.map((item) => (
-          <span
-            key={item}
-            className={cn(
-              "chip !px-3 !py-1 text-xs font-medium",
-              themedClass(
-                theme,
-                "!bg-slate-100/80 text-slate-600",
-                "!bg-slate-800/80 text-slate-200",
-              ),
-            )}
-          >
-            {item}
-          </span>
-        ))}
+        {project.tech.map((item) => {
+          const iconName = getSkillIcon(item);
+
+          return (
+            <span
+              key={item}
+              className={techChipClass}
+            >
+              {iconName ? (
+                <Icon icon={iconName} className="text-sm" aria-hidden="true" />
+              ) : null}
+              <span>{item}</span>
+            </span>
+          );
+        })}
       </div>
       {project.link ? (
         <a

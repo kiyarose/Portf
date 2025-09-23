@@ -1,9 +1,12 @@
+import { Icon } from "@iconify/react";
 import { motion, useReducedMotion } from "framer-motion";
 import { useCallback, useMemo, useState } from "react";
+import type { ChangeEvent, MouseEvent } from "react";
 
 import { SectionContainer } from "../components/SectionContainer";
 import { SectionHeader } from "../components/SectionHeader";
 import { experienceTimeline } from "../data/experience";
+import { defaultSkills, getSkillIcon } from "../data/skills";
 import { useTheme } from "../hooks/useTheme";
 import type { Theme } from "../providers/theme-context";
 import { themedClass } from "../utils/themeClass";
@@ -104,7 +107,7 @@ function TimelineColumn({
   theme,
 }: Readonly<TimelineColumnProps>) {
   const handleClick = useCallback(
-    (event: React.MouseEvent<HTMLButtonElement, MouseEvent>): void => {
+    (event: MouseEvent<HTMLButtonElement>): void => {
       const idx = Number(event.currentTarget.getAttribute("data-idx"));
       if (!Number.isNaN(idx)) {
         onChange(idx);
@@ -114,7 +117,7 @@ function TimelineColumn({
   );
 
   const handleSelectChange = useCallback(
-    (event: React.ChangeEvent<HTMLSelectElement>): void => {
+    (event: ChangeEvent<HTMLSelectElement>): void => {
       const idx = Number(event.target.value);
       if (!Number.isNaN(idx)) {
         onChange(idx);
@@ -145,46 +148,50 @@ function TimelineColumn({
           themedClass(theme, "border-slate-200", "border-slate-700"),
         )}
       >
-        {options.map((entry, idx) => (
-          <li key={entry.company + entry.role} className="mb-6 ml-2">
-            <span
-              className={cn(
-                "absolute -left-4 flex h-4 w-4 items-center justify-center rounded-full border-2",
-                idx === activeIndex
-                  ? "border-accent bg-accent"
-                  : themedClass(
-                      theme,
-                      "border-slate-300 bg-slate-100",
-                      "border-slate-600 bg-slate-800",
-                    ),
-              )}
-              aria-current={idx === activeIndex ? "step" : undefined}
-            />
-            <button
-              className={cn(
-                "text-left font-semibold transition-colors",
-                idx === activeIndex
-                  ? "text-accent"
-                  : themedClass(theme, "text-slate-700", "text-slate-300"),
-                "hover:text-accent",
-              )}
-              data-idx={idx}
-              onClick={handleClick}
-              aria-label={`View experience at ${entry.company}`}
-            >
-              {entry.company}
-            </button>
-            <div
-              className={themedClass(
-                theme,
-                "text-xs text-slate-500",
-                "text-xs text-slate-400",
-              )}
-            >
-              {entry.dates}
-            </div>
-          </li>
-        ))}
+        {options.map((entry, idx) => {
+          const isActive = idx === activeIndex;
+
+          return (
+            <li key={entry.company + entry.role} className="mb-6 ml-2">
+              <span
+                className={cn(
+                  "absolute -left-4 flex h-4 w-4 items-center justify-center rounded-full border-2",
+                  isActive
+                    ? "border-accent bg-accent"
+                    : themedClass(
+                        theme,
+                        "border-slate-300 bg-slate-100",
+                        "border-slate-600 bg-slate-800",
+                      ),
+                )}
+                aria-current={isActive ? "step" : undefined}
+              ></span>
+              <button
+                className={cn(
+                  "mt-1 block text-left font-semibold transition-colors",
+                  isActive
+                    ? "text-accent"
+                    : themedClass(theme, "text-slate-700", "text-slate-300"),
+                  "hover:text-accent",
+                )}
+                data-idx={idx}
+                onClick={handleClick}
+                aria-label={`View experience at ${entry.company}`}
+              >
+                {entry.company}
+              </button>
+              <div
+                className={themedClass(
+                  theme,
+                  "text-xs text-slate-500",
+                  "text-xs text-slate-400",
+                )}
+              >
+                {entry.dates}
+              </div>
+            </li>
+          );
+        })}
       </ol>
     </div>
   );
@@ -206,6 +213,21 @@ function DetailsCard({
   variants,
   theme,
 }: Readonly<DetailsCardProps>) {
+  const chipBaseClass = "chip flex items-center gap-2 !px-3 !py-1 text-xs font-medium";
+  const linkedChipClass = cn(
+    chipBaseClass,
+    "text-accent underline-offset-2 hover:underline",
+    themedClass(theme, "!bg-accent/20", "!bg-accent/30"),
+  );
+  const neutralChipClass = cn(
+    chipBaseClass,
+    themedClass(
+      theme,
+      "!bg-slate-100/80 text-slate-600",
+      "!bg-slate-800/80 text-slate-200",
+    ),
+  );
+  const mainSkills = defaultSkills;
   return (
     <motion.div
       key={entry.company + entry.role}
@@ -247,43 +269,40 @@ function DetailsCard({
           </div>
           <div className="flex flex-wrap gap-2">
             {entry.tech.map((item) => {
-              // Link to skills section if the skill matches a main skill
-              const mainSkills = [
-                "Information Technology Skills",
-                "Customer Service",
-                "Gaining Med Admin skills",
-              ];
               const normalized = item.toLowerCase();
               const match = mainSkills.find(
-                (s) =>
-                  s.toLowerCase().includes(normalized) ||
-                  normalized.includes(s.toLowerCase()),
+                (skill) =>
+                  skill.toLowerCase().includes(normalized) ||
+                  normalized.includes(skill.toLowerCase()),
               );
-              return match ? (
-                <a
-                  key={item}
-                  href="#skills"
-                  className={cn(
-                    "chip !px-3 !py-1 text-xs font-medium text-accent underline-offset-2 hover:underline",
-                    themedClass(theme, "!bg-accent/20", "!bg-accent/30"),
-                  )}
-                  title={`See more about ${match}`}
-                >
-                  {item}
-                </a>
-              ) : (
+              const iconName =
+                getSkillIcon(item) ?? (match ? getSkillIcon(match) : undefined);
+
+              if (match) {
+                return (
+                  <a
+                    key={item}
+                    href="#skills"
+                    className={linkedChipClass}
+                    title={`See more about ${match}`}
+                  >
+                    {iconName ? (
+                      <Icon icon={iconName} className="text-sm" aria-hidden="true" />
+                    ) : null}
+                    <span>{item}</span>
+                  </a>
+                );
+              }
+
+              return (
                 <span
                   key={item}
-                  className={cn(
-                    "chip !px-3 !py-1 text-xs font-medium",
-                    themedClass(
-                      theme,
-                      "!bg-slate-100/80 text-slate-600",
-                      "!bg-slate-800/80 text-slate-200",
-                    ),
-                  )}
+                  className={neutralChipClass}
                 >
-                  {item}
+                  {iconName ? (
+                    <Icon icon={iconName} className="text-sm" aria-hidden="true" />
+                  ) : null}
+                  <span>{item}</span>
                 </span>
               );
             })}

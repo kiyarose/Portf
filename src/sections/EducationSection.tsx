@@ -1,9 +1,11 @@
+import { Icon } from "@iconify/react";
 import { motion, useReducedMotion } from "framer-motion";
 import { useCallback, useMemo, useState } from "react";
 import type { ChangeEvent } from "react";
 import { SectionContainer } from "../components/SectionContainer";
 import { SectionHeader } from "../components/SectionHeader";
 import { educationTimeline } from "../data/education";
+import { getSkillIcon } from "../data/skills";
 import { useTheme } from "../hooks/useTheme";
 import type { Theme } from "../providers/theme-context";
 import { themedClass } from "../utils/themeClass";
@@ -177,6 +179,10 @@ function DetailsCard({
     "!bg-slate-100/80 text-slate-600",
     "!bg-slate-800/80 text-slate-200",
   );
+  const focusChipClass = cn(
+    "chip flex items-center gap-2 !px-3 !py-1 text-xs font-medium",
+    chipColor,
+  );
   const captionColor = themedClass(theme, "text-slate-600", "text-slate-300");
   return (
     <div className="flex-1">
@@ -211,17 +217,21 @@ function DetailsCard({
               Focus
             </div>
             <div className="flex flex-wrap gap-2">
-              {entry.tech.map((item) => (
-                <span
-                  key={item}
-                  className={cn(
-                    "chip !px-3 !py-1 text-xs font-medium",
-                    chipColor,
-                  )}
-                >
-                  {item}
-                </span>
-              ))}
+              {entry.tech.map((item) => {
+                const iconName = getSkillIcon(item);
+
+                return (
+                  <span
+                    key={item}
+                    className={focusChipClass}
+                  >
+                    {iconName ? (
+                      <Icon icon={iconName} className="text-sm" aria-hidden="true" />
+                    ) : null}
+                    <span>{item}</span>
+                  </span>
+                );
+              })}
             </div>
           </div>
         )}
