@@ -9,8 +9,10 @@ import {
 import { useCallback } from "react";
 import type { MouseEvent } from "react";
 import type { Project } from "../data/projects";
+import { getSkillIcon } from "../data/skills";
 import { cn } from "../utils/cn";
-import { skillIcons } from "../utils/icons";
+import { useTheme } from "../hooks/useTheme";
+import { themedClass } from "../utils/themeClass";
 
 interface ProjectCardProps {
   project: Project;
@@ -18,8 +20,17 @@ interface ProjectCardProps {
 
 export function ProjectCard({ project }: ProjectCardProps) {
   const prefersReducedMotion = useReducedMotion();
+  const { theme } = useTheme();
   const x = useMotionValue(0);
   const y = useMotionValue(0);
+  const techChipClass = cn(
+    "chip flex items-center gap-2 !px-3 !py-1 text-xs font-medium",
+    themedClass(
+      theme,
+      "!bg-slate-100/80 text-slate-600",
+      "!bg-slate-800/80 text-slate-200",
+    ),
+  );
 
   const springX = useSpring(x, { stiffness: 150, damping: 12 });
   const springY = useSpring(y, { stiffness: 150, damping: 12 });
@@ -53,38 +64,46 @@ export function ProjectCard({ project }: ProjectCardProps) {
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
       className={cn(
-        "card-surface h-full space-y-4 border border-white/30 dark:border-slate-700/60",
+        "card-surface h-full space-y-4 border",
+        themedClass(theme, "border-white/30", "border-slate-700/60"),
       )}
       style={prefersReducedMotion ? undefined : { rotateX, rotateY }}
       whileHover={prefersReducedMotion ? undefined : { translateY: -6 }}
     >
       <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-        <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100 sm:text-xl">
+        <h3
+          className={cn(
+            "text-lg font-semibold sm:text-xl",
+            themedClass(theme, "text-slate-900", "text-slate-100"),
+          )}
+        >
           {project.title}
         </h3>
         <span className="self-start rounded-full bg-accent/10 px-3 py-1 text-xs font-medium uppercase tracking-wide text-accent sm:px-4">
           Hobby Build
         </span>
       </div>
-      <p className="text-sm text-slate-600 dark:text-slate-300">
+      <p
+        className={cn(
+          "text-sm",
+          themedClass(theme, "text-slate-600", "text-slate-300"),
+        )}
+      >
         {project.description}
       </p>
       <div className="flex flex-wrap gap-2">
-        {project.tech.map((item) => (
-          <span
-            key={item}
-            className="chip flex items-center gap-2 !bg-slate-100/80 !px-3 !py-1 text-xs font-medium text-slate-600 dark:!bg-slate-800/80 dark:text-slate-200"
-          >
-            {skillIcons[item] && (
-              <Icon
-                icon={skillIcons[item]}
-                className="text-sm"
-                aria-hidden="true"
-              />
-            )}
-            {item}
-          </span>
-        ))}
+        {project.tech.map((item) => {
+          const iconName = getSkillIcon(item);
+
+          return (
+            <span key={item} className={techChipClass}>
+              {iconName ? (
+                <Icon icon={iconName} className="text-sm" aria-hidden="true" />
+              ) : null}
+              <span>{item}</span>
+            </span>
+          );
+        })}
       </div>
       {project.link ? (
         <a

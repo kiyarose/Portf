@@ -2,6 +2,9 @@ import { Icon } from "@iconify/react";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { useState, useCallback } from "react";
 import type { MouseEvent } from "react";
+import { useTheme } from "../hooks/useTheme";
+import { themedClass } from "../utils/themeClass";
+import { cn } from "../utils/cn";
 
 type Section = {
   id: string;
@@ -16,6 +19,15 @@ interface MobileNavProps {
 export function MobileNav({ sections }: MobileNavProps) {
   const [isOpen, setIsOpen] = useState(false);
   const prefersReducedMotion = useReducedMotion();
+  const { theme } = useTheme();
+  const buttonSurface = themedClass(theme, "bg-white/70", "bg-slate-900/70");
+  const iconColor = themedClass(theme, "text-slate-600", "text-slate-300");
+  const panelSurface = themedClass(
+    theme,
+    "border-white/20 bg-white/90",
+    "border-slate-700/60 bg-slate-900/90",
+  );
+  const linkColor = themedClass(theme, "text-slate-600", "text-slate-300");
 
   const toggleMenu = useCallback(() => setIsOpen(!isOpen), [isOpen]);
   const closeMenu = useCallback(() => setIsOpen(false), []);
@@ -29,7 +41,10 @@ export function MobileNav({ sections }: MobileNavProps) {
       {/* Hamburger Menu Button */}
       <motion.button
         onClick={toggleMenu}
-        className="flex items-center justify-center rounded-full bg-white/70 p-2 shadow-md backdrop-blur dark:bg-slate-900/70"
+        className={cn(
+          "flex items-center justify-center rounded-full p-2 shadow-md backdrop-blur",
+          buttonSurface,
+        )}
         whileTap={prefersReducedMotion ? undefined : { scale: 0.95 }}
         aria-label="Toggle navigation menu"
         aria-expanded={isOpen}
@@ -40,7 +55,7 @@ export function MobileNav({ sections }: MobileNavProps) {
               ? "material-symbols:close-rounded"
               : "material-symbols:menu-rounded"
           }
-          className="text-xl text-slate-600 dark:text-slate-300"
+          className={cn("text-xl", iconColor)}
         />
       </motion.button>
 
@@ -56,7 +71,10 @@ export function MobileNav({ sections }: MobileNavProps) {
           >
             {/* Mobile Menu Panel */}
             <motion.nav
-              className="absolute right-4 top-20 rounded-3xl border border-white/20 bg-white/90 p-4 shadow-2xl backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/90"
+              className={cn(
+                "absolute right-4 top-20 rounded-3xl border p-4 shadow-2xl backdrop-blur-xl",
+                panelSurface,
+              )}
               initial={
                 prefersReducedMotion
                   ? undefined
@@ -81,7 +99,10 @@ export function MobileNav({ sections }: MobileNavProps) {
                     <a
                       href={`#${section.id}`}
                       onClick={closeMenu}
-                      className="flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-medium text-slate-600 transition hover:bg-accent/10 hover:text-accent dark:text-slate-300"
+                      className={cn(
+                        "flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-medium transition hover:bg-accent/10 hover:text-accent",
+                        linkColor,
+                      )}
                     >
                       <Icon
                         icon={section.icon}

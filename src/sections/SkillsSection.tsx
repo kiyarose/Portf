@@ -22,7 +22,9 @@ import { SectionContainer } from "../components/SectionContainer";
 import { SectionHeader } from "../components/SectionHeader";
 import { defaultSkills } from "../data/skills";
 import { useLocalStorage } from "../hooks/useLocalStorage";
+import { useTheme } from "../hooks/useTheme";
 import { cn } from "../utils/cn";
+import { themedClass } from "../utils/themeClass";
 import { skillIcons } from "../utils/icons";
 
 function SortableSkill({
@@ -46,6 +48,22 @@ function SortableSkill({
     transform: CSS.Transform.toString(transform),
     transition,
   };
+  const { theme } = useTheme();
+  const surfaceClass = themedClass(
+    theme,
+    "bg-white/80 text-slate-700",
+    "bg-slate-800/70 text-slate-200",
+  );
+  const developingClass = themedClass(
+    theme,
+    "border-2 border-dashed border-accent/60 bg-accent/10 text-accent",
+    "border-2 border-dashed border-accent/60 bg-accent/20 text-accent",
+  );
+  const stableBorderClass = themedClass(
+    theme,
+    "border border-slate-200/60",
+    "border border-slate-700/60",
+  );
 
   const skillIcon = skillIcons[label];
 
@@ -57,6 +75,9 @@ function SortableSkill({
       {...attributes}
       {...listeners}
       className={cn(
+        "select-none rounded-full px-5 py-2 text-sm font-medium shadow-md transition-colors",
+        surfaceClass,
+        isDeveloping ? developingClass : stableBorderClass,
         "select-none rounded-full px-5 py-2 text-sm font-medium shadow-md transition-colors flex items-center gap-2",
         "bg-white/80 text-slate-700 dark:bg-slate-800/70 dark:text-slate-200",
         isDeveloping

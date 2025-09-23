@@ -5,11 +5,16 @@ import type { ChangeEvent } from "react";
 import { SectionContainer } from "../components/SectionContainer";
 import { SectionHeader } from "../components/SectionHeader";
 import { educationTimeline } from "../data/education";
-import { skillIcons } from "../utils/icons";
+import { getSkillIcon } from "../data/skills";
+import { useTheme } from "../hooks/useTheme";
+import type { Theme } from "../providers/theme-context";
+import { themedClass } from "../utils/themeClass";
+import { cn } from "../utils/cn";
 
 export function EducationSection() {
   const [activeIndex, setActiveIndex] = useState(0);
   const prefersReducedMotion = useReducedMotion() ?? false;
+  const { theme } = useTheme();
 
   const variants = useMemo(
     () => ({
@@ -37,6 +42,7 @@ export function EducationSection() {
         onChange={handleSelectChange}
         prefersReducedMotion={prefersReducedMotion}
         variants={variants}
+        theme={theme}
       />
     </SectionContainer>
   );
@@ -51,6 +57,7 @@ type EducationCardProps = {
     enter: { opacity: number; y: number };
     center: { opacity: number; y: number };
   };
+  theme: Theme;
 };
 
 function EducationCard({
@@ -59,6 +66,7 @@ function EducationCard({
   onChange,
   prefersReducedMotion,
   variants,
+  theme,
 }: EducationCardProps) {
   const activeItem = options[activeIndex];
 
@@ -76,11 +84,13 @@ function EducationCard({
           options={options}
           activeIndex={activeIndex}
           onChange={onChange}
+          theme={theme}
         />
         <DetailsCard
           entry={activeItem}
           prefersReducedMotion={prefersReducedMotion}
           variants={variants}
+          theme={theme}
         />
       </div>
     </div>
@@ -91,14 +101,18 @@ type TimelineColumnProps = {
   options: typeof educationTimeline;
   activeIndex: number;
   onChange: (event: ChangeEvent<HTMLSelectElement>) => void;
+  theme: Theme;
 };
 
 function TimelineColumn({
   options,
   activeIndex,
   onChange,
+  theme,
 }: TimelineColumnProps) {
   const selectSize = Math.min(Math.max(options.length, 3), 6);
+  const labelColor = themedClass(theme, "text-slate-600", "text-slate-300");
+  const helperColor = themedClass(theme, "text-slate-500", "text-slate-400");
 
   return (
     <div className="relative flex flex-col gap-3 md:w-1/2">
@@ -106,10 +120,17 @@ function TimelineColumn({
         className="pointer-events-none absolute left-4 top-2 hidden h-[calc(100%-1rem)] w-0.5 bg-accent/30 md:block"
         aria-hidden="true"
       />
-      <label className="block text-sm font-medium text-slate-600 dark:text-slate-300">
+      <label className={cn("block text-sm font-medium", labelColor)}>
         <span className="sr-only">Education timeline entries</span>
         <select
-          className="mt-1 w-full rounded-2xl border border-slate-200/60 bg-white/95 px-4 py-3 text-sm font-medium text-slate-700 shadow-sm outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/60 dark:border-slate-700/60 dark:bg-slate-900/70 dark:text-slate-200"
+          className={cn(
+            "mt-1 w-full rounded-2xl border px-4 py-3 text-sm font-medium shadow-sm outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/60",
+            themedClass(
+              theme,
+              "border-slate-200/60 bg-white/95 text-slate-700",
+              "border-slate-700/60 bg-slate-900/70 text-slate-200",
+            ),
+          )}
           size={selectSize}
           value={activeIndex}
           onChange={onChange}
@@ -122,7 +143,7 @@ function TimelineColumn({
           ))}
         </select>
       </label>
-      <p className="text-xs text-slate-500 dark:text-slate-400">
+      <p className={cn("text-xs", helperColor)}>
         These studies have boosted my networking foundations, customer-first
         support skills, and upcoming training in medical coding best practices.
       </p>
@@ -137,13 +158,32 @@ type DetailsCardProps = {
     enter: { opacity: number; y: number };
     center: { opacity: number; y: number };
   };
+  theme: Theme;
 };
 
 function DetailsCard({
   entry,
   prefersReducedMotion,
   variants,
+  theme,
 }: DetailsCardProps) {
+  const containerSurface = themedClass(
+    theme,
+    "bg-accent/10 text-slate-700",
+    "bg-accent/15 text-slate-200",
+  );
+  const headingColor = themedClass(theme, "text-slate-900", "text-white");
+  const metaColor = themedClass(theme, "text-slate-500", "text-slate-300");
+  const chipColor = themedClass(
+    theme,
+    "!bg-slate-100/80 text-slate-600",
+    "!bg-slate-800/80 text-slate-200",
+  );
+  const focusChipClass = cn(
+    "chip flex items-center gap-2 !px-3 !py-1 text-xs font-medium",
+    chipColor,
+  );
+  const captionColor = themedClass(theme, "text-slate-600", "text-slate-300");
   return (
     <div className="flex-1">
       <motion.div
@@ -152,40 +192,51 @@ function DetailsCard({
         animate="center"
         variants={prefersReducedMotion ? undefined : variants}
         transition={{ duration: 0.5, ease: "easeOut" }}
-        className="rounded-2xl bg-accent/10 p-6 text-slate-700 dark:bg-accent/15 dark:text-slate-200"
+        className={cn("rounded-2xl p-6", containerSurface)}
       >
-        <h3 className="text-2xl font-semibold text-slate-900 dark:text-white">
+        <h3 className={cn("text-2xl font-semibold", headingColor)}>
           {entry.school}
         </h3>
         <p className="mt-2 text-base">{entry.program}</p>
-        <p className="mt-4 text-sm font-medium uppercase tracking-wide text-slate-500 dark:text-slate-300">
+        <p
+          className={cn(
+            "mt-4 text-sm font-medium uppercase tracking-wide",
+            metaColor,
+          )}
+        >
           {entry.dates}
         </p>
         {entry.tech && entry.tech.length > 0 && (
           <div className="mt-4">
-            <div className="mb-1 text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-300">
+            <div
+              className={cn(
+                "mb-1 text-xs font-semibold uppercase tracking-wide",
+                metaColor,
+              )}
+            >
               Focus
             </div>
             <div className="flex flex-wrap gap-2">
-              {entry.tech.map((item) => (
-                <span
-                  key={item}
-                  className="chip flex items-center gap-2 !bg-slate-100/80 !px-3 !py-1 text-xs font-medium text-slate-600 dark:!bg-slate-800/80 dark:text-slate-200"
-                >
-                  {skillIcons[item] && (
-                    <Icon
-                      icon={skillIcons[item]}
-                      className="text-sm"
-                      aria-hidden="true"
-                    />
-                  )}
-                  {item}
-                </span>
-              ))}
+              {entry.tech.map((item) => {
+                const iconName = getSkillIcon(item);
+
+                return (
+                  <span key={item} className={focusChipClass}>
+                    {iconName ? (
+                      <Icon
+                        icon={iconName}
+                        className="text-sm"
+                        aria-hidden="true"
+                      />
+                    ) : null}
+                    <span>{item}</span>
+                  </span>
+                );
+              })}
             </div>
           </div>
         )}
-        <p className="mt-4 text-sm text-slate-600 dark:text-slate-300">
+        <p className={cn("mt-4 text-sm", captionColor)}>
           Use the selector to review different programmes taken.
         </p>
       </motion.div>
