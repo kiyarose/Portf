@@ -221,12 +221,13 @@ function DetailsCard({
                 const iconName = getSkillIcon(item);
 
                 return (
-                  <span
-                    key={item}
-                    className={focusChipClass}
-                  >
+                  <span key={item} className={focusChipClass}>
                     {iconName ? (
-                      <Icon icon={iconName} className="text-sm" aria-hidden="true" />
+                      <Icon
+                        icon={iconName}
+                        className="text-sm"
+                        aria-hidden="true"
+                      />
                     ) : null}
                     <span>{item}</span>
                   </span>

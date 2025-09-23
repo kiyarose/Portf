@@ -213,7 +213,8 @@ function DetailsCard({
   variants,
   theme,
 }: Readonly<DetailsCardProps>) {
-  const chipBaseClass = "chip flex items-center gap-2 !px-3 !py-1 text-xs font-medium";
+  const chipBaseClass =
+    "chip flex items-center gap-2 !px-3 !py-1 text-xs font-medium";
   const linkedChipClass = cn(
     chipBaseClass,
     "text-accent underline-offset-2 hover:underline",
@@ -287,7 +288,11 @@ function DetailsCard({
                     title={`See more about ${match}`}
                   >
                     {iconName ? (
-                      <Icon icon={iconName} className="text-sm" aria-hidden="true" />
+                      <Icon
+                        icon={iconName}
+                        className="text-sm"
+                        aria-hidden="true"
+                      />
                     ) : null}
                     <span>{item}</span>
                   </a>
@@ -295,12 +300,13 @@ function DetailsCard({
               }
 
               return (
-                <span
-                  key={item}
-                  className={neutralChipClass}
-                >
+                <span key={item} className={neutralChipClass}>
                   {iconName ? (
-                    <Icon icon={iconName} className="text-sm" aria-hidden="true" />
+                    <Icon
+                      icon={iconName}
+                      className="text-sm"
+                      aria-hidden="true"
+                    />
                   ) : null}
                   <span>{item}</span>
                 </span>
