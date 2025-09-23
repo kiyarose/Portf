@@ -18,6 +18,7 @@ import { CSS } from "@dnd-kit/utilities";
 import { Icon } from "@iconify/react";
 import { motion, useReducedMotion } from "framer-motion";
 import * as React from "react";
+import { useCallback } from "react";
 import { SectionContainer } from "../components/SectionContainer";
 import { SectionHeader } from "../components/SectionHeader";
 import { defaultSkills } from "../data/skills";
@@ -126,13 +127,16 @@ export function SkillsSection() {
 
   // Migrate skills: ensure all default skills are included
   React.useEffect(() => {
-    const missingSkills = defaultSkills.filter(
-      (skill) => !skills.includes(skill),
-    );
-    if (missingSkills.length > 0) {
-      setSkills((current) => [...current, ...missingSkills]);
-    }
-  }, [skills, setSkills]);
+    setSkills((current) => {
+      const missingSkills = defaultSkills.filter(
+        (skill) => !current.includes(skill),
+      );
+      if (missingSkills.length > 0) {
+        return [...current, ...missingSkills];
+      }
+      return current;
+    });
+  }, [setSkills]);
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),

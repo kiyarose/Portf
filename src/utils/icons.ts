@@ -101,7 +101,7 @@ export function initializeIcons() {
   mdiIconNames.forEach((name) => addIcon(name, mdiIcon));
   simpleIconNames.forEach((name) => addIcon(name, simpleIcon));
 }
-
+// Skill icon mapping
 export const skillIcons: Record<string, string> = {
   "Information Technology Skills": "material-symbols:computer",
   "Customer Service": "material-symbols:support",
