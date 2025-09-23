@@ -149,19 +149,19 @@ function TimelineColumn({
                 onClick={handleClick}
                 aria-label={`View experience at ${entry.company}`}
               >
-              {iconName && (
-                <Icon
-                  icon={iconName}
-                  className="text-base opacity-80"
-                  aria-hidden="true"
-                />
-              )}
-              <span>{entry.company}</span>
-            </button>
-            <div className="text-xs text-slate-500 dark:text-slate-400">
-              {entry.dates}
-            </div>
-          </li>
+                {iconName && (
+                  <Icon
+                    icon={iconName}
+                    className="text-base opacity-80"
+                    aria-hidden="true"
+                  />
+                )}
+                <span>{entry.company}</span>
+              </button>
+              <div className="text-xs text-slate-500 dark:text-slate-400">
+                {entry.dates}
+              </div>
+            </li>
           );
         })}
       </ol>
