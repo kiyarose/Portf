@@ -1,7 +1,8 @@
 // Icons are lazy-loaded from Iconify CDN by default; keep hook for future use
-export function initializeIcons() {}
-
 // Skill icon mapping
+export function initializeIcons() {
+  if (typeof window === "undefined") return;
+}
 export const skillIcons: Record<string, string> = {
   "Information Technology Skills": "material-symbols:computer",
   "Customer Service": "material-symbols:support",
@@ -45,11 +46,15 @@ export const skillIcons: Record<string, string> = {
   Passion: "mdi:fire",
   Love: "mdi:heart",
 };
-
 export const companyIcons: Record<string, string> = {
   "YRAB/CAYAH Research Board": "mdi:account-group",
   Walmart: "simple-icons:walmart",
   Amazon: "simple-icons:amazon",
   "Shawmut Services LLC (Contract)": "mdi:handshake",
   "Google (Contract)": "simple-icons:google",
+};
+export const projectIcons: Record<string, string> = {
+  ProtonVPN: "simple-icons:protonvpn",
+  OpenVPN: "simple-icons:openvpn",
+  JavaScript: "simple-icons:javascript",
 };
