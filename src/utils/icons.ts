@@ -1,9 +1,4 @@
-// Icons are lazy-loaded from Iconify CDN by default; keep hook for future use
 // Skill icon mapping
-export function initializeIcons() {
-  // Iconify loads icons on demand in the browser; nothing to preload yet.
-  if (typeof window === "undefined") return;
-}
 export const skillIcons: Record<string, string> = {
   "Information Technology Skills": "material-symbols:computer",
   "Customer Service": "material-symbols:support",
