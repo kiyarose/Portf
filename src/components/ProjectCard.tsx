@@ -1,3 +1,4 @@
+import { Icon } from "@iconify/react";
 import {
   motion,
   useMotionValue,
@@ -9,6 +10,7 @@ import { useCallback } from "react";
 import type { MouseEvent } from "react";
 import type { Project } from "../data/projects";
 import { cn } from "../utils/cn";
+import { skillIcons } from "../utils/icons";
 
 interface ProjectCardProps {
   project: Project;
@@ -71,8 +73,15 @@ export function ProjectCard({ project }: ProjectCardProps) {
         {project.tech.map((item) => (
           <span
             key={item}
-            className="chip !bg-slate-100/80 !px-3 !py-1 text-xs font-medium text-slate-600 dark:!bg-slate-800/80 dark:text-slate-200"
+            className="chip flex items-center gap-2 !bg-slate-100/80 !px-3 !py-1 text-xs font-medium text-slate-600 dark:!bg-slate-800/80 dark:text-slate-200"
           >
+            {skillIcons[item] && (
+              <Icon
+                icon={skillIcons[item]}
+                className="text-sm"
+                aria-hidden="true"
+              />
+            )}
             {item}
           </span>
         ))}
