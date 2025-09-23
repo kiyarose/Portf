@@ -127,29 +127,31 @@ function TimelineColumn({
         ))}
       </select>
       <ol className="relative border-l border-slate-200 dark:border-slate-700 ml-4 mt-2">
-        {options.map((entry, idx) => (
-          <li key={entry.company + entry.role} className="mb-6 ml-2">
-            <span
-              className={`absolute -left-4 flex h-4 w-4 items-center justify-center rounded-full border-2 ${
-                idx === activeIndex
-                  ? "border-accent bg-accent"
-                  : "border-slate-300 bg-slate-100 dark:border-slate-600 dark:bg-slate-800"
-              }`}
-              aria-current={idx === activeIndex ? "step" : undefined}
-            />
-            <button
-              className={`flex items-center gap-2 text-left font-semibold transition-colors ${
-                idx === activeIndex
-                  ? "text-accent"
-                  : "text-slate-700 dark:text-slate-300 hover:text-accent"
-              }`}
-              data-idx={idx}
-              onClick={handleClick}
-              aria-label={`View experience at ${entry.company}`}
-            >
-              {companyIcons[entry.company] && (
+        {options.map((entry, idx) => {
+          const iconName = companyIcons[entry.company];
+          return (
+            <li key={entry.company + entry.role} className="mb-6 ml-2">
+              <span
+                className={`absolute -left-4 flex h-4 w-4 items-center justify-center rounded-full border-2 ${
+                  idx === activeIndex
+                    ? "border-accent bg-accent"
+                    : "border-slate-300 bg-slate-100 dark:border-slate-600 dark:bg-slate-800"
+                }`}
+                aria-current={idx === activeIndex ? "step" : undefined}
+              />
+              <button
+                className={`flex items-center gap-2 text-left font-semibold transition-colors ${
+                  idx === activeIndex
+                    ? "text-accent"
+                    : "text-slate-700 dark:text-slate-300 hover:text-accent"
+                }`}
+                data-idx={idx}
+                onClick={handleClick}
+                aria-label={`View experience at ${entry.company}`}
+              >
+              {iconName && (
                 <Icon
-                  icon={companyIcons[entry.company]!}
+                  icon={iconName}
                   className="text-base opacity-80"
                   aria-hidden="true"
                 />
@@ -160,7 +162,8 @@ function TimelineColumn({
               {entry.dates}
             </div>
           </li>
-        ))}
+          );
+        })}
       </ol>
     </div>
   );

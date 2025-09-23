@@ -5,12 +5,9 @@ import App from "./App.tsx";
 import { ThemeProvider } from "./providers/ThemeProvider";
 import { ErrorBoundary } from "./components/ErrorBoundary";
 import { GENERIC_ERROR_MESSAGES } from "./utils/errorSanitizer";
-import { initializeIcons } from "./utils/icons";
+// Icons are registered on demand in individual components
 
 const container = document.getElementById("root");
-
-// Initialize icons before rendering
-initializeIcons();
 
 if (!container) {
   // Display a user-friendly error instead of throwing a raw error
