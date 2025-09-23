@@ -1,3 +1,4 @@
+import { Icon } from "@iconify/react";
 import { motion, useReducedMotion } from "framer-motion";
 import { useCallback, useMemo, useState } from "react";
 import type { ChangeEvent } from "react";
@@ -8,6 +9,7 @@ import { useTheme } from "../hooks/useTheme";
 import type { Theme } from "../providers/theme-context";
 import { themedClass } from "../utils/themeClass";
 import { cn } from "../utils/cn";
+import { skillIcons } from "../utils/icons";
 
 export function EducationSection() {
   const [activeIndex, setActiveIndex] = useState(0);
@@ -218,7 +220,15 @@ function DetailsCard({
                     "chip !px-3 !py-1 text-xs font-medium",
                     chipColor,
                   )}
+                  className="chip flex items-center gap-2 !bg-slate-100/80 !px-3 !py-1 text-xs font-medium text-slate-600 dark:!bg-slate-800/80 dark:text-slate-200"
                 >
+                  {skillIcons[item] && (
+                    <Icon
+                      icon={skillIcons[item]}
+                      className="text-sm"
+                      aria-hidden="true"
+                    />
+                  )}
                   {item}
                 </span>
               ))}

@@ -1,3 +1,4 @@
+import { Icon } from "@iconify/react";
 import { motion, useReducedMotion } from "framer-motion";
 import { useCallback, useMemo, useState } from "react";
 
@@ -8,6 +9,7 @@ import { useTheme } from "../hooks/useTheme";
 import type { Theme } from "../providers/theme-context";
 import { themedClass } from "../utils/themeClass";
 import { cn } from "../utils/cn";
+import { companyIcons, skillIcons } from "../utils/icons";
 
 export function ExperienceSection() {
   const [activeIndex, setActiveIndex] = useState(0);
@@ -67,7 +69,7 @@ function ExperienceCard({
     <div className="card-surface space-y-8">
       <SectionHeader
         id="experience"
-        icon="material-symbols:work-rounded"
+        icon="material-symbols:work"
         label="Experience"
         eyebrow="Timeline"
       />
@@ -185,6 +187,44 @@ function TimelineColumn({
             </div>
           </li>
         ))}
+      <ol className="relative border-l border-slate-200 dark:border-slate-700 ml-4 mt-2">
+        {options.map((entry, idx) => {
+          const iconName = companyIcons[entry.company];
+          return (
+            <li key={entry.company + entry.role} className="mb-6 ml-2">
+              <span
+                className={`absolute -left-4 flex h-4 w-4 items-center justify-center rounded-full border-2 ${
+                  idx === activeIndex
+                    ? "border-accent bg-accent"
+                    : "border-slate-300 bg-slate-100 dark:border-slate-600 dark:bg-slate-800"
+                }`}
+                aria-current={idx === activeIndex ? "step" : undefined}
+              />
+              <button
+                className={`flex items-center gap-2 text-left font-semibold transition-colors ${
+                  idx === activeIndex
+                    ? "text-accent"
+                    : "text-slate-700 dark:text-slate-300 hover:text-accent"
+                }`}
+                data-idx={idx}
+                onClick={handleClick}
+                aria-label={`View experience at ${entry.company}`}
+              >
+                {iconName && (
+                  <Icon
+                    icon={iconName}
+                    className="text-base opacity-80"
+                    aria-hidden="true"
+                  />
+                )}
+                <span>{entry.company}</span>
+              </button>
+              <div className="text-xs text-slate-500 dark:text-slate-400">
+                {entry.dates}
+              </div>
+            </li>
+          );
+        })}
       </ol>
     </div>
   );
@@ -206,6 +246,7 @@ function DetailsCard({
   variants,
   theme,
 }: Readonly<DetailsCardProps>) {
+  const companyIcon = companyIcons[entry.company];
   return (
     <motion.div
       key={entry.company + entry.role}
@@ -224,6 +265,11 @@ function DetailsCard({
         )}
       >
         {entry.company}
+      <div className="mb-1 flex items-center gap-2 text-base font-semibold text-slate-800 dark:text-slate-100">
+        {companyIcon && (
+          <Icon icon={companyIcon} className="text-lg" aria-hidden="true" />
+        )}
+        <span>{entry.company}</span>
       </div>
       <div
         className={themedClass(
@@ -259,6 +305,8 @@ function DetailsCard({
                   s.toLowerCase().includes(normalized) ||
                   normalized.includes(s.toLowerCase()),
               );
+              const iconName =
+                skillIcons[item] ?? (match ? skillIcons[match] : undefined);
               return match ? (
                 <a
                   key={item}
@@ -267,8 +315,16 @@ function DetailsCard({
                     "chip !px-3 !py-1 text-xs font-medium text-accent underline-offset-2 hover:underline",
                     themedClass(theme, "!bg-accent/20", "!bg-accent/30"),
                   )}
+                  className="chip flex items-center gap-2 !bg-accent/20 !px-3 !py-1 text-xs font-medium text-accent underline-offset-2 hover:underline dark:!bg-accent/30"
                   title={`See more about ${match}`}
                 >
+                  {iconName && (
+                    <Icon
+                      icon={iconName}
+                      className="text-sm"
+                      aria-hidden="true"
+                    />
+                  )}
                   {item}
                 </a>
               ) : (
@@ -282,7 +338,15 @@ function DetailsCard({
                       "!bg-slate-800/80 text-slate-200",
                     ),
                   )}
+                  className="chip flex items-center gap-2 !bg-slate-100/80 !px-3 !py-1 text-xs font-medium text-slate-600 dark:!bg-slate-800/80 dark:text-slate-200"
                 >
+                  {iconName && (
+                    <Icon
+                      icon={iconName}
+                      className="text-sm"
+                      aria-hidden="true"
+                    />
+                  )}
                   {item}
                 </span>
               );

@@ -1,3 +1,4 @@
+import { Icon } from "@iconify/react";
 import {
   motion,
   useMotionValue,
@@ -11,6 +12,7 @@ import type { Project } from "../data/projects";
 import { cn } from "../utils/cn";
 import { useTheme } from "../hooks/useTheme";
 import { themedClass } from "../utils/themeClass";
+import { skillIcons } from "../utils/icons";
 
 interface ProjectCardProps {
   project: Project;
@@ -93,7 +95,15 @@ export function ProjectCard({ project }: ProjectCardProps) {
                 "!bg-slate-800/80 text-slate-200",
               ),
             )}
+            className="chip flex items-center gap-2 !bg-slate-100/80 !px-3 !py-1 text-xs font-medium text-slate-600 dark:!bg-slate-800/80 dark:text-slate-200"
           >
+            {skillIcons[item] && (
+              <Icon
+                icon={skillIcons[item]}
+                className="text-sm"
+                aria-hidden="true"
+              />
+            )}
             {item}
           </span>
         ))}
