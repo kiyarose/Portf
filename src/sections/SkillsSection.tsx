@@ -17,7 +17,6 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 import { Icon } from "@iconify/react";
 import { motion, useReducedMotion } from "framer-motion";
-import * as React from "react";
 import { useCallback } from "react";
 import { SectionContainer } from "../components/SectionContainer";
 import { SectionHeader } from "../components/SectionHeader";
@@ -145,7 +144,7 @@ export function SkillsSection() {
     }),
   );
 
-  const handleDragEnd = React.useCallback(
+  const handleDragEnd = useCallback(
     (event: DragEndEvent) => {
       const { active, over } = event;
       if (!over || active.id === over.id) return;
