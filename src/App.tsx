@@ -23,7 +23,7 @@ const sections = [
   {
     id: "experience",
     label: "Experience",
-    icon: "material-symbols:work-rounded",
+    icon: "material-symbols:work",
   },
   {
     id: "education",

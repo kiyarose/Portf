@@ -15,8 +15,9 @@ import {
   useSortable,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import { Icon } from "@iconify/react";
 import { motion, useReducedMotion } from "framer-motion";
-import { useCallback } from "react";
+import React, { useCallback } from "react";
 import { SectionContainer } from "../components/SectionContainer";
 import { SectionHeader } from "../components/SectionHeader";
 import { defaultSkills } from "../data/skills";
@@ -24,6 +25,7 @@ import { useLocalStorage } from "../hooks/useLocalStorage";
 import { useTheme } from "../hooks/useTheme";
 import { cn } from "../utils/cn";
 import { themedClass } from "../utils/themeClass";
+import { skillIcons } from "../utils/icons";
 
 function SortableSkill({
   id,
@@ -63,6 +65,8 @@ function SortableSkill({
     "border border-slate-700/60",
   );
 
+  const skillIcon = skillIcons[label];
+
   return (
     <motion.li
       ref={setNodeRef}
@@ -74,9 +78,21 @@ function SortableSkill({
         "select-none rounded-full px-5 py-2 text-sm font-medium shadow-md transition-colors",
         surfaceClass,
         isDeveloping ? developingClass : stableBorderClass,
+        "select-none rounded-full px-5 py-2 text-sm font-medium shadow-md transition-colors flex items-center gap-2",
+        "bg-white/80 text-slate-700 dark:bg-slate-800/70 dark:text-slate-200",
+        isDeveloping
+          ? "border-2 border-dashed border-accent/60 bg-accent/10 text-accent dark:border-accent/60 dark:bg-accent/20 dark:text-accent"
+          : "border border-slate-200/60 dark:border-slate-700/60",
         isDragging && "ring-2 ring-accent",
       )}
     >
+      {skillIcon && (
+        <Icon
+          icon={skillIcon}
+          className="text-base flex-shrink-0"
+          aria-hidden="true"
+        />
+      )}
       {label}
     </motion.li>
   );
@@ -128,6 +144,19 @@ export function SkillsSection() {
     ...defaultSkills,
   ]);
   const prefersReducedMotion = useReducedMotion() ?? false;
+
+  // Migrate skills: ensure all default skills are included
+  React.useEffect(() => {
+    setSkills((current) => {
+      const missingSkills = defaultSkills.filter(
+        (skill) => !current.includes(skill),
+      );
+      if (missingSkills.length > 0) {
+        return [...current, ...missingSkills];
+      }
+      return current;
+    });
+  }, [setSkills]);
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),

@@ -8,36 +8,6 @@ export type ExperienceEntry = {
 
 export const experienceTimeline: ExperienceEntry[] = [
   {
-    company: "Google (Contract)",
-    role: "Social Media Management",
-    dates: "Apr 2021 – Jan 2023",
-    description:
-      "Managed community engagement and led technical and administrative teams for Google as a contract social media manager.",
-    tech: [
-      "Community Engagement",
-      "Technical Leadership",
-      "Team Leadership",
-      "Administration",
-      "Customer Service",
-    ],
-  },
-  {
-    company: "Shawmut Services LLC (Contract)",
-    role: "Sales Representative",
-    dates: "Nov 2024 – 2024",
-    description:
-      "Contract sales work including voter registration, canvassing, and direct sales for Shawmut Services.",
-    tech: ["Voter Registration", "Canvassing", "Sales", "Customer Service"],
-  },
-  {
-    company: "Amazon",
-    role: "Sortation Associate",
-    dates: "Jun 2025 – Jul 2025",
-    description:
-      "Handled picking, packing, stowing, and unloading packages as a sortation associate at Amazon.",
-    tech: ["Picking", "Packing", "Stowing", "Unloading", "Logistics"],
-  },
-  {
     company: "YRAB/CAYAH Research Board",
     role: "Board Member",
     dates: "Feb 2025 – Present",
@@ -57,6 +27,36 @@ export const experienceTimeline: ExperienceEntry[] = [
       "Product Substitutions",
       "Order Staging",
       "Order Dispensing",
+      "Customer Service",
+    ],
+  },
+  {
+    company: "Amazon",
+    role: "Sortation Associate",
+    dates: "Jun 2025 – Jul 2025",
+    description:
+      "Handled picking, packing, stowing, and unloading packages as a sortation associate at Amazon.",
+    tech: ["Picking", "Packing", "Stowing", "Unloading", "Logistics"],
+  },
+  {
+    company: "Shawmut Services LLC (Contract)",
+    role: "Sales Representative",
+    dates: "Nov 2024 – 2024",
+    description:
+      "Contract sales work including voter registration, canvassing, and direct sales for Shawmut Services.",
+    tech: ["Voter Registration", "Canvassing", "Sales", "Customer Service"],
+  },
+  {
+    company: "Google (Contract)",
+    role: "Social Media Management",
+    dates: "Apr 2021 – Jan 2023",
+    description:
+      "Managed community engagement and led technical and administrative teams for Google as a contract social media manager.",
+    tech: [
+      "Community Engagement",
+      "Technical Leadership",
+      "Team Leadership",
+      "Administration",
       "Customer Service",
     ],
   },
