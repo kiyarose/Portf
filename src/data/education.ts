@@ -6,7 +6,7 @@ export type EducationEntry = {
 };
 
 export const educationTimeline: EducationEntry[] = [
-    {
+  {
     school: "Colorado Mountain College",
     program: "Medical Billing and Coding",
     dates: "2025 – 2026",

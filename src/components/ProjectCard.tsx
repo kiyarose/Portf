@@ -96,10 +96,7 @@ export function ProjectCard({ project }: ProjectCardProps) {
           const iconName = getSkillIcon(item);
 
           return (
-            <span
-              key={item}
-              className={techChipClass}
-            >
+            <span key={item} className={techChipClass}>
               {iconName ? (
                 <Icon icon={iconName} className="text-sm" aria-hidden="true" />
               ) : null}
