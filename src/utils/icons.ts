@@ -11,7 +11,6 @@ const materialIconNames = [
   "material-symbols:rocket-launch-rounded",
   "material-symbols:school-rounded",
   "material-symbols:work",
-  "material-symbols:work-rounded",
   "material-symbols:workspace-premium-rounded",
   "material-symbols:close-rounded",
   "material-symbols:menu-rounded",
