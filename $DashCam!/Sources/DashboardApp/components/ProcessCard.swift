@@ -1,7 +1,7 @@
 import SwiftUI
 
 private enum CardMetrics {
-    static let heightRange: ClosedRange<CGFloat> = 160...420
+    static let heightRange: ClosedRange<CGFloat> = 120...420
 }
 
 struct ProcessCard<ExtraContent: View>: View {
@@ -10,6 +10,16 @@ struct ProcessCard<ExtraContent: View>: View {
     @Binding var preferredHeight: CGFloat
     var description: String
     var extraContent: ExtraContent
+    private var collapsedLogLine: String? {
+        guard isCollapsed else { return nil }
+        let trimmed = controller.log.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return nil }
+        guard let firstLine = trimmed.split(whereSeparator: { $0.isNewline }).first else {
+            return nil
+        }
+        let candidate = firstLine.trimmingCharacters(in: .whitespaces)
+        return candidate.isEmpty ? nil : String(candidate.prefix(120))
+    }
     private let statusColors: [ProcessController.Level: Color] = [
         .neutral: .secondary,
         .success: .green,
@@ -80,9 +90,16 @@ struct ProcessCard<ExtraContent: View>: View {
                     Text(controller.name)
                         .font(.title2)
                         .bold()
-                    Text(description)
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
+                    if let collapsedLogLine {
+                        Text(collapsedLogLine)
+                            .font(.caption2)
+                            .foregroundStyle(.secondary)
+                            .lineLimit(1)
+                    } else {
+                        Text(description)
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                    }
                 }
             }
             Spacer()

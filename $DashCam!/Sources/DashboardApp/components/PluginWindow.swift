@@ -23,6 +23,7 @@ final class PluginWindowController: NSWindowController, NSWindowDelegate {
         window.contentViewController = hostingController
         window.title = plugin.windowTitle
         window.isReleasedWhenClosed = false
+        window.contentMinSize = NSSize(width: 400, height: 360)
         window.center()
 
         super.init(window: window)
@@ -54,7 +55,8 @@ private struct PluginWindowContent: View {
             mode: .detached
         )
         .padding(20)
-        .frame(minWidth: 480, minHeight: 480, alignment: .topLeading)
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+        .frame(minWidth: 400, minHeight: 360, alignment: .topLeading)
         .background(Color(nsColor: .windowBackgroundColor))
     }
 }
