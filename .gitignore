@@ -58,6 +58,7 @@ build/Release
 *.sw?
 *.app
 *.app/*
+*.build*
 
 # Vite
 *.local
