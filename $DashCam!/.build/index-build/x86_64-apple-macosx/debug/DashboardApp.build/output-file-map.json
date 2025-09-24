@@ -32,6 +32,12 @@
     "swiftmodule": "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/.build/index-build/x86_64-apple-macosx/debug/DashboardApp.build/ProcessCard~partial.swiftmodule",
     "swift-dependencies": "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/.build/index-build/x86_64-apple-macosx/debug/DashboardApp.build/ProcessCard.swiftdeps"
   },
+  "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/Sources/DashboardApp/components/ProjectDirectoryCard.swift": {
+    "dependencies": "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/.build/index-build/x86_64-apple-macosx/debug/DashboardApp.build/ProjectDirectoryCard.d",
+    "object": "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/.build/index-build/x86_64-apple-macosx/debug/DashboardApp.build/ProjectDirectoryCard.swift.o",
+    "swiftmodule": "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/.build/index-build/x86_64-apple-macosx/debug/DashboardApp.build/ProjectDirectoryCard~partial.swiftmodule",
+    "swift-dependencies": "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/.build/index-build/x86_64-apple-macosx/debug/DashboardApp.build/ProjectDirectoryCard.swiftdeps"
+  },
   "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/Sources/DashboardApp/plugins/PlaywrightMGM.swift": {
     "dependencies": "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/.build/index-build/x86_64-apple-macosx/debug/DashboardApp.build/PlaywrightMGM.d",
     "object": "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/.build/index-build/x86_64-apple-macosx/debug/DashboardApp.build/PlaywrightMGM.swift.o",

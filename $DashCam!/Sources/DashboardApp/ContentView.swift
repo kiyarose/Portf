@@ -4,17 +4,26 @@ import UniformTypeIdentifiers
 struct ContentView: View {
     @EnvironmentObject private var viewModel: DashboardViewModel
     @State private var showingDirectoryPicker = false
+    @State private var draggingPlugin: PluginKind?
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 20) {
-            projectDirectorySection
-            ServerMGM(controller: viewModel.devProcess)
-            PlaywrightMGM(port: $viewModel.playwrightPort, controller: viewModel.playwrightProcess)
-            Spacer()
+        GeometryReader { proxy in
+            VStack(alignment: .leading, spacing: 20) {
+                ProjectDirectoryCard(
+                    projectPath: $viewModel.projectPath,
+                    isCollapsed: $viewModel.isProjectDirectoryCollapsed,
+                    validationMessage: viewModel.pathValidationMessage,
+                    pathIsValid: viewModel.pathIsValid,
+                    onBrowse: { showingDirectoryPicker = true },
+                    onUseCurrentDirectory: { viewModel.useCurrentDirectory() }
+                )
+                pluginList
+            }
+            .padding(24)
+            .frame(width: proxy.size.width, height: proxy.size.height, alignment: .topLeading)
+            .background(Color(nsColor: .windowBackgroundColor))
         }
-        .padding(24)
-        .frame(minWidth: 860, minHeight: 600)
-        .background(Color(nsColor: .windowBackgroundColor))
+        .frame(minWidth: 860, minHeight: 520)
         .fileImporter(
             isPresented: $showingDirectoryPicker,
             allowedContentTypes: [.folder],
@@ -30,32 +39,98 @@ struct ContentView: View {
             }
         }
     }
+}
 
-    private var projectDirectorySection: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Text("Project Directory")
-                .font(.title3)
-                .bold()
-            HStack(alignment: .center, spacing: 12) {
-                TextField("Path to your project", text: $viewModel.projectPath)
-                    .textFieldStyle(.roundedBorder)
-                    .disableAutocorrection(true)
-                Button {
-                    showingDirectoryPicker = true
-                } label: {
-                    Label("Browse…", systemImage: "folder")
+private extension ContentView {
+    var pluginList: some View {
+        ScrollView {
+            LazyVStack(spacing: 16) {
+                ForEach(viewModel.pluginOrder) { plugin in
+                    pluginView(for: plugin)
+                        .opacity(draggingPlugin == plugin ? 0.7 : 1)
+                        .overlay(alignment: .topTrailing) {
+                            Image(systemName: "arrow.up.arrow.down")
+                                .font(.system(size: 12, weight: .semibold))
+                                .foregroundStyle(.secondary)
+                                .padding(10)
+                                .opacity(draggingPlugin == plugin ? 1 : 0.4)
+                        }
+                        .onDrag {
+                            draggingPlugin = plugin
+                            return NSItemProvider(object: plugin.rawValue as NSString)
+                        }
+                        .onDrop(
+                            of: [UTType.text],
+                            delegate: PluginDropDelegate(
+                                target: plugin,
+                                items: $viewModel.pluginOrder,
+                                dragging: $draggingPlugin
+                            )
+                        )
                 }
-                .buttonStyle(.bordered)
             }
-            if let message = viewModel.pathValidationMessage {
-                Text(message)
-                    .font(.footnote)
-                    .foregroundStyle(.red)
-            }
+            .padding(.vertical, 8)
         }
-        .padding(16)
-        .background(.thinMaterial)
-        .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+
+    @ViewBuilder
+    func pluginView(for plugin: PluginKind) -> some View {
+        switch plugin {
+        case .server:
+            ServerMGM(
+                controller: viewModel.devProcess,
+                isCollapsed: $viewModel.isServerCollapsed,
+                preferredHeight: $viewModel.serverPanelHeight
+            )
+        case .playwright:
+            PlaywrightMGM(
+                port: $viewModel.playwrightPort,
+                controller: viewModel.playwrightProcess,
+                isCollapsed: $viewModel.isPlaywrightCollapsed,
+                preferredHeight: $viewModel.playwrightPanelHeight
+            )
+        }
+    }
+}
+
+private struct PluginDropDelegate: DropDelegate {
+    let target: PluginKind
+    @Binding var items: [PluginKind]
+    @Binding var dragging: PluginKind?
+
+    func validateDrop(info: DropInfo) -> Bool {
+        info.hasItemsConforming(to: [UTType.text])
+    }
+
+    func dropEntered(info: DropInfo) {
+        guard let dragging, dragging != target,
+              let fromIndex = items.firstIndex(of: dragging),
+              let toIndex = items.firstIndex(of: target) else { return }
+
+        withAnimation(.easeInOut(duration: 0.15)) {
+            items.move(
+                fromOffsets: IndexSet(integer: fromIndex),
+                toOffset: toIndex > fromIndex ? toIndex + 1 : toIndex
+            )
+        }
+        self.dragging = dragging
+    }
+
+    func dropUpdated(info: DropInfo) -> DropProposal? {
+        DropProposal(operation: .move)
+    }
+
+    func performDrop(info: DropInfo) -> Bool {
+        dragging = nil
+        return true
+    }
+
+    func dropExited(info: DropInfo) {
+        // reset hover state when leaving current row
+        if dragging == target {
+            dragging = nil
+        }
     }
 }
 

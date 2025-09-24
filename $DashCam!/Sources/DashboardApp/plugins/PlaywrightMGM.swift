@@ -3,14 +3,19 @@ import SwiftUI
 struct PlaywrightMGM: View {
     @Binding var port: Int
     @ObservedObject var controller: ProcessController
+    @Binding var isCollapsed: Bool
+    @Binding var preferredHeight: CGFloat
 
     var body: some View {
         ProcessCard(
             controller: controller,
-            description: "Launches Playwright codegen against your selected port. Use this when you need to record new flows."
+            description: "Launches Playwright codegen against your selected port. Use this when you need to record new flows.",
+            isCollapsed: $isCollapsed,
+            preferredHeight: $preferredHeight
         ) {
             PlaywrightPortControls(port: $port, controller: controller)
         }
+        .layoutPriority(1)
     }
 }
 

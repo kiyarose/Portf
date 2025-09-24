@@ -2,6 +2,8 @@ import SwiftUI
 
 struct ProcessCard<ExtraContent: View>: View {
     @ObservedObject var controller: ProcessController
+    @Binding var isCollapsed: Bool
+    @Binding var preferredHeight: CGFloat
     var description: String
     var extraContent: ExtraContent
 
@@ -12,14 +14,29 @@ struct ProcessCard<ExtraContent: View>: View {
         .error: .red
     ]
 
-    init(controller: ProcessController, description: String, @ViewBuilder extraContent: () -> ExtraContent) {
+    init(
+        controller: ProcessController,
+        description: String,
+        isCollapsed: Binding<Bool>,
+        preferredHeight: Binding<CGFloat>,
+        @ViewBuilder extraContent: () -> ExtraContent
+    ) {
         self.controller = controller
+        self._isCollapsed = isCollapsed
+        self._preferredHeight = preferredHeight
         self.description = description
         self.extraContent = extraContent()
     }
 
-    init(controller: ProcessController, description: String) where ExtraContent == EmptyView {
+    init(
+        controller: ProcessController,
+        description: String,
+        isCollapsed: Binding<Bool>,
+        preferredHeight: Binding<CGFloat>
+    ) where ExtraContent == EmptyView {
         self.controller = controller
+        self._isCollapsed = isCollapsed
+        self._preferredHeight = preferredHeight
         self.description = description
         self.extraContent = EmptyView()
     }
@@ -27,29 +44,62 @@ struct ProcessCard<ExtraContent: View>: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
             header
-            actionButtons
-            extraContent
-            LogView(text: controller.log)
-            footer
+            if !isCollapsed {
+                actionButtons
+                extraContent
+                LogView(text: controller.log)
+                    .frame(minHeight: preferredHeight, idealHeight: preferredHeight, maxHeight: .infinity)
+                    .animation(.easeInOut(duration: 0.15), value: preferredHeight)
+                footer
+                CardResizeHandle(height: $preferredHeight)
+            }
         }
+        .frame(maxWidth: .infinity, alignment: .topLeading)
+        .frame(maxHeight: isCollapsed ? nil : .infinity, alignment: .topLeading)
         .padding(20)
         .background(.regularMaterial)
         .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+        .animation(.easeInOut(duration: 0.2), value: isCollapsed)
+        .layoutPriority(1)
     }
 
     private var header: some View {
-        HStack(alignment: .firstTextBaseline) {
-            VStack(alignment: .leading, spacing: 6) {
-                Text(controller.name)
-                    .font(.title2)
-                    .bold()
-                Text(description)
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
+        HStack(alignment: .top) {
+            HStack(alignment: .top, spacing: 12) {
+                collapseToggle
+                VStack(alignment: .leading, spacing: 6) {
+                    Text(controller.name)
+                        .font(.title2)
+                        .bold()
+                    Text(description)
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                }
             }
             Spacer()
             StatusBadge(text: controller.statusText, color: statusColors[controller.statusLevel] ?? .secondary)
         }
+    }
+
+    private var collapseToggle: some View {
+        Button {
+            withAnimation(.easeInOut(duration: 0.2)) {
+                isCollapsed.toggle()
+            }
+        } label: {
+            Image(systemName: isCollapsed ? "chevron.down" : "chevron.up")
+                .font(.body.weight(.semibold))
+                .frame(width: 28, height: 28)
+                .background(Color.secondary.opacity(0.12))
+                .foregroundStyle(.primary)
+                .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 8, style: .continuous)
+                        .strokeBorder(Color.secondary.opacity(0.2))
+                )
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel(isCollapsed ? "Expand \(controller.name)" : "Collapse \(controller.name)")
     }
 
     private var actionButtons: some View {
@@ -127,8 +177,47 @@ struct LogView: View {
                 .padding(.vertical, 8)
                 .textSelection(.enabled)
         }
-        .frame(minHeight: 160, maxHeight: 220)
         .background(Color(nsColor: .textBackgroundColor))
         .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+    }
+}
+
+private struct CardResizeHandle: View {
+    @Binding var height: CGFloat
+    @State private var baseline: CGFloat?
+
+    private let range: ClosedRange<CGFloat> = 160...420
+
+    var body: some View {
+        HStack {
+            Spacer()
+            Capsule()
+                .fill(Color.secondary.opacity(0.35))
+                .frame(width: 80, height: 6)
+                .overlay(
+                    Capsule()
+                        .stroke(Color.secondary.opacity(0.5), lineWidth: 0.5)
+                )
+                .padding(.vertical, 6)
+                .gesture(dragGesture)
+                .accessibilityLabel("Resize panel height")
+            Spacer()
+        }
+        .padding(.top, 6)
+    }
+
+    private var dragGesture: some Gesture {
+        DragGesture(minimumDistance: 0)
+            .onChanged { value in
+                if baseline == nil {
+                    baseline = height
+                }
+                guard let baseline else { return }
+                let proposed = baseline - value.translation.height
+                height = min(max(proposed, range.lowerBound), range.upperBound)
+            }
+            .onEnded { _ in
+                baseline = nil
+            }
     }
 }
