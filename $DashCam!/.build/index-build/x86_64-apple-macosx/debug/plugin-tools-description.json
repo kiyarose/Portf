@@ -40,6 +40,14 @@
         },
         {
           "kind" : "file",
+          "name" : "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/Sources/DashboardApp/components/PluginPanelView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/Sources/DashboardApp/components/PluginWindow.swift"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/Sources/DashboardApp/components/ProcessCard.swift"
         },
         {
@@ -71,6 +79,8 @@
         "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/.build/index-build/x86_64-apple-macosx/debug/DashboardApp.build/DashboardApp.swift.o",
         "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/.build/index-build/x86_64-apple-macosx/debug/DashboardApp.build/DashboardViewModel.swift.o",
         "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/.build/index-build/x86_64-apple-macosx/debug/DashboardApp.build/ProcessController.swift.o",
+        "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/.build/index-build/x86_64-apple-macosx/debug/DashboardApp.build/PluginPanelView.swift.o",
+        "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/.build/index-build/x86_64-apple-macosx/debug/DashboardApp.build/PluginWindow.swift.o",
         "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/.build/index-build/x86_64-apple-macosx/debug/DashboardApp.build/ProcessCard.swift.o",
         "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/.build/index-build/x86_64-apple-macosx/debug/DashboardApp.build/ProjectDirectoryCard.swift.o",
         "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/.build/index-build/x86_64-apple-macosx/debug/DashboardApp.build/PlaywrightMGM.swift.o",
@@ -80,6 +90,8 @@
         "-target",
         "x86_64-apple-macosx13.0",
         "-enable-batch-mode",
+        "-index-store-path",
+        "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/.build/index-build/x86_64-apple-macosx/debug/index/store",
         "-Onone",
         "-enable-testing",
         "-j8",
@@ -88,10 +100,6 @@
         "-module-cache-path",
         "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/.build/index-build/x86_64-apple-macosx/debug/ModuleCache",
         "-parseable-output",
-        "-Xfrontend",
-        "-entry-point-function-name",
-        "-Xfrontend",
-        "DashboardApp_main",
         "-swift-version",
         "5",
         "-Xfrontend",
@@ -145,6 +153,8 @@
         "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/Sources/DashboardApp/DashboardApp.swift",
         "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/Sources/DashboardApp/DashboardViewModel.swift",
         "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/Sources/DashboardApp/ProcessController.swift",
+        "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/Sources/DashboardApp/components/PluginPanelView.swift",
+        "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/Sources/DashboardApp/components/PluginWindow.swift",
         "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/Sources/DashboardApp/components/ProcessCard.swift",
         "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/Sources/DashboardApp/components/ProjectDirectoryCard.swift",
         "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/Sources/DashboardApp/plugins/PlaywrightMGM.swift",
@@ -170,6 +180,8 @@
       "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/Sources/DashboardApp/DashboardApp.swift",
       "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/Sources/DashboardApp/DashboardViewModel.swift",
       "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/Sources/DashboardApp/ProcessController.swift",
+      "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/Sources/DashboardApp/components/PluginPanelView.swift",
+      "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/Sources/DashboardApp/components/PluginWindow.swift",
       "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/Sources/DashboardApp/components/ProcessCard.swift",
       "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/Sources/DashboardApp/components/ProjectDirectoryCard.swift",
       "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/Sources/DashboardApp/plugins/PlaywrightMGM.swift",
@@ -179,6 +191,8 @@
       "-target",
       "x86_64-apple-macosx13.0",
       "-enable-batch-mode",
+      "-index-store-path",
+      "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/.build/index-build/x86_64-apple-macosx/debug/index/store",
       "-Onone",
       "-enable-testing",
       "-j8",
@@ -187,10 +201,6 @@
       "-module-cache-path",
       "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/.build/index-build/x86_64-apple-macosx/debug/ModuleCache",
       "-parseable-output",
-      "-Xfrontend",
-      "-entry-point-function-name",
-      "-Xfrontend",
-      "DashboardApp_main",
       "-swift-version",
       "5",
       "-Xfrontend",
@@ -271,6 +281,14 @@
         {
           "kind" : "file",
           "name" : "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/Sources/DashboardApp/ProcessController.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/Sources/DashboardApp/components/PluginPanelView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/Sources/DashboardApp/components/PluginWindow.swift"
         },
         {
           "kind" : "file",

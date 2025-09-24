@@ -1,12 +1,15 @@
 import SwiftUI
 
+private enum CardMetrics {
+    static let heightRange: ClosedRange<CGFloat> = 160...420
+}
+
 struct ProcessCard<ExtraContent: View>: View {
     @ObservedObject var controller: ProcessController
     @Binding var isCollapsed: Bool
     @Binding var preferredHeight: CGFloat
     var description: String
     var extraContent: ExtraContent
-
     private let statusColors: [ProcessController.Level: Color] = [
         .neutral: .secondary,
         .success: .green,
@@ -44,8 +47,8 @@ struct ProcessCard<ExtraContent: View>: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
             header
+            actionButtons(compact: isCollapsed)
             if !isCollapsed {
-                actionButtons
                 extraContent
                 LogView(text: controller.log)
                     .frame(minHeight: preferredHeight, idealHeight: preferredHeight, maxHeight: .infinity)
@@ -61,6 +64,12 @@ struct ProcessCard<ExtraContent: View>: View {
         .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
         .animation(.easeInOut(duration: 0.2), value: isCollapsed)
         .layoutPriority(1)
+        .overlay {
+            EdgeResizeOverlay(
+                isCollapsed: isCollapsed,
+                height: $preferredHeight
+            )
+        }
     }
 
     private var header: some View {
@@ -102,14 +111,15 @@ struct ProcessCard<ExtraContent: View>: View {
         .accessibilityLabel(isCollapsed ? "Expand \(controller.name)" : "Collapse \(controller.name)")
     }
 
-    private var actionButtons: some View {
-        HStack(spacing: 12) {
+    private func actionButtons(compact: Bool) -> some View {
+        HStack(spacing: compact ? 8 : 12) {
             Button {
                 controller.start()
             } label: {
                 Label("Start", systemImage: "play.fill")
             }
             .buttonStyle(.borderedProminent)
+            .controlSize(compact ? .small : .regular)
             .disabled(controller.isRunning)
 
             Button {
@@ -118,6 +128,7 @@ struct ProcessCard<ExtraContent: View>: View {
                 Label("Stop", systemImage: "stop.fill")
             }
             .buttonStyle(.bordered)
+            .controlSize(compact ? .small : .regular)
             .disabled(!controller.isRunning)
 
             Button {
@@ -126,7 +137,9 @@ struct ProcessCard<ExtraContent: View>: View {
                 Label("Restart", systemImage: "arrow.clockwise")
             }
             .buttonStyle(.bordered)
+            .controlSize(compact ? .small : .regular)
         }
+        .padding(.top, compact ? 0 : 0)
     }
 
     private var footer: some View {
@@ -186,8 +199,6 @@ private struct CardResizeHandle: View {
     @Binding var height: CGFloat
     @State private var baseline: CGFloat?
 
-    private let range: ClosedRange<CGFloat> = 160...420
-
     var body: some View {
         HStack {
             Spacer()
@@ -214,10 +225,81 @@ private struct CardResizeHandle: View {
                 }
                 guard let baseline else { return }
                 let proposed = baseline - value.translation.height
-                height = min(max(proposed, range.lowerBound), range.upperBound)
+                height = clampHeight(proposed)
             }
             .onEnded { _ in
                 baseline = nil
+            }
+    }
+
+    private func clampHeight(_ value: CGFloat) -> CGFloat {
+        min(max(value, CardMetrics.heightRange.lowerBound), CardMetrics.heightRange.upperBound)
+    }
+}
+
+private struct EdgeResizeOverlay: View {
+    var isCollapsed: Bool
+    @Binding var height: CGFloat
+    @State private var baseline: CGFloat?
+    @State private var activeEdge: Edge?
+
+    private enum Edge {
+        case top
+        case bottom
+    }
+
+    var body: some View {
+        GeometryReader { _ in
+            if isCollapsed {
+                Color.clear
+            } else {
+                VStack {
+                    edgeHandle(.top)
+                    Spacer(minLength: 0)
+                    edgeHandle(.bottom)
+                }
+                .background(Color.clear)
+            }
+        }
+        .allowsHitTesting(!isCollapsed)
+    }
+
+    private func edgeHandle(_ edge: Edge) -> some View {
+        HStack {
+            Spacer()
+            Capsule()
+                .fill(Color.secondary.opacity(activeEdge == edge ? 0.45 : 0.15))
+                .frame(width: 80, height: 5)
+                .padding(.vertical, 4)
+                .opacity(activeEdge == edge ? 1 : 0.7)
+                .contentShape(Rectangle())
+                .gesture(dragGesture(for: edge))
+            Spacer()
+        }
+        .frame(height: 16)
+    }
+
+    private func dragGesture(for edge: Edge) -> some Gesture {
+        DragGesture(minimumDistance: 0)
+            .onChanged { value in
+                if baseline == nil {
+                    baseline = height
+                }
+                guard let baseline else { return }
+                let translation = value.translation.height
+                let proposed: CGFloat
+                switch edge {
+                case .top:
+                    proposed = baseline - translation
+                case .bottom:
+                    proposed = baseline + translation
+                }
+                height = min(max(proposed, CardMetrics.heightRange.lowerBound), CardMetrics.heightRange.upperBound)
+                activeEdge = edge
+            }
+            .onEnded { _ in
+                baseline = nil
+                activeEdge = nil
             }
     }
 }

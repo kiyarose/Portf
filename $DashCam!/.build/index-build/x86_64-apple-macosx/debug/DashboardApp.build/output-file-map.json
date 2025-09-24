@@ -26,6 +26,18 @@
     "swiftmodule": "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/.build/index-build/x86_64-apple-macosx/debug/DashboardApp.build/ProcessController~partial.swiftmodule",
     "swift-dependencies": "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/.build/index-build/x86_64-apple-macosx/debug/DashboardApp.build/ProcessController.swiftdeps"
   },
+  "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/Sources/DashboardApp/components/PluginPanelView.swift": {
+    "dependencies": "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/.build/index-build/x86_64-apple-macosx/debug/DashboardApp.build/PluginPanelView.d",
+    "object": "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/.build/index-build/x86_64-apple-macosx/debug/DashboardApp.build/PluginPanelView.swift.o",
+    "swiftmodule": "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/.build/index-build/x86_64-apple-macosx/debug/DashboardApp.build/PluginPanelView~partial.swiftmodule",
+    "swift-dependencies": "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/.build/index-build/x86_64-apple-macosx/debug/DashboardApp.build/PluginPanelView.swiftdeps"
+  },
+  "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/Sources/DashboardApp/components/PluginWindow.swift": {
+    "dependencies": "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/.build/index-build/x86_64-apple-macosx/debug/DashboardApp.build/PluginWindow.d",
+    "object": "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/.build/index-build/x86_64-apple-macosx/debug/DashboardApp.build/PluginWindow.swift.o",
+    "swiftmodule": "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/.build/index-build/x86_64-apple-macosx/debug/DashboardApp.build/PluginWindow~partial.swiftmodule",
+    "swift-dependencies": "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/.build/index-build/x86_64-apple-macosx/debug/DashboardApp.build/PluginWindow.swiftdeps"
+  },
   "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/Sources/DashboardApp/components/ProcessCard.swift": {
     "dependencies": "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/.build/index-build/x86_64-apple-macosx/debug/DashboardApp.build/ProcessCard.d",
     "object": "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/.build/index-build/x86_64-apple-macosx/debug/DashboardApp.build/ProcessCard.swift.o",

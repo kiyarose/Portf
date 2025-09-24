@@ -6,7 +6,7 @@ struct ServerMGM: View {
     @Binding var preferredHeight: CGFloat
 
     var body: some View {
-        ProcessCard(
+        ProcessCard<EmptyView>(
             controller: controller,
             description: "Controls the local Vite dev server via npm run dev.",
             isCollapsed: $isCollapsed,

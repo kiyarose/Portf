@@ -46,15 +46,9 @@ private extension ContentView {
         ScrollView {
             LazyVStack(spacing: 16) {
                 ForEach(viewModel.pluginOrder) { plugin in
-                    pluginView(for: plugin)
+                    pluginRow(for: plugin)
                         .opacity(draggingPlugin == plugin ? 0.7 : 1)
-                        .overlay(alignment: .topTrailing) {
-                            Image(systemName: "arrow.up.arrow.down")
-                                .font(.system(size: 12, weight: .semibold))
-                                .foregroundStyle(.secondary)
-                                .padding(10)
-                                .opacity(draggingPlugin == plugin ? 1 : 0.4)
-                        }
+                        .contentShape(Rectangle())
                         .onDrag {
                             draggingPlugin = plugin
                             return NSItemProvider(object: plugin.rawValue as NSString)
@@ -75,20 +69,14 @@ private extension ContentView {
     }
 
     @ViewBuilder
-    func pluginView(for plugin: PluginKind) -> some View {
-        switch plugin {
-        case .server:
-            ServerMGM(
-                controller: viewModel.devProcess,
-                isCollapsed: $viewModel.isServerCollapsed,
-                preferredHeight: $viewModel.serverPanelHeight
-            )
-        case .playwright:
-            PlaywrightMGM(
-                port: $viewModel.playwrightPort,
-                controller: viewModel.playwrightProcess,
-                isCollapsed: $viewModel.isPlaywrightCollapsed,
-                preferredHeight: $viewModel.playwrightPanelHeight
+    func pluginRow(for plugin: PluginKind) -> some View {
+        if viewModel.isPluginDetached(plugin) {
+            DetachedPluginPlaceholder(plugin: plugin)
+        } else {
+            PluginPanelView(
+                plugin: plugin,
+                mode: .embedded,
+                onPopOut: { draggingPlugin = nil }
             )
         }
     }

@@ -1,3 +1,4 @@
+import AppKit
 import Foundation
 import SwiftUI
 
@@ -14,6 +15,17 @@ enum PluginKind: String, CaseIterable, Identifiable, Codable {
     case playwright
 
     var id: String { rawValue }
+
+    var displayName: String {
+        switch self {
+        case .server:
+            return "Dev Server"
+        case .playwright:
+            return "Playwright Codegen"
+        }
+    }
+
+    var windowTitle: String { displayName }
 }
 
 @MainActor
@@ -49,6 +61,7 @@ final class DashboardViewModel: ObservableObject {
             persistPluginOrder()
         }
     }
+    @Published var detachedPlugins: Set<PluginKind> = []
     @Published var isProjectDirectoryCollapsed: Bool {
         didSet {
             persistCollapseState(key: CollapseKey.project, value: isProjectDirectoryCollapsed)
@@ -103,6 +116,8 @@ final class DashboardViewModel: ObservableObject {
     private enum OrderKey {
         static let plugins = "dashboard.plugin.order"
     }
+
+    private var pluginWindows: [PluginKind: PluginWindowController] = [:]
 
     init(defaultPath: String? = nil) {
         if let defaultPath {
@@ -193,18 +208,48 @@ final class DashboardViewModel: ObservableObject {
         pluginOrder.move(fromOffsets: offsets, toOffset: destination)
     }
 
+    func isPluginDetached(_ plugin: PluginKind) -> Bool {
+        detachedPlugins.contains(plugin)
+    }
+
+    func popOut(plugin: PluginKind) {
+        if let controller = pluginWindows[plugin] {
+            controller.showPluginWindow()
+            return
+        }
+
+        let controller = PluginWindowController(plugin: plugin, viewModel: self)
+        pluginWindows[plugin] = controller
+        detachedPlugins.insert(plugin)
+        controller.showPluginWindow()
+    }
+
+    func focusWindow(for plugin: PluginKind) {
+        pluginWindows[plugin]?.showPluginWindow()
+    }
+
+    func returnPluginToMain(plugin: PluginKind) {
+        guard let controller = pluginWindows[plugin] else { return }
+        controller.close()
+    }
+
+    func onPluginWindowClosed(_ plugin: PluginKind) {
+        pluginWindows[plugin] = nil
+        detachedPlugins.remove(plugin)
+    }
+
     func useCurrentDirectory() {
-        if let workingDir = devProcess.workingDirectory?.path {
+        if let workingDir = devProcess.workingDirectory?.path, isDirectory(workingDir) {
             projectPath = workingDir
             return
         }
 
-        let envCwd = ProcessInfo.processInfo.environment["PWD"]
-        let expandedEnv = envCwd.map { NSString(string: $0).expandingTildeInPath }
+        if let envCwd = ProcessInfo.processInfo.environment["PWD"], isDirectory(envCwd) {
+            projectPath = NSString(string: envCwd).expandingTildeInPath
+            return
+        }
 
-        if let candidate = expandedEnv, isDirectory(candidate) {
-            projectPath = candidate
-        } else if isDirectory(defaultProjectPath) {
+        if isDirectory(defaultProjectPath) {
             projectPath = defaultProjectPath
         }
     }
