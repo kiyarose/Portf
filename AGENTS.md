@@ -53,3 +53,12 @@
 
 - Use `firebase emulators:start --only hosting` to preview rewrites and headers locally.
 - Prefer GitHub Actions for deploys; reserve manual `firebase deploy --only hosting` for emergencies so release history stays auditable.
+
+## Native Companion Tooling
+
+- `$DashCam!/` hosts the **DashCam!** SwiftUI dashboard that starts, stops, and restarts the `npm run dev` and `npx playwright codegen` tasks; adjust `DashboardViewModel`/`ProcessController` plus the bundled `DashCam.app` and `dashcam_swift.tgz` whenever those commands or their default paths change.
+- Build the app with Xcode 15+ on macOS 13+; its Swift sources live under `$DashCam!/Sources/DashboardApp`, and the SwiftPM manifest is `$DashCam!/Package.swift`.
+
+## AI Assistant Guidance
+
+- `.github/copilot-instructions.md` documents the expectations for GitHub Copilot and other AI helpers—keep it aligned with this file when design language, workflows, or toolchain requirements shift.

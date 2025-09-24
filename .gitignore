@@ -56,9 +56,22 @@ build/Release
 *.njsproj
 *.sln
 *.sw?
+*.app
+*.app/*
+*.build*
 
 # Vite
 *.local
 
 # PlayWright Test Reports
 playwright-report/
+
+# Swift
+*.swiftdeps
+*.swiftmodule
+$DashCam\!/.build/index-build/build.db
+$DashCam\!/.build/index-build/debug.yaml
+$DashCam\!/.build/index-build/plugin-tools.yaml
+/$DashCam\!/.build
+/$DashCam\!/.build
+/$DashCam\!/.swiftpm
