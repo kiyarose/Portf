@@ -544,7 +544,7 @@ final class GitController: ObservableObject {
 private struct GitCommand {
   let arguments: [String]
   let description: String
-  var nonZeroHandler: ((GitCommandResult) -> Bool)? = nil
+  var nonZeroHandler: ((GitCommandResult) -> Bool)?
 }
 
 struct GitCommandResult {
