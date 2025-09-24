@@ -42,6 +42,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		C22263C02E83DA4200FA5025 /* DashCam-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "DashCam-Info.plist"; sourceTree = "<group>"; };
 		C23427042E81884800C1AF73 /* DashCam.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DashCam.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C23427142E81884C00C1AF73 /* DashCamTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DashCamTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		C234271E2E81884C00C1AF73 /* DashCamUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DashCamUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -94,6 +95,7 @@
 		C23426FB2E81884800C1AF73 = {
 			isa = PBXGroup;
 			children = (
+				C22263C02E83DA4200FA5025 /* DashCam-Info.plist */,
 				C23427402E818A6B00C1AF73 /* DashCam.entitlements */,
 				C23427412E818B2800C1AF73 /* Info.plist */,
 				C234273D2E81890300C1AF73 /* Package.swift */,
@@ -253,6 +255,9 @@
 			);
 			mainGroup = C23426FB2E81884800C1AF73;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				C271188C2E83D9AC003F0CF7 /* XCRemoteSwiftPackageReference "playwright" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = C23427052E81884800C1AF73 /* Products */;
 			projectDirPath = "";
@@ -478,6 +483,7 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "DashCam-Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = DashCam;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
@@ -511,6 +517,7 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "DashCam-Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = DashCam;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
@@ -636,6 +643,17 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		C271188C2E83D9AC003F0CF7 /* XCRemoteSwiftPackageReference "playwright" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/microsoft/playwright";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
 	};
 	rootObject = C23426FC2E81884800C1AF73 /* Project object */;
 }
