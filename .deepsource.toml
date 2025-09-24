@@ -1,6 +1,9 @@
 version = 1
 
 [[analyzers]]
+name = "swift"
+
+[[analyzers]]
 name = "secrets"
 
 [[analyzers]]
@@ -30,3 +33,6 @@ name = "prettier"
 
 [[transformers]]
 name = "standardjs"
+
+[[transformers]]
+name = "swift-format"
