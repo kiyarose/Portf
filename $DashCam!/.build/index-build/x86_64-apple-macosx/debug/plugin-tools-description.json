@@ -40,6 +40,10 @@
         },
         {
           "kind" : "file",
+          "name" : "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/Sources/DashboardApp/components/CardComponents.swift"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/Sources/DashboardApp/components/PluginPanelView.swift"
         },
         {
@@ -53,6 +57,10 @@
         {
           "kind" : "file",
           "name" : "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/Sources/DashboardApp/components/ProjectDirectoryCard.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/Sources/DashboardApp/plugins/GitterMGM.swift"
         },
         {
           "kind" : "file",
@@ -79,10 +87,12 @@
         "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/.build/index-build/x86_64-apple-macosx/debug/DashboardApp.build/DashboardApp.swift.o",
         "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/.build/index-build/x86_64-apple-macosx/debug/DashboardApp.build/DashboardViewModel.swift.o",
         "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/.build/index-build/x86_64-apple-macosx/debug/DashboardApp.build/ProcessController.swift.o",
+        "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/.build/index-build/x86_64-apple-macosx/debug/DashboardApp.build/CardComponents.swift.o",
         "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/.build/index-build/x86_64-apple-macosx/debug/DashboardApp.build/PluginPanelView.swift.o",
         "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/.build/index-build/x86_64-apple-macosx/debug/DashboardApp.build/PluginWindow.swift.o",
         "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/.build/index-build/x86_64-apple-macosx/debug/DashboardApp.build/ProcessCard.swift.o",
         "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/.build/index-build/x86_64-apple-macosx/debug/DashboardApp.build/ProjectDirectoryCard.swift.o",
+        "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/.build/index-build/x86_64-apple-macosx/debug/DashboardApp.build/GitterMGM.swift.o",
         "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/.build/index-build/x86_64-apple-macosx/debug/DashboardApp.build/PlaywrightMGM.swift.o",
         "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/.build/index-build/x86_64-apple-macosx/debug/DashboardApp.build/ServerMGM.swift.o"
       ],
@@ -153,10 +163,12 @@
         "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/Sources/DashboardApp/DashboardApp.swift",
         "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/Sources/DashboardApp/DashboardViewModel.swift",
         "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/Sources/DashboardApp/ProcessController.swift",
+        "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/Sources/DashboardApp/components/CardComponents.swift",
         "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/Sources/DashboardApp/components/PluginPanelView.swift",
         "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/Sources/DashboardApp/components/PluginWindow.swift",
         "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/Sources/DashboardApp/components/ProcessCard.swift",
         "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/Sources/DashboardApp/components/ProjectDirectoryCard.swift",
+        "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/Sources/DashboardApp/plugins/GitterMGM.swift",
         "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/Sources/DashboardApp/plugins/PlaywrightMGM.swift",
         "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/Sources/DashboardApp/plugins/ServerMGM.swift"
       ],
@@ -180,10 +192,12 @@
       "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/Sources/DashboardApp/DashboardApp.swift",
       "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/Sources/DashboardApp/DashboardViewModel.swift",
       "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/Sources/DashboardApp/ProcessController.swift",
+      "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/Sources/DashboardApp/components/CardComponents.swift",
       "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/Sources/DashboardApp/components/PluginPanelView.swift",
       "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/Sources/DashboardApp/components/PluginWindow.swift",
       "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/Sources/DashboardApp/components/ProcessCard.swift",
       "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/Sources/DashboardApp/components/ProjectDirectoryCard.swift",
+      "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/Sources/DashboardApp/plugins/GitterMGM.swift",
       "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/Sources/DashboardApp/plugins/PlaywrightMGM.swift",
       "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/Sources/DashboardApp/plugins/ServerMGM.swift",
       "-I",
@@ -284,6 +298,10 @@
         },
         {
           "kind" : "file",
+          "name" : "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/Sources/DashboardApp/components/CardComponents.swift"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/Sources/DashboardApp/components/PluginPanelView.swift"
         },
         {
@@ -297,6 +315,10 @@
         {
           "kind" : "file",
           "name" : "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/Sources/DashboardApp/components/ProjectDirectoryCard.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/Sources/DashboardApp/plugins/GitterMGM.swift"
         },
         {
           "kind" : "file",

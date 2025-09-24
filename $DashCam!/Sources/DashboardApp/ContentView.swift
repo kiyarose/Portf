@@ -44,25 +44,31 @@ struct ContentView: View {
 private extension ContentView {
     var pluginList: some View {
         ScrollView {
-            LazyVStack(spacing: 16) {
-                ForEach(viewModel.pluginOrder) { plugin in
-                    pluginRow(for: plugin)
-                        .opacity(draggingPlugin == plugin ? 0.7 : 1)
-                        .contentShape(Rectangle())
-                        .onDrag {
-                            draggingPlugin = plugin
-                            return NSItemProvider(object: plugin.rawValue as NSString)
+            HStack(alignment: .top, spacing: 24) {
+                ForEach(PluginColumn.allCases) { column in
+                    LazyVStack(spacing: 16) {
+                        ForEach(viewModel.pluginOrder.filter { $0.column == column }) { plugin in
+                            pluginRow(for: plugin)
+                                .opacity(draggingPlugin == plugin ? 0.7 : 1)
+                                .contentShape(Rectangle())
+                                .onDrag {
+                                    draggingPlugin = plugin
+                                    return NSItemProvider(object: plugin.rawValue as NSString)
+                                }
+                                .onDrop(
+                                    of: [UTType.text],
+                                    delegate: PluginDropDelegate(
+                                        target: plugin,
+                                        items: $viewModel.pluginOrder,
+                                        dragging: $draggingPlugin
+                                    )
+                                )
                         }
-                        .onDrop(
-                            of: [UTType.text],
-                            delegate: PluginDropDelegate(
-                                target: plugin,
-                                items: $viewModel.pluginOrder,
-                                dragging: $draggingPlugin
-                            )
-                        )
+                    }
+                    .frame(maxWidth: .infinity, alignment: .topLeading)
                 }
             }
+            .frame(maxWidth: .infinity, alignment: .topLeading)
             .padding(.vertical, 8)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)

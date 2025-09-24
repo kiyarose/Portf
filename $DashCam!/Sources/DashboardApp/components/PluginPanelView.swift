@@ -44,6 +44,13 @@ struct PluginPanelView: View {
                 isCollapsed: collapseBinding(for: .playwright),
                 preferredHeight: heightBinding(for: .playwright)
             )
+        case .gitter:
+            GitterMGM(
+                controller: viewModel.gitController,
+                isCollapsed: collapseBinding(for: .gitter),
+                preferredHeight: heightBinding(for: .gitter),
+                pathIsValid: viewModel.pathIsValid
+            )
         }
     }
 
@@ -96,6 +103,11 @@ struct PluginPanelView: View {
                 get: { viewModel.isPlaywrightCollapsed },
                 set: { viewModel.isPlaywrightCollapsed = $0 }
             )
+        case .gitter:
+            return Binding(
+                get: { viewModel.isGitterCollapsed },
+                set: { viewModel.isGitterCollapsed = $0 }
+            )
         }
     }
 
@@ -110,6 +122,11 @@ struct PluginPanelView: View {
             return Binding(
                 get: { viewModel.playwrightPanelHeight },
                 set: { viewModel.playwrightPanelHeight = $0 }
+            )
+        case .gitter:
+            return Binding(
+                get: { viewModel.gitterPanelHeight },
+                set: { viewModel.gitterPanelHeight = $0 }
             )
         }
     }
