@@ -65,3 +65,9 @@ build/Release
 
 # PlayWright Test Reports
 playwright-report/
+$DashCam\!/.build/index-build/x86_64-apple-macosx/debug/index/db/v13/p11799--c4d3b0/lock.mdb
+$DashCam\!/.build/index-build/x86_64-apple-macosx/debug/index/store/v5/units/ContentView.swift.o-2YGPN0CHKE2A0
+$DashCam\!/.build/index-build/x86_64-apple-macosx/debug/index/store/v5/units/DashboardViewModel.swift.o-1PG4FTYRVZ8A7
+$DashCam\!/.build/index-build/x86_64-apple-macosx/debug/index/store/v5/units/PlaywrightMGM.swift.o-1ETDZGKJ1WIHG
+$DashCam\!/.build/index-build/x86_64-apple-macosx/debug/index/store/v5/units/ProcessCard.swift.o-237218ZREFJAP
+$DashCam\!/.build/index-build/x86_64-apple-macosx/debug/index/store/v5/units/ServerMGM.swift.o-11ZGEM89WRT6B
