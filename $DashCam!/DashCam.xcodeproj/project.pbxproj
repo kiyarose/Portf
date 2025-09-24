@@ -12,6 +12,9 @@
 		C234273A2E8188F700C1AF73 /* ProcessController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C23427352E8188F700C1AF73 /* ProcessController.swift */; };
 		C234273B2E8188F700C1AF73 /* DashboardApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C23427332E8188F700C1AF73 /* DashboardApp.swift */; };
 		C234273C2E8188F700C1AF73 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C23427312E8188F700C1AF73 /* Assets.xcassets */; };
+		C283378B2E83A8340044FF20 /* ServerMGM.swift in Sources */ = {isa = PBXBuildFile; fileRef = C28337892E83A8340044FF20 /* ServerMGM.swift */; };
+		C283379D2E84B05A0044FF20 /* ProcessCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = C283379C2E84B05A0044FF20 /* ProcessCard.swift */; };
+		C283379F2E84B05A0044FF20 /* PlaywrightMGM.swift in Sources */ = {isa = PBXBuildFile; fileRef = C283379E2E84B05A0044FF20 /* PlaywrightMGM.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -44,6 +47,9 @@
 		C234273E2E81890A00C1AF73 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		C23427402E818A6B00C1AF73 /* DashCam.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = DashCam.entitlements; sourceTree = "<group>"; };
 		C23427412E818B2800C1AF73 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		C28337892E83A8340044FF20 /* ServerMGM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerMGM.swift; sourceTree = "<group>"; };
+		C283379C2E84B05A0044FF20 /* ProcessCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessCard.swift; sourceTree = "<group>"; };
+		C283379E2E84B05A0044FF20 /* PlaywrightMGM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaywrightMGM.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -97,6 +103,8 @@
 			isa = PBXGroup;
 			children = (
 				C23427312E8188F700C1AF73 /* Assets.xcassets */,
+				C28337A02E84B05A0044FF20 /* components */,
+				C283378A2E83A8340044FF20 /* plugins */,
 				C23427322E8188F700C1AF73 /* ContentView.swift */,
 				C23427332E8188F700C1AF73 /* DashboardApp.swift */,
 				C23427342E8188F700C1AF73 /* DashboardViewModel.swift */,
@@ -111,6 +119,23 @@
 				C23427362E8188F700C1AF73 /* DashboardApp */,
 			);
 			path = Sources;
+			sourceTree = "<group>";
+		};
+		C283378A2E83A8340044FF20 /* plugins */ = {
+			isa = PBXGroup;
+			children = (
+				C28337892E83A8340044FF20 /* ServerMGM.swift */,
+				C283379E2E84B05A0044FF20 /* PlaywrightMGM.swift */,
+			);
+			path = plugins;
+			sourceTree = "<group>";
+		};
+		C28337A02E84B05A0044FF20 /* components */ = {
+			isa = PBXGroup;
+			children = (
+				C283379C2E84B05A0044FF20 /* ProcessCard.swift */,
+			);
+			path = components;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -253,6 +278,9 @@
 				C23427392E8188F700C1AF73 /* DashboardViewModel.swift in Sources */,
 				C234273A2E8188F700C1AF73 /* ProcessController.swift in Sources */,
 				C234273B2E8188F700C1AF73 /* DashboardApp.swift in Sources */,
+				C283378B2E83A8340044FF20 /* ServerMGM.swift in Sources */,
+				C283379D2E84B05A0044FF20 /* ProcessCard.swift in Sources */,
+				C283379F2E84B05A0044FF20 /* PlaywrightMGM.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
