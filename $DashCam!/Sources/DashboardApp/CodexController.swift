@@ -22,7 +22,7 @@ final class CodexController: ObservableObject {
         let text: String
         let timestamp: Date
 
-        init(id: UUID = UUID(), role: Role, text: String, timestamp: Date = Date()) {
+        init(role: Role, text: String, id: UUID = UUID(), timestamp: Date = Date()) {
             self.id = id
             self.role = role
             self.text = text

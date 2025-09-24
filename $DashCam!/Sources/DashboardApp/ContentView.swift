@@ -39,10 +39,8 @@ struct ContentView: View {
             }
         }
     }
-}
-
-private extension ContentView {
-    var pluginList: some View {
+    
+    private var pluginList: some View {
         ScrollView {
             HStack(alignment: .top, spacing: 24) {
                 ForEach(PluginColumn.allCases) { column in
@@ -75,7 +73,7 @@ private extension ContentView {
     }
 
     @ViewBuilder
-    func pluginRow(for plugin: PluginKind) -> some View {
+    private func pluginRow(for plugin: PluginKind) -> some View {
         if viewModel.isPluginDetached(plugin) {
             DetachedPluginPlaceholder(plugin: plugin)
         } else {
