@@ -51,6 +51,12 @@ struct PluginPanelView: View {
                 preferredHeight: heightBinding(for: .gitter),
                 pathIsValid: viewModel.pathIsValid
             )
+        case .codex:
+            CodexMGM(
+                controller: viewModel.codexController,
+                isCollapsed: collapseBinding(for: .codex),
+                preferredHeight: heightBinding(for: .codex)
+            )
         }
     }
 
@@ -108,6 +114,11 @@ struct PluginPanelView: View {
                 get: { viewModel.isGitterCollapsed },
                 set: { viewModel.isGitterCollapsed = $0 }
             )
+        case .codex:
+            return Binding(
+                get: { viewModel.isCodexCollapsed },
+                set: { viewModel.isCodexCollapsed = $0 }
+            )
         }
     }
 
@@ -127,6 +138,11 @@ struct PluginPanelView: View {
             return Binding(
                 get: { viewModel.gitterPanelHeight },
                 set: { viewModel.gitterPanelHeight = $0 }
+            )
+        case .codex:
+            return Binding(
+                get: { viewModel.codexPanelHeight },
+                set: { viewModel.codexPanelHeight = $0 }
             )
         }
     }

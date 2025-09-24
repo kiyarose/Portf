@@ -15,6 +15,7 @@ enum PluginKind: String, CaseIterable, Identifiable, Codable {
     case server
     case playwright
     case gitter
+    case codex
 
     var id: String { rawValue }
 
@@ -26,6 +27,8 @@ enum PluginKind: String, CaseIterable, Identifiable, Codable {
             return "Playwright Codegen"
         case .gitter:
             return "Gitter"
+        case .codex:
+            return "Codex"
         }
     }
 
@@ -35,7 +38,7 @@ enum PluginKind: String, CaseIterable, Identifiable, Codable {
         switch self {
         case .server, .playwright:
             return .primary
-        case .gitter:
+        case .gitter, .codex:
             return .secondary
         }
     }
@@ -76,6 +79,7 @@ final class DashboardViewModel: ObservableObject {
     let devProcess: ProcessController
     let playwrightProcess: ProcessController
     let gitController: GitController
+    let codexController: CodexController
     private let defaultProjectPath: String
     @Published var pluginOrder: [PluginKind] = PluginKind.allCases {
         didSet {
@@ -104,6 +108,12 @@ final class DashboardViewModel: ObservableObject {
     @Published var isGitterCollapsed: Bool {
         didSet {
             persistCollapseState(key: CollapseKey.gitter, value: isGitterCollapsed)
+        }
+    }
+
+    @Published var isCodexCollapsed: Bool {
+        didSet {
+            persistCollapseState(key: CollapseKey.codex, value: isCodexCollapsed)
         }
     }
 
@@ -140,17 +150,30 @@ final class DashboardViewModel: ObservableObject {
         }
     }
 
+    @Published var codexPanelHeight: CGFloat {
+        didSet {
+            let clamped = PanelSizing.clamp(codexPanelHeight)
+            if codexPanelHeight != clamped {
+                codexPanelHeight = clamped
+                return
+            }
+            persistDimension(key: DimensionKey.codex, value: codexPanelHeight)
+        }
+    }
+
     private enum CollapseKey {
         static let project = "dashboard.collapse.project"
         static let server = "dashboard.collapse.server"
         static let playwright = "dashboard.collapse.playwright"
         static let gitter = "dashboard.collapse.gitter"
+        static let codex = "dashboard.collapse.codex"
     }
 
     private enum DimensionKey {
         static let server = "dashboard.dimension.server"
         static let playwright = "dashboard.dimension.playwright"
         static let gitter = "dashboard.dimension.gitter"
+        static let codex = "dashboard.dimension.codex"
     }
 
     private enum OrderKey {
@@ -173,13 +196,16 @@ final class DashboardViewModel: ObservableObject {
         self.isServerCollapsed = defaults.object(forKey: CollapseKey.server) as? Bool ?? false
         self.isPlaywrightCollapsed = defaults.object(forKey: CollapseKey.playwright) as? Bool ?? false
         self.isGitterCollapsed = defaults.object(forKey: CollapseKey.gitter) as? Bool ?? false
+        self.isCodexCollapsed = defaults.object(forKey: CollapseKey.codex) as? Bool ?? true
 
         let serverHeight = defaults.object(forKey: DimensionKey.server) as? Double ?? 200
         let playwrightHeight = defaults.object(forKey: DimensionKey.playwright) as? Double ?? 200
         let gitterHeight = defaults.object(forKey: DimensionKey.gitter) as? Double ?? 200
+        let codexHeight = defaults.object(forKey: DimensionKey.codex) as? Double ?? 260
         self.serverPanelHeight = PanelSizing.clamp(CGFloat(serverHeight))
         self.playwrightPanelHeight = PanelSizing.clamp(CGFloat(playwrightHeight))
         self.gitterPanelHeight = PanelSizing.clamp(CGFloat(gitterHeight))
+        self.codexPanelHeight = PanelSizing.clamp(CGFloat(codexHeight))
 
         let restoredOrder: [PluginKind]
         if let storedOrder = defaults.array(forKey: OrderKey.plugins) as? [String] {
@@ -194,13 +220,14 @@ final class DashboardViewModel: ObservableObject {
             command: ["npx", "playwright", "codegen", "http://localhost:5173"]
         )
         self.gitController = GitController()
+        self.codexController = CodexController()
         self.pluginOrder = restoredOrder
         refreshWorkingDirectories()
         updatePlaywrightCommand(announce: false)
     }
 
     var anyProcessRunning: Bool {
-        devProcess.isRunning || playwrightProcess.isRunning || gitController.isBusy
+        devProcess.isRunning || playwrightProcess.isRunning || gitController.isBusy || codexController.isProcessing
     }
 
     func setProjectURL(_ url: URL) {
@@ -223,6 +250,7 @@ final class DashboardViewModel: ObservableObject {
             devProcess.attachWorkingDirectory(nil)
             playwrightProcess.attachWorkingDirectory(nil)
             gitController.attachWorkingDirectory(nil)
+            codexController.updateProjectDirectory(nil)
             isProjectDirectoryCollapsed = false
             return
         }
@@ -233,6 +261,7 @@ final class DashboardViewModel: ObservableObject {
         devProcess.attachWorkingDirectory(url)
         playwrightProcess.attachWorkingDirectory(url)
         gitController.attachWorkingDirectory(url)
+        codexController.updateProjectDirectory(url.path)
         isProjectDirectoryCollapsed = true
     }
 

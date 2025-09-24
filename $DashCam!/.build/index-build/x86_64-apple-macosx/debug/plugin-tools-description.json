@@ -24,6 +24,10 @@
       "inputs" : [
         {
           "kind" : "file",
+          "name" : "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/Sources/DashboardApp/CodexController.swift"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/Sources/DashboardApp/ContentView.swift"
         },
         {
@@ -60,15 +64,19 @@
         },
         {
           "kind" : "file",
-          "name" : "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/Sources/DashboardApp/plugins/GitterMGM.swift"
+          "name" : "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/Sources/DashboardApp/plugins/Codex.swift"
         },
         {
           "kind" : "file",
-          "name" : "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/Sources/DashboardApp/plugins/PlaywrightMGM.swift"
+          "name" : "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/Sources/DashboardApp/plugins/Gitter.swift"
         },
         {
           "kind" : "file",
-          "name" : "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/Sources/DashboardApp/plugins/ServerMGM.swift"
+          "name" : "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/Sources/DashboardApp/plugins/Playwright.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/Sources/DashboardApp/plugins/Server.swift"
         },
         {
           "kind" : "file",
@@ -83,6 +91,7 @@
       "moduleName" : "DashboardApp",
       "moduleOutputPath" : "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/.build/index-build/x86_64-apple-macosx/debug/Modules/DashboardApp.swiftmodule",
       "objects" : [
+        "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/.build/index-build/x86_64-apple-macosx/debug/DashboardApp.build/CodexController.swift.o",
         "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/.build/index-build/x86_64-apple-macosx/debug/DashboardApp.build/ContentView.swift.o",
         "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/.build/index-build/x86_64-apple-macosx/debug/DashboardApp.build/DashboardApp.swift.o",
         "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/.build/index-build/x86_64-apple-macosx/debug/DashboardApp.build/DashboardViewModel.swift.o",
@@ -92,9 +101,10 @@
         "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/.build/index-build/x86_64-apple-macosx/debug/DashboardApp.build/PluginWindow.swift.o",
         "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/.build/index-build/x86_64-apple-macosx/debug/DashboardApp.build/ProcessCard.swift.o",
         "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/.build/index-build/x86_64-apple-macosx/debug/DashboardApp.build/ProjectDirectoryCard.swift.o",
-        "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/.build/index-build/x86_64-apple-macosx/debug/DashboardApp.build/GitterMGM.swift.o",
-        "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/.build/index-build/x86_64-apple-macosx/debug/DashboardApp.build/PlaywrightMGM.swift.o",
-        "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/.build/index-build/x86_64-apple-macosx/debug/DashboardApp.build/ServerMGM.swift.o"
+        "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/.build/index-build/x86_64-apple-macosx/debug/DashboardApp.build/Codex.swift.o",
+        "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/.build/index-build/x86_64-apple-macosx/debug/DashboardApp.build/Gitter.swift.o",
+        "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/.build/index-build/x86_64-apple-macosx/debug/DashboardApp.build/Playwright.swift.o",
+        "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/.build/index-build/x86_64-apple-macosx/debug/DashboardApp.build/Server.swift.o"
       ],
       "otherArguments" : [
         "-target",
@@ -159,6 +169,7 @@
       ],
       "prepareForIndexing" : true,
       "sources" : [
+        "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/Sources/DashboardApp/CodexController.swift",
         "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/Sources/DashboardApp/ContentView.swift",
         "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/Sources/DashboardApp/DashboardApp.swift",
         "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/Sources/DashboardApp/DashboardViewModel.swift",
@@ -168,9 +179,10 @@
         "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/Sources/DashboardApp/components/PluginWindow.swift",
         "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/Sources/DashboardApp/components/ProcessCard.swift",
         "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/Sources/DashboardApp/components/ProjectDirectoryCard.swift",
-        "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/Sources/DashboardApp/plugins/GitterMGM.swift",
-        "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/Sources/DashboardApp/plugins/PlaywrightMGM.swift",
-        "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/Sources/DashboardApp/plugins/ServerMGM.swift"
+        "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/Sources/DashboardApp/plugins/Codex.swift",
+        "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/Sources/DashboardApp/plugins/Gitter.swift",
+        "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/Sources/DashboardApp/plugins/Playwright.swift",
+        "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/Sources/DashboardApp/plugins/Server.swift"
       ],
       "tempsPath" : "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/.build/index-build/x86_64-apple-macosx/debug/DashboardApp.build",
       "wholeModuleOptimization" : false
@@ -188,6 +200,7 @@
       "_dashcam_",
       "-incremental",
       "-c",
+      "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/Sources/DashboardApp/CodexController.swift",
       "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/Sources/DashboardApp/ContentView.swift",
       "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/Sources/DashboardApp/DashboardApp.swift",
       "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/Sources/DashboardApp/DashboardViewModel.swift",
@@ -197,9 +210,10 @@
       "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/Sources/DashboardApp/components/PluginWindow.swift",
       "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/Sources/DashboardApp/components/ProcessCard.swift",
       "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/Sources/DashboardApp/components/ProjectDirectoryCard.swift",
-      "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/Sources/DashboardApp/plugins/GitterMGM.swift",
-      "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/Sources/DashboardApp/plugins/PlaywrightMGM.swift",
-      "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/Sources/DashboardApp/plugins/ServerMGM.swift",
+      "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/Sources/DashboardApp/plugins/Codex.swift",
+      "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/Sources/DashboardApp/plugins/Gitter.swift",
+      "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/Sources/DashboardApp/plugins/Playwright.swift",
+      "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/Sources/DashboardApp/plugins/Server.swift",
       "-I",
       "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/.build/index-build/x86_64-apple-macosx/debug/Modules",
       "-target",
@@ -282,6 +296,10 @@
         },
         {
           "kind" : "file",
+          "name" : "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/Sources/DashboardApp/CodexController.swift"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/Sources/DashboardApp/ContentView.swift"
         },
         {
@@ -318,15 +336,19 @@
         },
         {
           "kind" : "file",
-          "name" : "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/Sources/DashboardApp/plugins/GitterMGM.swift"
+          "name" : "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/Sources/DashboardApp/plugins/Codex.swift"
         },
         {
           "kind" : "file",
-          "name" : "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/Sources/DashboardApp/plugins/PlaywrightMGM.swift"
+          "name" : "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/Sources/DashboardApp/plugins/Gitter.swift"
         },
         {
           "kind" : "file",
-          "name" : "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/Sources/DashboardApp/plugins/ServerMGM.swift"
+          "name" : "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/Sources/DashboardApp/plugins/Playwright.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/Sources/DashboardApp/plugins/Server.swift"
         }
       ],
       "outputFilePath" : "/Users/kiyarose/Documents/GitStuff/Portf/$DashCam!/.build/index-build/x86_64-apple-macosx/debug/DashboardApp.build/sources"
