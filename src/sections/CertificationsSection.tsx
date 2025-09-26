@@ -77,7 +77,7 @@ export function CertificationsSection() {
                   )}
                 >
                   <Icon
-                    icon="mdi:clipboard-check"
+                    icon="mdi:check-decagram"
                     className="text-base"
                     aria-hidden="true"
                   />
