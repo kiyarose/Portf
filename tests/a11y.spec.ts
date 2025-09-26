@@ -18,7 +18,12 @@ test("collect axe violations (JSON only)", async ({ page }) => {
       .withTags(["wcag2a", "wcag2aa"])
       .analyze();
 
-    results.violations.forEach((v: any) => (v.pageUrl = url));
+    // Use the Violation type from axe-core for type safety
+    type Violation = import("axe-core").Result;
+
+    results.violations.forEach((v: Violation) => {
+      (v as unknown as { pageUrl: string }).pageUrl = url;
+    });
     allViolations.push(...results.violations);
   }
 

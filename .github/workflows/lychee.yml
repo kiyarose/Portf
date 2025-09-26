@@ -11,6 +11,8 @@ jobs:
         with: { node-version: 20 }
       - run: npm ci
       - run: npm run build
+      # Install lychee globally to ensure npx works
+      - run: npm install -g lychee
       # check repo files
       - run: npx lychee --config ./.lychee.toml .
       # check built site (find href/src inside dist)

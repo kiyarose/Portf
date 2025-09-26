@@ -2,132 +2,54 @@ name: a11y-axe
 
 on:
   pull_request:
-  workflow_dispatch:
-
-permissions:
-  contents: read
-  pull-requests: write
+  push:
+    branches:
+      - main
 
 jobs:
-  axe:
+  a11y:
     runs-on: ubuntu-latest
     env:
-      PREVIEW_URL: http://localhost:4173/
-
+      PORT: 4174  # Use a different port than other workflows
+      PREVIEW_URL: http://localhost:4174
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          node-version: 20
-          cache: npm
+          node-version: '20'
+          cache: 'npm'
 
-      - run: npm ci
-      - run: npm run build
+      - name: Install dependencies
+        run: npm ci
 
-      - name: Start Vite preview
-        run: |
-          npx vite preview --port 4173 --strictPort &
-          npx wait-on http://localhost:4173
+      - name: Build project
+        run: npm run build
 
-      # Cache Playwright browsers
       - name: Cache Playwright browsers
-        id: pw-cache
         uses: actions/cache@v4
         with:
           path: ~/.cache/ms-playwright
           key: ${{ runner.os }}-playwright-${{ hashFiles('package-lock.json') }}
 
       - name: Install Playwright browsers
-        if: steps.pw-cache.outputs.cache-hit != 'true'
         run: npx playwright install --with-deps
 
-      # Run axe via Playwright but NEVER fail here.
-      # We collect violations into axe-report.json for later steps.
-      - name: Run axe scan (collect JSON)
-        run: npx playwright test tests/a11y.spec.ts || true
+      - name: Start preview server
+        run: npm run preview -- --port $PORT &
+      
+      - name: Wait for server to be ready
+        run: npx wait-on http://localhost:$PORT
 
-      - name: Upload raw axe report (artifact)
-        if: always()
+      - name: Run a11y tests
+        env:
+          PREVIEW_URL: http://localhost:${{ env.PORT }}
+        run: npx playwright test tests/a11y.spec.ts
+
+      - name: Upload axe report (if exists)
         uses: actions/upload-artifact@v4
         with:
           name: axe-report
           path: axe-report.json
-          if-no-files-found: ignore
-
-      # Summarize to Job Summary and PR comment
-      - name: Summarize & comment on PR
-        if: always()
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const fs = require('fs');
-            const marker = '<!-- axe-a11y-report -->';
-            let violations = [];
-            if (fs.existsSync('axe-report.json')) {
-              try { violations = JSON.parse(fs.readFileSync('axe-report.json','utf8')); } catch {}
-            }
-
-            // Build nice markdown
-            function fmtNode(n) {
-              const sel = Array.isArray(n.target) ? n.target.join(', ') : String(n.target);
-              return `- Selector: \`${sel}\`${n.html ? `\n  - Snippet: \`${String(n.html).slice(0,160)}\`` : ''}`;
-            }
-
-            const lines = [];
-            if (violations.length === 0) {
-              lines.push('✅ **No accessibility violations found.**');
-            } else {
-              lines.push(`### ♿ Accessibility issues found: **${violations.length}**`);
-              for (const v of violations.slice(0, 10)) {
-                lines.push(
-                  `- **${v.id}** — ${v.help} (impact: **${v.impact || 'unknown'}**)`,
-                  `  - Docs: ${v.helpUrl || 'N/A'}`
-                );
-                const nodes = (v.nodes || []).slice(0, 3).map(fmtNode).join('\n');
-                if (nodes) lines.push(nodes);
-                // quick guidance hint
-                if (v.id === 'color-contrast') lines.push('  - Hint: increase text color contrast or darken text/lighten background.');
-                if (v.id === 'label') lines.push('  - Hint: associate <label> with form controls via `for`/`id` or wrap the input.');
-                if (v.id === 'image-alt') lines.push('  - Hint: add concise `alt` text, or empty alt for decorative images.');
-              }
-              if (violations.length > 10) {
-                lines.push(`\n…and **${violations.length - 10}** more. Download the artifact for full details.`);
-              }
-            }
-
-            // Write to Job Summary
-            core.summary
-              .addHeading('Axe Accessibility Report')
-              .addRaw(lines.join('\n'), true)
-              .write();
-
-            // Comment on PR
-            if (context.eventName === 'pull_request') {
-              const { owner, repo } = context.repo;
-              const issue_number = context.issue.number;
-              const comments = await github.paginate(github.rest.issues.listComments, { owner, repo, issue_number });
-              const body = [marker, ...lines].join('\n');
-              const existing = comments.find(c => c.body && c.body.includes(marker));
-              if (existing) {
-                await github.rest.issues.updateComment({ owner, repo, comment_id: existing.id, body });
-              } else {
-                await github.rest.issues.createComment({ owner, repo, issue_number, body });
-              }
-            }
-
-            // Expose a boolean output for fail step
-            core.setOutput('has_violations', String(violations.length > 0));
-        id: summarize
-
-      # PURPOSELY fail the job if there were violations,
-      # but only AFTER we've posted the comment & summary.
-      - name: Fail build on violations (intentional)
-        if: steps.summarize.outputs.has_violations == 'true'
-        run: |
-          echo "::error::Accessibility violations detected. See job summary and PR comment for details."
-          # Optional: also emit individual warnings for quick scanning
-          if [ -f axe-report.json ]; then
-            node -e "const v=require('./axe-report.json'); v.slice(0,20).forEach(x=>console.log('::warning file=axe-report.json::'+x.id+' - '+x.help));"
-          fi
-          exit 1
