@@ -11,5 +11,5 @@ jobs:
         with: { node-version: 20 }
       - run: npm ci
       - run: npm run build
-      - run: npm i -D @lhci/cli vite
+      - run: npm i -D vite
       - run: npx lhci autorun
