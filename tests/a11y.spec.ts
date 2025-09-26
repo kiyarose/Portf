@@ -1,6 +1,5 @@
 import { test } from "@playwright/test";
 import { AxeBuilder } from "@axe-core/playwright";
-import type { WriteFileOptions } from "fs";
 // Use dynamic import for fs to avoid issues in ESM/test environments
 
 const URL = process.env.PREVIEW_URL || "http://localhost:4173/";
