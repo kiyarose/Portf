@@ -1,0 +1,18 @@
+name: ZAP Baseline (nightly)
+on:
+  schedule:
+    - cron: "0 6 * * *"   # daily 06:00 UTC
+  workflow_dispatch:
+
+jobs:
+  zap:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: zaproxy/action-baseline@v0.11.0
+        with:
+          target: https://sillylittle.tech
+          rules_file_name: .zap-ignore
+          cmd_options: >
+            -a                  # show alerts in logs
+            -m 2                # max 2 mins spider (keeps noise low)
+            -d                  # debug logging if you need it; remove if too chatty

@@ -1,0 +1,15 @@
+name: Link check
+on: [pull_request]
+jobs:
+  lychee:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20 }
+      - run: npm ci
+      - run: npm run build
+      # check repo files
+      - run: npx lychee --config ./.lychee.toml .
+      # check built site (find href/src inside dist)
+      - run: npx lychee --config ./.lychee.toml dist
