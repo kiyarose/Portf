@@ -1,4 +1,5 @@
 import { motion, useReducedMotion } from "framer-motion";
+import { Icon } from "@iconify/react";
 import { SectionContainer } from "../components/SectionContainer";
 import { SectionHeader } from "../components/SectionHeader";
 import { certifications } from "../data/certifications";
@@ -65,6 +66,24 @@ export function CertificationsSection() {
               >
                 Issued {cert.date}
               </p>
+              {cert.link ? (
+                <a
+                  href={cert.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={cn(
+                    "mt-2 inline-flex items-center gap-2 text-sm font-medium transition-colors hover:underline sm:mt-3",
+                    "text-accent hover:text-accent/80",
+                  )}
+                >
+                  <Icon
+                    icon="mdi:clipboard-check"
+                    className="text-base"
+                    aria-hidden="true"
+                  />
+                  <span>Verify</span>
+                </a>
+              ) : null}
             </motion.div>
           ))}
         </div>
