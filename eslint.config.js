@@ -42,10 +42,21 @@ const tsRecommended = Array.isArray(tseslint.configs.recommended)
   ? tseslint.configs.recommended
   : [tseslint.configs.recommended]
 
+const nodeConfig = {
+  files: ['.lighthouserc.{js,cjs}'], // Support both .js and .cjs
+  languageOptions: {
+    ecmaVersion: 2020,
+    globals: {
+      ...globals.node
+    }
+  }
+}
+
 export default [
   {
     ignores: ['dist']
   },
+  nodeConfig,
   js.configs.recommended,
   ...tsRecommended,
   reactTsConfig

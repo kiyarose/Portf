@@ -1,0 +1,22 @@
+name: Link check
+permissions:
+  contents: read
+on: [pull_request]
+jobs:
+  lychee:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm ci
+      - run: npm run build
+      - name: Check links in repo
+        uses: lycheeverse/lychee-action@v1.9.0
+        with:
+          args: --config ./.lychee.toml .
+      - name: Check links in dist
+        uses: lycheeverse/lychee-action@v1.9.0
+        with:
+          args: --config ./.lychee.toml dist
