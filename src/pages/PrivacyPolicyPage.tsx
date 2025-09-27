@@ -240,96 +240,136 @@ export function PrivacyPolicyPage() {
     "border-white/60 bg-white/80 text-slate-700 shadow-card",
     "border-slate-800/60 bg-slate-950/70 text-slate-200 shadow-[0_25px_55px_rgba(2,6,23,0.65)]",
   );
-  const backButtonSurface = themedClass(
-    theme,
-    "bg-white/80 text-slate-700 hover:bg-white",
-    "bg-slate-900/80 text-slate-100 hover:bg-slate-900",
-  );
-  const backButtonBorder = themedClass(
-    theme,
-    "border-slate-200/60",
-    "border-slate-700/60",
-  );
   const mutedText = themedClass(
     theme,
     "text-slate-500",
     "text-slate-400",
+  );
+  const backButtonClass = cn(
+    "inline-flex items-center gap-2 rounded-full border px-4 py-2.5 text-sm font-semibold transition shadow-card backdrop-blur",
+    themedClass(theme, "bg-white/80 text-slate-700 hover:bg-white", "bg-slate-900/80 text-slate-100 hover:bg-slate-900"),
+    themedClass(theme, "border-slate-200/60", "border-slate-700/60"),
   );
 
   return (
     <div className="relative min-h-screen overflow-hidden px-4 pb-16 pt-12 sm:px-6 sm:pt-16">
       <DecorativeBackground theme={theme} />
       <div className="relative z-10 mx-auto flex w-full max-w-4xl flex-col gap-8">
-        <header className="flex flex-wrap items-center gap-4">
-          <button
-            type="button"
-            onClick={goBackOrNavigateHome}
-            className={cn(
-              "inline-flex items-center gap-2 rounded-full border px-4 py-2.5 text-sm font-semibold transition",
-              backButtonSurface,
-              backButtonBorder,
-              "shadow-card backdrop-blur",
-            )}
-          >
-            <Icon
-              icon="material-symbols:arrow-back-rounded"
-              className="text-lg"
-              aria-hidden="true"
-            />
-            Back
-          </button>
-        </header>
+        <PolicyHeader backButtonClass={backButtonClass} onBack={goBackOrNavigateHome} />
         <main>
-          <article
-            className={cn(
-              "rounded-3xl border px-6 py-8 backdrop-blur-md sm:px-10 sm:py-12",
-              cardSurface,
-            )}
-            aria-labelledby="privacy-policy-title"
-          >
-            <p className={cn("text-sm font-medium", mutedText)}>
-              Last updated:{" "}
-              {formattedDate ? (
-                <time
-                  dateTime={lastUpdatedIso ?? undefined}
-                  className="text-yellow-500"
-                >
-                  {formattedDate}
-                </time>
-              ) : (
-                <span>—</span>
-              )}
-            </p>
-            <h1
-              id="privacy-policy-title"
-              className="mt-3 text-3xl font-semibold text-accent sm:text-[2.4rem]"
-            >
-              Privacy Policy
-            </h1>
-            <p className={paragraphClass}>
-              Your privacy matters. This Privacy Policy explains how I,{" "}
-              <span className="font-kiya">Kiya Rose</span>, collect, use, and
-              safeguard personal information when you visit{" "}
-              <a href="https://sillylittle.tech" rel="noreferrer">
-                sillylittle.tech
-              </a>
-              , interact with the contact form, or engage with the analytics
-              services that power the site.
-            </p>
-            {policySections.map((section) => (
-              <section key={section.title} className="mt-10 first:mt-6">
-                <h2 className="text-xl font-semibold text-slate-800 dark:text-slate-100">
-                  {section.title}
-                </h2>
-                <div className="mt-3 space-y-4 text-base leading-7">
-                  {section.body}
-                </div>
-              </section>
-            ))}
-          </article>
+          <PolicyArticle
+            cardSurface={cardSurface}
+            formattedDate={formattedDate}
+            lastUpdatedIso={lastUpdatedIso}
+            mutedText={mutedText}
+          />
         </main>
         <SiteFooter />
       </div>
     </div>
+  );
+}
+
+type PolicyArticleProps = {
+  cardSurface: string;
+  formattedDate: string | null;
+  lastUpdatedIso: string | null;
+  mutedText: string;
+};
+
+function PolicyHeader({
+  backButtonClass,
+  onBack,
+}: {
+  backButtonClass: string;
+  onBack: () => void;
+}) {
+  return (
+    <header className="flex flex-wrap items-center gap-4">
+      <button type="button" onClick={onBack} className={backButtonClass}>
+        <Icon
+          icon="material-symbols:arrow-back-rounded"
+          className="text-lg"
+          aria-hidden="true"
+        />
+        Back
+      </button>
+    </header>
+  );
+}
+
+function PolicyArticle({
+  cardSurface,
+  formattedDate,
+  lastUpdatedIso,
+  mutedText,
+}: PolicyArticleProps) {
+  return (
+    <article
+      className={cn(
+        "rounded-3xl border px-6 py-8 backdrop-blur-md sm:px-10 sm:py-12",
+        cardSurface,
+      )}
+      aria-labelledby="privacy-policy-title"
+    >
+      <PolicyMeta
+        formattedDate={formattedDate}
+        lastUpdatedIso={lastUpdatedIso}
+        mutedText={mutedText}
+      />
+      <PolicyIntro />
+      {policySections.map((section) => (
+        <PolicySectionEntry key={section.title} section={section} />
+      ))}
+    </article>
+  );
+}
+
+function PolicyMeta({
+  formattedDate,
+  lastUpdatedIso,
+  mutedText,
+}: {
+  formattedDate: string | null;
+  lastUpdatedIso: string | null;
+  mutedText: string;
+}) {
+  return (
+    <p className={cn("text-sm font-medium", mutedText)}>
+      Last updated:{" "}
+      {formattedDate ? (
+        <time dateTime={lastUpdatedIso ?? undefined} className="text-yellow-500">
+          {formattedDate}
+        </time>
+      ) : (
+        <span>—</span>
+      )}
+    </p>
+  );
+}
+
+function PolicyIntro() {
+  return (
+    <p className={paragraphClass}>
+      Your privacy matters. This Privacy Policy explains how I,{" "}
+      <span className="font-kiya">Kiya Rose</span>, collect, use, and safeguard
+      personal information when you visit{" "}
+      <a href="https://sillylittle.tech" rel="noreferrer">
+        sillylittle.tech
+      </a>
+      , interact with the contact form, or engage with the analytics services
+      that power the site.
+    </p>
+  );
+}
+
+function PolicySectionEntry({ section }: { section: PolicySection }) {
+  return (
+    <section className="mt-10 space-y-4 text-base leading-7 first:mt-6">
+      <h2 className="text-xl font-semibold text-slate-800 dark:text-slate-100">
+        {section.title}
+      </h2>
+      {section.body}
+    </section>
   );
 }

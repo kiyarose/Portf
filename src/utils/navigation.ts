@@ -8,11 +8,19 @@ function isWindowAvailable() {
   return typeof window !== "undefined";
 }
 
+function stripTrailingSlashes(value: string) {
+  let end = value.length;
+  while (end > 1 && value.charCodeAt(end - 1) === 47) {
+    end -= 1;
+  }
+  return end === value.length ? value : value.slice(0, end);
+}
+
 function normalizePath(path: string): string {
   if (!path) return "/";
   const prefixed = path.startsWith("/") ? path : `/${path}`;
   if (prefixed === "/") return "/";
-  return prefixed.replace(/\/+$/, "") || "/";
+  return stripTrailingSlashes(prefixed) || "/";
 }
 
 export function getCurrentPath(): string {
