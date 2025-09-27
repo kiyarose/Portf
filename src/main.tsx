@@ -5,8 +5,10 @@ import App from "./App.tsx";
 import { ThemeProvider } from "./providers/ThemeProvider";
 import { ErrorBoundary } from "./components/ErrorBoundary";
 import { GENERIC_ERROR_MESSAGES } from "./utils/errorSanitizer";
+import { initializeIcons } from "./utils/icons";
 
-// Icons are loaded on-demand from Iconify CDN
+// Initialize embedded icons (no network requests needed)
+initializeIcons();
 
 const container = document.getElementById("root");
 
