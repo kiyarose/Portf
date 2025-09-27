@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Privacy Policy • Kiya Rose</title>
+    <script>
+      (() => {
+        const storageKey = "kiya-theme";
+        const root = document.documentElement;
+
+        const getSystemTheme = () => {
+          if (typeof window === "undefined") return "light";
+          if (typeof window.matchMedia !== "function") return "light";
+          return window.matchMedia("(prefers-color-scheme: dark)").matches
+            ? "dark"
+            : "light";
+        };
+
+        let storedTheme = null;
+        try {
+          const value = window.localStorage.getItem(storageKey);
+          if (value === "light" || value === "dark") {
+            storedTheme = value;
+          }
+        } catch (error) {
+          // localStorage may be unavailable (for example, in private mode)
+        }
+
+        const hasStoredTheme = storedTheme === "light" || storedTheme === "dark";
+        let theme = hasStoredTheme ? storedTheme : getSystemTheme();
+
+        const applyTheme = (nextTheme) => {
+          const resolved = nextTheme === "dark" ? "dark" : "light";
+          theme = resolved;
+
+          root.dataset.theme = resolved;
+          root.classList.remove("theme-light", "theme-dark");
+          root.classList.add(`theme-${resolved}`);
+          root.style.colorScheme =
+            resolved === "dark" ? "dark light" : "light dark";
+
+          const body = document.body;
+          if (!body) return;
+          body.dataset.theme = resolved;
+          body.classList.remove("theme-light", "theme-dark");
+          body.classList.add(`theme-${resolved}`);
+          body.style.colorScheme =
+            resolved === "dark" ? "dark light" : "light dark";
+        };
+
+        applyTheme(theme);
+
+        if (!document.body) {
+          document.addEventListener(
+            "DOMContentLoaded",
+            () => applyTheme(theme),
+            { once: true },
+          );
+        }
+
+        if (
+          !hasStoredTheme &&
+          typeof window !== "undefined" &&
+          typeof window.matchMedia === "function"
+        ) {
+          const media = window.matchMedia("(prefers-color-scheme: dark)");
+          const handleChange = (event) => {
+            applyTheme(event.matches ? "dark" : "light");
+          };
+
+          if (typeof media.addEventListener === "function") {
+            media.addEventListener("change", handleChange);
+          } else if (typeof media.addListener === "function") {
+            media.addListener(handleChange);
+          }
+        }
+      })();
+    </script>
+    <link
+      rel="preconnect"
+      href="https://fonts.googleapis.com"
+    />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Patrick+Hand&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        color-scheme: light;
+        --page-bg: radial-gradient(
+            circle at top left,
+            rgba(249, 115, 22, 0.18),
+            transparent 55%
+          ),
+          radial-gradient(
+            circle at bottom right,
+            rgba(236, 72, 153, 0.15),
+            transparent 40%
+          ),
+          #f7f8fc;
+        --surface-bg: rgba(255, 255, 255, 0.85);
+        --surface-border: rgba(226, 232, 240, 0.7);
+        --surface-shadow: 0 20px 45px rgba(15, 23, 42, 0.12);
+        --text-primary: #0f172a;
+        --text-body: #334155;
+        --text-muted: #475569;
+        --link-color: #f97316;
+        --link-hover: #ec4899;
+        --accent: #f97316;
+        --accent-soft: rgba(249, 115, 22, 0.75);
+        --focus-ring-base: rgba(247, 248, 252, 1);
+        --highlight: #facc15;
+        --footer-text: #64748b;
+        --logo-bg: rgba(255, 255, 255, 0.8);
+        --logo-border: rgba(226, 232, 240, 0.7);
+        --logo-text: #475569;
+        --logo-name: #f97316;
+      }
+
+      :root.theme-dark,
+      :root[data-theme="dark"] {
+        color-scheme: dark;
+        --page-bg: radial-gradient(
+            circle at top left,
+            rgba(249, 115, 22, 0.15),
+            transparent 55%
+          ),
+          radial-gradient(
+            circle at bottom right,
+            rgba(236, 72, 153, 0.16),
+            transparent 45%
+          ),
+          #0b1120;
+        --surface-bg: rgba(15, 23, 42, 0.78);
+        --surface-border: rgba(148, 163, 184, 0.28);
+        --surface-shadow: 0 25px 55px rgba(2, 6, 23, 0.7);
+        --text-primary: #e2e8f0;
+        --text-body: #cbd5f5;
+        --text-muted: #94a3b8;
+        --link-color: #fb923c;
+        --link-hover: #f472b6;
+        --accent: #fb923c;
+        --accent-soft: rgba(251, 146, 60, 0.75);
+        --focus-ring-base: rgba(11, 17, 32, 1);
+        --highlight: #fde047;
+        --footer-text: #94a3b8;
+        --logo-bg: rgba(15, 23, 42, 0.92);
+        --logo-border: rgba(148, 163, 184, 0.35);
+        --logo-text: #cbd5f5;
+        --logo-name: #fb923c;
+      }
+
+      @media (prefers-color-scheme: dark) {
+        :root:not([data-theme]) {
+          color-scheme: dark;
+          --page-bg: radial-gradient(
+              circle at top left,
+              rgba(249, 115, 22, 0.15),
+              transparent 55%
+            ),
+            radial-gradient(
+              circle at bottom right,
+              rgba(236, 72, 153, 0.16),
+              transparent 45%
+            ),
+            #0b1120;
+          --surface-bg: rgba(15, 23, 42, 0.78);
+          --surface-border: rgba(148, 163, 184, 0.28);
+          --surface-shadow: 0 25px 55px rgba(2, 6, 23, 0.7);
+          --text-primary: #e2e8f0;
+          --text-body: #cbd5f5;
+          --text-muted: #94a3b8;
+          --link-color: #fb923c;
+          --link-hover: #f472b6;
+          --accent: #fb923c;
+          --accent-soft: rgba(251, 146, 60, 0.75);
+          --focus-ring-base: rgba(11, 17, 32, 1);
+          --highlight: #fde047;
+          --footer-text: #94a3b8;
+          --logo-bg: rgba(15, 23, 42, 0.92);
+          --logo-border: rgba(148, 163, 184, 0.35);
+          --logo-text: #cbd5f5;
+          --logo-name: #fb923c;
+        }
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: "Inter", "-apple-system", "BlinkMacSystemFont", "Segoe UI",
+          "Helvetica Neue", sans-serif;
+        background: var(--page-bg);
+        color: var(--text-primary);
+        min-height: 100vh;
+        padding: 3rem 1.5rem;
+        transition: background 0.3s ease, color 0.3s ease;
+      }
+
+      a {
+        color: var(--link-color);
+        text-decoration: none;
+        transition: color 0.2s ease;
+      }
+
+      a:hover {
+        color: var(--link-hover);
+      }
+
+      a:focus-visible {
+        outline: none;
+        box-shadow: 0 0 0 2px var(--accent-soft), 0 0 0 4px var(--focus-ring-base);
+      }
+
+      header {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 2rem;
+      }
+
+      .logo {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.75rem 1.5rem;
+        border-radius: 999px;
+        background: var(--logo-bg);
+        border: 1px solid var(--logo-border);
+        box-shadow: var(--surface-shadow);
+        backdrop-filter: blur(6px);
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.18em;
+        color: var(--logo-text);
+      }
+
+      .logo span:first-child {
+        color: var(--accent);
+      }
+
+      .logo span:last-child {
+        font-family: "Patrick Hand", "Inter", sans-serif;
+        letter-spacing: 0.04em;
+        font-size: 1.1rem;
+        color: var(--logo-name);
+      }
+
+      main {
+        max-width: 960px;
+        margin: 0 auto;
+      }
+
+      .card {
+        background: var(--surface-bg);
+        border-radius: 1.75rem;
+        border: 1px solid var(--surface-border);
+        box-shadow: var(--surface-shadow);
+        padding: clamp(2rem, 3vw + 1rem, 3.25rem);
+        backdrop-filter: blur(8px);
+        transition: background 0.3s ease, box-shadow 0.3s ease,
+          border-color 0.3s ease;
+      }
+
+      h1 {
+        font-size: clamp(2.1rem, 3vw + 1.5rem, 2.75rem);
+        margin: 0 0 1.5rem;
+        color: var(--accent);
+        font-weight: 700;
+      }
+
+      h2 {
+        margin-top: 2.5rem;
+        margin-bottom: 0.75rem;
+        font-size: 1.35rem;
+        color: var(--text-primary);
+        font-weight: 600;
+      }
+
+      p {
+        line-height: 1.7;
+        margin: 0 0 1.15rem;
+        color: var(--text-body);
+      }
+
+      ul {
+        margin: 0 0 1.25rem 1.2rem;
+        padding: 0;
+        color: var(--text-body);
+      }
+
+      li {
+        margin-bottom: 0.75rem;
+        line-height: 1.6;
+      }
+
+      .muted {
+        color: var(--text-muted);
+      }
+
+      .highlight {
+        color: var(--highlight);
+        font-weight: 600;
+      }
+
+      footer {
+        margin-top: 2.5rem;
+        text-align: center;
+        font-size: 0.9rem;
+        color: var(--footer-text);
+      }
+
+      @media (max-width: 640px) {
+        body {
+          padding: 2.5rem 1.25rem;
+        }
+
+        header {
+          margin-bottom: 1.5rem;
+        }
+
+        .card {
+          padding: 1.75rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <a class="logo" href="/">
+        <span aria-hidden="true">⬡</span>
+        <span>Kiya Rose</span>
+      </a>
+    </header>
+    <main>
+      <article class="card" aria-labelledby="privacy-title">
+        <p class="muted">Last updated: May 20, 2024</p>
+        <h1 id="privacy-title">Privacy Policy</h1>
+        <p>
+          Your privacy matters. This Privacy Policy explains how I, Kiya Rose,
+          collect, use, and safeguard personal information when you visit
+          <a href="https://sillylittle.tech">sillylittle.tech</a>, interact with
+          the contact form, or engage with the analytics services that power the
+          site.
+        </p>
+
+        <h2>Information I Collect</h2>
+        <p>
+          I collect only the information needed to respond to inquiries and to
+          understand how the site is used so I can keep improving it.
+        </p>
+        <ul>
+          <li>
+            <strong>Contact form details:</strong> When you submit the “Contact
+            Me” form, I receive the name you share, your email address, and the
+            contents of your message. The form routes through Pageclip so that I
+            can receive and manage your message securely.
+          </li>
+          <li>
+            <strong>Usage analytics:</strong> Firebase Hosting and the built-in
+            Google Analytics integrations collect standard event and device
+            information (such as page views, browser type, approximate
+            geolocation, and device identifiers). These analytics are aggregated
+            and help me measure site performance.
+          </li>
+        </ul>
+
+        <h2>How I Use Your Information</h2>
+        <ul>
+          <li>Responding to you directly when you reach out through the form.</li>
+          <li>
+            Monitoring site performance, debugging issues, and improving
+            features using aggregated analytics insights.
+          </li>
+          <li>
+            Maintaining the security and reliability of the hosting
+            infrastructure.
+          </li>
+        </ul>
+
+        <h2>Services and Third Parties</h2>
+        <p>
+          The portfolio is hosted with <strong>Firebase Hosting</strong> and uses
+          Google’s analytics tooling. These providers process data on my behalf
+          in accordance with their own policies, which you can review here:
+        </p>
+        <ul>
+          <li>
+            <a href="https://firebase.google.com/support/privacy" target="_blank" rel="noreferrer">
+              Firebase Privacy and Security
+            </a>
+          </li>
+          <li>
+            <a href="https://support.google.com/analytics/answer/7318509" target="_blank" rel="noreferrer">
+              Google Analytics Privacy Overview
+            </a>
+          </li>
+        </ul>
+        <p>
+          I do not sell your personal information or share it with advertisers.
+          Access is limited to what is required to run this website.
+        </p>
+
+        <h2>Legal Bases for Processing (GDPR)</h2>
+        <p>
+          If you reside in the European Economic Area or United Kingdom, I rely
+          on the following legal bases under the General Data Protection
+          Regulation:
+        </p>
+        <ul>
+          <li>
+            <strong>Consent</strong> for analytics and form submissions; you can
+            withdraw consent at any time by contacting me.
+          </li>
+          <li>
+            <strong>Legitimate interest</strong> in operating and securing the
+            portfolio.
+          </li>
+        </ul>
+
+        <h2>Your Privacy Rights</h2>
+        <p>
+          Depending on where you live, you may have rights to access, correct,
+          delete, or restrict the use of your personal data.
+        </p>
+        <ul>
+          <li>
+            <strong>California residents (CCPA/CPRA):</strong> You can request a
+            copy of the data collected about you, ask for deletion, or opt out of
+            data sharing. I do not sell personal data, as defined by California
+            law.
+          </li>
+          <li>
+            <strong>EEA &amp; UK residents (GDPR):</strong> You can request access
+            to your personal data, correction of inaccuracies, deletion, or a
+            copy for portability. You may also object to or request restriction of
+            certain processing.
+          </li>
+        </ul>
+        <p>
+          To exercise any of these rights, email me at
+          <a href="mailto:kiya.rose@sillylittle.tech">kiya.rose@sillylittle.tech</a>.
+        </p>
+
+        <h2>Data Retention</h2>
+        <p>
+          Contact messages are retained only as long as needed to respond to you
+          or maintain a conversation record. Aggregated analytics data is stored
+          according to Google’s default retention schedule, which is currently 14
+          months unless a shorter period is chosen.
+        </p>
+
+        <h2>Security</h2>
+        <p>
+          Firebase provides managed infrastructure with encryption in transit and
+          at rest. I also review analytics and access logs to monitor for
+          unexpected activity. No system can be perfectly secure, but I take
+          reasonable precautions to protect your data.
+        </p>
+
+        <h2>International Data Transfers</h2>
+        <p>
+          Firebase and Google Analytics may process data on servers located in
+          the United States or other countries. These transfers follow Google’s
+          global infrastructure and incorporate appropriate safeguards.
+        </p>
+
+        <h2>Changes to This Policy</h2>
+        <p>
+          I may update this Privacy Policy at any time to reflect new features,
+          legal requirements, or provider changes. Updates will be posted on this
+          page with a new <span class="highlight">Last updated</span> date, so
+          please check back periodically.
+        </p>
+
+        <h2>Contact</h2>
+        <p>
+          Questions about this Privacy Policy or your data rights? Reach out any
+          time at
+          <a href="mailto:kiya.rose@sillylittle.tech">kiya.rose@sillylittle.tech</a>.
+        </p>
+      </article>
+      <footer>
+        © <span id="year"></span> <span style="font-family: 'Patrick Hand', 'Inter', sans-serif;">Kiya Rose</span>. Crafted with React, Tailwind CSS, and Firebase.
+      </footer>
+    </main>
+    <script>
+      const year = new Date().getFullYear();
+      const yearSpan = document.getElementById("year");
+      if (yearSpan) {
+        yearSpan.textContent = year;
+      }
+    </script>
+  </body>
+</html>

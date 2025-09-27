@@ -115,6 +115,17 @@ function ContactIntro({ copied, onCopy }: ContactIntroProps) {
         {copied ? "Copied!" : "Copy my email"}
       </button>
       <p className={cn("text-base font-semibold", emailColor)}>{EMAIL}</p>
+      <a
+        href="/privacy-policy"
+        className="inline-flex w-fit items-center gap-1 text-sm font-medium text-yellow-500 transition hover:text-yellow-400"
+      >
+        <Icon
+          icon="material-symbols:shield-person-rounded"
+          className="text-base"
+          aria-hidden="true"
+        />
+        Read the Privacy Policy
+      </a>
     </div>
   );
 }
