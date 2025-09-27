@@ -32,6 +32,14 @@ jobs:
       - name: Build site
         run: npm run build
 
+      # --- Added steps to start and wait for the preview server ---
+      - name: Start preview server
+        run: npm run preview -- --port 4173 &
+
+      - name: Wait for server to be ready
+        run: npx wait-on http://localhost:4173
+      # -----------------------------------------------------------
+
       - name: Cache Playwright browsers
         id: playwright-cache
         uses: actions/cache@v4

@@ -14,6 +14,5 @@ jobs:
       # Install lychee globally to ensure npx works
       - run: npm install -g lychee
       # check repo files
-      - run: npx lychee --config ./.lychee.toml .
-      # check built site (find href/src inside dist)
-      - run: npx lychee --config ./.lychee.toml dist
+      - run: lychee --config ./.lychee.toml .
+      - run: lychee --config ./.lychee.toml dist
