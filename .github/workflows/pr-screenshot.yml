@@ -1,7 +1,7 @@
 name: e2e-screenshot
 
 concurrency:
-  group: pages
+  group: ${{ (github.event_name != 'pull_request' || github.event.pull_request.head.repo.fork == false) && 'pages' || format('screenshot-{0}', github.ref) }}
   cancel-in-progress: true
 
 permissions:
