@@ -9,7 +9,8 @@ import { cn } from "../utils/cn";
 import { goBackOrNavigateHome } from "../utils/navigation";
 import { getBuildUpdatedAt } from "../data/build";
 
-const CONTACT_EMAIL = "kiya.rose@sillylittle.tech";
+const GDPR_CONTACT_EMAIL = "gdpr@sillylittle.tech";
+const PRIVACY_CONTACT_EMAIL = "privacy@sillylittle.tech";
 
 type PolicySection = {
   title: string;
@@ -34,7 +35,17 @@ const policySections: PolicySection[] = [
             <strong>Contact form details:</strong> When you submit the “Contact
             Me” form, I receive the name you share, your email address, and the
             contents of your message. The form routes through Pageclip so that I
-            can receive and manage your message securely.
+            can receive and manage your message securely. You can review how
+            Pageclip handles submissions in their
+            <a
+              className="ml-1"
+              href="https://pageclip.co/privacy"
+              target="_blank"
+              rel="noreferrer"
+            >
+              Privacy Policy
+            </a>
+            .
           </li>
           <li>
             <strong>Usage analytics:</strong> Firebase Hosting and the built-in
@@ -146,8 +157,8 @@ const policySections: PolicySection[] = [
         </ul>
         <p className={paragraphClass}>
           To exercise any of these rights, email me at
-          <a className="ml-1" href={`mailto:${CONTACT_EMAIL}`}>
-            {CONTACT_EMAIL}
+          <a className="ml-1" href={`mailto:${GDPR_CONTACT_EMAIL}`}>
+            {GDPR_CONTACT_EMAIL}
           </a>
           .
         </p>
@@ -192,7 +203,7 @@ const policySections: PolicySection[] = [
       <p className={paragraphClass}>
         I may update this Privacy Policy at any time to reflect new features,
         legal requirements, or provider changes. Updates will be posted on this
-        page with a new <span className="text-yellow-400">Last updated</span>
+        page with a new <span className="text-yellow-400">Last updated</span>{" "}
         date, so please check back periodically.
       </p>
     ),
@@ -203,8 +214,8 @@ const policySections: PolicySection[] = [
       <p className={paragraphClass}>
         Questions about this Privacy Policy or your data rights? Reach out any
         time at
-        <a className="ml-1" href={`mailto:${CONTACT_EMAIL}`}>
-          {CONTACT_EMAIL}
+        <a className="ml-1" href={`mailto:${PRIVACY_CONTACT_EMAIL}`}>
+          {PRIVACY_CONTACT_EMAIL}
         </a>
         .
       </p>
@@ -319,6 +330,7 @@ function PolicyArticle({
         lastUpdatedIso={lastUpdatedIso}
         mutedText={mutedText}
       />
+      <PolicyHeading />
       <PolicyIntro />
       {policySections.map((section) => (
         <PolicySectionEntry key={section.title} section={section} />
@@ -337,25 +349,40 @@ function PolicyMeta({
   mutedText: string;
 }) {
   return (
-    <p className={cn("text-sm font-medium", mutedText)}>
-      Last updated:{" "}
-      {formattedDate ? (
-        <time
-          dateTime={lastUpdatedIso ?? undefined}
-          className="text-yellow-500"
-        >
-          {formattedDate}
-        </time>
-      ) : (
-        <span>—</span>
-      )}
-    </p>
+    <div className={cn("mb-4 text-sm font-medium", mutedText)}>
+      <span className="uppercase tracking-[0.18em] text-slate-400 dark:text-slate-500">
+        Last updated
+      </span>
+      <span className="ml-2">
+        {formattedDate ? (
+          <time
+            dateTime={lastUpdatedIso ?? undefined}
+            className="text-yellow-500"
+          >
+            {formattedDate}
+          </time>
+        ) : (
+          <span>—</span>
+        )}
+      </span>
+    </div>
+  );
+}
+
+function PolicyHeading() {
+  return (
+    <h1
+      id="privacy-policy-title"
+      className="mt-1 mb-6 text-3xl font-semibold text-accent sm:text-[2.4rem]"
+    >
+      Privacy Policy
+    </h1>
   );
 }
 
 function PolicyIntro() {
   return (
-    <p className={paragraphClass}>
+    <p className={cn(paragraphClass, "mt-4")}>
       Your privacy matters. This Privacy Policy explains how I,{" "}
       <span className="font-kiya">Kiya Rose</span>, collect, use, and safeguard
       personal information when you visit{" "}
