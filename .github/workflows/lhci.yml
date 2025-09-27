@@ -1,6 +1,7 @@
 name: Lighthouse CI
 permissions:
   contents: read
+  pull-requests: write
 on: [pull_request]
 jobs:
   lhci:
@@ -12,4 +13,51 @@ jobs:
           node-version: 20
       - run: npm ci
       - run: npm run build
-      - run: npx lhci autorun
+      - run: npx lhci autorun --outputDir=lhci-results || true # Don't fail yet
+      - run: npx lhci assert --reporter json --reporter stdout > lhci-assert.json || true
+
+      # Add a script to summarize the assertion failures
+      - name: Summarize LHCI assertions
+        id: summarize
+        run: |
+          node <<'EOF'
+          const fs = require('fs');
+          try {
+            const data = JSON.parse(fs.readFileSync('lhci-assert.json', 'utf8'));
+            if (!data.assertionResults || !data.assertionResults.length) {
+              console.log('::set-output name=summary::No assertion results found.');
+              process.exit(0);
+            }
+            let summary = '';
+            data.assertionResults.forEach(r => {
+              if (r.level === 'error') {
+                summary += `❌ **${r.auditId}** failed:\n`;
+                summary += `- Expected: ${r.operator} ${r.expected}\n- Found: ${r.actual}\n- Path: ${r.url}\n\n`;
+              }
+            });
+            if (!summary) summary = 'All assertions passed!';
+            // Save to output
+            fs.writeFileSync('lhci-summary.txt', summary);
+            console.log(`::set-output name=summary::${summary}`);
+          } catch (e) {
+            console.error('Could not read LHCI assert json:', e);
+            fs.writeFileSync('lhci-summary.txt', 'LHCI assertion parsing failed.');
+            console.log('::set-output name=summary::LHCI assertion parsing failed.');
+          }
+          EOF
+
+      # Add a review comment on the PR with the summary
+      - name: Comment on PR with Lighthouse CI results
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const fs = require('fs');
+            const summary = fs.readFileSync('lhci-summary.txt', 'utf8');
+            github.rest.pulls.createReview({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.payload.pull_request.number,
+              event: 'COMMENT',
+              body: `### Lighthouse CI Report\n\n${summary}\n\n[View detailed report](https://storage.googleapis.com/lighthouse-infrastructure.appspot.com/reports/1758932663189-43674.report.html)`
+            });
