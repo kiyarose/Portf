@@ -250,16 +250,6 @@ export function PrivacyPolicyPage() {
     themedClass(theme, "bg-white/80 text-slate-700 hover:bg-white", "bg-slate-900/80 text-slate-100 hover:bg-slate-900"),
     themedClass(theme, "border-slate-200/60", "border-slate-700/60"),
   );
-  const backButtonSurface = themedClass(
-    theme,
-    "bg-white/80 text-slate-700 hover:bg-white",
-    "bg-slate-900/80 text-slate-100 hover:bg-slate-900",
-  );
-  const backButtonBorder = themedClass(
-    theme,
-    "border-slate-200/60",
-    "border-slate-700/60",
-  );
   return (
     <div className="relative min-h-screen overflow-hidden px-4 pb-16 pt-12 sm:px-6 sm:pt-16">
       <DecorativeBackground theme={theme} />
