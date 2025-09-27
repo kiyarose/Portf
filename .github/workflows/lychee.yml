@@ -8,11 +8,15 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
-        with: { node-version: 20 }
+        with:
+          node-version: 20
       - run: npm ci
       - run: npm run build
-      # Install lychee globally to ensure npx works
-      - run: npm install -g lychee
-      # check repo files
-      - run: lychee --config ./.lychee.toml .
-      - run: lychee --config ./.lychee.toml dist
+      - name: Check links in repo
+        uses: lycheeverse/lychee-action@v1.9.0
+        with:
+          args: --config ./.lychee.toml .
+      - name: Check links in dist
+        uses: lycheeverse/lychee-action@v1.9.0
+        with:
+          args: --config ./.lychee.toml dist
