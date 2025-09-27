@@ -1,7 +1,7 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
-import App from "./App.tsx";
+import { AppRouter } from "./AppRouter";
 import { ThemeProvider } from "./providers/ThemeProvider";
 import { ErrorBoundary } from "./components/ErrorBoundary";
 import { GENERIC_ERROR_MESSAGES } from "./utils/errorSanitizer";
@@ -69,7 +69,7 @@ createRoot(container).render(
   <StrictMode>
     <ErrorBoundary>
       <ThemeProvider>
-        <App />
+        <AppRouter />
       </ThemeProvider>
     </ErrorBoundary>
   </StrictMode>,

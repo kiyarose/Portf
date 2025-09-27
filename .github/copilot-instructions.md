@@ -10,6 +10,7 @@
 - Maintain the light/dark theme toggle with animated sun/moon icons and ensure contrast targets accessibility best practices.
 - Apply the `.font-kiya` (Patrick Hand) accent whenever “Kiya Rose” appears in UI copy.
 - Keep the footer’s legal line consistent: dynamic current year, typographic © symbol, `.font-kiya` "Kiya Rose", and the “Crafted with React, Tailwind CSS, and Firebase.” tag.
+- Privacy and legal copy should source their “Last updated” value from `getBuildUpdatedAt()` in `src/data/build.ts` so the date reflects the current build—no hard-coded timestamps.
 - Everything should be in Canadian English or French English when possible, when there are conflicting versions of a singular term use the more specific one. (For example cheque instead of check)
 
 ## Quality Expectations
@@ -30,3 +31,5 @@
 - Run `npm run lint` and (when relevant) `npm run build`; clean up generated `dist/` outputs if you run the build locally.
 - Keep the build label helper in `src/data/build.ts` intact: it persists a random prefix per build signature in `localStorage`, so only adjust it if that behaviour breaks, and retain the accent tooltip that explains the two segments.
 - Keep the macOS Swift companion `DashCam!` in `$DashCam!/`: it manages `npm run dev` and `npx playwright codegen` processes, so update `DashboardViewModel`/`ProcessController` plus the packaged `DashCam.app` or `dashcam_swift.tgz` whenever those workflows change.
+- Route-level additions should flow through `src/AppRouter.tsx` with helpers from `src/utils/navigation.ts`; render privacy/legal pages inside React rather than shipping standalone static HTML.
+- When you adjust repository guidance, update both `AGENTS.md` and this file so instructions stay in sync.

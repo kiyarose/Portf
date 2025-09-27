@@ -1,12 +1,14 @@
 import { Icon } from "@iconify/react";
 import { motion, useReducedMotion } from "framer-motion";
 import { useCallback, useState } from "react";
+import type { MouseEvent } from "react";
 import { SectionContainer } from "../components/SectionContainer";
 import { SectionHeader } from "../components/SectionHeader";
 import { safeConsoleWarn, safeConsoleError } from "../utils/errorSanitizer";
 import { useTheme } from "../hooks/useTheme";
 import { themedClass } from "../utils/themeClass";
 import { cn } from "../utils/cn";
+import { navigateTo } from "../utils/navigation";
 
 const EMAIL = "kiya.rose@sillylittle.tech";
 
@@ -94,6 +96,23 @@ function ContactIntro({ copied, onCopy }: ContactIntroProps) {
     "!bg-white !text-accent border border-accent hover:bg-accent/10",
     "!bg-accent !text-white border border-accent/30 hover:bg-accent/90",
   );
+  const handlePrivacyPolicyClick = useCallback(
+    (event: MouseEvent<HTMLAnchorElement>) => {
+      if (
+        event.defaultPrevented ||
+        event.button !== 0 ||
+        event.metaKey ||
+        event.altKey ||
+        event.ctrlKey ||
+        event.shiftKey
+      ) {
+        return;
+      }
+      event.preventDefault();
+      navigateTo("/privacy-policy");
+    },
+    [],
+  );
   return (
     <div className="flex-1 space-y-4">
       <p className={cn("text-base", introCopyColor)}>
@@ -115,6 +134,18 @@ function ContactIntro({ copied, onCopy }: ContactIntroProps) {
         {copied ? "Copied!" : "Copy my email"}
       </button>
       <p className={cn("text-base font-semibold", emailColor)}>{EMAIL}</p>
+      <a
+        href="/privacy-policy"
+        onClick={handlePrivacyPolicyClick}
+        className="inline-flex w-fit items-center gap-1 text-sm font-medium text-yellow-500 transition hover:text-yellow-400"
+      >
+        <Icon
+          icon="material-symbols:shield-person-rounded"
+          className="text-base"
+          aria-hidden="true"
+        />
+        Read the Privacy Policy
+      </a>
     </div>
   );
 }
