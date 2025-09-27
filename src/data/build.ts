@@ -1,7 +1,8 @@
 const RANDOM_CHARS = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
 const PREFIX_STORAGE_KEY = "kiya-portfolio::build-prefix";
 const PREFIX_LENGTH = 4;
-const BUILD_TIME_ISO = typeof __BUILD_TIME__ === "string" ? __BUILD_TIME__ : null;
+const BUILD_TIME_ISO =
+  typeof __BUILD_TIME__ === "string" ? __BUILD_TIME__ : null;
 
 function createRandomSegment(length: number) {
   if (typeof crypto !== "undefined" && "getRandomValues" in crypto) {
@@ -105,9 +106,9 @@ export function generateBuildLabel() {
 }
 
 export function getBuildUpdatedAt() {
-  const candidate = BUILD_TIME_ISO ?? (typeof document !== "undefined"
-    ? document.lastModified
-    : null);
+  const candidate =
+    BUILD_TIME_ISO ??
+    (typeof document !== "undefined" ? document.lastModified : null);
 
   if (!candidate) {
     return null;
