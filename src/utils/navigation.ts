@@ -41,9 +41,10 @@ export function subscribeToNavigation(listener: NavigationListener) {
   if (!isWindowAvailable()) return () => undefined;
   const handler = (event: Event) => {
     const customEvent = event as NavigationEvent;
-    const nextPath = typeof customEvent.detail === "string"
-      ? customEvent.detail
-      : getCurrentPath();
+    const nextPath =
+      typeof customEvent.detail === "string"
+        ? customEvent.detail
+        : getCurrentPath();
     listener(normalizePath(nextPath));
   };
 
