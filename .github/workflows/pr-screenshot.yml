@@ -1,7 +1,7 @@
 name: e2e-screenshot
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: pages
   cancel-in-progress: true
 
 permissions:
