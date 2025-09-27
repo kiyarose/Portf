@@ -240,21 +240,24 @@ export function PrivacyPolicyPage() {
     "border-white/60 bg-white/80 text-slate-700 shadow-card",
     "border-slate-800/60 bg-slate-950/70 text-slate-200 shadow-[0_25px_55px_rgba(2,6,23,0.65)]",
   );
-  const mutedText = themedClass(
-    theme,
-    "text-slate-500",
-    "text-slate-400",
-  );
+  const mutedText = themedClass(theme, "text-slate-500", "text-slate-400");
   const backButtonClass = cn(
     "inline-flex items-center gap-2 rounded-full border px-4 py-2.5 text-sm font-semibold transition shadow-card backdrop-blur",
-    themedClass(theme, "bg-white/80 text-slate-700 hover:bg-white", "bg-slate-900/80 text-slate-100 hover:bg-slate-900"),
+    themedClass(
+      theme,
+      "bg-white/80 text-slate-700 hover:bg-white",
+      "bg-slate-900/80 text-slate-100 hover:bg-slate-900",
+    ),
     themedClass(theme, "border-slate-200/60", "border-slate-700/60"),
   );
   return (
     <div className="relative min-h-screen overflow-hidden px-4 pb-16 pt-12 sm:px-6 sm:pt-16">
       <DecorativeBackground theme={theme} />
       <div className="relative z-10 mx-auto flex w-full max-w-4xl flex-col gap-8">
-        <PolicyHeader backButtonClass={backButtonClass} onBack={goBackOrNavigateHome} />
+        <PolicyHeader
+          backButtonClass={backButtonClass}
+          onBack={goBackOrNavigateHome}
+        />
         <main>
           <PolicyArticle
             cardSurface={cardSurface}
@@ -337,7 +340,10 @@ function PolicyMeta({
     <p className={cn("text-sm font-medium", mutedText)}>
       Last updated:{" "}
       {formattedDate ? (
-        <time dateTime={lastUpdatedIso ?? undefined} className="text-yellow-500">
+        <time
+          dateTime={lastUpdatedIso ?? undefined}
+          className="text-yellow-500"
+        >
           {formattedDate}
         </time>
       ) : (
