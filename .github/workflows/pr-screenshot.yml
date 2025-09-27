@@ -1,5 +1,9 @@
 name: e2e-screenshot
 
+concurrency:
+  group: github.ref
+  cancel-in-progress: true
+
 permissions:
   contents: write       # needed to push to gh-pages
   pages: write          # deploy with actions/deploy-pages
