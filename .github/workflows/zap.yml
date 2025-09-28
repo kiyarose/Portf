@@ -1,6 +1,7 @@
 name: ZAP Baseline (nightly)
 permissions:
   contents: read
+  issues: write
 on:
   schedule:
     - cron: "0 6 * * *"   # daily 06:00 UTC
@@ -10,6 +11,7 @@ jobs:
   zap:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
       - uses: zaproxy/action-baseline@v0.11.0
         with:
           target: https://sillylittle.tech
