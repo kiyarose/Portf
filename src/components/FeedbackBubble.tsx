@@ -103,8 +103,8 @@ function ConfettiParticle({
         width: `${size}px`,
         height: `${size}px`,
         background: color,
-        left: `${initialX}%`,
-        top: `${initialY}%`,
+        left: `${initialX}px`, // Now using pixel coordinates instead of percentages
+        top: `${initialY}px`,  // Now using pixel coordinates instead of percentages
         // Add shadow for more prominence
         boxShadow: "0 0 10px rgba(0,0,0,0.3)",
       }}
@@ -136,25 +136,40 @@ function ConfettiEffect({ isActive }: { isActive: boolean }) {
   // Generate more particles for bolder effect - similar to Discord
   const particles = useMemo(
     () =>
-      Array.from({ length: 25 }, (_, i) => ({
-        // Increased from 12 to 25 particles
-        id: `confetti-${Date.now()}-${i}`,
-        // Start particles from the button position (bottom right corner)
-        initialX: 85, // Button is positioned at right edge, so start around 85%
-        initialY: 85, // Button is positioned at bottom, so start around 85%
-        // Generate random angle for direction (spreading outward from button)
-        angle: (Math.PI * 2 * i) / 25 + (Math.random() - 0.5) * 0.8, // More spread
-        // Random size for variety - bigger particles like Discord
-        size: 8 + Math.random() * 12, // 8-20px particles (much larger than 2px)
-        // Random shape for visual interest
-        shape:
-          CONFETTI_SHAPES[Math.floor(Math.random() * CONFETTI_SHAPES.length)],
-        // Random bold color
-        color:
-          BOLD_CONFETTI_COLORS[
-            Math.floor(Math.random() * BOLD_CONFETTI_COLORS.length)
-          ],
-      })),
+      Array.from({ length: 25 }, (_, i) => {
+        // Calculate button position in pixels
+        // Mobile: bottom-20 (80px) right-4 (16px)
+        // Desktop: sm:bottom-6 (24px) sm:right-6 (24px)
+        // Use responsive values that match bubble positioning
+        const isMobile = window.innerWidth < 640; // Tailwind sm breakpoint
+        const bottomOffset = isMobile ? 80 : 24; // bottom-20 = 80px, bottom-6 = 24px
+        const rightOffset = isMobile ? 16 : 24; // right-4 = 16px, right-6 = 24px
+        const buttonSize = isMobile ? 56 : 64; // h-14 w-14 (56px) or h-16 w-16 (64px)
+        
+        // Calculate center of button from bottom-right of viewport
+        const buttonCenterX = window.innerWidth - rightOffset - (buttonSize / 2);
+        const buttonCenterY = window.innerHeight - bottomOffset - (buttonSize / 2);
+        
+        return {
+          // Increased from 12 to 25 particles
+          id: `confetti-${Date.now()}-${i}`,
+          // Start particles from the actual button center position in pixels
+          initialX: buttonCenterX,
+          initialY: buttonCenterY,
+          // Generate random angle for direction (spreading outward from button)
+          angle: (Math.PI * 2 * i) / 25 + (Math.random() - 0.5) * 0.8, // More spread
+          // Random size for variety - bigger particles like Discord
+          size: 8 + Math.random() * 12, // 8-20px particles (much larger than 2px)
+          // Random shape for visual interest
+          shape:
+            CONFETTI_SHAPES[Math.floor(Math.random() * CONFETTI_SHAPES.length)],
+          // Random bold color
+          color:
+            BOLD_CONFETTI_COLORS[
+              Math.floor(Math.random() * BOLD_CONFETTI_COLORS.length)
+            ],
+        };
+      }),
     [], // Empty dependency array means this only runs once
   );
 
