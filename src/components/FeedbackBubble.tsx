@@ -484,7 +484,7 @@ function ConfirmationDialog({
   onNo,
 }: ConfirmationDialogProps) {
   const confirmContainerClass = cn(
-    // Position higher to avoid clipping with scaled button (bottom-20 accounts for 1.2x scale) 
+    // Position higher to avoid clipping with scaled button (bottom-20 accounts for 1.2x scale)
     "absolute bottom-20 right-0 rounded-2xl border p-5 shadow-2xl backdrop-blur-lg",
     // Mobile responsive width
     "w-72 sm:w-80",
