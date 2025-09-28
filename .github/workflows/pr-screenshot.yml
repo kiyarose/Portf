@@ -1,8 +1,8 @@
 name: e2e-screenshot
 
 concurrency:
-  group: ${{ (github.event_name != 'pull_request' || github.event.pull_request.head.repo.fork == false) && 'pages' || format('screenshot-{0}', github.ref) }}
-  cancel-in-progress: true # Cancel on conflict. 
+  group: ${{ github.event_name == 'pull_request' && format('screenshot-pr-{0}', github.event.pull_request.number) || format('screenshot-{0}', github.ref) }}
+  cancel-in-progress: false # Don't cancel immediately - wait for timeout 
 
 permissions:
   contents: write       # needed to push to gh-pages
@@ -24,6 +24,100 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      # Wait for any concurrent jobs to complete, with timeout
+      - name: Wait for concurrent screenshot jobs
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const maxWaitTime = 10 * 60 * 1000; // 10 minutes in milliseconds
+            const pollInterval = 30 * 1000; // 30 seconds
+            const startTime = Date.now();
+            
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const currentRunId = context.runId;
+            const prNumber = context.payload.pull_request.number;
+            
+            core.info(`Waiting for concurrent screenshot jobs for PR ${prNumber}...`);
+            
+            while (Date.now() - startTime < maxWaitTime) {
+              try {
+                // Get workflow runs for this workflow
+                const runs = await github.rest.actions.listWorkflowRuns({
+                  owner,
+                  repo,
+                  workflow_id: 'pr-screenshot.yml',
+                  status: 'in_progress',
+                  per_page: 100
+                });
+                
+                // Find other runs for this PR that are still running
+                const concurrentRuns = runs.data.workflow_runs.filter(run => 
+                  run.id !== currentRunId && 
+                  run.head_commit.id !== context.sha &&
+                  run.event === 'pull_request'
+                );
+                
+                if (concurrentRuns.length === 0) {
+                  core.info('No concurrent screenshot jobs found. Proceeding...');
+                  break;
+                }
+                
+                core.info(`Found ${concurrentRuns.length} concurrent jobs. Waiting...`);
+                await new Promise(resolve => setTimeout(resolve, pollInterval));
+                
+              } catch (error) {
+                core.warning(`Error checking concurrent jobs: ${error.message}`);
+                break;
+              }
+            }
+            
+            // If we timed out, post a comment and fail gracefully
+            if (Date.now() - startTime >= maxWaitTime) {
+              const marker = '<!-- screenshot-timeout-marker -->';
+              const body = [
+                marker,
+                '⏱️ **Screenshot generation timed out**',
+                '',
+                `The screenshot workflow for this PR timed out while waiting for other concurrent jobs to complete.`,
+                `This usually happens when multiple PRs are being processed simultaneously.`,
+                '',
+                '**This comment will be updated automatically when the screenshot is ready.**',
+                '',
+                `_Timeout occurred after 10 minutes of waiting._`
+              ].join('\n');
+              
+              // Check for existing timeout comment
+              const comments = await github.paginate(github.rest.issues.listComments, {
+                owner,
+                repo,
+                issue_number: prNumber,
+              });
+              
+              const existing = comments.find(comment => 
+                comment.body && comment.body.includes(marker)
+              );
+              
+              if (existing) {
+                await github.rest.issues.updateComment({
+                  owner,
+                  repo,
+                  comment_id: existing.id,
+                  body,
+                });
+              } else {
+                await github.rest.issues.createComment({
+                  owner,
+                  repo,
+                  issue_number: prNumber,
+                  body,
+                });
+              }
+              
+              core.setFailed('Screenshot generation timed out waiting for concurrent jobs.');
+            }
 
       - name: Use Node
         uses: actions/setup-node@v4
@@ -127,9 +221,17 @@ jobs:
       - name: Prepare Pages payload and workspace archive
         id: prep_pages
         run: |
-          run_dir=${{ github.run_id }}
-          pages_root="_screenshot_publish/(dev-Shots)/screenshots/$run_dir"
-          repo_root="(dev-Shots)/screenshots/$run_dir"
+          # Use PR-specific directory structure instead of run-based
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            pr_number="${{ github.event.pull_request.number }}"
+            pages_root="_screenshot_publish/(Dev-Shots)/PR-${pr_number}"
+            repo_root="(Dev-Shots)/PR-${pr_number}"
+          else
+            # For main branch, use run-based structure
+            run_dir=${{ github.run_id }}
+            pages_root="_screenshot_publish/(Dev-Shots)/screenshots/$run_dir"
+            repo_root="(Dev-Shots)/screenshots/$run_dir"
+          fi
 
           rm -rf _screenshot_publish
           mkdir -p "$pages_root"
@@ -220,6 +322,10 @@ jobs:
             echo "found_mobile_dark=false" >> "$GITHUB_OUTPUT"
           fi
 
+          # Store the repo root for use in later steps (remove the leading parentheses part)
+          repo_root_clean="${repo_root#(Dev-Shots)/}"
+          echo "repo_root=$repo_root_clean" >> "$GITHUB_OUTPUT"
+
       # Publish screenshot via GitHub Pages for same-repo runs/PRs
       - name: Configure GitHub Pages
         if: steps.prep_pages.outputs.found == 'true' && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.fork == false)
@@ -247,7 +353,8 @@ jobs:
           fi
 
           if [ -n "$page_url" ]; then
-            base_url="${page_url%/}/(dev-Shots)"
+            base_url="${page_url%/}/(Dev-Shots)"
+            repo_root="${{ steps.prep_pages.outputs.repo_root }}"
             web_found="${{ steps.prep_pages.outputs.found_web }}"
             web_light_found="${{ steps.prep_pages.outputs.found_web_light }}"
             web_dark_found="${{ steps.prep_pages.outputs.found_web_dark }}"
@@ -259,18 +366,18 @@ jobs:
               echo
               if [ "$web_found" = 'true' ]; then
                 if [ "$web_light_found" = 'true' ]; then
-                  echo "- [View Web · Light](${base_url}/screenshots/${{ github.run_id }}/portfolio-web-light.png)"
+                  echo "- [View Web · Light](${base_url}/${repo_root}/portfolio-web-light.png)"
                 fi
                 if [ "$web_dark_found" = 'true' ]; then
-                  echo "- [View Web · Dark](${base_url}/screenshots/${{ github.run_id }}/portfolio-web-dark.png)"
+                  echo "- [View Web · Dark](${base_url}/${repo_root}/portfolio-web-dark.png)"
                 fi
               fi
               if [ "$mobile_found" = 'true' ]; then
                 if [ "$mobile_light_found" = 'true' ]; then
-                  echo "- [View Mobile · Light](${base_url}/screenshots/${{ github.run_id }}/portfolio-mobile-light.png)"
+                  echo "- [View Mobile · Light](${base_url}/${repo_root}/portfolio-mobile-light.png)"
                 fi
                 if [ "$mobile_dark_found" = 'true' ]; then
-                  echo "- [View Mobile · Dark](${base_url}/screenshots/${{ github.run_id }}/portfolio-mobile-dark.png)"
+                  echo "- [View Mobile · Dark](${base_url}/${repo_root}/portfolio-mobile-dark.png)"
                 fi
               fi
             } >> "$GITHUB_STEP_SUMMARY"
@@ -289,19 +396,21 @@ jobs:
           WEB_DARK_FOUND: ${{ steps.prep_pages.outputs.found_web_dark }}
           MOBILE_LIGHT_FOUND: ${{ steps.prep_pages.outputs.found_mobile_light }}
           MOBILE_DARK_FOUND: ${{ steps.prep_pages.outputs.found_mobile_dark }}
+          REPO_ROOT: ${{ steps.prep_pages.outputs.repo_root }}
         with:
           script: |
-            const runId = process.env.GITHUB_RUN_ID;
+            const prNumber = context.issue.number;
             const baseUrl = (process.env.PREVIEW_URL || process.env.PAGE_URL || '').replace(/\/$/, '');
             if (!baseUrl) {
               core.info('Pages URL missing; skipping comment.');
               return;
             }
-            const siteBaseUrl = `${baseUrl}/(dev-Shots)`;
+            const siteBaseUrl = `${baseUrl}/(Dev-Shots)`;
             const owner = context.repo.owner;
             const repo = context.repo.repo;
             const issueNumber = context.issue.number;
             const marker = '<!-- web-render-screenshot -->';
+            const timeoutMarker = '<!-- screenshot-timeout-marker -->';
             const commitSha = context.sha.slice(0, 7);
             const commitUrl = `${process.env.GITHUB_SERVER_URL}/${process.env.GITHUB_REPOSITORY}/commit/${context.sha}`;
             const webFound = process.env.WEB_FOUND === 'true';
@@ -310,6 +419,8 @@ jobs:
             const webDarkFound = process.env.WEB_DARK_FOUND === 'true';
             const mobileLightFound = process.env.MOBILE_LIGHT_FOUND === 'true';
             const mobileDarkFound = process.env.MOBILE_DARK_FOUND === 'true';
+            const repoRoot = process.env.REPO_ROOT;
+            
             const sections = [
               marker,
               '**Web Render**',
@@ -319,8 +430,8 @@ jobs:
             ];
 
             if (webFound) {
-              const webLightUrl = `${siteBaseUrl}/screenshots/${runId}/portfolio-web-light.png`;
-              const webDarkUrl = `${siteBaseUrl}/screenshots/${runId}/portfolio-web-dark.png`;
+              const webLightUrl = `${siteBaseUrl}/${repoRoot}/portfolio-web-light.png`;
+              const webDarkUrl = `${siteBaseUrl}/${repoRoot}/portfolio-web-dark.png`;
               const webContent = [];
 
               if (webLightFound || webDarkFound) {
@@ -350,8 +461,8 @@ jobs:
             }
 
             if (mobileFound) {
-              const mobileLightUrl = `${siteBaseUrl}/screenshots/${runId}/portfolio-mobile-light.png`;
-              const mobileDarkUrl = `${siteBaseUrl}/screenshots/${runId}/portfolio-mobile-dark.png`;
+              const mobileLightUrl = `${siteBaseUrl}/${repoRoot}/portfolio-mobile-light.png`;
+              const mobileDarkUrl = `${siteBaseUrl}/${repoRoot}/portfolio-mobile-dark.png`;
               const mobileContent = [];
 
               if (mobileLightFound || mobileDarkFound) {
@@ -394,7 +505,9 @@ jobs:
               issue_number: issueNumber,
             });
 
+            // Check for both regular screenshot comments and timeout comments
             const existing = comments.find((comment) => comment.body && comment.body.includes(marker));
+            const timeoutComment = comments.find((comment) => comment.body && comment.body.includes(timeoutMarker));
 
             if (existing) {
               await github.rest.issues.updateComment({
@@ -409,6 +522,15 @@ jobs:
                 repo,
                 issue_number: issueNumber,
                 body,
+              });
+            }
+            
+            // If there was a timeout comment, delete it since we now have the actual screenshots
+            if (timeoutComment) {
+              await github.rest.issues.deleteComment({
+                owner,
+                repo,
+                comment_id: timeoutComment.id,
               });
             }
 
