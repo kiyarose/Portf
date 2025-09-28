@@ -94,7 +94,7 @@ function FooterBuildLabel({
   tooltipId: string;
   theme: Theme;
 }) {
-  const labelColor = themedClass(theme, "text-slate-400", "text-slate-500");
+  const labelColor = themedClass(theme, "text-slate-600", "text-slate-300");
   return (
     <button
       type="button"

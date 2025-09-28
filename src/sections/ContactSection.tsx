@@ -1,6 +1,6 @@
 import { Icon } from "@iconify/react";
 import { motion, useReducedMotion } from "framer-motion";
-import { useCallback, useState } from "react";
+import { useCallback, useState, useRef } from "react";
 import type { MouseEvent } from "react";
 import { SectionContainer } from "../components/SectionContainer";
 import { SectionHeader } from "../components/SectionHeader";
@@ -14,6 +14,38 @@ const EMAIL = "kiya.rose@sillylittle.tech";
 
 const STRICT_CORS_PATTERNS = ["cors", "cross-origin", "opaque response"];
 const GENERIC_CORS_PATTERNS = ["load failed", "failed to fetch"];
+
+// Lazy load pageclip script when needed
+let pageclipLoaded = false;
+let pageclipPromise: Promise<void> | null = null;
+
+const loadPageclip = (): Promise<void> => {
+  if (pageclipLoaded) {
+    return Promise.resolve();
+  }
+  
+  if (pageclipPromise) {
+    return pageclipPromise;
+  }
+
+  pageclipPromise = new Promise((resolve, reject) => {
+    const script = document.createElement("script");
+    script.src = "https://s.pageclip.co/v1/pageclip.js";
+    script.charset = "utf-8";
+    script.crossOrigin = "anonymous";
+    script.onload = () => {
+      pageclipLoaded = true;
+      resolve();
+    };
+    script.onerror = () => {
+      pageclipPromise = null; // Reset so we can try again
+      reject(new Error("Failed to load pageclip script"));
+    };
+    document.head.appendChild(script);
+  });
+
+  return pageclipPromise;
+};
 
 const isLikelyCorsError = (error: unknown): boolean => {
   const message =
@@ -162,6 +194,9 @@ function ContactForm({
   onErrorChange,
 }: ContactFormProps) {
   const { theme } = useTheme();
+  const formRef = useRef<HTMLFormElement>(null);
+  const [pageclipLoading, setPageclipLoading] = useState(false);
+  
   // Use the env var (public key) to build the Pageclip URL.
   const pageclipApiKey = import.meta.env.VITE_PAGECLIP_API_KEY as
     | string
@@ -174,6 +209,20 @@ function ContactForm({
   const handleDismissError = useCallback(() => {
     onErrorChange(null);
   }, [onErrorChange]);
+
+  // Load pageclip on first form interaction
+  const handleFormFocus = useCallback(async () => {
+    if (pageclipLoaded || pageclipLoading) return;
+    
+    setPageclipLoading(true);
+    try {
+      await loadPageclip();
+    } catch (error) {
+      safeConsoleWarn("Failed to load pageclip script", error);
+    } finally {
+      setPageclipLoading(false);
+    }
+  }, [pageclipLoading]);
 
   const sendButtonSurface = themedClass(
     theme,
@@ -295,7 +344,12 @@ function ContactForm({
   }
 
   return (
-    <form className="pageclip-form flex-1 space-y-4" onSubmit={handleSubmit}>
+    <form 
+      ref={formRef}
+      className="pageclip-form flex-1 space-y-4" 
+      onSubmit={handleSubmit}
+      onFocus={handleFormFocus}
+    >
       {/* Error notification */}
       {errorMessage && (
         <motion.div

@@ -13,17 +13,41 @@
     />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <!-- Preload critical fonts for faster loading -->
     <link
-      rel="stylesheet"
+      rel="preload"
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&family=Patrick+Hand:wght@400;500&display=swap"
+      as="style"
+      onload="this.onload=null;this.rel='stylesheet'"
       crossorigin="anonymous"
     />
+    <!-- Fallback for browsers that don't support preload -->
+    <noscript>
+      <link
+        rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&family=Patrick+Hand:wght@400;500&display=swap"
+        crossorigin="anonymous"
+      />
+    </noscript>
+    <!-- Preconnect to pageclip for faster loading when needed -->
+    <link rel="preconnect" href="https://s.pageclip.co" crossorigin />
+    <!-- Defer pageclip CSS until contact form interaction -->
     <link
-      rel="stylesheet"
+      rel="preload"
       href="https://s.pageclip.co/v1/pageclip.css"
+      as="style"
+      onload="this.onload=null;this.rel='stylesheet'"
       media="screen"
       crossorigin="anonymous"
     />
+    <noscript>
+      <link
+        rel="stylesheet"
+        href="https://s.pageclip.co/v1/pageclip.css"
+        media="screen"
+        crossorigin="anonymous"
+      />
+    </noscript>
     <title>Kiya Rose | Portfolio</title>
   </head>
   <body>
@@ -39,10 +63,6 @@
     <!-- End Google Tag Manager (noscript) -->
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
-    <script
-      src="https://s.pageclip.co/v1/pageclip.js"
-      charset="utf-8"
-      crossorigin="anonymous"
-    ></script>
+    <!-- Pageclip.js will be loaded dynamically when contact form is interacted with -->
   </body>
 </html>
