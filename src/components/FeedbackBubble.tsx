@@ -100,6 +100,26 @@ function FeedbackForm({
     onErrorChange(null);
   }, [onErrorChange]);
 
+  const handleEmailChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData(prev => ({ ...prev, email: e.target.value }));
+  }, []);
+
+  const handleFeedbackTypeChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
+    setFormData(prev => ({ ...prev, feedbackType: e.target.value as FeedbackType }));
+  }, []);
+
+  const handleFeedbackTitleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData(prev => ({ ...prev, feedbackTitle: e.target.value }));
+  }, []);
+
+  const handleFeedbackDescriptionChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setFormData(prev => ({ ...prev, feedbackDescription: e.target.value }));
+  }, []);
+
+  const handleImpactChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
+    setFormData(prev => ({ ...prev, impact: e.target.value as FeedbackImpact }));
+  }, []);
+
   const handleSubmit = useCallback(
     async (event: React.FormEvent<HTMLFormElement>) => {
       event.preventDefault();
@@ -227,9 +247,7 @@ function FeedbackForm({
           name="email"
           className={inputClass}
           value={formData.email}
-          onChange={(e) =>
-            setFormData((prev) => ({ ...prev, email: e.target.value }))
-          }
+          onChange={handleEmailChange}
           placeholder="your.email@example.com"
           required
         />
@@ -241,12 +259,7 @@ function FeedbackForm({
           name="feedbackType"
           className={selectClass}
           value={formData.feedbackType}
-          onChange={(e) =>
-            setFormData((prev) => ({
-              ...prev,
-              feedbackType: e.target.value as FeedbackType,
-            }))
-          }
+          onChange={handleFeedbackTypeChange}
           required
         >
           <option value="suggestion">Suggestion</option>
@@ -261,9 +274,7 @@ function FeedbackForm({
           name="feedbackTitle"
           className={inputClass}
           value={formData.feedbackTitle}
-          onChange={(e) =>
-            setFormData((prev) => ({ ...prev, feedbackTitle: e.target.value }))
-          }
+          onChange={handleFeedbackTitleChange}
           placeholder="Brief description of your feedback"
           required
         />
@@ -276,12 +287,7 @@ function FeedbackForm({
           className={textareaClass}
           rows={3}
           value={formData.feedbackDescription}
-          onChange={(e) =>
-            setFormData((prev) => ({
-              ...prev,
-              feedbackDescription: e.target.value,
-            }))
-          }
+          onChange={handleFeedbackDescriptionChange}
           placeholder="Please provide detailed feedback..."
           required
         />
@@ -293,12 +299,7 @@ function FeedbackForm({
           name="impact"
           className={selectClass}
           value={formData.impact}
-          onChange={(e) =>
-            setFormData((prev) => ({
-              ...prev,
-              impact: e.target.value as FeedbackImpact,
-            }))
-          }
+          onChange={handleImpactChange}
         >
           {FEEDBACK_IMPACT_OPTIONS.map((option) => (
             <option key={option.value} value={option.value}>
@@ -459,6 +460,15 @@ export function FeedbackBubble({ className }: FeedbackBubbleProps) {
     [pageclipApiKey, pageclipUrl],
   );
 
+  const handleBubbleClick = useCallback(() => {
+    if (isSubmitted) return;
+    setIsExpanded(!isExpanded);
+  }, [isSubmitted, isExpanded]);
+
+  const handleFormClose = useCallback(() => {
+    setIsExpanded(false);
+  }, []);
+
   const bubbleClass = cn("fixed bottom-6 right-6 z-50", className);
 
   const bubbleButtonClass = cn(
@@ -522,7 +532,7 @@ export function FeedbackBubble({ className }: FeedbackBubbleProps) {
             </div>
             <FeedbackForm
               onSubmit={handleSubmit}
-              onClose={() => setIsExpanded(false)}
+              onClose={handleFormClose}
               isSubmitting={isSubmitting}
               errorMessage={errorMessage}
               onErrorChange={setErrorMessage}
@@ -533,10 +543,7 @@ export function FeedbackBubble({ className }: FeedbackBubbleProps) {
 
       <motion.button
         className={bubbleButtonClass}
-        onClick={() => {
-          if (isSubmitted) return;
-          setIsExpanded(!isExpanded);
-        }}
+        onClick={handleBubbleClick}
         whileHover={prefersReducedMotion ? undefined : { scale: 1.05 }}
         whileTap={prefersReducedMotion ? undefined : { scale: 0.95 }}
         animate={
