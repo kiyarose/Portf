@@ -28,7 +28,13 @@ interface FeedbackFormProps {
 }
 
 // Confetti component for celebration effect
-function ConfettiParticle({ initialX, initialY }: { initialX: number; initialY: number }) {
+function ConfettiParticle({
+  initialX,
+  initialY,
+}: {
+  initialX: number;
+  initialY: number;
+}) {
   const prefersReducedMotion = useReducedMotion();
 
   if (prefersReducedMotion) return null;
@@ -67,13 +73,14 @@ function ConfettiEffect({ isActive }: { isActive: boolean }) {
   const prefersReducedMotion = useReducedMotion();
 
   // Generate stable particles data to avoid re-renders changing positions
-  const particles = useMemo(() => 
-    Array.from({ length: 12 }, (_, i) => ({
-      id: `confetti-${Date.now()}-${i}`,
-      initialX: Math.random() * 100,
-      initialY: Math.random() * 100,
-    })),
-    [] // Empty dependency array means this only runs once
+  const particles = useMemo(
+    () =>
+      Array.from({ length: 12 }, (_, i) => ({
+        id: `confetti-${Date.now()}-${i}`,
+        initialX: Math.random() * 100,
+        initialY: Math.random() * 100,
+      })),
+    [], // Empty dependency array means this only runs once
   );
 
   if (!isActive || prefersReducedMotion) return null;
