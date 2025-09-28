@@ -5,7 +5,11 @@ import { useTheme } from "../hooks/useTheme";
 import { themedClass } from "../utils/themeClass";
 import { cn } from "../utils/cn";
 import { safeConsoleError } from "../utils/errorSanitizer";
-import type { FeedbackFormData, FeedbackType, FeedbackImpact } from "../types/feedback";
+import type {
+  FeedbackFormData,
+  FeedbackType,
+  FeedbackImpact,
+} from "../types/feedback";
 import { FEEDBACK_IMPACT_OPTIONS } from "../types/feedback";
 
 // Time in milliseconds before showing the feedback bubble
@@ -34,11 +38,11 @@ function FeedbackForm({
   const prefersReducedMotion = useReducedMotion();
 
   const [formData, setFormData] = useState<FeedbackFormData>({
-    email: '',
-    feedbackType: 'suggestion',
-    feedbackTitle: '',
-    feedbackDescription: '',
-    impact: 'site-wide',
+    email: "",
+    feedbackType: "suggestion",
+    feedbackTitle: "",
+    feedbackDescription: "",
+    impact: "site-wide",
   });
 
   const handleDismissError = useCallback(() => {
@@ -51,16 +55,20 @@ function FeedbackForm({
       onErrorChange(null);
 
       // Basic validation
-      if (!formData.email || !formData.feedbackTitle || !formData.feedbackDescription) {
-        onErrorChange('Please fill in all required fields.');
+      if (
+        !formData.email ||
+        !formData.feedbackTitle ||
+        !formData.feedbackDescription
+      ) {
+        onErrorChange("Please fill in all required fields.");
         return;
       }
 
       try {
         await onSubmit(formData);
       } catch (error) {
-        safeConsoleError('Feedback form submission failed', error);
-        onErrorChange('Failed to submit feedback. Please try again.');
+        safeConsoleError("Feedback form submission failed", error);
+        onErrorChange("Failed to submit feedback. Please try again.");
       }
     },
     [formData, onSubmit, onErrorChange],
@@ -168,7 +176,9 @@ function FeedbackForm({
           name="email"
           className={inputClass}
           value={formData.email}
-          onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
+          onChange={(e) =>
+            setFormData((prev) => ({ ...prev, email: e.target.value }))
+          }
           placeholder="your.email@example.com"
           required
         />
@@ -180,7 +190,12 @@ function FeedbackForm({
           name="feedbackType"
           className={selectClass}
           value={formData.feedbackType}
-          onChange={(e) => setFormData(prev => ({ ...prev, feedbackType: e.target.value as FeedbackType }))}
+          onChange={(e) =>
+            setFormData((prev) => ({
+              ...prev,
+              feedbackType: e.target.value as FeedbackType,
+            }))
+          }
           required
         >
           <option value="suggestion">Suggestion</option>
@@ -195,7 +210,9 @@ function FeedbackForm({
           name="feedbackTitle"
           className={inputClass}
           value={formData.feedbackTitle}
-          onChange={(e) => setFormData(prev => ({ ...prev, feedbackTitle: e.target.value }))}
+          onChange={(e) =>
+            setFormData((prev) => ({ ...prev, feedbackTitle: e.target.value }))
+          }
           placeholder="Brief description of your feedback"
           required
         />
@@ -208,7 +225,12 @@ function FeedbackForm({
           className={textareaClass}
           rows={3}
           value={formData.feedbackDescription}
-          onChange={(e) => setFormData(prev => ({ ...prev, feedbackDescription: e.target.value }))}
+          onChange={(e) =>
+            setFormData((prev) => ({
+              ...prev,
+              feedbackDescription: e.target.value,
+            }))
+          }
           placeholder="Please provide detailed feedback..."
           required
         />
@@ -220,7 +242,12 @@ function FeedbackForm({
           name="impact"
           className={selectClass}
           value={formData.impact}
-          onChange={(e) => setFormData(prev => ({ ...prev, impact: e.target.value as FeedbackImpact }))}
+          onChange={(e) =>
+            setFormData((prev) => ({
+              ...prev,
+              impact: e.target.value as FeedbackImpact,
+            }))
+          }
         >
           {FEEDBACK_IMPACT_OPTIONS.map((option) => (
             <option key={option.value} value={option.value}>
@@ -231,7 +258,12 @@ function FeedbackForm({
       </label>
 
       <div className="pt-2">
-        <p className={cn("text-xs mb-3", themedClass(theme, "text-slate-500", "text-slate-400"))}>
+        <p
+          className={cn(
+            "text-xs mb-3",
+            themedClass(theme, "text-slate-500", "text-slate-400"),
+          )}
+        >
           <strong>Developer?</strong>{" "}
           <a
             href="https://github.com/kiyarose/Portf"
@@ -278,7 +310,7 @@ function FeedbackForm({
             )}
             disabled={isSubmitting}
           >
-            {isSubmitting ? 'Submitting...' : 'Send Feedback'}
+            {isSubmitting ? "Submitting..." : "Send Feedback"}
           </button>
         </div>
       </div>
@@ -289,7 +321,7 @@ function FeedbackForm({
 export function FeedbackBubble({ className }: FeedbackBubbleProps) {
   const { theme } = useTheme();
   const prefersReducedMotion = useReducedMotion();
-  
+
   const [isVisible, setIsVisible] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -300,7 +332,7 @@ export function FeedbackBubble({ className }: FeedbackBubbleProps) {
   useEffect(() => {
     const timer = setTimeout(() => {
       // Check if feedback was already submitted in this session
-      const hasSubmitted = sessionStorage.getItem('feedback-submitted');
+      const hasSubmitted = sessionStorage.getItem("feedback-submitted");
       if (!hasSubmitted) {
         setIsVisible(true);
       }
@@ -309,7 +341,9 @@ export function FeedbackBubble({ className }: FeedbackBubbleProps) {
     return () => clearTimeout(timer);
   }, []);
 
-  const pageclipApiKey = import.meta.env.VITE_PAGECLIP_API_KEY as string | undefined;
+  const pageclipApiKey = import.meta.env.VITE_PAGECLIP_API_KEY as
+    | string
+    | undefined;
   const pageclipFormName = "Feedback";
   const pageclipUrl = pageclipApiKey
     ? `https://send.pageclip.co/${pageclipApiKey}/${pageclipFormName}`
@@ -329,7 +363,7 @@ export function FeedbackBubble({ className }: FeedbackBubbleProps) {
 
       try {
         // Convert feedbackType to binary (0 for suggestion, 1 for bug as specified)
-        const feedbackTypeBinary = data.feedbackType === 'bug' ? '1' : '0';
+        const feedbackTypeBinary = data.feedbackType === "bug" ? "1" : "0";
 
         const body = new URLSearchParams();
         body.set("email", data.email);
@@ -354,16 +388,15 @@ export function FeedbackBubble({ className }: FeedbackBubbleProps) {
         // Success
         setIsSubmitted(true);
         setIsExpanded(false);
-        sessionStorage.setItem('feedback-submitted', 'true');
-        
+        sessionStorage.setItem("feedback-submitted", "true");
+
         // Hide completely after showing success message
         setTimeout(() => {
           setIsVisible(false);
         }, 3000);
-
       } catch (error) {
-        safeConsoleError('Feedback submission failed', error);
-        setErrorMessage('Failed to submit feedback. Please try again.');
+        safeConsoleError("Feedback submission failed", error);
+        setErrorMessage("Failed to submit feedback. Please try again.");
       } finally {
         setIsSubmitting(false);
       }
@@ -371,10 +404,7 @@ export function FeedbackBubble({ className }: FeedbackBubbleProps) {
     [pageclipApiKey, pageclipUrl],
   );
 
-  const bubbleClass = cn(
-    "fixed bottom-6 right-6 z-50",
-    className,
-  );
+  const bubbleClass = cn("fixed bottom-6 right-6 z-50", className);
 
   const bubbleButtonClass = cn(
     "flex h-12 w-12 items-center justify-center rounded-full shadow-lg transition-all duration-300",
@@ -401,17 +431,37 @@ export function FeedbackBubble({ className }: FeedbackBubbleProps) {
       <AnimatePresence>
         {isExpanded && !isSubmitted && (
           <motion.div
-            initial={prefersReducedMotion ? undefined : { opacity: 0, scale: 0.9, y: 20 }}
-            animate={prefersReducedMotion ? undefined : { opacity: 1, scale: 1, y: 0 }}
-            exit={prefersReducedMotion ? undefined : { opacity: 0, scale: 0.9, y: 20 }}
+            initial={
+              prefersReducedMotion
+                ? undefined
+                : { opacity: 0, scale: 0.9, y: 20 }
+            }
+            animate={
+              prefersReducedMotion ? undefined : { opacity: 1, scale: 1, y: 0 }
+            }
+            exit={
+              prefersReducedMotion
+                ? undefined
+                : { opacity: 0, scale: 0.9, y: 20 }
+            }
             transition={{ duration: 0.2, ease: "easeOut" }}
             className={formContainerClass}
           >
             <div className="mb-3">
-              <h3 className={cn("text-sm font-semibold mb-1", themedClass(theme, "text-slate-900", "text-white"))}>
+              <h3
+                className={cn(
+                  "text-sm font-semibold mb-1",
+                  themedClass(theme, "text-slate-900", "text-white"),
+                )}
+              >
                 Share Your Feedback
               </h3>
-              <p className={cn("text-xs", themedClass(theme, "text-slate-600", "text-slate-400"))}>
+              <p
+                className={cn(
+                  "text-xs",
+                  themedClass(theme, "text-slate-600", "text-slate-400"),
+                )}
+              >
                 Help me improve this website by sharing your thoughts.
               </p>
             </div>
@@ -434,9 +484,13 @@ export function FeedbackBubble({ className }: FeedbackBubbleProps) {
         }}
         whileHover={prefersReducedMotion ? undefined : { scale: 1.05 }}
         whileTap={prefersReducedMotion ? undefined : { scale: 0.95 }}
-        animate={prefersReducedMotion ? undefined : {
-          scale: isSubmitted ? [1, 1.2, 1] : 1,
-        }}
+        animate={
+          prefersReducedMotion
+            ? undefined
+            : {
+                scale: isSubmitted ? [1, 1.2, 1] : 1,
+              }
+        }
         transition={{
           duration: isSubmitted ? 0.6 : 0.2,
           ease: "easeOut",
@@ -447,9 +501,15 @@ export function FeedbackBubble({ className }: FeedbackBubbleProps) {
           {isSubmitted ? (
             <motion.div
               key="success"
-              initial={prefersReducedMotion ? undefined : { opacity: 0, scale: 0.5 }}
-              animate={prefersReducedMotion ? undefined : { opacity: 1, scale: 1 }}
-              exit={prefersReducedMotion ? undefined : { opacity: 0, scale: 0.5 }}
+              initial={
+                prefersReducedMotion ? undefined : { opacity: 0, scale: 0.5 }
+              }
+              animate={
+                prefersReducedMotion ? undefined : { opacity: 1, scale: 1 }
+              }
+              exit={
+                prefersReducedMotion ? undefined : { opacity: 0, scale: 0.5 }
+              }
               transition={{ duration: 0.2 }}
             >
               <Icon icon="material-symbols:check-rounded" className="text-xl" />
@@ -457,13 +517,19 @@ export function FeedbackBubble({ className }: FeedbackBubbleProps) {
           ) : (
             <motion.div
               key="feedback"
-              initial={prefersReducedMotion ? undefined : { opacity: 0, scale: 0.5 }}
-              animate={prefersReducedMotion ? undefined : { opacity: 1, scale: 1 }}
-              exit={prefersReducedMotion ? undefined : { opacity: 0, scale: 0.5 }}
+              initial={
+                prefersReducedMotion ? undefined : { opacity: 0, scale: 0.5 }
+              }
+              animate={
+                prefersReducedMotion ? undefined : { opacity: 1, scale: 1 }
+              }
+              exit={
+                prefersReducedMotion ? undefined : { opacity: 0, scale: 0.5 }
+              }
               transition={{ duration: 0.2 }}
             >
-              <Icon 
-                icon="material-symbols:feedback-rounded" 
+              <Icon
+                icon="material-symbols:feedback-rounded"
                 className={cn("text-xl", isExpanded && "rotate-12")}
               />
             </motion.div>
