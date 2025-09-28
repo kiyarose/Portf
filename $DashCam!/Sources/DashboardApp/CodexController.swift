@@ -181,13 +181,10 @@ final class CodexController: ObservableObject {
     guard !binary.isEmpty else {
       throw CodexError.commandNotConfigured
     }
-
-    // Validate that the command exists and is executable
-    let resolvedPath = try validateCommand(binary, environment: configuredEnvironment())
-
+    
     let args = CodexController.shellSplit(commandArguments)
     return CommandContext(
-      binary: resolvedPath,
+      binary: binary,
       arguments: args,
       environment: configuredEnvironment(),
       workingDirectory: projectDirectoryURL
@@ -202,80 +199,6 @@ final class CodexController: ObservableObject {
       env["PATH"] = defaultPaths + (currentPath.isEmpty ? "" : ":" + currentPath)
     }
     return env
-  }
-
-  private func validateCommand(_ binary: String, environment: [String: String]) throws -> String {
-    // If it's an absolute path, check if it exists and is executable
-    if binary.starts(with: "/") {
-      let fileManager = FileManager.default
-      guard fileManager.fileExists(atPath: binary) else {
-        throw CodexError.commandNotFound(binary)
-      }
-
-      // More thorough validation for absolute paths
-      var isDirectory: ObjCBool = false
-      guard fileManager.fileExists(atPath: binary, isDirectory: &isDirectory),
-        !isDirectory.boolValue
-      else {
-        throw CodexError.processLaunchFailed(
-          binary: binary,
-          reason: "The specified path is a directory, not an executable file."
-        )
-      }
-
-      guard fileManager.isExecutableFile(atPath: binary) else {
-        throw CodexError.commandNotExecutable(binary)
-      }
-
-      // Additional check: try to get file attributes to ensure it's readable
-      do {
-        let attributes = try fileManager.attributesOfItem(atPath: binary)
-        let permissions = attributes[.posixPermissions] as? Int ?? 0
-        // Check if the file has execute permission for owner, group, or other
-        if permissions & 0o111 == 0 {
-          throw CodexError.processLaunchFailed(
-            binary: binary,
-            reason: "The file exists but has no execute permissions."
-          )
-        }
-      } catch {
-        throw CodexError.processLaunchFailed(
-          binary: binary,
-          reason: "Cannot access file attributes: \(error.localizedDescription)"
-        )
-      }
-
-      return binary
-    }
-
-    // Otherwise, search in PATH
-    let pathEnv = environment["PATH"] ?? ""
-    let pathComponents = pathEnv.split(separator: ":").map(String.init)
-
-    for pathDir in pathComponents {
-      let fullPath = "\(pathDir)/\(binary)"
-      let fileManager = FileManager.default
-
-      var isDirectory: ObjCBool = false
-      if fileManager.fileExists(atPath: fullPath, isDirectory: &isDirectory),
-        !isDirectory.boolValue,
-        fileManager.isExecutableFile(atPath: fullPath)
-      {
-        // Additional validation for PATH-found commands
-        do {
-          let attributes = try fileManager.attributesOfItem(atPath: fullPath)
-          let permissions = attributes[.posixPermissions] as? Int ?? 0
-          if permissions & 0o111 != 0 {
-            return fullPath
-          }
-        } catch {
-          // If we can't get attributes, skip this candidate
-          continue
-        }
-      }
-    }
-
-    throw CodexError.commandNotFound(binary)
   }
 
   private func systemPrompt() -> String {
@@ -348,9 +271,8 @@ final class CodexController: ObservableObject {
   {
     try await Task.detached(priority: .userInitiated) {
       let process = Process()
-      // Use the resolved binary path directly instead of /usr/bin/env
-      process.executableURL = URL(fileURLWithPath: context.binary)
-      process.arguments = context.arguments
+      process.executableURL = URL(fileURLWithPath: "/usr/bin/env")
+      process.arguments = [context.binary] + context.arguments
       process.environment = context.environment
       process.currentDirectoryURL = context.workingDirectory
 
@@ -362,38 +284,7 @@ final class CodexController: ObservableObject {
       process.standardOutput = stdoutPipe
       process.standardError = stderrPipe
 
-      do {
-        try process.run()
-      } catch {
-        // Handle specific POSIX errors that can occur during process launch
-        if let posixError = error as? POSIXError {
-          switch posixError.code {
-          case .ENXIO:  // Error 6: "Device not configured"
-            throw CodexError.processLaunchFailed(
-              binary: context.binary,
-              reason:
-                "The command exists but cannot be executed. This may be due to architecture mismatch, missing dependencies, or permission issues."
-            )
-          case .ENOENT:  // Error 2: "No such file or directory"
-            throw CodexError.processLaunchFailed(
-              binary: context.binary,
-              reason: "The command file was not found at the expected path."
-            )
-          case .EACCES:  // Error 13: "Permission denied"
-            throw CodexError.processLaunchFailed(
-              binary: context.binary,
-              reason: "Permission denied. The command file is not executable by the current user."
-            )
-          default:
-            throw CodexError.processLaunchFailed(
-              binary: context.binary,
-              reason: "Failed to launch command: \(posixError.localizedDescription)"
-            )
-          }
-        }
-        // Re-throw non-POSIX errors as-is
-        throw error
-      }
+      try process.run()
 
       if let data = (prompt + "\n").data(using: .utf8) {
         stdinPipe.fileHandleForWriting.write(data)
@@ -439,27 +330,31 @@ private struct CommandContext {
 
 enum CodexError: LocalizedError {
   case commandNotConfigured
-  case commandNotFound(String)
-  case commandNotExecutable(String)
-  case processLaunchFailed(binary: String, reason: String)
   case commandExited(code: Int32, stderr: String)
 
   var errorDescription: String? {
     switch self {
     case .commandNotConfigured:
       return "Set the Codex command before sending prompts."
-    case let .commandNotFound(binary):
-      return
-        "Command '\(binary)' not found. Please check the command path and ensure it's installed."
-    case let .commandNotExecutable(binary):
-      return "Command '\(binary)' is not executable. Please check the file permissions."
-    case let .processLaunchFailed(binary, reason):
-      return "Failed to launch '\(binary)': \(reason)"
     case let .commandExited(code, stderr):
       let message = stderr.trimmingCharacters(in: .whitespacesAndNewlines)
       if message.isEmpty {
         return "Codex command exited with status \(code)."
       }
+      
+      // Provide more helpful guidance for common error patterns
+      if message.contains("Device not configured") || message.contains("os error 6") {
+        return """
+        Codex command failed with: \(message)
+        
+        This error typically means the codex command is installed but not properly configured. Try:
+        • Check if you need to configure API keys or authentication
+        • Verify the codex command works in Terminal: run 'codex --help'  
+        • Check the codex documentation for required environment variables
+        • Ensure you have the latest version of the codex tool
+        """
+      }
+      
       return "Codex command exited with status \(code): \(message)"
     }
   }
