@@ -448,7 +448,7 @@ function ThumbsSelector({
   const thumbsContainerClass = cn(
     "absolute bottom-14 right-0 rounded-2xl border p-4 shadow-2xl backdrop-blur-lg",
     // Mobile responsive width
-    "w-64 sm:w-72", 
+    "w-64 sm:w-72",
     themedClass(
       theme,
       "border-white/60 bg-white/90 text-slate-700",
@@ -501,7 +501,10 @@ function ThumbsSelector({
           whileTap={prefersReducedMotion ? undefined : { scale: 0.95 }}
           title="Good experience"
         >
-          <Icon icon="material-symbols:thumb-up-rounded" className="text-2xl sm:text-3xl" />
+          <Icon
+            icon="material-symbols:thumb-up-rounded"
+            className="text-2xl sm:text-3xl"
+          />
         </motion.button>
         <motion.button
           type="button"
@@ -754,7 +757,10 @@ function FeedbackBubbleButton({
             exit={prefersReducedMotion ? undefined : { opacity: 0, scale: 0.5 }}
             transition={{ duration: 0.2 }}
           >
-            <Icon icon="material-symbols:check-rounded" className="text-2xl sm:text-3xl" />
+            <Icon
+              icon="material-symbols:check-rounded"
+              className="text-2xl sm:text-3xl"
+            />
           </motion.div>
         ) : (
           <motion.div
@@ -903,12 +909,12 @@ export function FeedbackBubble({ className }: FeedbackBubbleProps) {
   }, []);
 
   const bubbleClass = cn(
-    "fixed z-50", 
+    "fixed z-50",
     // Position to avoid back-to-top button collision on mobile
     "bottom-6 right-6 md:bottom-6 md:right-6",
     // On mobile, move up when back-to-top button might be visible
     "sm:bottom-20 sm:right-4",
-    className
+    className,
   );
 
   if (!isVisible) return null;
