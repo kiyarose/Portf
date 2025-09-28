@@ -14,7 +14,9 @@ export interface CelebrationOptions {
  * Trigger the original simple confetti effect
  * @param options Configuration options for the confetti effect
  */
-export async function celebrateOld(options: CelebrationOptions = {}): Promise<void> {
+export async function celebrateOld(
+  options: CelebrationOptions = {},
+): Promise<void> {
   const {
     x = window.innerWidth / 2,
     y = window.innerHeight / 2,
@@ -22,12 +24,18 @@ export async function celebrateOld(options: CelebrationOptions = {}): Promise<vo
   } = options;
 
   // Dynamically import React and required components
-  const { createRoot } = await import('react-dom/client');
-  const React = await import('react');
-  const { motion, useReducedMotion } = await import('framer-motion');
+  const { createRoot } = await import("react-dom/client");
+  const React = await import("react");
+  const { motion, useReducedMotion } = await import("framer-motion");
 
   // Original confetti particle component
-  const OriginalConfettiParticle = ({ initialX, initialY }: { initialX: number; initialY: number }) => {
+  const OriginalConfettiParticle = ({
+    initialX,
+    initialY,
+  }: {
+    initialX: number;
+    initialY: number;
+  }) => {
     const prefersReducedMotion = useReducedMotion();
     if (prefersReducedMotion) return null;
 
@@ -58,22 +66,26 @@ export async function celebrateOld(options: CelebrationOptions = {}): Promise<vo
       initialY: y,
     }));
 
-    return React.createElement('div', {
-      className: "fixed inset-0 overflow-visible pointer-events-none z-50"
-    }, particles.map(particle =>
-      React.createElement(OriginalConfettiParticle, { 
-        key: particle.id, 
-        initialX: particle.initialX, 
-        initialY: particle.initialY 
-      })
-    ));
+    return React.createElement(
+      "div",
+      {
+        className: "fixed inset-0 overflow-visible pointer-events-none z-50",
+      },
+      particles.map((particle) =>
+        React.createElement(OriginalConfettiParticle, {
+          key: particle.id,
+          initialX: particle.initialX,
+          initialY: particle.initialY,
+        }),
+      ),
+    );
   };
 
   // Create container and render
-  const container = document.createElement('div');
+  const container = document.createElement("div");
   document.body.appendChild(container);
   const root = createRoot(container);
-  
+
   root.render(React.createElement(ConfettiContainer));
 
   // Clean up after animation
@@ -87,7 +99,9 @@ export async function celebrateOld(options: CelebrationOptions = {}): Promise<vo
  * Trigger the new Discord-style bold confetti effect
  * @param options Configuration options for the confetti effect
  */
-export async function celebrateNew(options: CelebrationOptions = {}): Promise<void> {
+export async function celebrateNew(
+  options: CelebrationOptions = {},
+): Promise<void> {
   const {
     x = window.innerWidth / 2,
     y = window.innerHeight / 2,
@@ -95,24 +109,50 @@ export async function celebrateNew(options: CelebrationOptions = {}): Promise<vo
   } = options;
 
   // Dynamically import React and required components
-  const { createRoot } = await import('react-dom/client');
-  const React = await import('react');
-  const { motion, useReducedMotion } = await import('framer-motion');
+  const { createRoot } = await import("react-dom/client");
+  const React = await import("react");
+  const { motion, useReducedMotion } = await import("framer-motion");
 
   const BOLD_CONFETTI_COLORS = [
-    "#FF6B6B", "#4ECDC4", "#45B7D1", "#96CEB4", "#FECA57", "#FF9FF3", "#54A0FF",
-    "#5F27CD", "#00D2D3", "#FF9F43", "#EE5A24", "#0ABDE3", "#10AC84", "#F79F1F",
-    "#A3CB38", "#FD79A8", "#6C5CE7", "#A29BFE", "#74B9FF", "#81ECEC"
+    "#FF6B6B",
+    "#4ECDC4",
+    "#45B7D1",
+    "#96CEB4",
+    "#FECA57",
+    "#FF9FF3",
+    "#54A0FF",
+    "#5F27CD",
+    "#00D2D3",
+    "#FF9F43",
+    "#EE5A24",
+    "#0ABDE3",
+    "#10AC84",
+    "#F79F1F",
+    "#A3CB38",
+    "#FD79A8",
+    "#6C5CE7",
+    "#A29BFE",
+    "#74B9FF",
+    "#81ECEC",
   ];
 
   const CONFETTI_SHAPES = ["circle", "square", "triangle"] as const;
 
-  // New Discord-style confetti particle component  
-  const NewConfettiParticle = ({ 
-    initialX, initialY, angle, size, shape, color 
-  }: { 
-    initialX: number; initialY: number; angle: number; size: number; 
-    shape: "circle" | "square" | "triangle"; color: string; 
+  // New Discord-style confetti particle component
+  const NewConfettiParticle = ({
+    initialX,
+    initialY,
+    angle,
+    size,
+    shape,
+    color,
+  }: {
+    initialX: number;
+    initialY: number;
+    angle: number;
+    size: number;
+    shape: "circle" | "square" | "triangle";
+    color: string;
   }) => {
     const prefersReducedMotion = useReducedMotion();
     if (prefersReducedMotion) return null;
@@ -123,10 +163,14 @@ export async function celebrateNew(options: CelebrationOptions = {}): Promise<vo
 
     const getShapeClass = () => {
       switch (shape) {
-        case "circle": return "rounded-full";
-        case "square": return "rounded-sm";
-        case "triangle": return "rounded-sm transform rotate-45";
-        default: return "rounded-full";
+        case "circle":
+          return "rounded-full";
+        case "square":
+          return "rounded-sm";
+        case "triangle":
+          return "rounded-sm transform rotate-45";
+        default:
+          return "rounded-full";
       }
     };
 
@@ -160,30 +204,38 @@ export async function celebrateNew(options: CelebrationOptions = {}): Promise<vo
       initialY: y,
       angle: (Math.PI * 2 * i) / 25 + (Math.random() - 0.5) * 0.8,
       size: 8 + Math.random() * 12,
-      shape: CONFETTI_SHAPES[Math.floor(Math.random() * CONFETTI_SHAPES.length)],
-      color: BOLD_CONFETTI_COLORS[Math.floor(Math.random() * BOLD_CONFETTI_COLORS.length)],
+      shape:
+        CONFETTI_SHAPES[Math.floor(Math.random() * CONFETTI_SHAPES.length)],
+      color:
+        BOLD_CONFETTI_COLORS[
+          Math.floor(Math.random() * BOLD_CONFETTI_COLORS.length)
+        ],
     }));
 
-    return React.createElement('div', {
-      className: "fixed inset-0 overflow-visible pointer-events-none z-50"
-    }, particles.map(particle =>
-      React.createElement(NewConfettiParticle, { 
-        key: particle.id, 
-        initialX: particle.initialX,
-        initialY: particle.initialY,
-        angle: particle.angle,
-        size: particle.size,
-        shape: particle.shape,
-        color: particle.color,
-      })
-    ));
+    return React.createElement(
+      "div",
+      {
+        className: "fixed inset-0 overflow-visible pointer-events-none z-50",
+      },
+      particles.map((particle) =>
+        React.createElement(NewConfettiParticle, {
+          key: particle.id,
+          initialX: particle.initialX,
+          initialY: particle.initialY,
+          angle: particle.angle,
+          size: particle.size,
+          shape: particle.shape,
+          color: particle.color,
+        }),
+      ),
+    );
   };
 
   // Create container and render
-  const container = document.createElement('div');
+  const container = document.createElement("div");
   document.body.appendChild(container);
   const root = createRoot(container);
-  
+
   root.render(React.createElement(ConfettiContainer));
 
   // Clean up after animation
@@ -194,27 +246,32 @@ export async function celebrateNew(options: CelebrationOptions = {}): Promise<vo
 }
 
 // Convenience functions for common use cases
-export async function celebrateAtElement(element: HTMLElement, style: 'old' | 'new' = 'new'): Promise<void> {
+export async function celebrateAtElement(
+  element: HTMLElement,
+  style: "old" | "new" = "new",
+): Promise<void> {
   const rect = element.getBoundingClientRect();
   const options = {
     x: rect.left + rect.width / 2,
     y: rect.top + rect.height / 2,
   };
 
-  if (style === 'old') {
+  if (style === "old") {
     await celebrateOld(options);
   } else {
     await celebrateNew(options);
   }
 }
 
-export async function celebrateAtCenter(style: 'old' | 'new' = 'new'): Promise<void> {
+export async function celebrateAtCenter(
+  style: "old" | "new" = "new",
+): Promise<void> {
   const options = {
     x: window.innerWidth / 2,
     y: window.innerHeight / 2,
   };
 
-  if (style === 'old') {
+  if (style === "old") {
     await celebrateOld(options);
   } else {
     await celebrateNew(options);
