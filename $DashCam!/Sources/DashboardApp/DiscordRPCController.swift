@@ -46,7 +46,7 @@ final class DiscordRPCController: ObservableObject {
   }
 
   deinit {
-    disconnect()
+    Task { await disconnect() }
   }
 
   func connect() {
@@ -57,7 +57,7 @@ final class DiscordRPCController: ObservableObject {
     // Set up a timer to periodically try connecting
     connectTimer?.invalidate()
     connectTimer = Timer.scheduledTimer(withTimeInterval: 3.0, repeats: true) { [weak self] _ in
-      self?.attemptConnection()
+      Task { await self?.attemptConnection() }
     }
 
     // Try immediate connection
@@ -128,8 +128,7 @@ final class DiscordRPCController: ObservableObject {
   private func setupUpdateTimer() {
     updateTimer?.invalidate()
     updateTimer = Timer.scheduledTimer(withTimeInterval: 15.0, repeats: true) { [weak self] _ in
-      // Send a heartbeat to keep connection alive
-      self?.sendHeartbeat()
+      Task { await self?.sendHeartbeat() }
     }
   }
 
@@ -143,8 +142,10 @@ final class DiscordRPCController: ObservableObject {
       let opcode: UInt32 = 0  // Handshake opcode
       let length: UInt32 = UInt32(data.count)
 
-      header.append(Data(bytes: &opcode.littleEndian, count: 4))
-      header.append(Data(bytes: &length.littleEndian, count: 4))
+      var opcodeLE = opcode.littleEndian
+      var lengthLE = length.littleEndian
+      header.append(Data(bytes: &opcodeLE, count: 4))
+      header.append(Data(bytes: &lengthLE, count: 4))
 
       fileHandle.write(header)
       fileHandle.write(data)
@@ -167,8 +168,10 @@ final class DiscordRPCController: ObservableObject {
       let opcode: UInt32 = 1  // Frame opcode
       let length: UInt32 = UInt32(data.count)
 
-      header.append(Data(bytes: &opcode.littleEndian, count: 4))
-      header.append(Data(bytes: &length.littleEndian, count: 4))
+      var opcodeLE = opcode.littleEndian
+      var lengthLE = length.littleEndian
+      header.append(Data(bytes: &opcodeLE, count: 4))
+      header.append(Data(bytes: &lengthLE, count: 4))
 
       fileHandle.write(header)
       fileHandle.write(data)

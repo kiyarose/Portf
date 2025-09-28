@@ -173,7 +173,7 @@ struct DiscordRPCStatusIndicator: View {
       return "Connecting..."
     case .disconnected:
       return "Disconnected"
-    case .failed(let message):
+    case .failed(_):
       return "Failed"
     }
   }

@@ -401,7 +401,7 @@ final class DashboardViewModel: ObservableObject {
       // Show running processes
       let lastUsedTool = getLastUsedTool(from: runningProcesses)
       let details =
-        processCount == 1 ? "Running \(runningProcesses.first!)" : "Running \(processCount) tools"
+        processCount == 1 ? "Running \(runningProcesses.first ?? "Unknown Tool")" : "Running \(processCount) tools"
 
       let activity = DiscordRPCController.Activity(
         details: details,
