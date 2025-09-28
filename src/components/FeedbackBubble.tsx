@@ -100,25 +100,46 @@ function FeedbackForm({
     onErrorChange(null);
   }, [onErrorChange]);
 
-  const handleEmailChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData(prev => ({ ...prev, email: e.target.value }));
-  }, []);
+  const handleEmailChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setFormData((prev) => ({ ...prev, email: e.target.value }));
+    },
+    [],
+  );
 
-  const handleFeedbackTypeChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
-    setFormData(prev => ({ ...prev, feedbackType: e.target.value as FeedbackType }));
-  }, []);
+  const handleFeedbackTypeChange = useCallback(
+    (e: React.ChangeEvent<HTMLSelectElement>) => {
+      setFormData((prev) => ({
+        ...prev,
+        feedbackType: e.target.value as FeedbackType,
+      }));
+    },
+    [],
+  );
 
-  const handleFeedbackTitleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData(prev => ({ ...prev, feedbackTitle: e.target.value }));
-  }, []);
+  const handleFeedbackTitleChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setFormData((prev) => ({ ...prev, feedbackTitle: e.target.value }));
+    },
+    [],
+  );
 
-  const handleFeedbackDescriptionChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setFormData(prev => ({ ...prev, feedbackDescription: e.target.value }));
-  }, []);
+  const handleFeedbackDescriptionChange = useCallback(
+    (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+      setFormData((prev) => ({ ...prev, feedbackDescription: e.target.value }));
+    },
+    [],
+  );
 
-  const handleImpactChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
-    setFormData(prev => ({ ...prev, impact: e.target.value as FeedbackImpact }));
-  }, []);
+  const handleImpactChange = useCallback(
+    (e: React.ChangeEvent<HTMLSelectElement>) => {
+      setFormData((prev) => ({
+        ...prev,
+        impact: e.target.value as FeedbackImpact,
+      }));
+    },
+    [],
+  );
 
   const handleSubmit = useCallback(
     async (event: React.FormEvent<HTMLFormElement>) => {
