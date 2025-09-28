@@ -14,21 +14,22 @@ export function useScrollProgress() {
       const scrollY = window.scrollY || document.documentElement.scrollTop;
       const viewportHeight = window.innerHeight;
       const scrollHeight = document.documentElement.scrollHeight;
-      
+
       // Calculate total scrollable distance
       const totalScrollableDistance = scrollHeight - viewportHeight;
-      
+
       // Calculate progress as a percentage (0 to 1)
-      const progress = totalScrollableDistance > 0 
-        ? Math.min(scrollY / totalScrollableDistance, 1)
-        : 0;
-      
+      const progress =
+        totalScrollableDistance > 0
+          ? Math.min(scrollY / totalScrollableDistance, 1)
+          : 0;
+
       setScrollProgress(progress);
     }
 
     handleScroll(); // Set initial value
     window.addEventListener("scroll", handleScroll, { passive: true });
-    
+
     return () => {
       window.removeEventListener("scroll", handleScroll);
     };
