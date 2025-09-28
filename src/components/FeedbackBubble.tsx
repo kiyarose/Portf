@@ -379,8 +379,8 @@ function ThumbsSelector({
   }, [onThumbClick]);
 
   const thumbsContainerClass = cn(
-    // Position higher to avoid clipping with smaller button (bottom-16 instead of bottom-14)
-    "absolute bottom-16 right-0 rounded-2xl border p-4 shadow-2xl backdrop-blur-lg",
+    // Position higher to avoid clipping with scaled button (bottom-20 accounts for 1.2x scale)
+    "absolute bottom-20 right-0 rounded-2xl border p-4 shadow-2xl backdrop-blur-lg",
     // Smaller on desktop, larger on mobile as requested
     "w-64 sm:w-60",
     themedClass(
@@ -484,7 +484,8 @@ function ConfirmationDialog({
   onNo,
 }: ConfirmationDialogProps) {
   const confirmContainerClass = cn(
-    "absolute bottom-14 right-0 rounded-2xl border p-5 shadow-2xl backdrop-blur-lg",
+    // Position higher to avoid clipping with scaled button (bottom-20 accounts for 1.2x scale) 
+    "absolute bottom-20 right-0 rounded-2xl border p-5 shadow-2xl backdrop-blur-lg",
     // Mobile responsive width
     "w-72 sm:w-80",
     themedClass(
@@ -578,7 +579,8 @@ function FeedbackFormContainer({
   onErrorChange,
 }: FeedbackFormContainerProps) {
   const formContainerClass = cn(
-    "absolute bottom-14 right-0 rounded-2xl border p-5 shadow-2xl backdrop-blur-lg",
+    // Position higher to avoid clipping with scaled button (bottom-20 accounts for 1.2x scale)
+    "absolute bottom-20 right-0 rounded-2xl border p-5 shadow-2xl backdrop-blur-lg",
     // Mobile responsive width - wider for better usability
     "w-80 sm:w-96",
     themedClass(
