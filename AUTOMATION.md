@@ -5,10 +5,12 @@ This repository now includes automated workflows to streamline issue and pull re
 ## Features
 
 ### 1. Label Synchronization
+
 - **Issue to PR**: When a pull request references an issue (using `#123`, `fixes #123`, or GitHub issue URLs), all labels from the linked issues are automatically copied to the PR.
 - **PR to Issue**: When labels are added or removed from an issue, those changes are automatically synced to any open PRs that reference that issue.
 
 ### 2. Project Board Management
+
 - **Auto-assignment**: New issues are automatically added to the "Portfolio Devmt" project and placed in the backlog.
 - **Status updates**: Issue and PR statuses are automatically updated based on their relationship:
   - Issues move to "In Progress" when a linked PR is opened
@@ -17,6 +19,7 @@ This repository now includes automated workflows to streamline issue and pull re
   - Issues return to "Backlog" if linked PRs are closed without merging
 
 ### 3. Milestone Synchronization
+
 - Milestones are automatically synced between linked issues and pull requests
 - If an issue has a milestone but its linked PR doesn't, the milestone is copied to the PR
 - If a PR has a milestone but its linked issue doesn't, the milestone is copied to the issue
@@ -62,6 +65,7 @@ For full functionality, you may need to:
 ## Customization
 
 The workflows can be customized by:
+
 - Modifying the project name in `github-projects-integration.yml`
 - Adjusting status names to match your project board setup
 - Adding or removing label synchronization rules
