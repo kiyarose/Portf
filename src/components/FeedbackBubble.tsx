@@ -505,7 +505,10 @@ function ThumbsSelector({
           whileTap={prefersReducedMotion ? undefined : { scale: 0.95 }}
           title="Poor experience"
         >
-          <Icon icon="material-symbols:thumb-down-rounded" className="text-xl" />
+          <Icon
+            icon="material-symbols:thumb-down-rounded"
+            className="text-xl"
+          />
         </motion.button>
       </div>
     </motion.div>
@@ -724,9 +727,7 @@ function FeedbackBubbleButton({
             animate={
               prefersReducedMotion ? undefined : { opacity: 1, scale: 1 }
             }
-            exit={
-              prefersReducedMotion ? undefined : { opacity: 0, scale: 0.5 }
-            }
+            exit={prefersReducedMotion ? undefined : { opacity: 0, scale: 0.5 }}
             transition={{ duration: 0.2 }}
           >
             <Icon icon="material-symbols:check-rounded" className="text-xl" />
@@ -740,9 +741,7 @@ function FeedbackBubbleButton({
             animate={
               prefersReducedMotion ? undefined : { opacity: 1, scale: 1 }
             }
-            exit={
-              prefersReducedMotion ? undefined : { opacity: 0, scale: 0.5 }
-            }
+            exit={prefersReducedMotion ? undefined : { opacity: 0, scale: 0.5 }}
             transition={{ duration: 0.2 }}
           >
             <Icon
