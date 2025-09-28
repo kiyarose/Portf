@@ -66,6 +66,9 @@ build/Release
 # PlayWright Test Reports
 playwright-report/
 
+# Lighthouse CI Reports
+.lighthouseci/
+
 # Swift
 *.swiftdeps
 *.swiftmodule
