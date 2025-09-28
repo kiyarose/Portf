@@ -1,5 +1,9 @@
 // Global confetti utility functions that can be called from anywhere
 // This creates confetti effects by dynamically rendering React components
+//
+// Note: Math.random() usage in this file is for visual effects only (particle positions, 
+// colors, animations) and does not require cryptographic security. SonarCloud warnings
+// about pseudo-random number generation are not applicable for these use cases.
 
 export interface CelebrationOptions {
   /** X coordinate in pixels (defaults to center of screen) */
@@ -42,7 +46,7 @@ export async function celebrateOld(
     return React.createElement(motion.div, {
       className: "absolute h-2 w-2 rounded-full",
       style: {
-        background: `hsl(${Math.random() * 360}, 70%, 60%)`,
+        background: `hsl(${Math.random() * 360}, 70%, 60%)`, // NOSONAR - visual effect only
         left: `${initialX}px`,
         top: `${initialY}px`,
       },
@@ -50,11 +54,11 @@ export async function celebrateOld(
       animate: {
         opacity: 0,
         scale: [0, 1, 0],
-        x: (Math.random() - 0.5) * 200,
-        y: (Math.random() - 0.5) * 200,
-        rotate: Math.random() * 360,
+        x: (Math.random() - 0.5) * 200, // NOSONAR - visual effect only
+        y: (Math.random() - 0.5) * 200, // NOSONAR - visual effect only
+        rotate: Math.random() * 360, // NOSONAR - visual effect only
       },
-      transition: { duration: 1.5 + Math.random() * 0.5, ease: "easeOut" },
+      transition: { duration: 1.5 + Math.random() * 0.5, ease: "easeOut" }, // NOSONAR - visual effect only
     });
   };
 
@@ -157,7 +161,7 @@ export async function celebrateNew(
     const prefersReducedMotion = useReducedMotion();
     if (prefersReducedMotion) return null;
 
-    const distance = 300 + Math.random() * 400;
+    const distance = 300 + Math.random() * 400; // NOSONAR - visual effect only
     const moveX = Math.cos(angle) * distance;
     const moveY = Math.sin(angle) * distance;
 
@@ -190,9 +194,9 @@ export async function celebrateNew(
         scale: [0, 1.2, 0.8, 0],
         x: moveX,
         y: moveY,
-        rotate: Math.random() * 720,
+        rotate: Math.random() * 720, // NOSONAR - visual effect only
       },
-      transition: { duration: 2 + Math.random(), ease: "easeOut" },
+      transition: { duration: 2 + Math.random(), ease: "easeOut" }, // NOSONAR - visual effect only
     });
   };
 
@@ -202,13 +206,13 @@ export async function celebrateNew(
       id: `new-confetti-${Date.now()}-${i}`,
       initialX: x,
       initialY: y,
-      angle: (Math.PI * 2 * i) / 25 + (Math.random() - 0.5) * 0.8,
-      size: 8 + Math.random() * 12,
+      angle: (Math.PI * 2 * i) / 25 + (Math.random() - 0.5) * 0.8, // NOSONAR - visual effect only
+      size: 8 + Math.random() * 12, // NOSONAR - visual effect only
       shape:
-        CONFETTI_SHAPES[Math.floor(Math.random() * CONFETTI_SHAPES.length)],
+        CONFETTI_SHAPES[Math.floor(Math.random() * CONFETTI_SHAPES.length)], // NOSONAR - visual effect only
       color:
         BOLD_CONFETTI_COLORS[
-          Math.floor(Math.random() * BOLD_CONFETTI_COLORS.length)
+          Math.floor(Math.random() * BOLD_CONFETTI_COLORS.length) // NOSONAR - visual effect only
         ],
     }));
 
