@@ -381,17 +381,16 @@ final class CodexController: ObservableObject {
     try process.run()
 
     captureGroup.enter()
-    DispatchQueue.global(qos: .userInitiated).async {
-      while true {
-        let data = masterHandle.availableData
-        if data.isEmpty {
-          break
-        }
-        captureLock.lock()
-        capturedData.append(data)
-        captureLock.unlock()
+    masterHandle.readabilityHandler = { handle in
+      let data = handle.availableData
+      if data.isEmpty {
+        masterHandle.readabilityHandler = nil
+        captureGroup.leave()
+        return
       }
-      captureGroup.leave()
+      captureLock.lock()
+      capturedData.append(data)
+      captureLock.unlock()
     }
 
     if let data = (prompt + "\n").data(using: .utf8) {
