@@ -410,8 +410,8 @@ function FeedbackForm({
               "px-4 py-3 text-sm",
               themedClass(
                 theme,
-                "bg-accent text-white hover:bg-accent/90",
-                "bg-accent text-white hover:bg-accent/90",
+                "bg-orange-500 text-white hover:bg-orange-600",
+                "bg-orange-500 text-white hover:bg-orange-600",
               ),
             )}
             disabled={isSubmitting}
@@ -593,8 +593,8 @@ function ConfirmationDialog({
             "flex-1 rounded-xl px-4 py-3 text-sm font-medium transition",
             themedClass(
               theme,
-              "bg-accent text-white hover:bg-accent/90",
-              "bg-accent text-white hover:bg-accent/90",
+              "bg-orange-500 text-white hover:bg-orange-600",
+              "bg-orange-500 text-white hover:bg-orange-600",
             ),
           )}
           whileHover={prefersReducedMotion ? undefined : { scale: 1.02 }}
@@ -716,8 +716,8 @@ function FeedbackBubbleButton({
     "h-14 w-14 sm:h-16 sm:w-16",
     themedClass(
       theme,
-      "bg-accent text-white hover:bg-accent/90 hover:shadow-xl",
-      "bg-accent text-white hover:bg-accent/90 hover:shadow-xl shadow-accent/20",
+      "bg-orange-500 text-white hover:bg-orange-600 hover:shadow-xl",
+      "bg-orange-500 text-white hover:bg-orange-600 hover:shadow-xl shadow-orange-500/20",
     ),
   );
 
