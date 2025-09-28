@@ -161,7 +161,7 @@ function ConfettiEffect({ isActive }: { isActive: boolean }) {
   if (!isActive || prefersReducedMotion) return null;
 
   return (
-    <div className="absolute inset-0 overflow-hidden pointer-events-none">
+    <div className="fixed inset-0 overflow-visible pointer-events-none z-50">
       {particles.map((particle) => (
         <ConfettiParticle
           key={particle.id}
@@ -1011,72 +1011,74 @@ export function FeedbackBubble({ className }: FeedbackBubbleProps) {
   );
 
   return (
-    <AnimatePresence>
-      {isVisible && (
-        <motion.div
-          className={bubbleClass}
-          initial={
-            prefersReducedMotion ? undefined : { opacity: 0, scale: 0.5, y: 20 }
-          }
-          animate={
-            prefersReducedMotion ? undefined : { opacity: 1, scale: 1, y: 0 }
-          }
-          exit={
-            prefersReducedMotion
-              ? { opacity: 0 }
-              : { opacity: 0, scale: 0.3, y: 20 }
-          }
-          transition={{
-            duration: 0.3,
-            ease: "easeOut",
-          }}
-        >
-          <AnimatePresence>
-            {/* Thumbs Up/Down Selection */}
-            {feedbackStep === "thumbs" && (
-              <ThumbsSelector
-                theme={theme}
-                prefersReducedMotion={prefersReducedMotion}
-                selectedThumb={selectedThumb}
-                onThumbClick={handleThumbClick}
-              />
-            )}
+    <>
+      {/* Confetti effect when bubble first appears - positioned at document level to avoid clipping */}
+      <ConfettiEffect isActive={showConfetti} />
+      
+      <AnimatePresence>
+        {isVisible && (
+          <motion.div
+            className={bubbleClass}
+            initial={
+              prefersReducedMotion ? undefined : { opacity: 0, scale: 0.5, y: 20 }
+            }
+            animate={
+              prefersReducedMotion ? undefined : { opacity: 1, scale: 1, y: 0 }
+            }
+            exit={
+              prefersReducedMotion
+                ? { opacity: 0 }
+                : { opacity: 0, scale: 0.3, y: 20 }
+            }
+            transition={{
+              duration: 0.3,
+              ease: "easeOut",
+            }}
+          >
+            <AnimatePresence>
+              {/* Thumbs Up/Down Selection */}
+              {feedbackStep === "thumbs" && (
+                <ThumbsSelector
+                  theme={theme}
+                  prefersReducedMotion={prefersReducedMotion}
+                  selectedThumb={selectedThumb}
+                  onThumbClick={handleThumbClick}
+                />
+              )}
 
-            {/* Confirmation Dialog */}
-            {feedbackStep === "confirm" && (
-              <ConfirmationDialog
-                theme={theme}
-                prefersReducedMotion={prefersReducedMotion}
-                onYes={handleConfirmYes}
-                onNo={handleConfirmNo}
-              />
-            )}
+              {/* Confirmation Dialog */}
+              {feedbackStep === "confirm" && (
+                <ConfirmationDialog
+                  theme={theme}
+                  prefersReducedMotion={prefersReducedMotion}
+                  onYes={handleConfirmYes}
+                  onNo={handleConfirmNo}
+                />
+              )}
 
-            {/* Full Feedback Form */}
-            {feedbackStep === "form" && (
-              <FeedbackFormContainer
-                theme={theme}
-                prefersReducedMotion={prefersReducedMotion}
-                onSubmit={handleSubmit}
-                onClose={handleFormClose}
-                isSubmitting={isSubmitting}
-                errorMessage={errorMessage}
-                onErrorChange={setErrorMessage}
-              />
-            )}
-          </AnimatePresence>
+              {/* Full Feedback Form */}
+              {feedbackStep === "form" && (
+                <FeedbackFormContainer
+                  theme={theme}
+                  prefersReducedMotion={prefersReducedMotion}
+                  onSubmit={handleSubmit}
+                  onClose={handleFormClose}
+                  isSubmitting={isSubmitting}
+                  errorMessage={errorMessage}
+                  onErrorChange={setErrorMessage}
+                />
+              )}
+            </AnimatePresence>
 
-          <FeedbackBubbleButton
-            theme={theme}
-            prefersReducedMotion={prefersReducedMotion}
-            feedbackStep={feedbackStep}
-            onClick={handleBubbleClick}
-          />
-
-          {/* Confetti effect when bubble first appears */}
-          <ConfettiEffect isActive={showConfetti} />
-        </motion.div>
-      )}
-    </AnimatePresence>
+            <FeedbackBubbleButton
+              theme={theme}
+              prefersReducedMotion={prefersReducedMotion}
+              feedbackStep={feedbackStep}
+              onClick={handleBubbleClick}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
   );
 }
