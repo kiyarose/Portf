@@ -226,7 +226,7 @@ function ContactForm({
     } finally {
       setPageclipLoading(false);
     }
-  }, [pageclipLoading]);
+  }, []);
 
   const sendButtonSurface = themedClass(
     theme,
