@@ -15,6 +15,7 @@ import type { Theme } from "./providers/theme-context";
 import { themedClass } from "./utils/themeClass";
 import { DecorativeBackground } from "./components/DecorativeBackground";
 import { SiteFooter } from "./components/SiteFooter";
+import { FeedbackBubble } from "./components/FeedbackBubble";
 
 const sections = [
   { id: "hero", label: "Home", icon: "material-symbols:home-rounded" },
@@ -69,6 +70,7 @@ export default function App() {
         <ContactSection />
       </main>
       <SiteFooter />
+      <FeedbackBubble />
     </div>
   );
 }
