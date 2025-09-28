@@ -911,9 +911,9 @@ export function FeedbackBubble({ className }: FeedbackBubbleProps) {
   const bubbleClass = cn(
     "fixed z-50",
     // Position to avoid back-to-top button collision on mobile
-    "bottom-6 right-6 md:bottom-6 md:right-6",
-    // On mobile, move up when back-to-top button might be visible
-    "sm:bottom-20 sm:right-4",
+    "bottom-20 right-4",
+    // On larger screens, use more compact positioning
+    "sm:bottom-6 sm:right-6",
     className,
   );
 
