@@ -1,6 +1,6 @@
 import Combine
-import Foundation
 import Darwin
+import Foundation
 
 @MainActor
 final class CodexController: ObservableObject {
