@@ -2,6 +2,7 @@ import { Icon } from "@iconify/react";
 import { motion, useReducedMotion, AnimatePresence } from "framer-motion";
 import { useCallback, useState, useEffect, useMemo } from "react";
 import { useTheme } from "../hooks/useTheme";
+import { useScrollProgress } from "../hooks/useScrollProgress";
 import type { Theme } from "../providers/theme-context";
 import { themedClass } from "../utils/themeClass";
 import { cn } from "../utils/cn";
@@ -15,6 +16,8 @@ import { FEEDBACK_IMPACT_OPTIONS } from "../types/feedback";
 
 // Time in milliseconds before showing the feedback bubble
 const SHOW_AFTER_TIME = 30000; // 30 seconds
+// Scroll progress threshold (25% of page) to show feedback bubble
+const SHOW_AFTER_SCROLL_PROGRESS = 0.25; // 25%
 
 interface FeedbackBubbleProps {
   className?: string;
@@ -58,8 +61,8 @@ function ConfettiParticle({
       animate={{
         opacity: 0,
         scale: [0, 1, 0],
-        x: (Math.random() - 0.5) * 200,
-        y: (Math.random() - 0.5) * 200,
+        x: (Math.random() - 0.5) * 400, // Increased from 200 to 400 for better visibility
+        y: (Math.random() - 0.5) * 400, // Increased from 200 to 400 for better visibility
         rotate: Math.random() * 360,
       }}
       transition={{
@@ -791,6 +794,7 @@ function FeedbackBubbleButton({
 export function FeedbackBubble({ className }: FeedbackBubbleProps) {
   const { theme } = useTheme();
   const prefersReducedMotion = useReducedMotion();
+  const scrollProgress = useScrollProgress();
 
   const [isVisible, setIsVisible] = useState(false);
   const [feedbackStep, setFeedbackStep] = useState<
@@ -803,7 +807,7 @@ export function FeedbackBubble({ className }: FeedbackBubbleProps) {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [showConfetti, setShowConfetti] = useState(false);
 
-  // Show bubble after specified time
+  // Show bubble after specified time OR after user scrolls 25% of the page
   useEffect(() => {
     const timer = setTimeout(() => {
       // Check if feedback was already submitted in this session
@@ -818,6 +822,20 @@ export function FeedbackBubble({ className }: FeedbackBubbleProps) {
 
     return () => clearTimeout(timer);
   }, []);
+
+  // Also show bubble when user scrolls more than 25% of the page
+  useEffect(() => {
+    if (scrollProgress >= SHOW_AFTER_SCROLL_PROGRESS && !isVisible) {
+      // Check if feedback was already submitted in this session
+      const hasSubmitted = sessionStorage.getItem("feedback-submitted");
+      if (!hasSubmitted) {
+        setIsVisible(true);
+        setShowConfetti(true);
+        // Stop confetti after animation completes
+        setTimeout(() => setShowConfetti(false), 2000);
+      }
+    }
+  }, [scrollProgress, isVisible]);
 
   const pageclipApiKey = import.meta.env.VITE_PAGECLIP_API_KEY as
     | string
