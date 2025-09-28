@@ -9,14 +9,20 @@ struct ContentView: View {
   var body: some View {
     GeometryReader { proxy in
       VStack(alignment: .leading, spacing: 20) {
-        ProjectDirectoryCard(
-          projectPath: $viewModel.projectPath,
-          isCollapsed: $viewModel.isProjectDirectoryCollapsed,
-          validationMessage: viewModel.pathValidationMessage,
-          pathIsValid: viewModel.pathIsValid,
-          onBrowse: { showingDirectoryPicker = true },
-          onUseCurrentDirectory: { viewModel.useCurrentDirectory() }
-        )
+        HStack {
+          VStack(alignment: .leading, spacing: 12) {
+            ProjectDirectoryCard(
+              projectPath: $viewModel.projectPath,
+              isCollapsed: $viewModel.isProjectDirectoryCollapsed,
+              validationMessage: viewModel.pathValidationMessage,
+              pathIsValid: viewModel.pathIsValid,
+              onBrowse: { showingDirectoryPicker = true },
+              onUseCurrentDirectory: { viewModel.useCurrentDirectory() }
+            )
+          }
+          Spacer()
+          DiscordRPCStatusIndicator(controller: viewModel.discordRPCController)
+        }
         pluginList
       }
       .padding(24)

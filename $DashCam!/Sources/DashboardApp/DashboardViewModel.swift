@@ -80,6 +80,7 @@ final class DashboardViewModel: ObservableObject {
   let playwrightProcess: ProcessController
   let gitController: GitController
   let codexController: CodexController
+  let discordRPCController: DiscordRPCController
   private let defaultProjectPath: String
   @Published var pluginOrder: [PluginKind] = PluginKind.allCases {
     didSet {
@@ -222,9 +223,13 @@ final class DashboardViewModel: ObservableObject {
     )
     self.gitController = GitController()
     self.codexController = CodexController()
+    self.discordRPCController = DiscordRPCController()
     self.pluginOrder = restoredOrder
     refreshWorkingDirectories()
     updatePlaywrightCommand(announce: false)
+    
+    // Set up Discord RPC activity monitoring
+    setupDiscordRPCMonitoring()
   }
 
   var anyProcessRunning: Bool {
@@ -239,6 +244,7 @@ final class DashboardViewModel: ObservableObject {
   func stopAll() {
     devProcess.stop()
     playwrightProcess.stop()
+    // Discord RPC will be updated automatically via the monitoring system
   }
 
   private func refreshWorkingDirectories() {
@@ -352,6 +358,112 @@ final class DashboardViewModel: ObservableObject {
   private func isDirectory(_ path: String) -> Bool {
     var isDir: ObjCBool = false
     return FileManager.default.fileExists(atPath: path, isDirectory: &isDir) && isDir.boolValue
+  }
+  
+  // MARK: - Discord RPC Integration
+  
+  private func setupDiscordRPCMonitoring() {
+    // Monitor process status changes to update Discord activity
+    let processControllers = [devProcess, playwrightProcess]
+    
+    for processController in processControllers {
+      processController.$status
+        .combineLatest(gitController.$isBusy, codexController.$isProcessing)
+        .sink { [weak self] _, _, _ in
+          self?.updateDiscordActivity()
+        }
+        .store(in: &cancellables)
+    }
+    
+    // Initial update
+    updateDiscordActivity()
+  }
+  
+  private var cancellables: Set<AnyCancellable> = []
+  
+  private func updateDiscordActivity() {
+    let runningProcesses = getRunningProcesses()
+    let processCount = runningProcesses.count
+    
+    if processCount == 0 {
+      // No processes running - show idle state
+      let activity = DiscordRPCController.Activity(
+        details: "DashCam - Developer Workflow",
+        state: "Idle",
+        largeImageKey: "dashcam_app",
+        largeImageText: "DashCam",
+        smallImageKey: nil,
+        smallImageText: nil,
+        startTimestamp: nil
+      )
+      discordRPCController.updateActivity(activity)
+    } else {
+      // Show running processes
+      let lastUsedTool = getLastUsedTool(from: runningProcesses)
+      let details = processCount == 1 ? "Running \(runningProcesses.first!)" : "Running \(processCount) tools"
+      
+      let activity = DiscordRPCController.Activity(
+        details: details,
+        state: "Development in progress",
+        largeImageKey: "dashcam_app",
+        largeImageText: "DashCam",
+        smallImageKey: getToolIcon(for: lastUsedTool),
+        smallImageText: lastUsedTool,
+        startTimestamp: Int64(Date().timeIntervalSince1970)
+      )
+      discordRPCController.updateActivity(activity)
+    }
+  }
+  
+  private func getRunningProcesses() -> [String] {
+    var running: [String] = []
+    
+    if devProcess.isRunning {
+      running.append("Dev Server")
+    }
+    if playwrightProcess.isRunning {
+      running.append("Playwright")
+    }
+    if gitController.isBusy {
+      running.append("Git")
+    }
+    if codexController.isProcessing {
+      running.append("Codex")
+    }
+    
+    return running
+  }
+  
+  private func getLastUsedTool(from runningProcesses: [String]) -> String {
+    // Return the most recently active tool, prioritizing interactive ones
+    if codexController.isProcessing {
+      return "Codex"
+    }
+    if gitController.isBusy {
+      return "Git"
+    }
+    if playwrightProcess.isRunning {
+      return "Playwright"
+    }
+    if devProcess.isRunning {
+      return "Dev Server"
+    }
+    return runningProcesses.first ?? "DashCam"
+  }
+  
+  private func getToolIcon(for tool: String) -> String? {
+    switch tool {
+    case "Dev Server":
+      return "server_icon"
+    case "Playwright":
+      return "playwright_icon"
+    case "Git":
+      return "git_icon"
+    case "Codex":
+      return "codex_icon"
+    default:
+      return nil
+    }
   }
 }
 

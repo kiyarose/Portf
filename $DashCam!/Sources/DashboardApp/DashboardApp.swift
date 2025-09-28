@@ -42,6 +42,7 @@ final class DashboardAppDelegate: NSObject, NSApplicationDelegate {
 
   func applicationWillTerminate(_ notification: Notification) {
     viewModel?.stopAll()
+    viewModel?.discordRPCController.disconnect()
   }
 
   func setViewModel(_ viewModel: DashboardViewModel) {

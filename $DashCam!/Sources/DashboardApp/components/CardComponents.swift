@@ -113,3 +113,68 @@ struct EdgeResizeOverlay: View {
       }
   }
 }
+
+struct DiscordRPCStatusIndicator: View {
+  @ObservedObject var controller: DiscordRPCController
+  
+  var body: some View {
+    HStack(spacing: 6) {
+      Image(systemName: discordIcon)
+        .foregroundStyle(statusColor)
+        .font(.caption.weight(.medium))
+      
+      Text(statusText)
+        .font(.caption2)
+        .foregroundStyle(.secondary)
+      
+      if controller.isEnabled {
+        Toggle("", isOn: $controller.isEnabled)
+          .toggleStyle(.switch)
+          .controlSize(.mini)
+      }
+    }
+    .padding(.horizontal, 8)
+    .padding(.vertical, 4)
+    .background(
+      RoundedRectangle(cornerRadius: 6, style: .continuous)
+        .fill(.regularMaterial.opacity(0.8))
+    )
+  }
+  
+  private var discordIcon: String {
+    switch controller.status {
+    case .connected:
+      return "dot.radiowaves.up.forward"
+    case .connecting:
+      return "dot.radiowaves.up.forward"
+    case .disconnected, .failed:
+      return "dot.radiowaves.up.forward"
+    }
+  }
+  
+  private var statusColor: Color {
+    switch controller.status {
+    case .connected:
+      return .green
+    case .connecting:
+      return .orange
+    case .disconnected:
+      return .secondary
+    case .failed:
+      return .red
+    }
+  }
+  
+  private var statusText: String {
+    switch controller.status {
+    case .connected:
+      return "Discord RPC"
+    case .connecting:
+      return "Connecting..."
+    case .disconnected:
+      return "Disconnected"
+    case .failed(let message):
+      return "Failed"
+    }
+  }
+}
