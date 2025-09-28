@@ -15,38 +15,42 @@ const EMAIL = "kiya.rose@sillylittle.tech";
 const STRICT_CORS_PATTERNS = ["cors", "cross-origin", "opaque response"];
 const GENERIC_CORS_PATTERNS = ["load failed", "failed to fetch"];
 
-// Lazy load pageclip script when needed
-let pageclipLoaded = false;
-let pageclipPromise: Promise<void> | null = null;
+// Lazy load pageclip script when needed, encapsulated in a hook
 
-const loadPageclip = (): Promise<void> => {
-  if (pageclipLoaded) {
-    return Promise.resolve();
-  }
+function usePageclipLoader() {
+  const pageclipLoaded = useRef(false);
+  const pageclipPromise = useRef<Promise<void> | null>(null);
 
-  if (pageclipPromise) {
-    return pageclipPromise;
-  }
+  const loadPageclip = useCallback((): Promise<void> => {
+    if (pageclipLoaded.current) {
+      return Promise.resolve();
+    }
 
-  pageclipPromise = new Promise((resolve, reject) => {
-    const script = document.createElement("script");
-    script.src = "https://s.pageclip.co/v1/pageclip.js";
-    script.charset = "utf-8";
-    script.crossOrigin = "anonymous";
-    script.onload = () => {
-      pageclipLoaded = true;
-      resolve();
-    };
-    script.onerror = () => {
-      pageclipPromise = null; // Reset so we can try again
-      reject(new Error("Failed to load pageclip script"));
-    };
-    document.head.appendChild(script);
-  });
+    if (pageclipPromise.current) {
+      return pageclipPromise.current;
+    }
 
-  return pageclipPromise;
-};
+    pageclipPromise.current = new Promise((resolve, reject) => {
+      const script = document.createElement("script");
+      script.src = "https://s.pageclip.co/v1/pageclip.js";
+      script.charset = "utf-8";
+      script.crossOrigin = "anonymous";
+      script.onload = () => {
+        pageclipLoaded.current = true;
+        resolve();
+      };
+      script.onerror = () => {
+        pageclipPromise.current = null; // Reset so we can try again
+        reject(new Error("Failed to load pageclip script"));
+      };
+      document.head.appendChild(script);
+    });
 
+    return pageclipPromise.current;
+  }, []);
+
+  return loadPageclip;
+}
 const isLikelyCorsError = (error: unknown): boolean => {
   const message =
     error instanceof Error
