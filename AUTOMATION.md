@@ -6,7 +6,7 @@ This repository now includes automated workflows to streamline issue and pull re
 
 ### 1. Label Synchronization
 
-- **Issue to PR**: When a pull request references an issue (using `#123`, `fixes #123`, or GitHub issue URLs), all labels from the linked issues are automatically copied to the PR.
+- **Issue to PR**: When a pull request references an issue (using `#105`, `fixes #105`, or GitHub issue URLs), all labels from the linked issues are automatically copied to the PR.
 - **PR to Issue**: When labels are added or removed from an issue, those changes are automatically synced to any open PRs that reference that issue.
 
 ### 2. Project Board Management
@@ -29,8 +29,8 @@ This repository now includes automated workflows to streamline issue and pull re
 The automation detects issue-PR relationships through:
 
 1. **Issue references in PR title/body**:
-   - `#123` (simple reference)
-   - `fixes #123`, `closes #123`, `resolves #123` (closing keywords)
+   - `#105` (simple reference)
+   - `fixes #105`, `closes #105`, `resolves #105` (closing keywords)
    - Full GitHub URLs to issues
 
 2. **Keywords supported**:
