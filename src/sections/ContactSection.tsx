@@ -15,42 +15,38 @@ const EMAIL = "kiya.rose@sillylittle.tech";
 const STRICT_CORS_PATTERNS = ["cors", "cross-origin", "opaque response"];
 const GENERIC_CORS_PATTERNS = ["load failed", "failed to fetch"];
 
-// Lazy load pageclip script when needed, encapsulated in a hook
+// Simple lazy loading for pageclip script
+let pageclipLoaded = false;
+let pageclipPromise: Promise<void> | null = null;
 
-function usePageclipLoader() {
-  const pageclipLoaded = useRef(false);
-  const pageclipPromise = useRef<Promise<void> | null>(null);
+const loadPageclip = (): Promise<void> => {
+  if (pageclipLoaded) {
+    return Promise.resolve();
+  }
+  
+  if (pageclipPromise) {
+    return pageclipPromise;
+  }
 
-  const loadPageclip = useCallback((): Promise<void> => {
-    if (pageclipLoaded.current) {
-      return Promise.resolve();
-    }
+  pageclipPromise = new Promise((resolve, reject) => {
+    const script = document.createElement("script");
+    script.src = "https://s.pageclip.co/v1/pageclip.js";
+    script.charset = "utf-8";
+    script.crossOrigin = "anonymous";
+    script.onload = () => {
+      pageclipLoaded = true;
+      resolve();
+    };
+    script.onerror = () => {
+      pageclipPromise = null; // Reset so we can try again
+      reject(new Error("Failed to load pageclip script"));
+    };
+    document.head.appendChild(script);
+  });
 
-    if (pageclipPromise.current) {
-      return pageclipPromise.current;
-    }
+  return pageclipPromise;
+};
 
-    pageclipPromise.current = new Promise((resolve, reject) => {
-      const script = document.createElement("script");
-      script.src = "https://s.pageclip.co/v1/pageclip.js";
-      script.charset = "utf-8";
-      script.crossOrigin = "anonymous";
-      script.onload = () => {
-        pageclipLoaded.current = true;
-        resolve();
-      };
-      script.onerror = () => {
-        pageclipPromise.current = null; // Reset so we can try again
-        reject(new Error("Failed to load pageclip script"));
-      };
-      document.head.appendChild(script);
-    });
-
-    return pageclipPromise.current;
-  }, []);
-
-  return loadPageclip;
-}
 const isLikelyCorsError = (error: unknown): boolean => {
   const message =
     error instanceof Error
@@ -226,7 +222,7 @@ function ContactForm({
     } finally {
       setPageclipLoading(false);
     }
-  }, []);
+  }, [pageclipLoading]);
 
   const sendButtonSurface = themedClass(
     theme,
@@ -352,7 +348,6 @@ function ContactForm({
       ref={formRef}
       className="pageclip-form flex-1 space-y-4"
       onSubmit={handleSubmit}
-      onFocus={handleFormFocus}
     >
       {/* Error notification */}
       {errorMessage && (
@@ -432,6 +427,7 @@ function ContactForm({
             ),
           )}
           placeholder="How should I address you?"
+          onFocus={handleFormFocus}
         />
       </label>
       <label
@@ -454,6 +450,7 @@ function ContactForm({
           )}
           placeholder="Where can I reach you?"
           required
+          onFocus={handleFormFocus}
         />
       </label>
       <input
@@ -480,6 +477,7 @@ function ContactForm({
             ),
           )}
           placeholder="Let me know how I can help."
+          onFocus={handleFormFocus}
         />
       </label>
       <motion.button
