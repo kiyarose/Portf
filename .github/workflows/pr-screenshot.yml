@@ -230,6 +230,7 @@ jobs:
         uses: actions/upload-pages-artifact@v3
         with:
           path: _screenshot_publish
+          name: github-pages-screenshot-${{ github.run_id }}
 
       - name: Deploy GitHub Pages site
         id: deploy
@@ -237,6 +238,7 @@ jobs:
         uses: actions/deploy-pages@v4
         with:
           preview: ${{ github.event_name == 'pull_request' }}
+          artifact_name: github-pages-screenshot-${{ github.run_id }}
 
       - name: Add GitHub Pages link to job summary
         if: steps.prep_pages.outputs.found == 'true' && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.fork == false)
