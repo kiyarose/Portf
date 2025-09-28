@@ -339,71 +339,56 @@ final class CodexController: ObservableObject {
     return CommandResult(exitCode: process.terminationStatus, stdout: stdout, stderr: stderr)
   }
 
-  nonisolated private static func runWithPseudoTerminal(
-    prompt: String,
-    context: CommandContext
-  ) throws -> CommandResult {
-    var masterFD: Int32 = -1
-    var slaveFD: Int32 = -1
-    guard openpty(&masterFD, &slaveFD, nil, nil, nil) == 0 else {
-      let errorCode = POSIXErrorCode(rawValue: errno) ?? .EIO
-      throw POSIXError(errorCode)
-    }
-
-    let masterHandle = FileHandle(fileDescriptor: masterFD, closeOnDealloc: true)
-    let slaveHandle = FileHandle(fileDescriptor: slaveFD, closeOnDealloc: true)
-    let writerFD = dup(masterFD)
-    guard writerFD != -1 else {
-      let errorCode = POSIXErrorCode(rawValue: errno) ?? .EIO
-      throw POSIXError(errorCode)
-    }
-    let writerHandle = FileHandle(fileDescriptor: writerFD, closeOnDealloc: true)
-
-    var term = termios()
-    if tcgetattr(slaveFD, &term) == 0 {
-      term.c_lflag &= ~tcflag_t(ECHO)
-      _ = tcsetattr(slaveFD, TCSANOW, &term)
-    }
-
     let process = Process()
     process.executableURL = URL(fileURLWithPath: "/usr/bin/env")
     process.arguments = [context.binary] + context.arguments
     process.environment = context.environment
     process.currentDirectoryURL = context.workingDirectory
-    process.standardInput = slaveHandle
-    process.standardOutput = slaveHandle
-    process.standardError = slaveHandle
 
-    let captureLock = NSLock()
-    var capturedData = Data()
+    let inputPipe = Pipe()
+    let outputPipe = Pipe()
+    let errorPipe = Pipe()
+
+    process.standardInput = inputPipe
+    process.standardOutput = outputPipe
+    process.standardError = errorPipe
+
+    var stdoutData = Data()
+    var stderrData = Data()
     let captureGroup = DispatchGroup()
+
+    // Capture stdout
+    captureGroup.enter()
+    DispatchQueue.global(qos: .userInitiated).async {
+      let data = outputPipe.fileHandleForReading.readDataToEndOfFile()
+      stdoutData.append(data)
+      captureGroup.leave()
+    }
+
+    // Capture stderr
+    captureGroup.enter()
+    DispatchQueue.global(qos: .userInitiated).async {
+      let data = errorPipe.fileHandleForReading.readDataToEndOfFile()
+      stderrData.append(data)
+      captureGroup.leave()
+    }
 
     try process.run()
 
-    captureGroup.enter()
-    masterHandle.readabilityHandler = { handle in
-      let data = handle.availableData
-      if data.isEmpty {
-        masterHandle.readabilityHandler = nil
-        captureGroup.leave()
-        return
-      }
-      captureLock.lock()
-      capturedData.append(data)
-      captureLock.unlock()
-    }
-
+    // Write prompt to stdin
     if let data = (prompt + "\n").data(using: .utf8) {
-      writerHandle.write(data)
+      inputPipe.fileHandleForWriting.write(data)
     }
-    writerHandle.write(Data([0x04]))
-    writerHandle.closeFile()
+    // Send EOF
+    inputPipe.fileHandleForWriting.write(Data([0x04]))
+    inputPipe.fileHandleForWriting.closeFile()
 
     process.waitUntilExit()
     captureGroup.wait()
 
-    let combined = String(data: capturedData, encoding: .utf8) ?? ""
-    return CommandResult(exitCode: process.terminationStatus, stdout: combined, stderr: combined)
+    let stdoutString = String(data: stdoutData, encoding: .utf8) ?? ""
+    let stderrString = String(data: stderrData, encoding: .utf8) ?? ""
+    return CommandResult(exitCode: process.terminationStatus, stdout: stdoutString, stderr: stderrString)
   }
 
   nonisolated private static func describe(error: Error) -> String {
