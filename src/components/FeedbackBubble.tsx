@@ -379,9 +379,10 @@ function ThumbsSelector({
   }, [onThumbClick]);
 
   const thumbsContainerClass = cn(
-    "absolute bottom-14 right-0 rounded-2xl border p-4 shadow-2xl backdrop-blur-lg",
-    // Mobile responsive width
-    "w-64 sm:w-72",
+    // Position higher to avoid clipping with smaller button (bottom-16 instead of bottom-14)
+    "absolute bottom-16 right-0 rounded-2xl border p-4 shadow-2xl backdrop-blur-lg",
+    // Smaller on desktop, larger on mobile as requested
+    "w-64 sm:w-60",
     themedClass(
       theme,
       "border-white/60 bg-white/90 text-slate-700",
@@ -645,8 +646,8 @@ function FeedbackBubbleButton({
 }: FeedbackBubbleButtonProps) {
   const bubbleButtonClass = cn(
     "flex items-center justify-center rounded-full shadow-lg transition-all duration-300",
-    // Larger button on mobile for better touch targets
-    "h-14 w-14 sm:h-16 sm:w-16",
+    // Smaller button size - reduced from h-14 w-14 sm:h-16 sm:w-16
+    "h-12 w-12 sm:h-14 sm:w-14",
     themedClass(
       theme,
       "bg-orange-500 text-white hover:bg-orange-600 hover:shadow-xl",
@@ -738,11 +739,11 @@ export function FeedbackBubble({ className }: FeedbackBubbleProps) {
 
   // Function to trigger confetti at the button location
   const triggerConfetti = useCallback(() => {
-    // Calculate button position in pixels - same logic as the old embedded confetti
+    // Calculate button position in pixels - updated for smaller button sizes
     const isMobile = window.innerWidth < 640; // Tailwind sm breakpoint
     const bottomOffset = isMobile ? 80 : 24; // bottom-20 = 80px, bottom-6 = 24px
     const rightOffset = isMobile ? 16 : 24; // right-4 = 16px, right-6 = 24px
-    const buttonSize = isMobile ? 56 : 64; // h-14 w-14 (56px) or h-16 w-16 (64px)
+    const buttonSize = isMobile ? 48 : 56; // h-12 w-12 (48px) or h-14 w-14 (56px)
 
     // Calculate center of button from bottom-right of viewport
     const buttonCenterX = window.innerWidth - rightOffset - buttonSize / 2;
