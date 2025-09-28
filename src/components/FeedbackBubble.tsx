@@ -1,11 +1,13 @@
 import { Icon } from "@iconify/react";
 import { motion, useReducedMotion, AnimatePresence } from "framer-motion";
-import { useCallback, useState, useEffect, useMemo } from "react";
+import { useCallback, useState, useEffect } from "react";
 import { useTheme } from "../hooks/useTheme";
+import { useScrollProgress } from "../hooks/useScrollProgress";
 import type { Theme } from "../providers/theme-context";
 import { themedClass } from "../utils/themeClass";
 import { cn } from "../utils/cn";
 import { safeConsoleError } from "../utils/errorSanitizer";
+import { celebrateNew } from "../utils/confetti";
 import type {
   FeedbackFormData,
   FeedbackType,
@@ -15,6 +17,8 @@ import { FEEDBACK_IMPACT_OPTIONS } from "../types/feedback";
 
 // Time in milliseconds before showing the feedback bubble
 const SHOW_AFTER_TIME = 30000; // 30 seconds
+// Scroll progress threshold (50% of page) to show feedback bubble
+const SHOW_AFTER_SCROLL_PROGRESS = 0.5; // 50%
 
 interface FeedbackBubbleProps {
   className?: string;
@@ -26,77 +30,6 @@ interface FeedbackFormProps {
   isSubmitting: boolean;
   errorMessage: string | null;
   onErrorChange: (message: string | null) => void;
-}
-
-// Confetti component for celebration effect
-function ConfettiParticle({
-  initialX,
-  initialY,
-}: {
-  initialX: number;
-  initialY: number;
-}) {
-  const prefersReducedMotion = useReducedMotion();
-
-  if (prefersReducedMotion) return null;
-
-  return (
-    <motion.div
-      className="absolute h-2 w-2 rounded-full"
-      style={{
-        background: `hsl(${Math.random() * 360}, 70%, 60%)`,
-        left: `${initialX}%`,
-        top: `${initialY}%`,
-      }}
-      initial={{
-        opacity: 1,
-        scale: 0,
-        x: 0,
-        y: 0,
-        rotate: 0,
-      }}
-      animate={{
-        opacity: 0,
-        scale: [0, 1, 0],
-        x: (Math.random() - 0.5) * 200,
-        y: (Math.random() - 0.5) * 200,
-        rotate: Math.random() * 360,
-      }}
-      transition={{
-        duration: 1.5 + Math.random() * 0.5,
-        ease: "easeOut",
-      }}
-    />
-  );
-}
-
-function ConfettiEffect({ isActive }: { isActive: boolean }) {
-  const prefersReducedMotion = useReducedMotion();
-
-  // Generate stable particles data to avoid re-renders changing positions
-  const particles = useMemo(
-    () =>
-      Array.from({ length: 12 }, (_, i) => ({
-        id: `confetti-${Date.now()}-${i}`,
-        initialX: Math.random() * 100,
-        initialY: Math.random() * 100,
-      })),
-    [], // Empty dependency array means this only runs once
-  );
-
-  if (!isActive || prefersReducedMotion) return null;
-
-  return (
-    <div className="absolute inset-0 overflow-hidden pointer-events-none">
-      {particles.map((particle) => (
-        <ConfettiParticle
-          key={particle.id}
-          initialX={particle.initialX}
-          initialY={particle.initialY}
-        />
-      ))}
-    </div>
-  );
 }
 
 function FeedbackForm({
@@ -446,9 +379,10 @@ function ThumbsSelector({
   }, [onThumbClick]);
 
   const thumbsContainerClass = cn(
-    "absolute bottom-14 right-0 rounded-2xl border p-4 shadow-2xl backdrop-blur-lg",
-    // Mobile responsive width
-    "w-64 sm:w-72",
+    // Position higher to avoid clipping with scaled button (bottom-20 accounts for 1.2x scale)
+    "absolute bottom-20 right-0 rounded-2xl border p-4 shadow-2xl backdrop-blur-lg",
+    // Smaller on desktop, larger on mobile as requested
+    "w-64 sm:w-60",
     themedClass(
       theme,
       "border-white/60 bg-white/90 text-slate-700",
@@ -550,7 +484,8 @@ function ConfirmationDialog({
   onNo,
 }: ConfirmationDialogProps) {
   const confirmContainerClass = cn(
-    "absolute bottom-14 right-0 rounded-2xl border p-5 shadow-2xl backdrop-blur-lg",
+    // Position higher to avoid clipping with scaled button (bottom-20 accounts for 1.2x scale)
+    "absolute bottom-20 right-0 rounded-2xl border p-5 shadow-2xl backdrop-blur-lg",
     // Mobile responsive width
     "w-72 sm:w-80",
     themedClass(
@@ -644,7 +579,8 @@ function FeedbackFormContainer({
   onErrorChange,
 }: FeedbackFormContainerProps) {
   const formContainerClass = cn(
-    "absolute bottom-14 right-0 rounded-2xl border p-5 shadow-2xl backdrop-blur-lg",
+    // Position higher to avoid clipping with scaled button (bottom-20 accounts for 1.2x scale)
+    "absolute bottom-20 right-0 rounded-2xl border p-5 shadow-2xl backdrop-blur-lg",
     // Mobile responsive width - wider for better usability
     "w-80 sm:w-96",
     themedClass(
@@ -712,8 +648,8 @@ function FeedbackBubbleButton({
 }: FeedbackBubbleButtonProps) {
   const bubbleButtonClass = cn(
     "flex items-center justify-center rounded-full shadow-lg transition-all duration-300",
-    // Larger button on mobile for better touch targets
-    "h-14 w-14 sm:h-16 sm:w-16",
+    // Smaller button size - reduced from h-14 w-14 sm:h-16 sm:w-16
+    "h-12 w-12 sm:h-14 sm:w-14",
     themedClass(
       theme,
       "bg-orange-500 text-white hover:bg-orange-600 hover:shadow-xl",
@@ -791,6 +727,7 @@ function FeedbackBubbleButton({
 export function FeedbackBubble({ className }: FeedbackBubbleProps) {
   const { theme } = useTheme();
   const prefersReducedMotion = useReducedMotion();
+  const scrollProgress = useScrollProgress();
 
   const [isVisible, setIsVisible] = useState(false);
   const [feedbackStep, setFeedbackStep] = useState<
@@ -801,23 +738,52 @@ export function FeedbackBubble({ className }: FeedbackBubbleProps) {
   );
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [showConfetti, setShowConfetti] = useState(false);
 
-  // Show bubble after specified time
+  // Function to trigger confetti at the button location
+  const triggerConfetti = useCallback(() => {
+    // Calculate button position in pixels - updated for smaller button sizes
+    const isMobile = window.innerWidth < 640; // Tailwind sm breakpoint
+    const bottomOffset = isMobile ? 80 : 24; // bottom-20 = 80px, bottom-6 = 24px
+    const rightOffset = isMobile ? 16 : 24; // right-4 = 16px, right-6 = 24px
+    const buttonSize = isMobile ? 48 : 56; // h-12 w-12 (48px) or h-14 w-14 (56px)
+
+    // Calculate center of button from bottom-right of viewport
+    const buttonCenterX = window.innerWidth - rightOffset - buttonSize / 2;
+    const buttonCenterY = window.innerHeight - bottomOffset - buttonSize / 2;
+
+    // Trigger the new Discord-style confetti
+    celebrateNew({
+      x: buttonCenterX,
+      y: buttonCenterY,
+      duration: 4000, // 4 seconds for the animation
+    });
+  }, []);
+
+  // Show bubble after specified time OR after user scrolls 25% of the page
   useEffect(() => {
     const timer = setTimeout(() => {
       // Check if feedback was already submitted in this session
       const hasSubmitted = sessionStorage.getItem("feedback-submitted");
       if (!hasSubmitted) {
         setIsVisible(true);
-        setShowConfetti(true);
-        // Stop confetti after animation completes
-        setTimeout(() => setShowConfetti(false), 2000);
+        triggerConfetti();
       }
     }, SHOW_AFTER_TIME);
 
     return () => clearTimeout(timer);
-  }, []);
+  }, [triggerConfetti]);
+
+  // Also show bubble when user scrolls more than 50% of the page
+  useEffect(() => {
+    if (scrollProgress >= SHOW_AFTER_SCROLL_PROGRESS && !isVisible) {
+      // Check if feedback was already submitted in this session
+      const hasSubmitted = sessionStorage.getItem("feedback-submitted");
+      if (!hasSubmitted) {
+        setIsVisible(true);
+        triggerConfetti();
+      }
+    }
+  }, [scrollProgress, isVisible, triggerConfetti]);
 
   const pageclipApiKey = import.meta.env.VITE_PAGECLIP_API_KEY as
     | string
@@ -917,54 +883,70 @@ export function FeedbackBubble({ className }: FeedbackBubbleProps) {
     className,
   );
 
-  if (!isVisible) return null;
-
   return (
-    <div className={bubbleClass}>
-      <AnimatePresence>
-        {/* Thumbs Up/Down Selection */}
-        {feedbackStep === "thumbs" && (
-          <ThumbsSelector
+    <AnimatePresence>
+      {isVisible && (
+        <motion.div
+          className={bubbleClass}
+          initial={
+            prefersReducedMotion ? undefined : { opacity: 0, scale: 0.5, y: 20 }
+          }
+          animate={
+            prefersReducedMotion ? undefined : { opacity: 1, scale: 1, y: 0 }
+          }
+          exit={
+            prefersReducedMotion
+              ? { opacity: 0 }
+              : { opacity: 0, scale: 0.3, y: 20 }
+          }
+          transition={{
+            duration: 0.3,
+            ease: "easeOut",
+          }}
+        >
+          <AnimatePresence>
+            {/* Thumbs Up/Down Selection */}
+            {feedbackStep === "thumbs" && (
+              <ThumbsSelector
+                theme={theme}
+                prefersReducedMotion={prefersReducedMotion}
+                selectedThumb={selectedThumb}
+                onThumbClick={handleThumbClick}
+              />
+            )}
+
+            {/* Confirmation Dialog */}
+            {feedbackStep === "confirm" && (
+              <ConfirmationDialog
+                theme={theme}
+                prefersReducedMotion={prefersReducedMotion}
+                onYes={handleConfirmYes}
+                onNo={handleConfirmNo}
+              />
+            )}
+
+            {/* Full Feedback Form */}
+            {feedbackStep === "form" && (
+              <FeedbackFormContainer
+                theme={theme}
+                prefersReducedMotion={prefersReducedMotion}
+                onSubmit={handleSubmit}
+                onClose={handleFormClose}
+                isSubmitting={isSubmitting}
+                errorMessage={errorMessage}
+                onErrorChange={setErrorMessage}
+              />
+            )}
+          </AnimatePresence>
+
+          <FeedbackBubbleButton
             theme={theme}
             prefersReducedMotion={prefersReducedMotion}
-            selectedThumb={selectedThumb}
-            onThumbClick={handleThumbClick}
+            feedbackStep={feedbackStep}
+            onClick={handleBubbleClick}
           />
-        )}
-
-        {/* Confirmation Dialog */}
-        {feedbackStep === "confirm" && (
-          <ConfirmationDialog
-            theme={theme}
-            prefersReducedMotion={prefersReducedMotion}
-            onYes={handleConfirmYes}
-            onNo={handleConfirmNo}
-          />
-        )}
-
-        {/* Full Feedback Form */}
-        {feedbackStep === "form" && (
-          <FeedbackFormContainer
-            theme={theme}
-            prefersReducedMotion={prefersReducedMotion}
-            onSubmit={handleSubmit}
-            onClose={handleFormClose}
-            isSubmitting={isSubmitting}
-            errorMessage={errorMessage}
-            onErrorChange={setErrorMessage}
-          />
-        )}
-      </AnimatePresence>
-
-      <FeedbackBubbleButton
-        theme={theme}
-        prefersReducedMotion={prefersReducedMotion}
-        feedbackStep={feedbackStep}
-        onClick={handleBubbleClick}
-      />
-
-      {/* Confetti effect when bubble first appears */}
-      <ConfettiEffect isActive={showConfetti} />
-    </div>
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 }
