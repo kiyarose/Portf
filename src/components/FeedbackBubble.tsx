@@ -21,13 +21,29 @@ const SHOW_AFTER_SCROLL_PROGRESS = 0.5; // 50%
 
 // Discord-style bold colors - vibrant and saturated
 const BOLD_CONFETTI_COLORS = [
-  '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FECA57', 
-  '#FF9FF3', '#54A0FF', '#5F27CD', '#00D2D3', '#FF9F43',
-  '#EE5A24', '#0ABDE3', '#10AC84', '#F79F1F', '#A3CB38',
-  '#FD79A8', '#6C5CE7', '#A29BFE', '#74B9FF', '#81ECEC'
+  "#FF6B6B",
+  "#4ECDC4",
+  "#45B7D1",
+  "#96CEB4",
+  "#FECA57",
+  "#FF9FF3",
+  "#54A0FF",
+  "#5F27CD",
+  "#00D2D3",
+  "#FF9F43",
+  "#EE5A24",
+  "#0ABDE3",
+  "#10AC84",
+  "#F79F1F",
+  "#A3CB38",
+  "#FD79A8",
+  "#6C5CE7",
+  "#A29BFE",
+  "#74B9FF",
+  "#81ECEC",
 ];
 
-const CONFETTI_SHAPES = ['circle', 'square', 'triangle'] as const;
+const CONFETTI_SHAPES = ["circle", "square", "triangle"] as const;
 
 interface FeedbackBubbleProps {
   className?: string;
@@ -54,7 +70,7 @@ function ConfettiParticle({
   initialY: number;
   angle: number;
   size: number;
-  shape: 'circle' | 'square' | 'triangle';
+  shape: "circle" | "square" | "triangle";
   color: string;
 }) {
   const prefersReducedMotion = useReducedMotion();
@@ -69,14 +85,14 @@ function ConfettiParticle({
   // Shape-specific styling
   const getShapeClass = () => {
     switch (shape) {
-      case 'circle':
-        return 'rounded-full';
-      case 'square':
-        return 'rounded-sm';
-      case 'triangle':
-        return 'rounded-sm transform rotate-45';
+      case "circle":
+        return "rounded-full";
+      case "square":
+        return "rounded-sm";
+      case "triangle":
+        return "rounded-sm transform rotate-45";
       default:
-        return 'rounded-full';
+        return "rounded-full";
     }
   };
 
@@ -90,7 +106,7 @@ function ConfettiParticle({
         left: `${initialX}%`,
         top: `${initialY}%`,
         // Add shadow for more prominence
-        boxShadow: '0 0 10px rgba(0,0,0,0.3)',
+        boxShadow: "0 0 10px rgba(0,0,0,0.3)",
       }}
       initial={{
         opacity: 1,
@@ -120,7 +136,8 @@ function ConfettiEffect({ isActive }: { isActive: boolean }) {
   // Generate more particles for bolder effect - similar to Discord
   const particles = useMemo(
     () =>
-      Array.from({ length: 25 }, (_, i) => ({ // Increased from 12 to 25 particles
+      Array.from({ length: 25 }, (_, i) => ({
+        // Increased from 12 to 25 particles
         id: `confetti-${Date.now()}-${i}`,
         // Start particles from the button position (bottom right corner)
         initialX: 85, // Button is positioned at right edge, so start around 85%
@@ -130,9 +147,13 @@ function ConfettiEffect({ isActive }: { isActive: boolean }) {
         // Random size for variety - bigger particles like Discord
         size: 8 + Math.random() * 12, // 8-20px particles (much larger than 2px)
         // Random shape for visual interest
-        shape: CONFETTI_SHAPES[Math.floor(Math.random() * CONFETTI_SHAPES.length)],
+        shape:
+          CONFETTI_SHAPES[Math.floor(Math.random() * CONFETTI_SHAPES.length)],
         // Random bold color
-        color: BOLD_CONFETTI_COLORS[Math.floor(Math.random() * BOLD_CONFETTI_COLORS.length)],
+        color:
+          BOLD_CONFETTI_COLORS[
+            Math.floor(Math.random() * BOLD_CONFETTI_COLORS.length)
+          ],
       })),
     [], // Empty dependency array means this only runs once
   );
