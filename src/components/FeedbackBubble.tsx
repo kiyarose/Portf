@@ -1014,13 +1014,15 @@ export function FeedbackBubble({ className }: FeedbackBubbleProps) {
     <>
       {/* Confetti effect when bubble first appears - positioned at document level to avoid clipping */}
       <ConfettiEffect isActive={showConfetti} />
-      
+
       <AnimatePresence>
         {isVisible && (
           <motion.div
             className={bubbleClass}
             initial={
-              prefersReducedMotion ? undefined : { opacity: 0, scale: 0.5, y: 20 }
+              prefersReducedMotion
+                ? undefined
+                : { opacity: 0, scale: 0.5, y: 20 }
             }
             animate={
               prefersReducedMotion ? undefined : { opacity: 1, scale: 1, y: 0 }
