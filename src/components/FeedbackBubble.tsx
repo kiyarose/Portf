@@ -123,7 +123,7 @@ function ConfettiParticle({
         rotate: Math.random() * 720, // More rotation for dramatic effect
       }}
       transition={{
-        duration: 2 + Math.random() * 1, // Longer duration: 2-3 seconds
+        duration: 2 + Number(Math.random()), // Longer duration: 2-3 seconds
         ease: "easeOut",
       }}
     />
