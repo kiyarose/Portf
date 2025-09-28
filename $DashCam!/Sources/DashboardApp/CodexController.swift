@@ -181,10 +181,10 @@ final class CodexController: ObservableObject {
     guard !binary.isEmpty else {
       throw CodexError.commandNotConfigured
     }
-    
+
     // Validate that the command exists and is executable
     let resolvedPath = try validateCommand(binary, environment: configuredEnvironment())
-    
+
     let args = CodexController.shellSplit(commandArguments)
     return CommandContext(
       binary: resolvedPath,
@@ -216,19 +216,20 @@ final class CodexController: ObservableObject {
       }
       return binary
     }
-    
+
     // Otherwise, search in PATH
     let pathEnv = environment["PATH"] ?? ""
     let pathComponents = pathEnv.split(separator: ":").map(String.init)
-    
+
     for pathDir in pathComponents {
       let fullPath = "\(pathDir)/\(binary)"
       let fileManager = FileManager.default
-      if fileManager.fileExists(atPath: fullPath) && fileManager.isExecutableFile(atPath: fullPath) {
+      if fileManager.fileExists(atPath: fullPath) && fileManager.isExecutableFile(atPath: fullPath)
+      {
         return fullPath
       }
     }
-    
+
     throw CodexError.commandNotFound(binary)
   }
 
@@ -371,7 +372,8 @@ enum CodexError: LocalizedError {
     case .commandNotConfigured:
       return "Set the Codex command before sending prompts."
     case let .commandNotFound(binary):
-      return "Command '\(binary)' not found. Please check the command path and ensure it's installed."
+      return
+        "Command '\(binary)' not found. Please check the command path and ensure it's installed."
     case let .commandNotExecutable(binary):
       return "Command '\(binary)' is not executable. Please check the file permissions."
     case let .commandExited(code, stderr):
