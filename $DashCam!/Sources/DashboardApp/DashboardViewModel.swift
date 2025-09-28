@@ -222,7 +222,7 @@ final class DashboardViewModel: ObservableObject {
     )
     self.gitController = GitController()
     self.codexProcess = ProcessController(
-      name: "Codex", 
+      name: "Codex",
       command: [ProcessInfo.processInfo.environment["CODEX_COMMAND"] ?? "codex"]
     )
     self.pluginOrder = restoredOrder

@@ -8,7 +8,8 @@ struct CodexMGM: View {
   var body: some View {
     ProcessCard(
       controller: controller,
-      description: "Interactive Codex assistant for development tasks. Uses the command configured in environment variables or 'codex' by default.",
+      description:
+        "Interactive Codex assistant for development tasks. Uses the command configured in environment variables or 'codex' by default.",
       isCollapsed: $isCollapsed,
       preferredHeight: $preferredHeight
     ) {
@@ -20,7 +21,8 @@ struct CodexMGM: View {
 
 private struct CodexControls: View {
   @ObservedObject var controller: ProcessController
-  @State private var codexCommand: String = ProcessInfo.processInfo.environment["CODEX_COMMAND"] ?? "codex"
+  @State private var codexCommand: String =
+    ProcessInfo.processInfo.environment["CODEX_COMMAND"] ?? "codex"
 
   var body: some View {
     VStack(alignment: .leading, spacing: 8) {
@@ -34,16 +36,18 @@ private struct CodexControls: View {
             updateCommand()
           }
       }
-      
-      Text("Configure the codex command to use. Set CODEX_COMMAND environment variable or modify here.")
-        .font(.footnote)
-        .foregroundStyle(.secondary)
+
+      Text(
+        "Configure the codex command to use. Set CODEX_COMMAND environment variable or modify here."
+      )
+      .font(.footnote)
+      .foregroundStyle(.secondary)
     }
     .onAppear {
       updateCommand()
     }
   }
-  
+
   private func updateCommand() {
     controller.updateCommand([codexCommand])
   }
