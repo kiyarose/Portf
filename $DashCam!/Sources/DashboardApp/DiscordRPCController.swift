@@ -137,7 +137,7 @@ final class DiscordRPCController: ObservableObject {
   private func sendHandshake(_ data: Data) -> Bool {
     do {
       let fileHandle = try FileHandle(forWritingTo: URL(fileURLWithPath: ipcPath))
-      defer { 
+      defer {
         try? fileHandle.close()
       }
 
@@ -165,7 +165,7 @@ final class DiscordRPCController: ObservableObject {
 
     do {
       let fileHandle = try FileHandle(forWritingTo: URL(fileURLWithPath: ipcPath))
-      defer { 
+      defer {
         try? fileHandle.close()
       }
 
