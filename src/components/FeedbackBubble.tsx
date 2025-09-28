@@ -1,12 +1,13 @@
 import { Icon } from "@iconify/react";
 import { motion, useReducedMotion, AnimatePresence } from "framer-motion";
-import { useCallback, useState, useEffect, useMemo } from "react";
+import { useCallback, useState, useEffect } from "react";
 import { useTheme } from "../hooks/useTheme";
 import { useScrollProgress } from "../hooks/useScrollProgress";
 import type { Theme } from "../providers/theme-context";
 import { themedClass } from "../utils/themeClass";
 import { cn } from "../utils/cn";
 import { safeConsoleError } from "../utils/errorSanitizer";
+import { celebrateNew } from "../utils/confetti";
 import type {
   FeedbackFormData,
   FeedbackType,
@@ -19,32 +20,6 @@ const SHOW_AFTER_TIME = 30000; // 30 seconds
 // Scroll progress threshold (50% of page) to show feedback bubble
 const SHOW_AFTER_SCROLL_PROGRESS = 0.5; // 50%
 
-// Discord-style bold colors - vibrant and saturated
-const BOLD_CONFETTI_COLORS = [
-  "#FF6B6B",
-  "#4ECDC4",
-  "#45B7D1",
-  "#96CEB4",
-  "#FECA57",
-  "#FF9FF3",
-  "#54A0FF",
-  "#5F27CD",
-  "#00D2D3",
-  "#FF9F43",
-  "#EE5A24",
-  "#0ABDE3",
-  "#10AC84",
-  "#F79F1F",
-  "#A3CB38",
-  "#FD79A8",
-  "#6C5CE7",
-  "#A29BFE",
-  "#74B9FF",
-  "#81ECEC",
-];
-
-const CONFETTI_SHAPES = ["circle", "square", "triangle"] as const;
-
 interface FeedbackBubbleProps {
   className?: string;
 }
@@ -55,142 +30,6 @@ interface FeedbackFormProps {
   isSubmitting: boolean;
   errorMessage: string | null;
   onErrorChange: (message: string | null) => void;
-}
-
-// Confetti component for celebration effect - Discord-style bold confetti
-function ConfettiParticle({
-  initialX,
-  initialY,
-  angle,
-  size,
-  shape,
-  color,
-}: {
-  initialX: number;
-  initialY: number;
-  angle: number;
-  size: number;
-  shape: "circle" | "square" | "triangle";
-  color: string;
-}) {
-  const prefersReducedMotion = useReducedMotion();
-
-  if (prefersReducedMotion) return null;
-
-  // Calculate directional movement based on angle (burst outward from button)
-  const distance = 300 + Math.random() * 400; // Increased distance: 300-700px for more dramatic effect
-  const moveX = Math.cos(angle) * distance;
-  const moveY = Math.sin(angle) * distance;
-
-  // Shape-specific styling
-  const getShapeClass = () => {
-    switch (shape) {
-      case "circle":
-        return "rounded-full";
-      case "square":
-        return "rounded-sm";
-      case "triangle":
-        return "rounded-sm transform rotate-45";
-      default:
-        return "rounded-full";
-    }
-  };
-
-  return (
-    <motion.div
-      className={`absolute ${getShapeClass()}`}
-      style={{
-        width: `${size}px`,
-        height: `${size}px`,
-        background: color,
-        left: `${initialX}px`, // Now using pixel coordinates instead of percentages
-        top: `${initialY}px`, // Now using pixel coordinates instead of percentages
-        // Add shadow for more prominence
-        boxShadow: "0 0 10px rgba(0,0,0,0.3)",
-      }}
-      initial={{
-        opacity: 1,
-        scale: 0,
-        x: 0,
-        y: 0,
-        rotate: 0,
-      }}
-      animate={{
-        opacity: 0,
-        scale: [0, 1.2, 0.8, 0], // More dramatic scaling sequence
-        x: moveX,
-        y: moveY,
-        rotate: Math.random() * 720, // More rotation for dramatic effect
-      }}
-      transition={{
-        duration: 2 + Number(Math.random()), // Longer duration: 2-3 seconds
-        ease: "easeOut",
-      }}
-    />
-  );
-}
-
-function ConfettiEffect({ isActive }: { isActive: boolean }) {
-  const prefersReducedMotion = useReducedMotion();
-
-  // Generate more particles for bolder effect - similar to Discord
-  const particles = useMemo(
-    () =>
-      Array.from({ length: 25 }, (_, i) => {
-        // Calculate button position in pixels
-        // Mobile: bottom-20 (80px) right-4 (16px)
-        // Desktop: sm:bottom-6 (24px) sm:right-6 (24px)
-        // Use responsive values that match bubble positioning
-        const isMobile = window.innerWidth < 640; // Tailwind sm breakpoint
-        const bottomOffset = isMobile ? 80 : 24; // bottom-20 = 80px, bottom-6 = 24px
-        const rightOffset = isMobile ? 16 : 24; // right-4 = 16px, right-6 = 24px
-        const buttonSize = isMobile ? 56 : 64; // h-14 w-14 (56px) or h-16 w-16 (64px)
-
-        // Calculate center of button from bottom-right of viewport
-        const buttonCenterX = window.innerWidth - rightOffset - buttonSize / 2;
-        const buttonCenterY =
-          window.innerHeight - bottomOffset - buttonSize / 2;
-
-        return {
-          // Increased from 12 to 25 particles
-          id: `confetti-${Date.now()}-${i}`,
-          // Start particles from the actual button center position in pixels
-          initialX: buttonCenterX,
-          initialY: buttonCenterY,
-          // Generate random angle for direction (spreading outward from button)
-          angle: (Math.PI * 2 * i) / 25 + (Math.random() - 0.5) * 0.8, // More spread
-          // Random size for variety - bigger particles like Discord
-          size: 8 + Math.random() * 12, // 8-20px particles (much larger than 2px)
-          // Random shape for visual interest
-          shape:
-            CONFETTI_SHAPES[Math.floor(Math.random() * CONFETTI_SHAPES.length)],
-          // Random bold color
-          color:
-            BOLD_CONFETTI_COLORS[
-              Math.floor(Math.random() * BOLD_CONFETTI_COLORS.length)
-            ],
-        };
-      }),
-    [], // Empty dependency array means this only runs once
-  );
-
-  if (!isActive || prefersReducedMotion) return null;
-
-  return (
-    <div className="fixed inset-0 overflow-visible pointer-events-none z-50">
-      {particles.map((particle) => (
-        <ConfettiParticle
-          key={particle.id}
-          initialX={particle.initialX}
-          initialY={particle.initialY}
-          angle={particle.angle}
-          size={particle.size}
-          shape={particle.shape}
-          color={particle.color}
-        />
-      ))}
-    </div>
-  );
 }
 
 function FeedbackForm({
@@ -896,7 +735,26 @@ export function FeedbackBubble({ className }: FeedbackBubbleProps) {
   );
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [showConfetti, setShowConfetti] = useState(false);
+
+  // Function to trigger confetti at the button location
+  const triggerConfetti = useCallback(() => {
+    // Calculate button position in pixels - same logic as the old embedded confetti
+    const isMobile = window.innerWidth < 640; // Tailwind sm breakpoint
+    const bottomOffset = isMobile ? 80 : 24; // bottom-20 = 80px, bottom-6 = 24px
+    const rightOffset = isMobile ? 16 : 24; // right-4 = 16px, right-6 = 24px
+    const buttonSize = isMobile ? 56 : 64; // h-14 w-14 (56px) or h-16 w-16 (64px)
+
+    // Calculate center of button from bottom-right of viewport
+    const buttonCenterX = window.innerWidth - rightOffset - buttonSize / 2;
+    const buttonCenterY = window.innerHeight - bottomOffset - buttonSize / 2;
+
+    // Trigger the new Discord-style confetti
+    celebrateNew({
+      x: buttonCenterX,
+      y: buttonCenterY,
+      duration: 4000, // 4 seconds for the animation
+    });
+  }, []);
 
   // Show bubble after specified time OR after user scrolls 25% of the page
   useEffect(() => {
@@ -905,14 +763,12 @@ export function FeedbackBubble({ className }: FeedbackBubbleProps) {
       const hasSubmitted = sessionStorage.getItem("feedback-submitted");
       if (!hasSubmitted) {
         setIsVisible(true);
-        setShowConfetti(true);
-        // Stop confetti after animation completes
-        setTimeout(() => setShowConfetti(false), 2000);
+        triggerConfetti();
       }
     }, SHOW_AFTER_TIME);
 
     return () => clearTimeout(timer);
-  }, []);
+  }, [triggerConfetti]);
 
   // Also show bubble when user scrolls more than 50% of the page
   useEffect(() => {
@@ -921,12 +777,10 @@ export function FeedbackBubble({ className }: FeedbackBubbleProps) {
       const hasSubmitted = sessionStorage.getItem("feedback-submitted");
       if (!hasSubmitted) {
         setIsVisible(true);
-        setShowConfetti(true);
-        // Stop confetti after animation completes
-        setTimeout(() => setShowConfetti(false), 2000);
+        triggerConfetti();
       }
     }
-  }, [scrollProgress, isVisible]);
+  }, [scrollProgress, isVisible, triggerConfetti]);
 
   const pageclipApiKey = import.meta.env.VITE_PAGECLIP_API_KEY as
     | string
@@ -1027,12 +881,8 @@ export function FeedbackBubble({ className }: FeedbackBubbleProps) {
   );
 
   return (
-    <>
-      {/* Confetti effect when bubble first appears - positioned at document level to avoid clipping */}
-      <ConfettiEffect isActive={showConfetti} />
-
-      <AnimatePresence>
-        {isVisible && (
+    <AnimatePresence>
+      {isVisible && (
           <motion.div
             className={bubbleClass}
             initial={
@@ -1097,6 +947,5 @@ export function FeedbackBubble({ className }: FeedbackBubbleProps) {
           </motion.div>
         )}
       </AnimatePresence>
-    </>
-  );
+    );
 }
