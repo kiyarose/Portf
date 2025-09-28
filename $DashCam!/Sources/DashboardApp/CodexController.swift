@@ -1,5 +1,6 @@
 import Combine
 import Foundation
+import Darwin
 
 @MainActor
 final class CodexController: ObservableObject {
@@ -269,41 +270,141 @@ final class CodexController: ObservableObject {
     -> String
   {
     try await Task.detached(priority: .userInitiated) {
-      let process = Process()
-      process.executableURL = URL(fileURLWithPath: "/usr/bin/env")
-      process.arguments = [context.binary] + context.arguments
-      process.environment = context.environment
-      process.currentDirectoryURL = context.workingDirectory
-
-      let stdinPipe = Pipe()
-      let stdoutPipe = Pipe()
-      let stderrPipe = Pipe()
-
-      process.standardInput = stdinPipe
-      process.standardOutput = stdoutPipe
-      process.standardError = stderrPipe
-
-      try process.run()
-
-      if let data = (prompt + "\n").data(using: .utf8) {
-        stdinPipe.fileHandleForWriting.write(data)
+      do {
+        return try runCodexCommand(prompt: prompt, context: context, usePseudoTerminal: false)
+      } catch {
+        guard case let CodexError.commandExited(code, stderr) = error,
+          code != 0,
+          stderr.localizedCaseInsensitiveContains("device not configured")
+            || stderr.localizedCaseInsensitiveContains("os error 6")
+        else {
+          throw error
+        }
+        return try runCodexCommand(prompt: prompt, context: context, usePseudoTerminal: true)
       }
-      stdinPipe.fileHandleForWriting.closeFile()
-
-      process.waitUntilExit()
-
-      let stdoutData = stdoutPipe.fileHandleForReading.readDataToEndOfFile()
-      let stderrData = stderrPipe.fileHandleForReading.readDataToEndOfFile()
-      let stdout = String(data: stdoutData, encoding: .utf8) ?? ""
-      let stderr = String(data: stderrData, encoding: .utf8) ?? ""
-
-      if process.terminationStatus != 0 {
-        throw CodexError.commandExited(code: process.terminationStatus, stderr: stderr)
-      }
-
-      let trimmed = stdout.trimmingCharacters(in: .whitespacesAndNewlines)
-      return trimmed.isEmpty ? "Codex command completed with no output." : trimmed
     }.value
+  }
+
+  nonisolated private static func runCodexCommand(
+    prompt: String,
+    context: CommandContext,
+    usePseudoTerminal: Bool
+  ) throws -> String {
+    let result: CommandResult
+    if usePseudoTerminal {
+      result = try runWithPseudoTerminal(prompt: prompt, context: context)
+    } else {
+      result = try runWithPipes(prompt: prompt, context: context)
+    }
+
+    if result.exitCode != 0 {
+      throw CodexError.commandExited(code: result.exitCode, stderr: result.stderr)
+    }
+
+    let trimmed = result.stdout.trimmingCharacters(in: .whitespacesAndNewlines)
+    return trimmed.isEmpty ? "Codex command completed with no output." : trimmed
+  }
+
+  nonisolated private static func runWithPipes(prompt: String, context: CommandContext) throws
+    -> CommandResult
+  {
+    let process = Process()
+    process.executableURL = URL(fileURLWithPath: "/usr/bin/env")
+    process.arguments = [context.binary] + context.arguments
+    process.environment = context.environment
+    process.currentDirectoryURL = context.workingDirectory
+
+    let stdinPipe = Pipe()
+    let stdoutPipe = Pipe()
+    let stderrPipe = Pipe()
+
+    process.standardInput = stdinPipe
+    process.standardOutput = stdoutPipe
+    process.standardError = stderrPipe
+
+    try process.run()
+
+    if let data = (prompt + "\n").data(using: .utf8) {
+      stdinPipe.fileHandleForWriting.write(data)
+    }
+    stdinPipe.fileHandleForWriting.closeFile()
+
+    process.waitUntilExit()
+
+    let stdoutData = stdoutPipe.fileHandleForReading.readDataToEndOfFile()
+    let stderrData = stderrPipe.fileHandleForReading.readDataToEndOfFile()
+    let stdout = String(data: stdoutData, encoding: .utf8) ?? ""
+    let stderr = String(data: stderrData, encoding: .utf8) ?? ""
+
+    return CommandResult(exitCode: process.terminationStatus, stdout: stdout, stderr: stderr)
+  }
+
+  nonisolated private static func runWithPseudoTerminal(
+    prompt: String,
+    context: CommandContext
+  ) throws -> CommandResult {
+    var masterFD: Int32 = -1
+    var slaveFD: Int32 = -1
+    guard openpty(&masterFD, &slaveFD, nil, nil, nil) == 0 else {
+      let errorCode = POSIXErrorCode(rawValue: errno) ?? .EIO
+      throw POSIXError(errorCode)
+    }
+
+    let masterHandle = FileHandle(fileDescriptor: masterFD, closeOnDealloc: true)
+    let slaveHandle = FileHandle(fileDescriptor: slaveFD, closeOnDealloc: true)
+    let writerFD = dup(masterFD)
+    guard writerFD != -1 else {
+      let errorCode = POSIXErrorCode(rawValue: errno) ?? .EIO
+      throw POSIXError(errorCode)
+    }
+    let writerHandle = FileHandle(fileDescriptor: writerFD, closeOnDealloc: true)
+
+    var term = termios()
+    if tcgetattr(slaveFD, &term) == 0 {
+      term.c_lflag &= ~tcflag_t(ECHO)
+      _ = tcsetattr(slaveFD, TCSANOW, &term)
+    }
+
+    let process = Process()
+    process.executableURL = URL(fileURLWithPath: "/usr/bin/env")
+    process.arguments = [context.binary] + context.arguments
+    process.environment = context.environment
+    process.currentDirectoryURL = context.workingDirectory
+    process.standardInput = slaveHandle
+    process.standardOutput = slaveHandle
+    process.standardError = slaveHandle
+
+    let captureLock = NSLock()
+    var capturedData = Data()
+    let captureGroup = DispatchGroup()
+
+    try process.run()
+
+    captureGroup.enter()
+    DispatchQueue.global(qos: .userInitiated).async {
+      while true {
+        let data = masterHandle.availableData
+        if data.isEmpty {
+          break
+        }
+        captureLock.lock()
+        capturedData.append(data)
+        captureLock.unlock()
+      }
+      captureGroup.leave()
+    }
+
+    if let data = (prompt + "\n").data(using: .utf8) {
+      writerHandle.write(data)
+    }
+    writerHandle.write(Data([0x04]))
+    writerHandle.closeFile()
+
+    process.waitUntilExit()
+    captureGroup.wait()
+
+    let combined = String(data: capturedData, encoding: .utf8) ?? ""
+    return CommandResult(exitCode: process.terminationStatus, stdout: combined, stderr: combined)
   }
 
   nonisolated private static func describe(error: Error) -> String {
@@ -325,6 +426,12 @@ private struct CommandContext {
   let arguments: [String]
   let environment: [String: String]
   let workingDirectory: URL?
+}
+
+private struct CommandResult {
+  let exitCode: Int32
+  let stdout: String
+  let stderr: String
 }
 
 enum CodexError: LocalizedError {
