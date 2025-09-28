@@ -1,6 +1,6 @@
 import { Icon } from "@iconify/react";
 import { motion, useReducedMotion, AnimatePresence } from "framer-motion";
-import { useCallback, useState, useEffect } from "react";
+import { useCallback, useState, useEffect, useMemo } from "react";
 import { useTheme } from "../hooks/useTheme";
 import { themedClass } from "../utils/themeClass";
 import { cn } from "../utils/cn";
@@ -28,19 +28,18 @@ interface FeedbackFormProps {
 }
 
 // Confetti component for celebration effect
-function ConfettiParticle({ index }: { index: number }) {
+function ConfettiParticle({ initialX, initialY }: { initialX: number; initialY: number }) {
   const prefersReducedMotion = useReducedMotion();
 
   if (prefersReducedMotion) return null;
 
   return (
     <motion.div
-      key={index}
       className="absolute h-2 w-2 rounded-full"
       style={{
         background: `hsl(${Math.random() * 360}, 70%, 60%)`,
-        left: `${Math.random() * 100}%`,
-        top: `${Math.random() * 100}%`,
+        left: `${initialX}%`,
+        top: `${initialY}%`,
       }}
       initial={{
         opacity: 1,
@@ -67,12 +66,26 @@ function ConfettiParticle({ index }: { index: number }) {
 function ConfettiEffect({ isActive }: { isActive: boolean }) {
   const prefersReducedMotion = useReducedMotion();
 
+  // Generate stable particles data to avoid re-renders changing positions
+  const particles = useMemo(() => 
+    Array.from({ length: 12 }, (_, i) => ({
+      id: `confetti-${Date.now()}-${i}`,
+      initialX: Math.random() * 100,
+      initialY: Math.random() * 100,
+    })),
+    [] // Empty dependency array means this only runs once
+  );
+
   if (!isActive || prefersReducedMotion) return null;
 
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none">
-      {Array.from({ length: 12 }).map((_, i) => (
-        <ConfettiParticle key={i} index={i} />
+      {particles.map((particle) => (
+        <ConfettiParticle
+          key={particle.id}
+          initialX={particle.initialX}
+          initialY={particle.initialY}
+        />
       ))}
     </div>
   );
