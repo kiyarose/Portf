@@ -55,9 +55,10 @@ jobs:
                 
                 // Find other runs for this PR that are still running
                 const concurrentRuns = runs.data.workflow_runs.filter(run => 
-                  run.id !== currentRunId && 
-                  run.head_commit.id !== context.sha &&
-                  run.event === 'pull_request'
+                  run.id !== currentRunId &&
+                  run.event === 'pull_request' &&
+                  Array.isArray(run.pull_requests) &&
+                  run.pull_requests.some(pr => pr.number === prNumber)
                 );
                 
                 if (concurrentRuns.length === 0) {
