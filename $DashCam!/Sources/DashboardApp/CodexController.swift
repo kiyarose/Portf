@@ -211,9 +211,39 @@ final class CodexController: ObservableObject {
       guard fileManager.fileExists(atPath: binary) else {
         throw CodexError.commandNotFound(binary)
       }
+      
+      // More thorough validation for absolute paths
+      var isDirectory: ObjCBool = false
+      guard fileManager.fileExists(atPath: binary, isDirectory: &isDirectory),
+            !isDirectory.boolValue else {
+        throw CodexError.processLaunchFailed(
+          binary: binary, 
+          reason: "The specified path is a directory, not an executable file."
+        )
+      }
+      
       guard fileManager.isExecutableFile(atPath: binary) else {
         throw CodexError.commandNotExecutable(binary)
       }
+      
+      // Additional check: try to get file attributes to ensure it's readable
+      do {
+        let attributes = try fileManager.attributesOfItem(atPath: binary)
+        let permissions = attributes[.posixPermissions] as? Int ?? 0
+        // Check if the file has execute permission for owner, group, or other
+        if permissions & 0o111 == 0 {
+          throw CodexError.processLaunchFailed(
+            binary: binary,
+            reason: "The file exists but has no execute permissions."
+          )
+        }
+      } catch {
+        throw CodexError.processLaunchFailed(
+          binary: binary,
+          reason: "Cannot access file attributes: \(error.localizedDescription)"
+        )
+      }
+      
       return binary
     }
 
@@ -224,9 +254,22 @@ final class CodexController: ObservableObject {
     for pathDir in pathComponents {
       let fullPath = "\(pathDir)/\(binary)"
       let fileManager = FileManager.default
-      if fileManager.fileExists(atPath: fullPath) && fileManager.isExecutableFile(atPath: fullPath)
-      {
-        return fullPath
+      
+      var isDirectory: ObjCBool = false
+      if fileManager.fileExists(atPath: fullPath, isDirectory: &isDirectory),
+         !isDirectory.boolValue,
+         fileManager.isExecutableFile(atPath: fullPath) {
+        // Additional validation for PATH-found commands
+        do {
+          let attributes = try fileManager.attributesOfItem(atPath: fullPath)
+          let permissions = attributes[.posixPermissions] as? Int ?? 0
+          if permissions & 0o111 != 0 {
+            return fullPath
+          }
+        } catch {
+          // If we can't get attributes, skip this candidate
+          continue
+        }
       }
     }
 
@@ -317,7 +360,37 @@ final class CodexController: ObservableObject {
       process.standardOutput = stdoutPipe
       process.standardError = stderrPipe
 
-      try process.run()
+      do {
+        try process.run()
+      } catch {
+        // Handle specific POSIX errors that can occur during process launch
+        if let posixError = error as? POSIXError {
+          switch posixError.code {
+          case .ENXIO: // Error 6: "Device not configured"
+            throw CodexError.processLaunchFailed(
+              binary: context.binary,
+              reason: "The command exists but cannot be executed. This may be due to architecture mismatch, missing dependencies, or permission issues."
+            )
+          case .ENOENT: // Error 2: "No such file or directory"
+            throw CodexError.processLaunchFailed(
+              binary: context.binary, 
+              reason: "The command file was not found at the expected path."
+            )
+          case .EACCES: // Error 13: "Permission denied"
+            throw CodexError.processLaunchFailed(
+              binary: context.binary,
+              reason: "Permission denied. The command file is not executable by the current user."
+            )
+          default:
+            throw CodexError.processLaunchFailed(
+              binary: context.binary,
+              reason: "Failed to launch command: \(posixError.localizedDescription)"
+            )
+          }
+        }
+        // Re-throw non-POSIX errors as-is
+        throw error
+      }
 
       if let data = (prompt + "\n").data(using: .utf8) {
         stdinPipe.fileHandleForWriting.write(data)
@@ -365,6 +438,7 @@ enum CodexError: LocalizedError {
   case commandNotConfigured
   case commandNotFound(String)
   case commandNotExecutable(String)
+  case processLaunchFailed(binary: String, reason: String)
   case commandExited(code: Int32, stderr: String)
 
   var errorDescription: String? {
@@ -376,6 +450,8 @@ enum CodexError: LocalizedError {
         "Command '\(binary)' not found. Please check the command path and ensure it's installed."
     case let .commandNotExecutable(binary):
       return "Command '\(binary)' is not executable. Please check the file permissions."
+    case let .processLaunchFailed(binary, reason):
+      return "Failed to launch '\(binary)': \(reason)"
     case let .commandExited(code, stderr):
       let message = stderr.trimmingCharacters(in: .whitespacesAndNewlines)
       if message.isEmpty {
