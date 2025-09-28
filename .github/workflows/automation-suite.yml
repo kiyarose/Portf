@@ -1,0 +1,259 @@
+name: Issue & PR Automation Suite
+
+on:
+  issues:
+    types: [opened, closed, reopened, labeled, unlabeled, milestoned, demilestoned]
+  pull_request:
+    types: [opened, closed, reopened, ready_for_review, converted_to_draft, synchronize, edited]
+  pull_request_target:
+    types: [opened, synchronize]
+
+permissions:
+  issues: write
+  pull-requests: write
+  repository-projects: write
+  contents: read
+
+jobs:
+  automation-suite:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Issue & PR Automation
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { owner, repo } = context.repo;
+            const eventName = context.eventName;
+            const action = context.payload.action;
+            
+            console.log(`Event: ${eventName}, Action: ${action}`);
+            
+            // Helper function to extract linked issue numbers from text
+            function extractIssueNumbers(text) {
+              const issuePattern = /#(\d+)|(?:close[ds]?|fix(?:e[ds]?)?|resolve[ds]?)\s+#(\d+)|(?:https?:\/\/)?(?:www\.)?github\.com\/[^\/]+\/[^\/]+\/issues\/(\d+)/gi;
+              const issueNumbers = new Set();
+              let match;
+              
+              while ((match = issuePattern.exec(text)) !== null) {
+                const issueNum = match[1] || match[2] || match[3];
+                if (issueNum) {
+                  issueNumbers.add(parseInt(issueNum));
+                }
+              }
+              
+              return Array.from(issueNumbers);
+            }
+            
+            // Helper function to find PRs that link to a specific issue
+            async function findLinkedPRs(issueNumber) {
+              const { data: prs } = await github.rest.pulls.list({
+                owner,
+                repo,
+                state: 'open',
+              });
+              
+              const linkedPRs = [];
+              
+              for (const pr of prs) {
+                const prText = `${pr.title} ${pr.body || ''}`;
+                const linkedIssues = extractIssueNumbers(prText);
+                
+                if (linkedIssues.includes(issueNumber)) {
+                  linkedPRs.push(pr.number);
+                }
+              }
+              
+              return linkedPRs;
+            }
+            
+            // ISSUE EVENTS
+            if (eventName === 'issues') {
+              const issue = context.payload.issue;
+              const issueNumber = issue.number;
+              
+              if (action === 'opened') {
+                console.log(`✨ New issue #${issueNumber} opened`);
+                console.log('📋 Would add to "Portfolio Devmt" project backlog');
+              }
+              
+              if (action === 'labeled' || action === 'unlabeled') {
+                console.log(`🏷️  Issue #${issueNumber} labels changed`);
+                
+                // Find linked PRs and sync labels
+                const linkedPRs = await findLinkedPRs(issueNumber);
+                console.log(`Found ${linkedPRs.length} linked PRs:`, linkedPRs);
+                
+                if (linkedPRs.length > 0) {
+                  const issueLabels = issue.labels.map(label => 
+                    typeof label === 'object' ? label.name : label
+                  ).filter(Boolean);
+                  
+                  console.log('📋 Issue labels:', issueLabels);
+                  
+                  for (const prNumber of linkedPRs) {
+                    try {
+                      await github.rest.issues.setLabels({
+                        owner,
+                        repo,
+                        issue_number: prNumber,
+                        labels: issueLabels,
+                      });
+                      
+                      console.log(`✅ Synced labels to PR #${prNumber}`);
+                    } catch (error) {
+                      console.log(`❌ Failed to sync labels to PR #${prNumber}:`, error.message);
+                    }
+                  }
+                }
+              }
+              
+              if (action === 'milestoned' || action === 'demilestoned') {
+                console.log(`📅 Issue #${issueNumber} milestone changed`);
+                
+                // Find linked PRs and sync milestone
+                const linkedPRs = await findLinkedPRs(issueNumber);
+                
+                for (const prNumber of linkedPRs) {
+                  try {
+                    await github.rest.issues.update({
+                      owner,
+                      repo,
+                      issue_number: prNumber,
+                      milestone: issue.milestone ? issue.milestone.number : null,
+                    });
+                    
+                    console.log(`✅ Synced milestone to PR #${prNumber}`);
+                  } catch (error) {
+                    console.log(`❌ Failed to sync milestone to PR #${prNumber}:`, error.message);
+                  }
+                }
+              }
+            }
+            
+            // PULL REQUEST EVENTS
+            if (eventName === 'pull_request' || eventName === 'pull_request_target') {
+              const pr = context.payload.pull_request;
+              const prNumber = pr.number;
+              const prText = `${pr.title} ${pr.body || ''}`;
+              const linkedIssues = extractIssueNumbers(prText);
+              
+              console.log(`🔀 PR #${prNumber} event: ${action}`);
+              console.log(`Found ${linkedIssues.length} linked issues:`, linkedIssues);
+              
+              if (action === 'opened') {
+                console.log(`📋 Would add PR #${prNumber} to project`);
+                
+                // Sync labels from linked issues to PR
+                if (linkedIssues.length > 0) {
+                  const allLabels = new Set();
+                  
+                  for (const issueNumber of linkedIssues) {
+                    try {
+                      const { data: issue } = await github.rest.issues.get({
+                        owner,
+                        repo,
+                        issue_number: issueNumber,
+                      });
+                      
+                      issue.labels.forEach(label => {
+                        if (typeof label === 'object' && label.name) {
+                          allLabels.add(label.name);
+                        }
+                      });
+                      
+                      console.log(`📅 Would move issue #${issueNumber} to "In Progress" status`);
+                      
+                    } catch (error) {
+                      console.log(`❌ Could not fetch issue #${issueNumber}:`, error.message);
+                    }
+                  }
+                  
+                  if (allLabels.size > 0) {
+                    try {
+                      await github.rest.issues.setLabels({
+                        owner,
+                        repo,
+                        issue_number: prNumber,
+                        labels: Array.from(allLabels),
+                      });
+                      
+                      console.log(`✅ Applied ${allLabels.size} labels to PR #${prNumber}`);
+                    } catch (error) {
+                      console.log(`❌ Failed to apply labels to PR #${prNumber}:`, error.message);
+                    }
+                  }
+                }
+              }
+              
+              if (action === 'ready_for_review') {
+                console.log(`🔍 PR #${prNumber} ready for review`);
+                
+                for (const issueNumber of linkedIssues) {
+                  console.log(`📅 Would move issue #${issueNumber} to "In Review" status`);
+                }
+                console.log(`📅 Would move PR #${prNumber} to "In Review" status`);
+              }
+              
+              if (action === 'converted_to_draft') {
+                console.log(`📝 PR #${prNumber} converted to draft`);
+                
+                for (const issueNumber of linkedIssues) {
+                  console.log(`📅 Would move issue #${issueNumber} to "In Progress" status`);
+                }
+                console.log(`📅 Would move PR #${prNumber} to "In Progress" status`);
+              }
+              
+              if (action === 'closed') {
+                const status = pr.merged ? '✅ merged' : '❌ closed without merging';
+                console.log(`🔒 PR #${prNumber} ${status}`);
+                
+                for (const issueNumber of linkedIssues) {
+                  if (pr.merged) {
+                    console.log(`📅 Would move issue #${issueNumber} to "Done" status`);
+                  } else {
+                    console.log(`📅 Would move issue #${issueNumber} back to "Backlog" status`);
+                  }
+                }
+              }
+              
+              // Sync milestones
+              if (linkedIssues.length > 0) {
+                for (const issueNumber of linkedIssues) {
+                  try {
+                    const { data: issue } = await github.rest.issues.get({
+                      owner,
+                      repo,
+                      issue_number: issueNumber,
+                    });
+                    
+                    // Sync milestone from issue to PR if PR doesn't have one
+                    if (issue.milestone && !pr.milestone) {
+                      await github.rest.issues.update({
+                        owner,
+                        repo,
+                        issue_number: prNumber,
+                        milestone: issue.milestone.number,
+                      });
+                      
+                      console.log(`✅ Applied milestone "${issue.milestone.title}" from issue #${issueNumber} to PR #${prNumber}`);
+                    }
+                    // Sync milestone from PR to issue if issue doesn't have one
+                    else if (!issue.milestone && pr.milestone) {
+                      await github.rest.issues.update({
+                        owner,
+                        repo,
+                        issue_number: issueNumber,
+                        milestone: pr.milestone.number,
+                      });
+                      
+                      console.log(`✅ Applied milestone "${pr.milestone.title}" from PR #${prNumber} to issue #${issueNumber}`);
+                    }
+                    
+                  } catch (error) {
+                    console.log(`❌ Could not sync milestone for issue #${issueNumber}:`, error.message);
+                  }
+                }
+              }
+            }
+            
+            console.log('🎉 Automation suite completed')
