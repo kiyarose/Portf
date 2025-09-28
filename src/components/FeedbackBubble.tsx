@@ -188,7 +188,9 @@ function FeedbackForm({
   );
 
   const inputClass = cn(
-    "mt-1 w-full rounded-xl border px-3 py-2 text-sm placeholder:text-slate-400 focus:border-accent focus:outline-none",
+    "mt-2 w-full rounded-xl border placeholder:text-slate-400 focus:border-accent focus:outline-none",
+    // Better mobile touch targets
+    "px-4 py-3 text-base sm:text-sm",
     themedClass(
       theme,
       "border-slate-200 bg-white text-slate-900",
@@ -197,7 +199,9 @@ function FeedbackForm({
   );
 
   const selectClass = cn(
-    "mt-1 w-full rounded-xl border px-3 py-2 text-sm focus:border-accent focus:outline-none",
+    "mt-2 w-full rounded-xl border focus:border-accent focus:outline-none",
+    // Better mobile touch targets
+    "px-4 py-3 text-base sm:text-sm",
     themedClass(
       theme,
       "border-slate-200 bg-white text-slate-900",
@@ -206,7 +210,9 @@ function FeedbackForm({
   );
 
   const textareaClass = cn(
-    "mt-1 w-full rounded-xl border px-3 py-2 text-sm placeholder:text-slate-400 focus:border-accent focus:outline-none resize-none",
+    "mt-2 w-full rounded-xl border placeholder:text-slate-400 focus:border-accent focus:outline-none resize-none",
+    // Better mobile touch targets and height
+    "px-4 py-3 text-base sm:text-sm h-24 sm:h-20",
     themedClass(
       theme,
       "border-slate-200 bg-white text-slate-900",
@@ -215,7 +221,9 @@ function FeedbackForm({
   );
 
   const labelClass = cn(
-    "block text-xs font-medium",
+    "block font-medium",
+    // Larger labels for mobile
+    "text-sm sm:text-xs",
     themedClass(theme, "text-slate-600", "text-slate-300"),
   );
 
@@ -376,12 +384,14 @@ function FeedbackForm({
           </a>
         </p>
 
-        <div className="flex gap-2">
+        <div className="flex gap-3">
           <button
             type="button"
             onClick={onClose}
             className={cn(
-              "flex-1 rounded-xl px-3 py-2 text-xs font-medium transition",
+              "flex-1 rounded-xl font-medium transition",
+              // Better mobile touch targets
+              "px-4 py-3 text-sm",
               themedClass(
                 theme,
                 "bg-slate-100 text-slate-700 hover:bg-slate-200",
@@ -395,7 +405,9 @@ function FeedbackForm({
           <button
             type="submit"
             className={cn(
-              "flex-1 rounded-xl px-3 py-2 text-xs font-medium transition",
+              "flex-1 rounded-xl font-medium transition",
+              // Better mobile touch targets
+              "px-4 py-3 text-sm",
               themedClass(
                 theme,
                 "bg-accent text-white hover:bg-accent/90",
@@ -434,7 +446,9 @@ function ThumbsSelector({
   }, [onThumbClick]);
 
   const thumbsContainerClass = cn(
-    "absolute bottom-14 right-0 rounded-2xl border p-3 shadow-2xl backdrop-blur-lg",
+    "absolute bottom-14 right-0 rounded-2xl border p-4 shadow-2xl backdrop-blur-lg",
+    // Mobile responsive width
+    "w-64 sm:w-72", 
     themedClass(
       theme,
       "border-white/60 bg-white/90 text-slate-700",
@@ -456,23 +470,25 @@ function ThumbsSelector({
       transition={{ duration: 0.2, ease: "easeOut" }}
       className={thumbsContainerClass}
     >
-      <div className="mb-3">
+      <div className="mb-4">
         <p
           className={cn(
-            "text-xs text-center",
+            "text-sm text-center sm:text-base",
             themedClass(theme, "text-slate-600", "text-slate-400"),
           )}
         >
           How was your experience?
         </p>
       </div>
-      <div className="flex gap-3 justify-center">
+      <div className="flex gap-4 justify-center">
         <motion.button
           type="button"
           data-gtm="feedback-thumbs-up"
           onClick={handleThumbUpClick}
           className={cn(
-            "flex items-center justify-center w-12 h-12 rounded-full transition-all duration-200",
+            "flex items-center justify-center rounded-full transition-all duration-200",
+            // Larger buttons for mobile
+            "w-14 h-14 sm:w-16 sm:h-16",
             selectedThumb === "up"
               ? "bg-green-500 text-white shadow-lg"
               : themedClass(
@@ -485,14 +501,16 @@ function ThumbsSelector({
           whileTap={prefersReducedMotion ? undefined : { scale: 0.95 }}
           title="Good experience"
         >
-          <Icon icon="material-symbols:thumb-up-rounded" className="text-xl" />
+          <Icon icon="material-symbols:thumb-up-rounded" className="text-2xl sm:text-3xl" />
         </motion.button>
         <motion.button
           type="button"
           data-gtm="feedback-thumbs-down"
           onClick={handleThumbDownClick}
           className={cn(
-            "flex items-center justify-center w-12 h-12 rounded-full transition-all duration-200",
+            "flex items-center justify-center rounded-full transition-all duration-200",
+            // Larger buttons for mobile
+            "w-14 h-14 sm:w-16 sm:h-16",
             selectedThumb === "down"
               ? "bg-red-500 text-white shadow-lg"
               : themedClass(
@@ -507,7 +525,7 @@ function ThumbsSelector({
         >
           <Icon
             icon="material-symbols:thumb-down-rounded"
-            className="text-xl"
+            className="text-2xl sm:text-3xl"
           />
         </motion.button>
       </div>
@@ -529,7 +547,9 @@ function ConfirmationDialog({
   onNo,
 }: ConfirmationDialogProps) {
   const confirmContainerClass = cn(
-    "absolute bottom-14 right-0 w-72 rounded-2xl border p-4 shadow-2xl backdrop-blur-lg",
+    "absolute bottom-14 right-0 rounded-2xl border p-5 shadow-2xl backdrop-blur-lg",
+    // Mobile responsive width
+    "w-72 sm:w-80",
     themedClass(
       theme,
       "border-white/60 bg-white/90 text-slate-700",
@@ -551,23 +571,23 @@ function ConfirmationDialog({
       transition={{ duration: 0.2, ease: "easeOut" }}
       className={confirmContainerClass}
     >
-      <div className="mb-4">
+      <div className="mb-5">
         <p
           className={cn(
-            "text-sm text-center",
+            "text-base text-center sm:text-lg",
             themedClass(theme, "text-slate-700", "text-slate-300"),
           )}
         >
           Want to leave more detailed feedback?
         </p>
       </div>
-      <div className="flex gap-2">
+      <div className="flex gap-3">
         <motion.button
           type="button"
           data-gtm="feedback-detailed-yes"
           onClick={onYes}
           className={cn(
-            "flex-1 rounded-xl px-3 py-2 text-xs font-medium transition",
+            "flex-1 rounded-xl px-4 py-3 text-sm font-medium transition",
             themedClass(
               theme,
               "bg-accent text-white hover:bg-accent/90",
@@ -584,7 +604,7 @@ function ConfirmationDialog({
           data-gtm="feedback-detailed-no"
           onClick={onNo}
           className={cn(
-            "flex-1 rounded-xl px-3 py-2 text-xs font-medium transition",
+            "flex-1 rounded-xl px-4 py-3 text-sm font-medium transition",
             themedClass(
               theme,
               "border border-slate-300 text-slate-600 hover:bg-slate-50",
@@ -621,7 +641,9 @@ function FeedbackFormContainer({
   onErrorChange,
 }: FeedbackFormContainerProps) {
   const formContainerClass = cn(
-    "absolute bottom-14 right-0 w-80 rounded-2xl border p-4 shadow-2xl backdrop-blur-lg",
+    "absolute bottom-14 right-0 rounded-2xl border p-5 shadow-2xl backdrop-blur-lg",
+    // Mobile responsive width - wider for better usability
+    "w-80 sm:w-96",
     themedClass(
       theme,
       "border-white/60 bg-white/90 text-slate-700",
@@ -643,10 +665,10 @@ function FeedbackFormContainer({
       transition={{ duration: 0.2, ease: "easeOut" }}
       className={formContainerClass}
     >
-      <div className="mb-3">
+      <div className="mb-4">
         <h3
           className={cn(
-            "text-sm font-semibold mb-1",
+            "text-base font-semibold mb-2 sm:text-lg",
             themedClass(theme, "text-slate-900", "text-white"),
           )}
         >
@@ -654,7 +676,7 @@ function FeedbackFormContainer({
         </h3>
         <p
           className={cn(
-            "text-xs",
+            "text-sm sm:text-base",
             themedClass(theme, "text-slate-600", "text-slate-400"),
           )}
         >
@@ -686,7 +708,9 @@ function FeedbackBubbleButton({
   onClick,
 }: FeedbackBubbleButtonProps) {
   const bubbleButtonClass = cn(
-    "flex h-12 w-12 items-center justify-center rounded-full shadow-lg transition-all duration-300",
+    "flex items-center justify-center rounded-full shadow-lg transition-all duration-300",
+    // Larger button on mobile for better touch targets
+    "h-14 w-14 sm:h-16 sm:w-16",
     themedClass(
       theme,
       "bg-accent text-white hover:bg-accent/90 hover:shadow-xl",
@@ -730,7 +754,7 @@ function FeedbackBubbleButton({
             exit={prefersReducedMotion ? undefined : { opacity: 0, scale: 0.5 }}
             transition={{ duration: 0.2 }}
           >
-            <Icon icon="material-symbols:check-rounded" className="text-xl" />
+            <Icon icon="material-symbols:check-rounded" className="text-2xl sm:text-3xl" />
           </motion.div>
         ) : (
           <motion.div
@@ -747,7 +771,7 @@ function FeedbackBubbleButton({
             <Icon
               icon="material-symbols:feedback-rounded"
               className={cn(
-                "text-xl",
+                "text-2xl sm:text-3xl",
                 feedbackStep !== "initial" && "rotate-12",
               )}
             />
@@ -878,7 +902,14 @@ export function FeedbackBubble({ className }: FeedbackBubbleProps) {
     setSelectedThumb(null);
   }, []);
 
-  const bubbleClass = cn("fixed bottom-6 right-6 z-50", className);
+  const bubbleClass = cn(
+    "fixed z-50", 
+    // Position to avoid back-to-top button collision on mobile
+    "bottom-6 right-6 md:bottom-6 md:right-6",
+    // On mobile, move up when back-to-top button might be visible
+    "sm:bottom-20 sm:right-4",
+    className
+  );
 
   if (!isVisible) return null;
 
