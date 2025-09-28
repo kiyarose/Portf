@@ -1,5 +1,7 @@
 import AppKit
+import Combine
 import Foundation
+import SwiftUI
 
 @MainActor
 final class DiscordRPCController: ObservableObject {
@@ -135,7 +137,9 @@ final class DiscordRPCController: ObservableObject {
   private func sendHandshake(_ data: Data) -> Bool {
     do {
       let fileHandle = try FileHandle(forWritingTo: URL(fileURLWithPath: ipcPath))
-      defer { fileHandle.closeFile() }
+      defer { 
+        try? fileHandle.close()
+      }
 
       // Discord RPC protocol: opcode (4 bytes) + length (4 bytes) + data
       var header = Data()
@@ -161,7 +165,9 @@ final class DiscordRPCController: ObservableObject {
 
     do {
       let fileHandle = try FileHandle(forWritingTo: URL(fileURLWithPath: ipcPath))
-      defer { fileHandle.closeFile() }
+      defer { 
+        try? fileHandle.close()
+      }
 
       // Discord RPC protocol: opcode (4 bytes) + length (4 bytes) + data
       var header = Data()
