@@ -315,7 +315,7 @@ jobs:
           MOBILE_LIGHT_FOUND: ${{ steps.prep_pages.outputs.found_mobile_light }}
           MOBILE_DARK_FOUND: ${{ steps.prep_pages.outputs.found_mobile_dark }}
           REPO_ROOT: ${{ steps.prep_pages.outputs.repo_root }}
-            const prNumber = context.payload.pull_request.number;
+        with:
           script: |
             const prNumber = context.issue.number;
             const baseUrl = (process.env.PREVIEW_URL || process.env.PAGE_URL || '').replace(/\/$/, '');
