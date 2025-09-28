@@ -23,7 +23,7 @@ const loadPageclip = (): Promise<void> => {
   if (pageclipLoaded) {
     return Promise.resolve();
   }
-  
+
   if (pageclipPromise) {
     return pageclipPromise;
   }
