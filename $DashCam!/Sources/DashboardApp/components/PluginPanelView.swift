@@ -53,7 +53,7 @@ struct PluginPanelView: View {
       )
     case .codex:
       CodexMGM(
-        controller: viewModel.codexController,
+        controller: viewModel.codexProcess,
         isCollapsed: collapseBinding(for: .codex),
         preferredHeight: heightBinding(for: .codex)
       )

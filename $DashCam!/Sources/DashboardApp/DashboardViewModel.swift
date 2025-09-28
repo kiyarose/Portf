@@ -79,7 +79,7 @@ final class DashboardViewModel: ObservableObject {
   let devProcess: ProcessController
   let playwrightProcess: ProcessController
   let gitController: GitController
-  let codexController: CodexController
+  let codexProcess: ProcessController
   private let defaultProjectPath: String
   @Published var pluginOrder: [PluginKind] = PluginKind.allCases {
     didSet {
@@ -221,7 +221,10 @@ final class DashboardViewModel: ObservableObject {
       command: ["npx", "playwright", "codegen", "http://localhost:5173"]
     )
     self.gitController = GitController()
-    self.codexController = CodexController()
+    self.codexProcess = ProcessController(
+      name: "Codex", 
+      command: [ProcessInfo.processInfo.environment["CODEX_COMMAND"] ?? "codex"]
+    )
     self.pluginOrder = restoredOrder
     refreshWorkingDirectories()
     updatePlaywrightCommand(announce: false)
@@ -229,7 +232,7 @@ final class DashboardViewModel: ObservableObject {
 
   var anyProcessRunning: Bool {
     devProcess.isRunning || playwrightProcess.isRunning || gitController.isBusy
-      || codexController.isProcessing
+      || codexProcess.isRunning
   }
 
   func setProjectURL(_ url: URL) {
@@ -252,7 +255,7 @@ final class DashboardViewModel: ObservableObject {
       devProcess.attachWorkingDirectory(nil)
       playwrightProcess.attachWorkingDirectory(nil)
       gitController.attachWorkingDirectory(nil)
-      codexController.updateProjectDirectory(nil)
+      codexProcess.attachWorkingDirectory(nil)
       isProjectDirectoryCollapsed = false
       return
     }
@@ -263,7 +266,7 @@ final class DashboardViewModel: ObservableObject {
     devProcess.attachWorkingDirectory(url)
     playwrightProcess.attachWorkingDirectory(url)
     gitController.attachWorkingDirectory(url)
-    codexController.updateProjectDirectory(url.path)
+    codexProcess.attachWorkingDirectory(url)
     isProjectDirectoryCollapsed = true
   }
 
