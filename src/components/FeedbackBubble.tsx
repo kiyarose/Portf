@@ -19,6 +19,16 @@ const SHOW_AFTER_TIME = 30000; // 30 seconds
 // Scroll progress threshold (50% of page) to show feedback bubble
 const SHOW_AFTER_SCROLL_PROGRESS = 0.5; // 50%
 
+// Discord-style bold colors - vibrant and saturated
+const BOLD_CONFETTI_COLORS = [
+  '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FECA57', 
+  '#FF9FF3', '#54A0FF', '#5F27CD', '#00D2D3', '#FF9F43',
+  '#EE5A24', '#0ABDE3', '#10AC84', '#F79F1F', '#A3CB38',
+  '#FD79A8', '#6C5CE7', '#A29BFE', '#74B9FF', '#81ECEC'
+];
+
+const CONFETTI_SHAPES = ['circle', 'square', 'triangle'] as const;
+
 interface FeedbackBubbleProps {
   className?: string;
 }
@@ -31,32 +41,56 @@ interface FeedbackFormProps {
   onErrorChange: (message: string | null) => void;
 }
 
-// Confetti component for celebration effect
+// Confetti component for celebration effect - Discord-style bold confetti
 function ConfettiParticle({
   initialX,
   initialY,
   angle,
+  size,
+  shape,
+  color,
 }: {
   initialX: number;
   initialY: number;
   angle: number;
+  size: number;
+  shape: 'circle' | 'square' | 'triangle';
+  color: string;
 }) {
   const prefersReducedMotion = useReducedMotion();
 
   if (prefersReducedMotion) return null;
 
   // Calculate directional movement based on angle (burst outward from button)
-  const distance = 200 + Math.random() * 200; // Random distance between 200-400px
+  const distance = 300 + Math.random() * 400; // Increased distance: 300-700px for more dramatic effect
   const moveX = Math.cos(angle) * distance;
   const moveY = Math.sin(angle) * distance;
 
+  // Shape-specific styling
+  const getShapeClass = () => {
+    switch (shape) {
+      case 'circle':
+        return 'rounded-full';
+      case 'square':
+        return 'rounded-sm';
+      case 'triangle':
+        return 'rounded-sm transform rotate-45';
+      default:
+        return 'rounded-full';
+    }
+  };
+
   return (
     <motion.div
-      className="absolute h-2 w-2 rounded-full"
+      className={`absolute ${getShapeClass()}`}
       style={{
-        background: `hsl(${Math.random() * 360}, 70%, 60%)`,
+        width: `${size}px`,
+        height: `${size}px`,
+        background: color,
         left: `${initialX}%`,
         top: `${initialY}%`,
+        // Add shadow for more prominence
+        boxShadow: '0 0 10px rgba(0,0,0,0.3)',
       }}
       initial={{
         opacity: 1,
@@ -67,13 +101,13 @@ function ConfettiParticle({
       }}
       animate={{
         opacity: 0,
-        scale: [0, 1, 0],
+        scale: [0, 1.2, 0.8, 0], // More dramatic scaling sequence
         x: moveX,
         y: moveY,
-        rotate: Math.random() * 360,
+        rotate: Math.random() * 720, // More rotation for dramatic effect
       }}
       transition={{
-        duration: 1.5 + Math.random() * 0.5,
+        duration: 2 + Math.random() * 1, // Longer duration: 2-3 seconds
         ease: "easeOut",
       }}
     />
@@ -83,16 +117,22 @@ function ConfettiParticle({
 function ConfettiEffect({ isActive }: { isActive: boolean }) {
   const prefersReducedMotion = useReducedMotion();
 
-  // Generate stable particles data to avoid re-renders changing positions
+  // Generate more particles for bolder effect - similar to Discord
   const particles = useMemo(
     () =>
-      Array.from({ length: 12 }, (_, i) => ({
+      Array.from({ length: 25 }, (_, i) => ({ // Increased from 12 to 25 particles
         id: `confetti-${Date.now()}-${i}`,
         // Start particles from the button position (bottom right corner)
         initialX: 85, // Button is positioned at right edge, so start around 85%
         initialY: 85, // Button is positioned at bottom, so start around 85%
         // Generate random angle for direction (spreading outward from button)
-        angle: (Math.PI * 2 * i) / 12 + (Math.random() - 0.5) * 0.5, // Evenly distributed angles with some randomness
+        angle: (Math.PI * 2 * i) / 25 + (Math.random() - 0.5) * 0.8, // More spread
+        // Random size for variety - bigger particles like Discord
+        size: 8 + Math.random() * 12, // 8-20px particles (much larger than 2px)
+        // Random shape for visual interest
+        shape: CONFETTI_SHAPES[Math.floor(Math.random() * CONFETTI_SHAPES.length)],
+        // Random bold color
+        color: BOLD_CONFETTI_COLORS[Math.floor(Math.random() * BOLD_CONFETTI_COLORS.length)],
       })),
     [], // Empty dependency array means this only runs once
   );
@@ -107,6 +147,9 @@ function ConfettiEffect({ isActive }: { isActive: boolean }) {
           initialX={particle.initialX}
           initialY={particle.initialY}
           angle={particle.angle}
+          size={particle.size}
+          shape={particle.shape}
+          color={particle.color}
         />
       ))}
     </div>
