@@ -181,9 +181,13 @@ final class CodexController: ObservableObject {
     guard !binary.isEmpty else {
       throw CodexError.commandNotConfigured
     }
+    
+    // Validate that the command exists and is executable
+    let resolvedPath = try validateCommand(binary, environment: configuredEnvironment())
+    
     let args = CodexController.shellSplit(commandArguments)
     return CommandContext(
-      binary: binary,
+      binary: resolvedPath,
       arguments: args,
       environment: configuredEnvironment(),
       workingDirectory: projectDirectoryURL
@@ -198,6 +202,34 @@ final class CodexController: ObservableObject {
       env["PATH"] = defaultPaths + (currentPath.isEmpty ? "" : ":" + currentPath)
     }
     return env
+  }
+
+  private func validateCommand(_ binary: String, environment: [String: String]) throws -> String {
+    // If it's an absolute path, check if it exists and is executable
+    if binary.starts(with: "/") {
+      let fileManager = FileManager.default
+      guard fileManager.fileExists(atPath: binary) else {
+        throw CodexError.commandNotFound(binary)
+      }
+      guard fileManager.isExecutableFile(atPath: binary) else {
+        throw CodexError.commandNotExecutable(binary)
+      }
+      return binary
+    }
+    
+    // Otherwise, search in PATH
+    let pathEnv = environment["PATH"] ?? ""
+    let pathComponents = pathEnv.split(separator: ":").map(String.init)
+    
+    for pathDir in pathComponents {
+      let fullPath = "\(pathDir)/\(binary)"
+      let fileManager = FileManager.default
+      if fileManager.fileExists(atPath: fullPath) && fileManager.isExecutableFile(atPath: fullPath) {
+        return fullPath
+      }
+    }
+    
+    throw CodexError.commandNotFound(binary)
   }
 
   private func systemPrompt() -> String {
@@ -270,8 +302,9 @@ final class CodexController: ObservableObject {
   {
     try await Task.detached(priority: .userInitiated) {
       let process = Process()
-      process.executableURL = URL(fileURLWithPath: "/usr/bin/env")
-      process.arguments = [context.binary] + context.arguments
+      // Use the resolved binary path directly instead of /usr/bin/env
+      process.executableURL = URL(fileURLWithPath: context.binary)
+      process.arguments = context.arguments
       process.environment = context.environment
       process.currentDirectoryURL = context.workingDirectory
 
@@ -329,12 +362,18 @@ private struct CommandContext {
 
 enum CodexError: LocalizedError {
   case commandNotConfigured
+  case commandNotFound(String)
+  case commandNotExecutable(String)
   case commandExited(code: Int32, stderr: String)
 
   var errorDescription: String? {
     switch self {
     case .commandNotConfigured:
       return "Set the Codex command before sending prompts."
+    case let .commandNotFound(binary):
+      return "Command '\(binary)' not found. Please check the command path and ensure it's installed."
+    case let .commandNotExecutable(binary):
+      return "Command '\(binary)' is not executable. Please check the file permissions."
     case let .commandExited(code, stderr):
       let message = stderr.trimmingCharacters(in: .whitespacesAndNewlines)
       if message.isEmpty {
