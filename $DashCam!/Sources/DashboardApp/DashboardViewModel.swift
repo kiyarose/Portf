@@ -227,7 +227,7 @@ final class DashboardViewModel: ObservableObject {
     self.pluginOrder = restoredOrder
     refreshWorkingDirectories()
     updatePlaywrightCommand(announce: false)
-    
+
     // Set up Discord RPC activity monitoring
     setupDiscordRPCMonitoring()
   }
@@ -359,13 +359,13 @@ final class DashboardViewModel: ObservableObject {
     var isDir: ObjCBool = false
     return FileManager.default.fileExists(atPath: path, isDirectory: &isDir) && isDir.boolValue
   }
-  
+
   // MARK: - Discord RPC Integration
-  
+
   private func setupDiscordRPCMonitoring() {
     // Monitor process status changes to update Discord activity
     let processControllers = [devProcess, playwrightProcess]
-    
+
     for processController in processControllers {
       processController.$status
         .combineLatest(gitController.$isBusy, codexController.$isProcessing)
@@ -374,17 +374,17 @@ final class DashboardViewModel: ObservableObject {
         }
         .store(in: &cancellables)
     }
-    
+
     // Initial update
     updateDiscordActivity()
   }
-  
+
   private var cancellables: Set<AnyCancellable> = []
-  
+
   private func updateDiscordActivity() {
     let runningProcesses = getRunningProcesses()
     let processCount = runningProcesses.count
-    
+
     if processCount == 0 {
       // No processes running - show idle state
       let activity = DiscordRPCController.Activity(
@@ -400,8 +400,9 @@ final class DashboardViewModel: ObservableObject {
     } else {
       // Show running processes
       let lastUsedTool = getLastUsedTool(from: runningProcesses)
-      let details = processCount == 1 ? "Running \(runningProcesses.first!)" : "Running \(processCount) tools"
-      
+      let details =
+        processCount == 1 ? "Running \(runningProcesses.first!)" : "Running \(processCount) tools"
+
       let activity = DiscordRPCController.Activity(
         details: details,
         state: "Development in progress",
@@ -414,10 +415,10 @@ final class DashboardViewModel: ObservableObject {
       discordRPCController.updateActivity(activity)
     }
   }
-  
+
   private func getRunningProcesses() -> [String] {
     var running: [String] = []
-    
+
     if devProcess.isRunning {
       running.append("Dev Server")
     }
@@ -430,10 +431,10 @@ final class DashboardViewModel: ObservableObject {
     if codexController.isProcessing {
       running.append("Codex")
     }
-    
+
     return running
   }
-  
+
   private func getLastUsedTool(from runningProcesses: [String]) -> String {
     // Return the most recently active tool, prioritizing interactive ones
     if codexController.isProcessing {
@@ -450,7 +451,7 @@ final class DashboardViewModel: ObservableObject {
     }
     return runningProcesses.first ?? "DashCam"
   }
-  
+
   private func getToolIcon(for tool: String) -> String? {
     switch tool {
     case "Dev Server":

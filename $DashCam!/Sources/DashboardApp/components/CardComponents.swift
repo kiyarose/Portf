@@ -116,17 +116,17 @@ struct EdgeResizeOverlay: View {
 
 struct DiscordRPCStatusIndicator: View {
   @ObservedObject var controller: DiscordRPCController
-  
+
   var body: some View {
     HStack(spacing: 6) {
       Image(systemName: discordIcon)
         .foregroundStyle(statusColor)
         .font(.caption.weight(.medium))
-      
+
       Text(statusText)
         .font(.caption2)
         .foregroundStyle(.secondary)
-      
+
       if controller.isEnabled {
         Toggle("", isOn: $controller.isEnabled)
           .toggleStyle(.switch)
@@ -140,7 +140,7 @@ struct DiscordRPCStatusIndicator: View {
         .fill(.regularMaterial.opacity(0.8))
     )
   }
-  
+
   private var discordIcon: String {
     switch controller.status {
     case .connected:
@@ -151,7 +151,7 @@ struct DiscordRPCStatusIndicator: View {
       return "dot.radiowaves.up.forward"
     }
   }
-  
+
   private var statusColor: Color {
     switch controller.status {
     case .connected:
@@ -164,7 +164,7 @@ struct DiscordRPCStatusIndicator: View {
       return .red
     }
   }
-  
+
   private var statusText: String {
     switch controller.status {
     case .connected:
