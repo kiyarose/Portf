@@ -30,7 +30,7 @@ interface FeedbackFormProps {
 // Confetti component for celebration effect
 function ConfettiParticle({ index }: { index: number }) {
   const prefersReducedMotion = useReducedMotion();
-  
+
   if (prefersReducedMotion) return null;
 
   return (
@@ -42,21 +42,21 @@ function ConfettiParticle({ index }: { index: number }) {
         left: `${Math.random() * 100}%`,
         top: `${Math.random() * 100}%`,
       }}
-      initial={{ 
-        opacity: 1, 
+      initial={{
+        opacity: 1,
         scale: 0,
         x: 0,
         y: 0,
         rotate: 0,
       }}
-      animate={{ 
-        opacity: 0, 
+      animate={{
+        opacity: 0,
         scale: [0, 1, 0],
         x: (Math.random() - 0.5) * 200,
         y: (Math.random() - 0.5) * 200,
         rotate: Math.random() * 360,
       }}
-      transition={{ 
+      transition={{
         duration: 1.5 + Math.random() * 0.5,
         ease: "easeOut",
       }}
@@ -66,7 +66,7 @@ function ConfettiParticle({ index }: { index: number }) {
 
 function ConfettiEffect({ isActive }: { isActive: boolean }) {
   const prefersReducedMotion = useReducedMotion();
-  
+
   if (!isActive || prefersReducedMotion) return null;
 
   return (
@@ -227,7 +227,9 @@ function FeedbackForm({
           name="email"
           className={inputClass}
           value={formData.email}
-          onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
+          onChange={(e) =>
+            setFormData((prev) => ({ ...prev, email: e.target.value }))
+          }
           placeholder="your.email@example.com"
           required
         />
@@ -239,7 +241,12 @@ function FeedbackForm({
           name="feedbackType"
           className={selectClass}
           value={formData.feedbackType}
-          onChange={(e) => setFormData(prev => ({ ...prev, feedbackType: e.target.value as FeedbackType }))}
+          onChange={(e) =>
+            setFormData((prev) => ({
+              ...prev,
+              feedbackType: e.target.value as FeedbackType,
+            }))
+          }
           required
         >
           <option value="suggestion">Suggestion</option>
@@ -254,7 +261,9 @@ function FeedbackForm({
           name="feedbackTitle"
           className={inputClass}
           value={formData.feedbackTitle}
-          onChange={(e) => setFormData(prev => ({ ...prev, feedbackTitle: e.target.value }))}
+          onChange={(e) =>
+            setFormData((prev) => ({ ...prev, feedbackTitle: e.target.value }))
+          }
           placeholder="Brief description of your feedback"
           required
         />
@@ -267,7 +276,12 @@ function FeedbackForm({
           className={textareaClass}
           rows={3}
           value={formData.feedbackDescription}
-          onChange={(e) => setFormData(prev => ({ ...prev, feedbackDescription: e.target.value }))}
+          onChange={(e) =>
+            setFormData((prev) => ({
+              ...prev,
+              feedbackDescription: e.target.value,
+            }))
+          }
           placeholder="Please provide detailed feedback..."
           required
         />
@@ -279,7 +293,12 @@ function FeedbackForm({
           name="impact"
           className={selectClass}
           value={formData.impact}
-          onChange={(e) => setFormData(prev => ({ ...prev, impact: e.target.value as FeedbackImpact }))}
+          onChange={(e) =>
+            setFormData((prev) => ({
+              ...prev,
+              impact: e.target.value as FeedbackImpact,
+            }))
+          }
         >
           {FEEDBACK_IMPACT_OPTIONS.map((option) => (
             <option key={option.value} value={option.value}>
@@ -572,7 +591,7 @@ export function FeedbackBubble({ className }: FeedbackBubbleProps) {
           )}
         </AnimatePresence>
       </motion.button>
-      
+
       {/* Confetti effect when bubble first appears */}
       <ConfettiEffect isActive={showConfetti} />
     </div>
