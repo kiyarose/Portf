@@ -416,8 +416,8 @@ export function FeedbackBubble({ className }: FeedbackBubbleProps) {
   const prefersReducedMotion = useReducedMotion();
 
   const [isVisible, setIsVisible] = useState(false);
-  const [isExpanded, setIsExpanded] = useState(false);
-  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [feedbackStep, setFeedbackStep] = useState<'initial' | 'thumbs' | 'confirm' | 'form' | 'submitted'>('initial');
+  const [selectedThumb, setSelectedThumb] = useState<'up' | 'down' | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [showConfetti, setShowConfetti] = useState(false);
@@ -483,8 +483,7 @@ export function FeedbackBubble({ className }: FeedbackBubbleProps) {
         }
 
         // Success
-        setIsSubmitted(true);
-        setIsExpanded(false);
+        setFeedbackStep('submitted');
         sessionStorage.setItem("feedback-submitted", "true");
 
         // Hide completely after showing success message
@@ -502,12 +501,30 @@ export function FeedbackBubble({ className }: FeedbackBubbleProps) {
   );
 
   const handleBubbleClick = useCallback(() => {
-    if (isSubmitted) return;
-    setIsExpanded(!isExpanded);
-  }, [isSubmitted, isExpanded]);
+    if (feedbackStep === 'submitted') return;
+    setFeedbackStep('thumbs');
+  }, [feedbackStep]);
+
+  const handleThumbClick = useCallback((thumb: 'up' | 'down') => {
+    setSelectedThumb(thumb);
+    setFeedbackStep('confirm');
+  }, []);
+
+  const handleConfirmYes = useCallback(() => {
+    setFeedbackStep('form');
+  }, []);
+
+  const handleConfirmNo = useCallback(() => {
+    setFeedbackStep('initial');
+    setSelectedThumb(null);
+    setIsVisible(false);
+    // Mark as completed in session storage to prevent reshowing
+    sessionStorage.setItem("feedback-submitted", "true");
+  }, []);
 
   const handleFormClose = useCallback(() => {
-    setIsExpanded(false);
+    setFeedbackStep('initial');
+    setSelectedThumb(null);
   }, []);
 
   const bubbleClass = cn("fixed bottom-6 right-6 z-50", className);
@@ -530,12 +547,173 @@ export function FeedbackBubble({ className }: FeedbackBubbleProps) {
     ),
   );
 
+  const thumbsContainerClass = cn(
+    "absolute bottom-14 right-0 rounded-2xl border p-3 shadow-2xl backdrop-blur-lg",
+    themedClass(
+      theme,
+      "border-white/60 bg-white/90 text-slate-700",
+      "border-slate-700/60 bg-slate-900/90 text-slate-300",
+    ),
+  );
+
+  const confirmContainerClass = cn(
+    "absolute bottom-14 right-0 w-72 rounded-2xl border p-4 shadow-2xl backdrop-blur-lg",
+    themedClass(
+      theme,
+      "border-white/60 bg-white/90 text-slate-700",
+      "border-slate-700/60 bg-slate-900/90 text-slate-300",
+    ),
+  );
+
   if (!isVisible) return null;
 
   return (
     <div className={bubbleClass}>
       <AnimatePresence>
-        {isExpanded && !isSubmitted && (
+        {/* Thumbs Up/Down Selection */}
+        {feedbackStep === 'thumbs' && (
+          <motion.div
+            initial={
+              prefersReducedMotion
+                ? undefined
+                : { opacity: 0, scale: 0.9, y: 20 }
+            }
+            animate={
+              prefersReducedMotion ? undefined : { opacity: 1, scale: 1, y: 0 }
+            }
+            exit={
+              prefersReducedMotion
+                ? undefined
+                : { opacity: 0, scale: 0.9, y: 20 }
+            }
+            transition={{ duration: 0.2, ease: "easeOut" }}
+            className={thumbsContainerClass}
+          >
+            <div className="mb-3">
+              <p
+                className={cn(
+                  "text-xs text-center",
+                  themedClass(theme, "text-slate-600", "text-slate-400"),
+                )}
+              >
+                How was your experience?
+              </p>
+            </div>
+            <div className="flex gap-3 justify-center">
+              <motion.button
+                type="button"
+                data-gtm="feedback-thumbs-up"
+                onClick={() => handleThumbClick('up')}
+                className={cn(
+                  "flex items-center justify-center w-12 h-12 rounded-full transition-all duration-200",
+                  selectedThumb === 'up'
+                    ? "bg-green-500 text-white shadow-lg"
+                    : themedClass(
+                        theme,
+                        "bg-slate-100 hover:bg-green-100 text-slate-600 hover:text-green-600",
+                        "bg-slate-800 hover:bg-green-900/50 text-slate-400 hover:text-green-400"
+                      )
+                )}
+                whileHover={prefersReducedMotion ? undefined : { scale: 1.05 }}
+                whileTap={prefersReducedMotion ? undefined : { scale: 0.95 }}
+                title="Good experience"
+              >
+                <Icon icon="material-symbols:thumb-up-rounded" className="text-xl" />
+              </motion.button>
+              <motion.button
+                type="button"
+                data-gtm="feedback-thumbs-down"
+                onClick={() => handleThumbClick('down')}
+                className={cn(
+                  "flex items-center justify-center w-12 h-12 rounded-full transition-all duration-200",
+                  selectedThumb === 'down'
+                    ? "bg-red-500 text-white shadow-lg"
+                    : themedClass(
+                        theme,
+                        "bg-slate-100 hover:bg-red-100 text-slate-600 hover:text-red-600",
+                        "bg-slate-800 hover:bg-red-900/50 text-slate-400 hover:text-red-400"
+                      )
+                )}
+                whileHover={prefersReducedMotion ? undefined : { scale: 1.05 }}
+                whileTap={prefersReducedMotion ? undefined : { scale: 0.95 }}
+                title="Poor experience"
+              >
+                <Icon icon="material-symbols:thumb-down-rounded" className="text-xl" />
+              </motion.button>
+            </div>
+          </motion.div>
+        )}
+
+        {/* Confirmation Dialog */}
+        {feedbackStep === 'confirm' && (
+          <motion.div
+            initial={
+              prefersReducedMotion
+                ? undefined
+                : { opacity: 0, scale: 0.9, y: 20 }
+            }
+            animate={
+              prefersReducedMotion ? undefined : { opacity: 1, scale: 1, y: 0 }
+            }
+            exit={
+              prefersReducedMotion
+                ? undefined
+                : { opacity: 0, scale: 0.9, y: 20 }
+            }
+            transition={{ duration: 0.2, ease: "easeOut" }}
+            className={confirmContainerClass}
+          >
+            <div className="mb-4">
+              <p
+                className={cn(
+                  "text-sm text-center",
+                  themedClass(theme, "text-slate-700", "text-slate-300"),
+                )}
+              >
+                Want to leave more detailed feedback?
+              </p>
+            </div>
+            <div className="flex gap-2">
+              <motion.button
+                type="button"
+                data-gtm="feedback-detailed-yes"
+                onClick={handleConfirmYes}
+                className={cn(
+                  "flex-1 rounded-xl px-3 py-2 text-xs font-medium transition",
+                  themedClass(
+                    theme,
+                    "bg-accent text-white hover:bg-accent/90",
+                    "bg-accent text-white hover:bg-accent/90",
+                  ),
+                )}
+                whileHover={prefersReducedMotion ? undefined : { scale: 1.02 }}
+                whileTap={prefersReducedMotion ? undefined : { scale: 0.98 }}
+              >
+                Yes
+              </motion.button>
+              <motion.button
+                type="button"
+                data-gtm="feedback-detailed-no"
+                onClick={handleConfirmNo}
+                className={cn(
+                  "flex-1 rounded-xl px-3 py-2 text-xs font-medium transition",
+                  themedClass(
+                    theme,
+                    "border border-slate-300 text-slate-600 hover:bg-slate-50",
+                    "border border-slate-600 text-slate-300 hover:bg-slate-800",
+                  ),
+                )}
+                whileHover={prefersReducedMotion ? undefined : { scale: 1.02 }}
+                whileTap={prefersReducedMotion ? undefined : { scale: 0.98 }}
+              >
+                No
+              </motion.button>
+            </div>
+          </motion.div>
+        )}
+
+        {/* Full Feedback Form */}
+        {feedbackStep === 'form' && (
           <motion.div
             initial={
               prefersReducedMotion
@@ -591,17 +769,17 @@ export function FeedbackBubble({ className }: FeedbackBubbleProps) {
           prefersReducedMotion
             ? undefined
             : {
-                scale: isSubmitted ? [1, 1.2, 1] : 1,
+                scale: feedbackStep === 'submitted' ? [1, 1.2, 1] : 1,
               }
         }
         transition={{
-          duration: isSubmitted ? 0.6 : 0.2,
+          duration: feedbackStep === 'submitted' ? 0.6 : 0.2,
           ease: "easeOut",
         }}
-        title={isSubmitted ? "Thank you for your feedback!" : "Share feedback"}
+        title={feedbackStep === 'submitted' ? "Thank you for your feedback!" : "Share feedback"}
       >
         <AnimatePresence mode="wait">
-          {isSubmitted ? (
+          {feedbackStep === 'submitted' ? (
             <motion.div
               key="success"
               initial={
@@ -633,7 +811,7 @@ export function FeedbackBubble({ className }: FeedbackBubbleProps) {
             >
               <Icon
                 icon="material-symbols:feedback-rounded"
-                className={cn("text-xl", isExpanded && "rotate-12")}
+                className={cn("text-xl", feedbackStep !== 'initial' && "rotate-12")}
               />
             </motion.div>
           )}
