@@ -104,7 +104,7 @@ function ConfettiParticle({
         height: `${size}px`,
         background: color,
         left: `${initialX}px`, // Now using pixel coordinates instead of percentages
-        top: `${initialY}px`,  // Now using pixel coordinates instead of percentages
+        top: `${initialY}px`, // Now using pixel coordinates instead of percentages
         // Add shadow for more prominence
         boxShadow: "0 0 10px rgba(0,0,0,0.3)",
       }}
@@ -145,11 +145,12 @@ function ConfettiEffect({ isActive }: { isActive: boolean }) {
         const bottomOffset = isMobile ? 80 : 24; // bottom-20 = 80px, bottom-6 = 24px
         const rightOffset = isMobile ? 16 : 24; // right-4 = 16px, right-6 = 24px
         const buttonSize = isMobile ? 56 : 64; // h-14 w-14 (56px) or h-16 w-16 (64px)
-        
+
         // Calculate center of button from bottom-right of viewport
-        const buttonCenterX = window.innerWidth - rightOffset - (buttonSize / 2);
-        const buttonCenterY = window.innerHeight - bottomOffset - (buttonSize / 2);
-        
+        const buttonCenterX = window.innerWidth - rightOffset - buttonSize / 2;
+        const buttonCenterY =
+          window.innerHeight - bottomOffset - buttonSize / 2;
+
         return {
           // Increased from 12 to 25 particles
           id: `confetti-${Date.now()}-${i}`,
