@@ -1,0 +1,93 @@
+name: CodeQL
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  detect-changes:
+    name: Detect language changes
+    runs-on: ubuntu-latest
+    outputs:
+      swift: ${{ steps.filter.outputs.swift }}
+      javascript: ${{ steps.filter.outputs.javascript }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Filter changed paths
+        id: filter
+        uses: dorny/paths-filter@v3
+        with:
+          filters: |
+            swift:
+              - '**/*.swift'
+              - '**/*.xcodeproj/**'
+              - '**/*.xcworkspace/**'
+              - '**/*.xcconfig'
+              - '**/*.plist'
+            javascript:
+              - '**/*.js'
+              - '**/*.jsx'
+              - '**/*.ts'
+              - '**/*.tsx'
+              - 'package.json'
+              - 'package-lock.json'
+              - 'yarn.lock'
+              - 'pnpm-lock.yaml'
+              - 'vite.config.ts'
+              - 'eslint.config.js'
+              - 'tailwind.config.js'
+              - 'postcss.config.js'
+              - 'tsconfig.json'
+              - 'tsconfig.app.json'
+              - 'tsconfig.node.json'
+              - 'src/**'
+              - 'public/**'
+              - 'tests/**'
+
+  codeql-javascript:
+    name: CodeQL (JavaScript)
+    needs: detect-changes
+    if: needs.detect-changes.outputs.javascript == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+      actions: read
+      contents: read
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: javascript-typescript
+      - name: Autobuild
+        uses: github/codeql-action/autobuild@v3
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+
+  codeql-swift:
+    name: CodeQL (Swift)
+    needs: detect-changes
+    if: needs.detect-changes.outputs.swift == 'true'
+    runs-on: macos-13
+    permissions:
+      security-events: write
+      actions: read
+      contents: read
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: swift
+      - name: Autobuild
+        uses: github/codeql-action/autobuild@v3
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
