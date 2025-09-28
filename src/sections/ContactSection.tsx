@@ -23,7 +23,7 @@ const loadPageclip = (): Promise<void> => {
   if (pageclipLoaded) {
     return Promise.resolve();
   }
-  
+
   if (pageclipPromise) {
     return pageclipPromise;
   }
@@ -196,7 +196,7 @@ function ContactForm({
   const { theme } = useTheme();
   const formRef = useRef<HTMLFormElement>(null);
   const [pageclipLoading, setPageclipLoading] = useState(false);
-  
+
   // Use the env var (public key) to build the Pageclip URL.
   const pageclipApiKey = import.meta.env.VITE_PAGECLIP_API_KEY as
     | string
@@ -213,7 +213,7 @@ function ContactForm({
   // Load pageclip on first form interaction
   const handleFormFocus = useCallback(async () => {
     if (pageclipLoaded || pageclipLoading) return;
-    
+
     setPageclipLoading(true);
     try {
       await loadPageclip();
@@ -344,9 +344,9 @@ function ContactForm({
   }
 
   return (
-    <form 
+    <form
       ref={formRef}
-      className="pageclip-form flex-1 space-y-4" 
+      className="pageclip-form flex-1 space-y-4"
       onSubmit={handleSubmit}
       onFocus={handleFormFocus}
     >
