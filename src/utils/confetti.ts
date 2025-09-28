@@ -1,7 +1,7 @@
 // Global confetti utility functions that can be called from anywhere
 // This creates confetti effects by dynamically rendering React components
 //
-// Note: Math.random() usage in this file is for visual effects only (particle positions, 
+// Note: Math.random() usage in this file is for visual effects only (particle positions,
 // colors, animations) and does not require cryptographic security. SonarCloud warnings
 // about pseudo-random number generation are not applicable for these use cases.
 
