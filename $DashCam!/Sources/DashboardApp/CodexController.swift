@@ -181,7 +181,7 @@ final class CodexController: ObservableObject {
     guard !binary.isEmpty else {
       throw CodexError.commandNotConfigured
     }
-    
+
     let args = CodexController.shellSplit(commandArguments)
     return CommandContext(
       binary: binary,
@@ -341,20 +341,20 @@ enum CodexError: LocalizedError {
       if message.isEmpty {
         return "Codex command exited with status \(code)."
       }
-      
+
       // Provide more helpful guidance for common error patterns
       if message.contains("Device not configured") || message.contains("os error 6") {
         return """
-        Codex command failed with: \(message)
-        
-        This error typically means the codex command is installed but not properly configured. Try:
-        • Check if you need to configure API keys or authentication
-        • Verify the codex command works in Terminal: run 'codex --help'  
-        • Check the codex documentation for required environment variables
-        • Ensure you have the latest version of the codex tool
-        """
+          Codex command failed with: \(message)
+
+          This error typically means the codex command is installed but not properly configured. Try:
+          • Check if you need to configure API keys or authentication
+          • Verify the codex command works in Terminal: run 'codex --help'  
+          • Check the codex documentation for required environment variables
+          • Ensure you have the latest version of the codex tool
+          """
       }
-      
+
       return "Codex command exited with status \(code): \(message)"
     }
   }
