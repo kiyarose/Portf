@@ -416,8 +416,12 @@ export function FeedbackBubble({ className }: FeedbackBubbleProps) {
   const prefersReducedMotion = useReducedMotion();
 
   const [isVisible, setIsVisible] = useState(false);
-  const [feedbackStep, setFeedbackStep] = useState<'initial' | 'thumbs' | 'confirm' | 'form' | 'submitted'>('initial');
-  const [selectedThumb, setSelectedThumb] = useState<'up' | 'down' | null>(null);
+  const [feedbackStep, setFeedbackStep] = useState<
+    "initial" | "thumbs" | "confirm" | "form" | "submitted"
+  >("initial");
+  const [selectedThumb, setSelectedThumb] = useState<"up" | "down" | null>(
+    null,
+  );
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [showConfetti, setShowConfetti] = useState(false);
@@ -483,7 +487,7 @@ export function FeedbackBubble({ className }: FeedbackBubbleProps) {
         }
 
         // Success
-        setFeedbackStep('submitted');
+        setFeedbackStep("submitted");
         sessionStorage.setItem("feedback-submitted", "true");
 
         // Hide completely after showing success message
@@ -501,21 +505,21 @@ export function FeedbackBubble({ className }: FeedbackBubbleProps) {
   );
 
   const handleBubbleClick = useCallback(() => {
-    if (feedbackStep === 'submitted') return;
-    setFeedbackStep('thumbs');
+    if (feedbackStep === "submitted") return;
+    setFeedbackStep("thumbs");
   }, [feedbackStep]);
 
-  const handleThumbClick = useCallback((thumb: 'up' | 'down') => {
+  const handleThumbClick = useCallback((thumb: "up" | "down") => {
     setSelectedThumb(thumb);
-    setFeedbackStep('confirm');
+    setFeedbackStep("confirm");
   }, []);
 
   const handleConfirmYes = useCallback(() => {
-    setFeedbackStep('form');
+    setFeedbackStep("form");
   }, []);
 
   const handleConfirmNo = useCallback(() => {
-    setFeedbackStep('initial');
+    setFeedbackStep("initial");
     setSelectedThumb(null);
     setIsVisible(false);
     // Mark as completed in session storage to prevent reshowing
@@ -523,7 +527,7 @@ export function FeedbackBubble({ className }: FeedbackBubbleProps) {
   }, []);
 
   const handleFormClose = useCallback(() => {
-    setFeedbackStep('initial');
+    setFeedbackStep("initial");
     setSelectedThumb(null);
   }, []);
 
@@ -571,7 +575,7 @@ export function FeedbackBubble({ className }: FeedbackBubbleProps) {
     <div className={bubbleClass}>
       <AnimatePresence>
         {/* Thumbs Up/Down Selection */}
-        {feedbackStep === 'thumbs' && (
+        {feedbackStep === "thumbs" && (
           <motion.div
             initial={
               prefersReducedMotion
@@ -603,49 +607,55 @@ export function FeedbackBubble({ className }: FeedbackBubbleProps) {
               <motion.button
                 type="button"
                 data-gtm="feedback-thumbs-up"
-                onClick={() => handleThumbClick('up')}
+                onClick={() => handleThumbClick("up")}
                 className={cn(
                   "flex items-center justify-center w-12 h-12 rounded-full transition-all duration-200",
-                  selectedThumb === 'up'
+                  selectedThumb === "up"
                     ? "bg-green-500 text-white shadow-lg"
                     : themedClass(
                         theme,
                         "bg-slate-100 hover:bg-green-100 text-slate-600 hover:text-green-600",
-                        "bg-slate-800 hover:bg-green-900/50 text-slate-400 hover:text-green-400"
-                      )
+                        "bg-slate-800 hover:bg-green-900/50 text-slate-400 hover:text-green-400",
+                      ),
                 )}
                 whileHover={prefersReducedMotion ? undefined : { scale: 1.05 }}
                 whileTap={prefersReducedMotion ? undefined : { scale: 0.95 }}
                 title="Good experience"
               >
-                <Icon icon="material-symbols:thumb-up-rounded" className="text-xl" />
+                <Icon
+                  icon="material-symbols:thumb-up-rounded"
+                  className="text-xl"
+                />
               </motion.button>
               <motion.button
                 type="button"
                 data-gtm="feedback-thumbs-down"
-                onClick={() => handleThumbClick('down')}
+                onClick={() => handleThumbClick("down")}
                 className={cn(
                   "flex items-center justify-center w-12 h-12 rounded-full transition-all duration-200",
-                  selectedThumb === 'down'
+                  selectedThumb === "down"
                     ? "bg-red-500 text-white shadow-lg"
                     : themedClass(
                         theme,
                         "bg-slate-100 hover:bg-red-100 text-slate-600 hover:text-red-600",
-                        "bg-slate-800 hover:bg-red-900/50 text-slate-400 hover:text-red-400"
-                      )
+                        "bg-slate-800 hover:bg-red-900/50 text-slate-400 hover:text-red-400",
+                      ),
                 )}
                 whileHover={prefersReducedMotion ? undefined : { scale: 1.05 }}
                 whileTap={prefersReducedMotion ? undefined : { scale: 0.95 }}
                 title="Poor experience"
               >
-                <Icon icon="material-symbols:thumb-down-rounded" className="text-xl" />
+                <Icon
+                  icon="material-symbols:thumb-down-rounded"
+                  className="text-xl"
+                />
               </motion.button>
             </div>
           </motion.div>
         )}
 
         {/* Confirmation Dialog */}
-        {feedbackStep === 'confirm' && (
+        {feedbackStep === "confirm" && (
           <motion.div
             initial={
               prefersReducedMotion
@@ -713,7 +723,7 @@ export function FeedbackBubble({ className }: FeedbackBubbleProps) {
         )}
 
         {/* Full Feedback Form */}
-        {feedbackStep === 'form' && (
+        {feedbackStep === "form" && (
           <motion.div
             initial={
               prefersReducedMotion
@@ -769,17 +779,21 @@ export function FeedbackBubble({ className }: FeedbackBubbleProps) {
           prefersReducedMotion
             ? undefined
             : {
-                scale: feedbackStep === 'submitted' ? [1, 1.2, 1] : 1,
+                scale: feedbackStep === "submitted" ? [1, 1.2, 1] : 1,
               }
         }
         transition={{
-          duration: feedbackStep === 'submitted' ? 0.6 : 0.2,
+          duration: feedbackStep === "submitted" ? 0.6 : 0.2,
           ease: "easeOut",
         }}
-        title={feedbackStep === 'submitted' ? "Thank you for your feedback!" : "Share feedback"}
+        title={
+          feedbackStep === "submitted"
+            ? "Thank you for your feedback!"
+            : "Share feedback"
+        }
       >
         <AnimatePresence mode="wait">
-          {feedbackStep === 'submitted' ? (
+          {feedbackStep === "submitted" ? (
             <motion.div
               key="success"
               initial={
@@ -811,7 +825,10 @@ export function FeedbackBubble({ className }: FeedbackBubbleProps) {
             >
               <Icon
                 icon="material-symbols:feedback-rounded"
-                className={cn("text-xl", feedbackStep !== 'initial' && "rotate-12")}
+                className={cn(
+                  "text-xl",
+                  feedbackStep !== "initial" && "rotate-12",
+                )}
               />
             </motion.div>
           )}
