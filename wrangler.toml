@@ -1,17 +1,11 @@
-# Wrangler configuration for Cloudflare Pages and Workers.
-# This file is staged for future deploys; update the placeholder
-# values before running `npx wrangler pages deploy` or similar commands.
+# Wrangler configuration for Cloudflare Pages.
+# Update project metadata right before deploying with
+# `npx wrangler pages deploy dist --project-name kiyaverse`.
 
-name = "kiyaverse"
-account_id = "5870184517da3396bf167461e6b2a421"
 compatibility_date = "2024-05-17"
 pages_build_output_dir = "dist"
 
-# Set the project name at deploy time:
-# `npx wrangler pages deploy --project-name kiyaverse`
-
-# Uncomment and populate the following block if you decide to surface
-# non-sensitive environment variables via Wrangler commands.
+# Uncomment to surface non-sensitive environment variables when needed.
 # [vars]
 # VITE_PAGECLIP_API_KEY = ""
 # VITE_TURNSTILE_SITE_KEY = ""
