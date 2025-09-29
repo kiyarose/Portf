@@ -3,7 +3,7 @@ import { AxeBuilder } from "@axe-core/playwright";
 // Use dynamic import for fs to avoid issues in ESM/test environments
 
 // Add more routes as you grow:
-const routes = ["/"]; 
+const routes = ["/"];
 
 test("collect axe violations (JSON only)", async ({ page }) => {
   const allViolations = [];
