@@ -1,7 +1,7 @@
 # Wrangler configuration for Cloudflare Pages.
-# Update project metadata right before deploying with
-# `npx wrangler pages deploy dist --project-name kiyaverse`.
+# Deploy with `npx wrangler pages deploy dist --project-name kiyaverse`.
 
+name = "kiyaverse"
 compatibility_date = "2024-05-17"
 pages_build_output_dir = "dist"
 
