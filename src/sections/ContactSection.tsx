@@ -59,8 +59,10 @@ const TURNSTILE_SITE_KEY = trimmedTurnstileSiteKey
   ? trimmedTurnstileSiteKey
   : undefined;
 
-let turnstileLoaded = false;
-let turnstilePromise: Promise<void> | null = null;
+const turnstileLoader = {
+  loaded: false,
+  promise: null as Promise<void> | null,
+};
 
 type TurnstileRenderOptions = {
   sitekey: string;
