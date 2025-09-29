@@ -25,7 +25,7 @@ async function findAvailablePort(startPort = 4173): Promise<number> {
 
 // Determine port based on environment
 const isCI = !!process.env.CI;
-const port = isCI 
+const port = isCI
   ? parseInt(process.env.PORT || "4173", 10) // Use PORT env var in CI, fallback to 4173
   : await findAvailablePort(4173); // Dynamic port detection for local development
 
@@ -35,13 +35,15 @@ export default defineConfig({
   },
   // Only configure webServer for local development
   // In CI, the preview server is started manually by GitHub Actions workflows
-  ...(isCI ? {} : {
-    webServer: {
-      command: `npm run preview -- --port ${port}`,
-      url: `http://localhost:${port}`,
-      reuseExistingServer: true,
-      timeout: 120_000,
-    },
-  }),
+  ...(isCI
+    ? {}
+    : {
+        webServer: {
+          command: `npm run preview -- --port ${port}`,
+          url: `http://localhost:${port}`,
+          reuseExistingServer: true,
+          timeout: 120_000,
+        },
+      }),
   reporter: [["html", { open: "never" }]],
 });
