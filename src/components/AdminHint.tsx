@@ -63,7 +63,10 @@ function AdminHint<T extends ElementType = "span">({
 
   const startPressTimer = useCallback(() => {
     clearTimer();
-    timeoutRef.current = window.setTimeout(triggerNavigation, LONG_PRESS_THRESHOLD_MS);
+    timeoutRef.current = window.setTimeout(
+      triggerNavigation,
+      LONG_PRESS_THRESHOLD_MS,
+    );
   }, [clearTimer, triggerNavigation]);
 
   useEffect(() => () => clearTimer(), [clearTimer]);
@@ -123,10 +126,13 @@ function AdminHint<T extends ElementType = "span">({
     className: clsx("font-kiya", className),
     onMouseDown: handleMouseDown as ComponentPropsWithoutRef<T>["onMouseDown"],
     onMouseUp: handleMouseUp as ComponentPropsWithoutRef<T>["onMouseUp"],
-    onMouseLeave: handleMouseLeave as ComponentPropsWithoutRef<T>["onMouseLeave"],
-    onTouchStart: handleTouchStart as ComponentPropsWithoutRef<T>["onTouchStart"],
+    onMouseLeave:
+      handleMouseLeave as ComponentPropsWithoutRef<T>["onMouseLeave"],
+    onTouchStart:
+      handleTouchStart as ComponentPropsWithoutRef<T>["onTouchStart"],
     onTouchEnd: handleTouchEnd as ComponentPropsWithoutRef<T>["onTouchEnd"],
-    onTouchCancel: handleTouchCancel as ComponentPropsWithoutRef<T>["onTouchCancel"],
+    onTouchCancel:
+      handleTouchCancel as ComponentPropsWithoutRef<T>["onTouchCancel"],
     title: "Press and hold to open the secure dashboard",
   };
 
