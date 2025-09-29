@@ -60,17 +60,17 @@ const rawTurnstileSiteKey =
   (import.meta.env.VITE_TURNSTILE_SITE_KEY ??
     import.meta.env.VITE_TURNSTYLE_SITE ??
     DEFAULT_TURNSTYLE_SITE_KEY ??
-    "") || "";
+    "") ||
+  "";
 const trimmedTurnstileSiteKey = rawTurnstileSiteKey.trim();
 const TURNSTILE_SITE_KEY = trimmedTurnstileSiteKey
   ? trimmedTurnstileSiteKey
   : undefined;
 
 const DEFAULT_PAGECLIP_API_KEY = "YLDHAohhRJSQJX3izF30KRLNxy5NYhiz";
-const rawPageclipApiKey =
-  (import.meta.env.VITE_PAGECLIP_API_KEY ?? DEFAULT_PAGECLIP_API_KEY ?? "") as
-    | string
-    | undefined;
+const rawPageclipApiKey = (import.meta.env.VITE_PAGECLIP_API_KEY ??
+  DEFAULT_PAGECLIP_API_KEY ??
+  "") as string | undefined;
 const trimmedPageclipApiKey = (rawPageclipApiKey ?? "").trim();
 const PAGECLIP_API_KEY = trimmedPageclipApiKey
   ? trimmedPageclipApiKey
@@ -94,7 +94,10 @@ type TurnstileRenderOptions = {
 declare global {
   interface Window {
     turnstile?: {
-      render: (container: HTMLElement, options: TurnstileRenderOptions) => string;
+      render: (
+        container: HTMLElement,
+        options: TurnstileRenderOptions,
+      ) => string;
       reset: (id?: string) => void;
       getResponse?: (id?: string) => string | undefined;
     };
@@ -288,7 +291,8 @@ function ContactForm({
   const { theme } = useTheme();
   const formRef = useRef<HTMLFormElement>(null);
   const [pageclipLoading, setPageclipLoading] = useState(false);
-  const [turnstileReady, setTurnstileReady] = useState<boolean>(turnstileLoaded);
+  const [turnstileReady, setTurnstileReady] =
+    useState<boolean>(turnstileLoaded);
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
   const [turnstileError, setTurnstileError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
