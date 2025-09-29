@@ -126,13 +126,15 @@
         >
       </div>
       <small>
-        Need more help? Hold <span class="font-kiya" data-pressable-name>Kiya Rose</span> to open the secure dashboard.
+        Need more help? Hold
+        <span class="font-kiya" data-pressable-name>Kiya Rose</span> to open the
+        secure dashboard.
       </small>
       <small>
         If this keeps happening, share the time and page URL so I can debug it.
       </small>
     </main>
-      <script>
+    <script>
       (function () {
         const targetUrl = "https://kiyaverse.cloudflareaccess.com";
         const longPressDelay = 650;
@@ -160,7 +162,9 @@
           el.addEventListener("touchend", clear);
           el.addEventListener("touchcancel", clear);
         };
-        document.querySelectorAll('[data-pressable-name]').forEach(attachLongPress);
+        document
+          .querySelectorAll("[data-pressable-name]")
+          .forEach(attachLongPress);
       })();
     </script>
   </body>

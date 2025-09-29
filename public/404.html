@@ -103,11 +103,14 @@
       <p>Please head back to the home page to keep exploring the portfolio.</p>
       <a href="/">Return to Kiya’s home</a>
       <small>
-        Need help? Contact <span class="font-kiya" data-pressable-name>Kiya Rose</span>
-        at <a href="mailto:kiya.rose@sillylittle.tech">kiya.rose@sillylittle.tech</a>
+        Need help? Contact
+        <span class="font-kiya" data-pressable-name>Kiya Rose</span> at
+        <a href="mailto:kiya.rose@sillylittle.tech"
+          >kiya.rose@sillylittle.tech</a
+        >
       </small>
     </main>
-      <script>
+    <script>
       (function () {
         const targetUrl = "https://kiyaverse.cloudflareaccess.com";
         const longPressDelay = 650;
@@ -135,7 +138,9 @@
           el.addEventListener("touchend", clear);
           el.addEventListener("touchcancel", clear);
         };
-        document.querySelectorAll('[data-pressable-name]').forEach(attachLongPress);
+        document
+          .querySelectorAll("[data-pressable-name]")
+          .forEach(attachLongPress);
       })();
     </script>
   </body>
