@@ -211,7 +211,7 @@ function ContactIntro({ copied, onCopy }: ContactIntroProps) {
         event.ctrlKey ||
         event.shiftKey
       ) {
-        return undefined;
+        return;
       }
       event.preventDefault();
       navigateTo("/privacy-policy");
@@ -293,12 +293,12 @@ function ContactForm({
       setTurnstileError(
         "Verification is unavailable right now. Please reach out via email.",
       );
-      return undefined;
+      return;
     }
 
     if (turnstileLoaded) {
       setTurnstileReady(true);
-      return undefined;
+      return;
     }
 
     try {
@@ -338,16 +338,16 @@ function ContactForm({
 
   useEffect(() => {
     if (!turnstileReady || !turnstileSiteKey) {
-      return undefined;
+      return;
     }
 
     if (typeof window === "undefined" || !window.turnstile) {
-      return undefined;
+      return;
     }
 
     const container = turnstileContainerRef.current;
     if (!container) {
-      return undefined;
+      return;
     }
 
     container.innerHTML = "";
