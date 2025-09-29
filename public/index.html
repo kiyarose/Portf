@@ -143,10 +143,14 @@
           >Email Kiya</a
         >
       </div>
-      <small>Need help? Hold <span class="font-kiya" data-pressable-name>Kiya Rose</span> to open the secure dashboard.</small>
+      <small
+        >Need help? Hold
+        <span class="font-kiya" data-pressable-name>Kiya Rose</span> to open the
+        secure dashboard.</small
+      >
       <small>Reference: fallback served by Firebase Hosting</small>
     </main>
-      <script>
+    <script>
       (function () {
         const targetUrl = "https://kiyaverse.cloudflareaccess.com";
         const longPressDelay = 650;
@@ -174,7 +178,9 @@
           el.addEventListener("touchend", clear);
           el.addEventListener("touchcancel", clear);
         };
-        document.querySelectorAll('[data-pressable-name]').forEach(attachLongPress);
+        document
+          .querySelectorAll("[data-pressable-name]")
+          .forEach(attachLongPress);
       })();
     </script>
   </body>

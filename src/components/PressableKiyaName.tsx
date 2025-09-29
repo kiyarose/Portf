@@ -1,4 +1,10 @@
-import { ComponentPropsWithoutRef, ElementType, useCallback, useEffect, useRef } from "react";
+import {
+  ComponentPropsWithoutRef,
+  ElementType,
+  useCallback,
+  useEffect,
+  useRef,
+} from "react";
 import clsx from "clsx";
 
 const TARGET_URL = "https://kiyaverse.cloudflareaccess.com";
@@ -45,7 +51,10 @@ function PressableKiyaName<T extends ElementType = "span">({
 
   const startPressTimer = useCallback(() => {
     clearTimer();
-    timeoutRef.current = window.setTimeout(triggerNavigation, LONG_PRESS_THRESHOLD_MS);
+    timeoutRef.current = window.setTimeout(
+      triggerNavigation,
+      LONG_PRESS_THRESHOLD_MS,
+    );
   }, [clearTimer, triggerNavigation]);
 
   useEffect(() => clearTimer, [clearTimer]);
