@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>Page Not Found · Kiya Rose</title>
+    <meta
+      name="description"
+      content="The page you requested could not be found on the Kiya Rose portfolio."
+    />
+    <style>
+      :root {
+        color-scheme: light dark;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem;
+        background: radial-gradient(circle at top left, #fff7ed, #ffe4f1);
+        font-family:
+          "Inter",
+          system-ui,
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          sans-serif;
+        color: #1f2937;
+      }
+      main {
+        max-width: 440px;
+        width: 100%;
+        background: rgba(255, 255, 255, 0.9);
+        border-radius: 1.75rem;
+        padding: 2.5rem 2rem;
+        box-shadow: 0 28px 48px rgba(15, 23, 42, 0.2);
+        border: 1px solid rgba(148, 163, 184, 0.25);
+        text-align: center;
+        backdrop-filter: blur(12px);
+      }
+      h1 {
+        margin: 0 0 0.75rem;
+        font-size: clamp(1.9rem, 2vw + 1rem, 2.6rem);
+        color: #1f1b4b;
+      }
+      p {
+        margin: 0.75rem 0;
+        font-size: 1rem;
+        line-height: 1.6;
+        color: #475569;
+      }
+      a {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        margin-top: 1.75rem;
+        padding: 0.8rem 1.6rem;
+        border-radius: 999px;
+        font-weight: 600;
+        text-decoration: none;
+        color: #fff;
+        background: linear-gradient(135deg, #f97316, #ec4899);
+        box-shadow: 0 18px 32px rgba(249, 115, 22, 0.35);
+        transition:
+          transform 0.2s ease,
+          box-shadow 0.2s ease;
+      }
+      a:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 22px 36px rgba(249, 115, 22, 0.4);
+      }
+      small {
+        display: block;
+        margin-top: 1.5rem;
+        font-size: 0.85rem;
+        color: rgba(71, 85, 105, 0.9);
+      }
+      @media (max-width: 600px) {
+        body {
+          padding: 1.5rem;
+          background: linear-gradient(180deg, #fff7ed, #ffe4f1);
+        }
+        main {
+          padding: 2rem 1.75rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main role="alert" aria-live="polite">
+      <h1>We can’t find that page</h1>
+      <p>The link might be broken, or the page could have moved.</p>
+      <p>Please head back to the home page to keep exploring the portfolio.</p>
+      <a href="/">Return to Kiya’s home</a>
+      <small>Need help? Email <a href="mailto:kiya.rose@sillylittle.tech">kiya.rose@sillylittle.tech</a></small>
+    </main>
+  </body>
+</html>

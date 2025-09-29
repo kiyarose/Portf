@@ -1,1 +1,9 @@
-/* /index.html 200
+# Explicitly surface dedicated error documents before the SPA fallback.
+/404 /404.html 404
+/500 /500.html 500
+
+# Directly rewrite the privacy policy route so deep links load in the SPA.
+/privacy-policy /index.html 200!
+
+# Fallback all other extension-less routes to the SPA entry point.
+/* /index.html 200!
