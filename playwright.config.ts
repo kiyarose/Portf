@@ -1,7 +1,7 @@
 import { defineConfig } from "@playwright/test";
 import { createServer } from "net";
 
-async function findAvailablePort(startPort: number = 4173): Promise<number> {
+async function findAvailablePort(startPort = 4173): Promise<number> {
   return new Promise((resolve, reject) => {
     const tryPort = (port: number) => {
       const server = createServer();
