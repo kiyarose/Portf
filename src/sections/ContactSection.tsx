@@ -9,6 +9,7 @@ import { useTheme } from "../hooks/useTheme";
 import { themedClass } from "../utils/themeClass";
 import { cn } from "../utils/cn";
 import { navigateTo } from "../utils/navigation";
+import { getCspNonce } from "../utils/getCspNonce";
 
 const EMAIL = "kiya.rose@sillylittle.tech";
 
@@ -33,6 +34,10 @@ const loadPageclip = (): Promise<void> => {
     script.src = "https://s.pageclip.co/v1/pageclip.js";
     script.charset = "utf-8";
     script.crossOrigin = "anonymous";
+    const nonce = getCspNonce();
+    if (nonce) {
+      script.nonce = nonce;
+    }
     script.onload = () => {
       pageclipLoaded = true;
       resolve();
@@ -85,6 +90,7 @@ declare global {
       ) => string;
       reset: (id?: string) => void;
       getResponse?: (id?: string) => string | undefined;
+      ready?: (callback: () => void) => void;
     };
   }
 }
@@ -108,6 +114,10 @@ const loadTurnstile = (): Promise<void> => {
     script.async = true;
     script.defer = true;
     script.crossOrigin = "anonymous";
+    const nonce = getCspNonce();
+    if (nonce) {
+      script.nonce = nonce;
+    }
     script.onload = () => {
       turnstileLoader.loaded = true;
       resolve();
@@ -340,6 +350,8 @@ function ContactForm({
   }, [ensureTurnstileScript]);
 
   useEffect(() => {
+    let cancelled = false;
+
     const cleanup = () => {
       if (turnstileWidgetIdRef.current) {
         window.turnstile?.reset(turnstileWidgetIdRef.current);
@@ -360,49 +372,64 @@ function ContactForm({
       return cleanup;
     }
 
-    const container = turnstileContainerRef.current;
-    if (!container) {
-      return cleanup;
+    const renderTurnstile = () => {
+      if (cancelled) {
+        return;
+      }
+
+      const container = turnstileContainerRef.current;
+      if (!container) {
+        return;
+      }
+
+      container.innerHTML = "";
+
+      try {
+        const turnstileTheme = theme === "dark" ? "dark" : "light";
+        const widgetId = window.turnstile!.render(container, {
+          sitekey: turnstileSiteKey,
+          theme: turnstileTheme,
+          appearance: "always",
+          callback: (token: string) => {
+            setTurnstileToken(token);
+            setTurnstileError(null);
+          },
+          "error-callback": () => {
+            setTurnstileToken(null);
+            setTurnstileError(
+              "Verification failed to load. Please refresh the challenge.",
+            );
+          },
+          "expired-callback": () => {
+            setTurnstileToken(null);
+            setTurnstileError(
+              "Verification expired. Please complete the challenge again.",
+            );
+            if (turnstileWidgetIdRef.current) {
+              window.turnstile?.reset(turnstileWidgetIdRef.current);
+            }
+          },
+        } as TurnstileRenderOptions);
+
+        turnstileWidgetIdRef.current = widgetId;
+      } catch (error) {
+        safeConsoleError("Failed to render Turnstile widget", error);
+        setTurnstileError(
+          "Unable to show the verification challenge. Please reload and try again.",
+        );
+      }
+    };
+
+    if (window.turnstile.ready) {
+      window.turnstile.ready(renderTurnstile);
+    } else {
+      renderTurnstile();
     }
 
-    container.innerHTML = "";
-
-    try {
-      const turnstileTheme = theme === "dark" ? "dark" : "light";
-      const widgetId = window.turnstile.render(container, {
-        sitekey: turnstileSiteKey,
-        theme: turnstileTheme,
-        appearance: "always",
-        callback: (token: string) => {
-          setTurnstileToken(token);
-          setTurnstileError(null);
-        },
-        "error-callback": () => {
-          setTurnstileToken(null);
-          setTurnstileError(
-            "Verification failed to load. Please refresh the challenge.",
-          );
-        },
-        "expired-callback": () => {
-          setTurnstileToken(null);
-          setTurnstileError(
-            "Verification expired. Please complete the challenge again.",
-          );
-          if (turnstileWidgetIdRef.current) {
-            window.turnstile?.reset(turnstileWidgetIdRef.current);
-          }
-        },
-      } as TurnstileRenderOptions);
-
-      turnstileWidgetIdRef.current = widgetId;
-    } catch (error) {
-      safeConsoleError("Failed to render Turnstile widget", error);
-      setTurnstileError(
-        "Unable to show the verification challenge. Please reload and try again.",
-      );
-    }
-
-    return cleanup;
+    return () => {
+      cancelled = true;
+      cleanup();
+    };
   }, [theme, turnstileReady, turnstileSiteKey]);
 
   const sendButtonSurface = themedClass(
