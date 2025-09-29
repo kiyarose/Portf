@@ -1,9 +1,7 @@
-# Explicitly surface dedicated error documents before the SPA fallback.
-/404 /404.html 404
-/500 /500.html 500
+# Cloudflare Pages serves 404.html and 500.html automatically—no explicit
+# redirects needed. These rules only handle SPA routing.
 
-# Directly rewrite the privacy policy route so deep links load in the SPA.
-/privacy-policy /index.html 200!
+/privacy-policy /index.html 200
 
 # Fallback all other extension-less routes to the SPA entry point.
-/* /index.html 200!
+/* /index.html 200
