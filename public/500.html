@@ -1,16 +1,13 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <!-- Google Tag Manager -->
-    <script src="/scripts/gtm.js"></script>
-    <!-- End Google Tag Manager -->
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <title>Something Went Wrong · Kiya Rose</title>
     <meta
       name="description"
-      content="Fallback page for the Kiya Rose portfolio when the main application cannot load."
+      content="An unexpected error occurred while loading the Kiya Rose portfolio."
     />
     <style>
       :root {
@@ -29,7 +26,8 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        background: radial-gradient(circle at top, #fff7ed, #ffe4f1);
+        padding: 2rem;
+        background: radial-gradient(circle at top right, #fff7ed, #ffe4f1);
         font-family:
           "Inter",
           system-ui,
@@ -38,27 +36,26 @@
           "Segoe UI",
           sans-serif;
         color: #1f2937;
-        padding: 2rem;
       }
-      .card {
-        max-width: 420px;
+      main {
+        max-width: 440px;
         width: 100%;
-        padding: 2.5rem 2rem;
-        border-radius: 1.5rem;
         background: rgba(255, 255, 255, 0.92);
-        box-shadow: 0 24px 48px rgba(15, 23, 42, 0.18);
-        backdrop-filter: blur(12px);
+        border-radius: 1.75rem;
+        padding: 2.5rem 2rem;
+        box-shadow: 0 28px 52px rgba(15, 23, 42, 0.22);
+        border: 1px solid rgba(148, 163, 184, 0.3);
         text-align: center;
-        border: 1px solid rgba(148, 163, 184, 0.25);
+        backdrop-filter: blur(14px);
       }
       h1 {
-        font-size: clamp(1.75rem, 2vw + 1rem, 2.4rem);
         margin: 0 0 0.75rem;
-        color: #1e1b4b;
+        font-size: clamp(1.9rem, 2vw + 1rem, 2.6rem);
+        color: #1f1b4b;
       }
       p {
-        margin: 0.5rem 0;
-        font-size: 0.95rem;
+        margin: 0.75rem 0;
+        font-size: 1rem;
         line-height: 1.6;
         color: #475569;
       }
@@ -70,85 +67,72 @@
       }
       a {
         display: inline-flex;
-        justify-content: center;
         align-items: center;
-        gap: 0.5rem;
-        text-decoration: none;
-        font-weight: 600;
+        justify-content: center;
+        padding: 0.8rem 1.6rem;
         border-radius: 999px;
-        padding: 0.75rem 1.5rem;
+        font-weight: 600;
+        text-decoration: none;
         transition:
           transform 0.2s ease,
           box-shadow 0.2s ease;
       }
       .primary {
-        background: linear-gradient(135deg, #f97316, #ec4899);
         color: #fff;
-        box-shadow: 0 15px 30px rgba(249, 115, 22, 0.35);
+        background: linear-gradient(135deg, #f97316, #ec4899);
+        box-shadow: 0 20px 36px rgba(249, 115, 22, 0.38);
       }
       .primary:hover {
         transform: translateY(-2px);
-        box-shadow: 0 18px 34px rgba(249, 115, 22, 0.4);
+        box-shadow: 0 24px 42px rgba(249, 115, 22, 0.42);
       }
       .secondary {
         color: #9a3412;
-        border: 1px solid rgba(250, 128, 114, 0.3);
-        background: rgba(255, 240, 245, 0.85);
+        border: 1px solid rgba(249, 115, 22, 0.3);
+        background: rgba(255, 240, 245, 0.9);
       }
       .secondary:hover {
         transform: translateY(-2px);
-        box-shadow: 0 12px 20px rgba(148, 163, 184, 0.2);
+        box-shadow: 0 14px 26px rgba(148, 163, 184, 0.22);
       }
       small {
         display: block;
-        margin-top: 1.25rem;
-        font-size: 0.8rem;
-        color: rgba(71, 85, 105, 0.8);
+        margin-top: 1.5rem;
+        font-size: 0.85rem;
+        color: rgba(71, 85, 105, 0.9);
       }
       @media (max-width: 600px) {
         body {
           padding: 1.5rem;
           background: linear-gradient(180deg, #fff7ed, #ffe4f1);
         }
-        .card {
-          padding: 2rem 1.5rem;
+        main {
+          padding: 2rem 1.75rem;
         }
       }
     </style>
   </head>
   <body>
-    <!-- Google Tag Manager (noscript) -->
-    <noscript>
-      <iframe
-        src="https://www.googletagmanager.com/ns.html?id=GTM-PPXTVWF9"
-        height="0"
-        width="0"
-        style="display: none; visibility: hidden"
-      ></iframe>
-    </noscript>
-    <!-- End Google Tag Manager (noscript) -->
-    <main class="card" role="alert" aria-live="polite">
+    <main role="alert" aria-live="polite">
       <h1>We hit a snag</h1>
       <p>
-        The main site had trouble loading. You can refresh the page or try again
-        later.
-      </p>
-      <p>
-        If you continue to see this message, feel free to reach out so I can
-        take a look.
+        An unexpected error kept the portfolio from loading. Refresh the page to
+        try again, or contact me so I can help.
       </p>
       <div class="actions">
-        <a class="primary" href="/">Reload my portfolio</a>
+        <a class="primary" href="/">Reload the site</a>
         <a class="secondary" href="mailto:kiya.rose@sillylittle.tech"
           >Email Kiya</a
         >
       </div>
-      <small
-        >Need help? Hold
+      <small>
+        Need more help? Hold
         <span class="font-kiya" data-pressable-name>Kiya Rose</span> to open the
-        secure dashboard.</small
-      >
-      <small>Reference: fallback served by Firebase Hosting</small>
+        secure dashboard.
+      </small>
+      <small>
+        If this keeps happening, share the time and page URL so I can debug it.
+      </small>
     </main>
     <script>
       (function () {

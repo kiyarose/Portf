@@ -1,6 +1,7 @@
 import { useId, useMemo } from "react";
 import { generateBuildLabel } from "../data/build";
 import { useTheme } from "../hooks/useTheme";
+import AdminHint from "./AdminHint";
 import type { Theme } from "../providers/theme-context";
 import { themedClass } from "../utils/themeClass";
 
@@ -67,7 +68,7 @@ function FooterBranding({
     <span className={`inline-flex items-center gap-1 ${brandingColor}`}>
       <span className="text-base text-accent">©</span>
       <span>{currentYear}</span>
-      <span className="font-kiya">Kiya Rose</span>
+      <AdminHint>Kiya Rose</AdminHint>
     </span>
   );
 }

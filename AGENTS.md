@@ -11,6 +11,10 @@
 - `src/data/build.ts` exposes helpers for the build label and build timestamp: the label stores a random prefix in `localStorage` keyed by the build signature so it only changes when the code does, and `getBuildUpdatedAt()` surfaces the deploy timestamp for privacy/legal copy—leave that flow intact.
 - `src/AppRouter.tsx`, `src/pages/PrivacyPolicyPage.tsx`, and `src/utils/navigation.ts` handle lightweight client-side routing so `/privacy-policy` renders inside the React app without duplicating static assets.
 
+## Environment Variables
+
+- Secrets follow the `VITE_` prefix. Note that `VITE_TURNSTYLE_SITE` is spelled without the second “t” on purpose; do not rename it to `VITE_TURNSTILE_SITE`.
+
 ## Build, Test, and Development Commands
 
 - `npm install` (or `npm ci` in CI) installs dependencies; rerun after adding libraries like Framer Motion or @dnd-kit.

@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import { Icon } from "@iconify/react";
 import { DecorativeBackground } from "../components/DecorativeBackground";
 import { SiteFooter } from "../components/SiteFooter";
+import AdminHint from "../components/AdminHint";
 import { useTheme } from "../hooks/useTheme";
 import { themedClass } from "../utils/themeClass";
 import { cn } from "../utils/cn";
@@ -48,11 +49,24 @@ const policySections: PolicySection[] = [
             .
           </li>
           <li>
-            <strong>Usage analytics:</strong> Firebase Hosting and the built-in
-            Google Analytics integrations collect standard event and device
-            information (such as page views, browser type, approximate
-            geolocation, and device identifiers). These analytics are aggregated
-            and help me measure site performance.
+            <strong>Request and performance logs:</strong> Cloudflare Pages logs
+            standard request metadata (such as IP address, user agent, and
+            requested URLs) to keep the site running reliably and diagnose
+            issues. These logs are retained briefly and are not used for
+            marketing.
+          </li>
+          <li>
+            <strong>Zero Trust access events:</strong> Cloudflare Zero Trust
+            (Access) records when the private admin tools are opened so I can
+            audit who is accessing the dashboard and respond to potential
+            security incidents. These events are tied to my Cloudflare account
+            and are not shared externally.
+          </li>
+          <li>
+            <strong>Legacy analytics (retired October 30, 2025):</strong>
+            Firebase Hosting metrics and Google Analytics events were previously
+            collected for aggregated insights. They were shut off effective
+            October 30, 2025 and no longer receive data from any visitors.
           </li>
         </ul>
       </>
@@ -79,12 +93,30 @@ const policySections: PolicySection[] = [
     body: (
       <>
         <p className={paragraphClass}>
-          The portfolio is hosted with <strong>Firebase Hosting</strong> and
-          uses Google’s analytics tooling. These providers process data on my
-          behalf in accordance with their own policies, which you can review
-          here:
+          The portfolio is hosted with <strong>Cloudflare Pages</strong> and
+          protected with <strong>Cloudflare Zero Trust Access</strong>. These
+          services process data on my behalf to deliver the site, apply security
+          policies, and monitor for abuse. You can review their practices here:
         </p>
         <ul className={listClass}>
+          <li>
+            <a
+              href="https://www.cloudflare.com/privacypolicy/"
+              target="_blank"
+              rel="noreferrer"
+            >
+              Cloudflare Privacy Policy
+            </a>
+          </li>
+          <li>
+            <a
+              href="https://developers.cloudflare.com/pages/platform/data-usage/"
+              target="_blank"
+              rel="noreferrer"
+            >
+              Cloudflare Pages Data Usage
+            </a>
+          </li>
           <li>
             <a
               href="https://firebase.google.com/support/privacy"
@@ -105,8 +137,11 @@ const policySections: PolicySection[] = [
           </li>
         </ul>
         <p className={paragraphClass}>
-          I do not sell your personal information or share it with advertisers.
-          Access is limited to what is required to run this website.
+          Firebase Hosting metrics and Google Analytics are kept listed here for
+          historical context only—they ceased collecting new data after October
+          30, 2025. I do not sell your personal information or share it with
+          advertisers. Access is limited to what is required to run this
+          website.
         </p>
       </>
     ),
@@ -384,8 +419,8 @@ function PolicyIntro() {
   return (
     <p className={cn(paragraphClass, "mt-4")}>
       Your privacy matters. This Privacy Policy explains how I,{" "}
-      <span className="font-kiya">Kiya Rose</span>, collect, use, and safeguard
-      personal information when you visit{" "}
+      <AdminHint>Kiya Rose</AdminHint>, collect, use, and safeguard personal
+      information when you visit{" "}
       <a href="https://sillylittle.tech" rel="noreferrer">
         sillylittle.tech
       </a>

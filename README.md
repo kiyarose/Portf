@@ -11,6 +11,7 @@ My Personal Portfolio. I put things here, hopefully it looks good.
 - **Firebase Hosting** via GitHub Actions for automated deploys
 
 - `VITE_PAGECLIP_API_KEY` - Required for the contact form to work. API key from [Pageclip](https://pageclip.co/).
+- `VITE_TURNSTILE_SITE_KEY` (or legacy `VITE_TURNSTYLE_SITE`) - Cloudflare Turnstile site key that powers the human verification step on the contact form.
 
 ## Deployment
 
