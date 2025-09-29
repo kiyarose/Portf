@@ -337,17 +337,29 @@ function ContactForm({
   }, [ensureTurnstileScript]);
 
   useEffect(() => {
+    const cleanup = () => {
+      if (turnstileWidgetIdRef.current) {
+        window.turnstile?.reset(turnstileWidgetIdRef.current);
+        turnstileWidgetIdRef.current = null;
+      }
+
+      const currentContainer = turnstileContainerRef.current;
+      if (currentContainer) {
+        currentContainer.innerHTML = "";
+      }
+    };
+
     if (!turnstileReady || !turnstileSiteKey) {
-      return;
+      return cleanup;
     }
 
     if (typeof window === "undefined" || !window.turnstile) {
-      return;
+      return cleanup;
     }
 
     const container = turnstileContainerRef.current;
     if (!container) {
-      return;
+      return cleanup;
     }
 
     container.innerHTML = "";
@@ -387,13 +399,7 @@ function ContactForm({
       );
     }
 
-    return () => {
-      if (turnstileWidgetIdRef.current) {
-        window.turnstile?.reset(turnstileWidgetIdRef.current);
-        turnstileWidgetIdRef.current = null;
-      }
-      container.innerHTML = "";
-    };
+    return cleanup;
   }, [theme, turnstileReady, turnstileSiteKey]);
 
   const sendButtonSurface = themedClass(
