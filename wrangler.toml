@@ -1,0 +1,19 @@
+# Wrangler configuration for Cloudflare Pages and Workers.
+# This file is staged for future deploys; update the placeholder
+# values before running `npx wrangler pages deploy` or similar commands.
+
+name = "kiyaverse"
+account_id = "5870184517da3396bf167461e6b2a421"
+compatibility_date = "2024-05-17"
+
+# The Pages section mirrors the GitHub workflows added for Cloudflare Pages.
+[pages]
+project_name = "kiyaverse"
+build_output_dir = "dist"
+
+# Uncomment and populate the following block if you decide to surface
+# non-sensitive environment variables via Wrangler commands.
+# [vars]
+# VITE_PAGECLIP_API_KEY = ""
+# VITE_TURNSTILE_SITE_KEY = ""
+# VITE_TURNSTYLE_SITE = ""
