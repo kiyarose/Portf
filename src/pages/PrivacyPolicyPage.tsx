@@ -385,8 +385,8 @@ function PolicyIntro() {
   return (
     <p className={cn(paragraphClass, "mt-4")}>
       Your privacy matters. This Privacy Policy explains how I,{" "}
-      <AdminHint>Kiya Rose</AdminHint>, collect, use, and safeguard
-      personal information when you visit{" "}
+      <AdminHint>Kiya Rose</AdminHint>, collect, use, and safeguard personal
+      information when you visit{" "}
       <a href="https://sillylittle.tech" rel="noreferrer">
         sillylittle.tech
       </a>
