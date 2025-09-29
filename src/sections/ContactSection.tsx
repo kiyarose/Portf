@@ -94,32 +94,32 @@ const loadTurnstile = (): Promise<void> => {
     return Promise.resolve();
   }
 
-  if (turnstileLoaded) {
+  if (turnstileLoader.loaded) {
     return Promise.resolve();
   }
 
-  if (turnstilePromise) {
-    return turnstilePromise;
+  if (turnstileLoader.promise) {
+    return turnstileLoader.promise;
   }
 
-  turnstilePromise = new Promise((resolve, reject) => {
+  turnstileLoader.promise = new Promise((resolve, reject) => {
     const script = document.createElement("script");
     script.src = TURNSTILE_SCRIPT_SRC;
     script.async = true;
     script.defer = true;
     script.crossOrigin = "anonymous";
     script.onload = () => {
-      turnstileLoaded = true;
+      turnstileLoader.loaded = true;
       resolve();
     };
     script.onerror = () => {
-      turnstilePromise = null;
+      turnstileLoader.promise = null;
       reject(new Error("Failed to load Turnstile script"));
     };
     document.head.appendChild(script);
   });
 
-  return turnstilePromise;
+  return turnstileLoader.promise;
 };
 
 const isLikelyCorsError = (error: unknown): boolean => {
@@ -272,7 +272,7 @@ function ContactForm({
   const formRef = useRef<HTMLFormElement>(null);
   const [pageclipLoading, setPageclipLoading] = useState(false);
   const [turnstileReady, setTurnstileReady] =
-    useState<boolean>(turnstileLoaded);
+    useState<boolean>(turnstileLoader.loaded);
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
   const [turnstileError, setTurnstileError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -298,7 +298,7 @@ function ContactForm({
       return;
     }
 
-    if (turnstileLoaded) {
+    if (turnstileLoader.loaded) {
       setTurnstileReady(true);
       return;
     }
