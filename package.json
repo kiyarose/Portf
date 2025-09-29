@@ -19,7 +19,7 @@
     "@iconify/json": "^2.2.386",
     "@iconify/react": "^6.0.2",
     "clsx": "^2.1.1",
-    "framer-motion": "^12.23.18",
+    "framer-motion": "^12.23.22",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
     "tailwind-merge": "^3.3.1"
