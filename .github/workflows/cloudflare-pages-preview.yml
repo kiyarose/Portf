@@ -1,8 +1,8 @@
-name: Deploy Cloudflare Pages preview
+name: Deploy Cloudflare Pages preview (disabled)
 
 on:
-  pull_request:
-    types: [opened, synchronize, reopened]
+  # Temporarily disabled while Cloudflare deploys are paused.
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -10,7 +10,7 @@ permissions:
 
 jobs:
   build_and_preview:
-    if: ${{ github.event.pull_request.head.repo.full_name == github.repository }}
+    if: ${{ false }}
     runs-on: ubuntu-latest
     steps:
       - name: Check out source

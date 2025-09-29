@@ -1,15 +1,15 @@
-name: Deploy to Cloudflare Pages on merge
+name: Deploy to Cloudflare Pages on merge (disabled)
 
 on:
-  push:
-    branches:
-      - main
+  # Temporarily disabled while Cloudflare deploys are paused.
+  workflow_dispatch:
 
 permissions:
   contents: read
 
 jobs:
   build_and_deploy:
+    if: ${{ false }}
     runs-on: ubuntu-latest
     steps:
       - name: Check out source
