@@ -785,9 +785,13 @@ export function FeedbackBubble({ className }: FeedbackBubbleProps) {
     }
   }, [scrollProgress, isVisible, triggerConfetti]);
 
-  const pageclipApiKey = import.meta.env.VITE_PAGECLIP_API_KEY as
-    | string
-    | undefined;
+  // Hardcoded for debugging - revert after testing
+  // const pageclipApiKey = import.meta.env.VITE_PAGECLIP_API_KEY as
+  //   | string
+  //   | undefined;
+  
+  // Hardcoded for debugging - revert after testing  
+  const pageclipApiKey = "YLDHAohhRJSQJX3izF30KRLNxy5NYhiz";
   const pageclipFormName = "Feedback";
   const pageclipUrl = pageclipApiKey
     ? `https://send.pageclip.co/${pageclipApiKey}/${pageclipFormName}`

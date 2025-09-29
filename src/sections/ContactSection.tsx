@@ -49,15 +49,19 @@ const loadPageclip = (): Promise<void> => {
 
 const TURNSTILE_SCRIPT_SRC =
   "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
-const rawTurnstileSiteKey =
-  (import.meta.env.VITE_TURNSTILE_SITE_KEY ??
-    import.meta.env.VITE_TURNSTYLE_SITE ??
-    "") ||
-  "";
-const trimmedTurnstileSiteKey = rawTurnstileSiteKey.trim();
-const TURNSTILE_SITE_KEY = trimmedTurnstileSiteKey
-  ? trimmedTurnstileSiteKey
-  : undefined;
+// Hardcoded for debugging - revert after testing
+// const rawTurnstileSiteKey =
+//   (import.meta.env.VITE_TURNSTILE_SITE_KEY ??
+//     import.meta.env.VITE_TURNSTYLE_SITE ??
+//     "") ||
+//   "";
+// const trimmedTurnstileSiteKey = rawTurnstileSiteKey.trim();
+// const TURNSTILE_SITE_KEY = trimmedTurnstileSiteKey
+//   ? trimmedTurnstileSiteKey
+//   : undefined;
+
+// Hardcoded for debugging - revert after testing
+const TURNSTILE_SITE_KEY = "0x4AAAAAAB33nR-Wv_kJwwAA";
 
 const turnstileLoader = {
   loaded: false,
@@ -282,10 +286,13 @@ function ContactForm({
 
   const turnstileSiteKey = TURNSTILE_SITE_KEY;
 
-  // Use the env var (public key) to build the Pageclip URL.
-  const pageclipApiKey = import.meta.env.VITE_PAGECLIP_API_KEY as
-    | string
-    | undefined;
+  // Hardcoded for debugging - revert after testing
+  // const pageclipApiKey = import.meta.env.VITE_PAGECLIP_API_KEY as
+  //   | string
+  //   | undefined;
+  
+  // Hardcoded for debugging - revert after testing
+  const pageclipApiKey = "YLDHAohhRJSQJX3izF30KRLNxy5NYhiz";
   const pageclipFormName = "Contact_Me_Form";
   const pageclipUrl = pageclipApiKey
     ? `https://send.pageclip.co/${pageclipApiKey}/${pageclipFormName}`
