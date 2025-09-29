@@ -24,7 +24,7 @@ async function findAvailablePort(startPort = 4173): Promise<number> {
 }
 
 // Determine port based on environment
-const isCI = !!process.env.CI;
+const isCI = Boolean(process.env.CI);
 const port = isCI
   ? parseInt(process.env.PORT || "4173", 10) // Use PORT env var in CI, fallback to 4173
   : await findAvailablePort(4173); // Dynamic port detection for local development
