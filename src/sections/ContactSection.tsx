@@ -1,6 +1,6 @@
 import { Icon } from "@iconify/react";
 import { motion, useReducedMotion } from "framer-motion";
-import { useCallback, useState, useRef } from "react";
+import { useCallback, useState, useRef, useEffect } from "react";
 import type { MouseEvent } from "react";
 import { SectionContainer } from "../components/SectionContainer";
 import { SectionHeader } from "../components/SectionHeader";
@@ -45,6 +45,81 @@ const loadPageclip = (): Promise<void> => {
   });
 
   return pageclipPromise;
+};
+
+const TURNSTILE_SCRIPT_SRC =
+  "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
+const rawTurnstileSiteKey =
+  (import.meta.env.VITE_TURNSTILE_SITE_KEY ??
+    import.meta.env.VITE_TURNSTYLE_SITE ??
+    "") ||
+  "";
+const trimmedTurnstileSiteKey = rawTurnstileSiteKey.trim();
+const TURNSTILE_SITE_KEY = trimmedTurnstileSiteKey
+  ? trimmedTurnstileSiteKey
+  : undefined;
+
+const turnstileLoader = {
+  loaded: false,
+  promise: null as Promise<void> | null,
+};
+
+type TurnstileRenderOptions = {
+  sitekey: string;
+  callback?: (token: string) => void;
+  "error-callback"?: () => void;
+  "expired-callback"?: () => void;
+  theme?: "light" | "dark" | "auto";
+  appearance?: "always" | "execute" | "interaction-only";
+  size?: "normal" | "compact";
+  action?: string;
+  cData?: string;
+};
+
+declare global {
+  interface Window {
+    turnstile?: {
+      render: (
+        container: HTMLElement,
+        options: TurnstileRenderOptions,
+      ) => string;
+      reset: (id?: string) => void;
+      getResponse?: (id?: string) => string | undefined;
+    };
+  }
+}
+
+const loadTurnstile = (): Promise<void> => {
+  if (typeof window === "undefined") {
+    return Promise.resolve();
+  }
+
+  if (turnstileLoader.loaded) {
+    return Promise.resolve();
+  }
+
+  if (turnstileLoader.promise) {
+    return turnstileLoader.promise;
+  }
+
+  turnstileLoader.promise = new Promise((resolve, reject) => {
+    const script = document.createElement("script");
+    script.src = TURNSTILE_SCRIPT_SRC;
+    script.async = true;
+    script.defer = true;
+    script.crossOrigin = "anonymous";
+    script.onload = () => {
+      turnstileLoader.loaded = true;
+      resolve();
+    };
+    script.onerror = () => {
+      turnstileLoader.promise = null;
+      reject(new Error("Failed to load Turnstile script"));
+    };
+    document.head.appendChild(script);
+  });
+
+  return turnstileLoader.promise;
 };
 
 const isLikelyCorsError = (error: unknown): boolean => {
@@ -196,6 +271,16 @@ function ContactForm({
   const { theme } = useTheme();
   const formRef = useRef<HTMLFormElement>(null);
   const [pageclipLoading, setPageclipLoading] = useState(false);
+  const [turnstileReady, setTurnstileReady] = useState<boolean>(
+    turnstileLoader.loaded,
+  );
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
+  const [turnstileError, setTurnstileError] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const turnstileContainerRef = useRef<HTMLDivElement | null>(null);
+  const turnstileWidgetIdRef = useRef<string | null>(null);
+
+  const turnstileSiteKey = TURNSTILE_SITE_KEY;
 
   // Use the env var (public key) to build the Pageclip URL.
   const pageclipApiKey = import.meta.env.VITE_PAGECLIP_API_KEY as
@@ -206,33 +291,149 @@ function ContactForm({
     ? `https://send.pageclip.co/${pageclipApiKey}/${pageclipFormName}`
     : null;
 
+  const ensureTurnstileScript = useCallback(async () => {
+    if (!turnstileSiteKey) {
+      setTurnstileError(
+        "Verification is unavailable right now. Please reach out via email.",
+      );
+      return;
+    }
+
+    if (turnstileLoader.loaded) {
+      setTurnstileReady(true);
+      return;
+    }
+
+    try {
+      await loadTurnstile();
+      setTurnstileReady(true);
+    } catch (error) {
+      setTurnstileError(
+        "Unable to load the verification step. Please refresh and try again.",
+      );
+      safeConsoleWarn("Failed to load Turnstile script", error);
+    }
+  }, [turnstileSiteKey]);
+
   const handleDismissError = useCallback(() => {
     onErrorChange(null);
   }, [onErrorChange]);
 
   // Load pageclip on first form interaction
   const handleFormFocus = useCallback(async () => {
-    if (pageclipLoaded || pageclipLoading) return;
-
-    setPageclipLoading(true);
-    try {
-      await loadPageclip();
-    } catch (error) {
-      safeConsoleWarn("Failed to load pageclip script", error);
-    } finally {
-      setPageclipLoading(false);
+    if (!pageclipLoaded && !pageclipLoading) {
+      setPageclipLoading(true);
+      try {
+        await loadPageclip();
+      } catch (error) {
+        safeConsoleWarn("Failed to load pageclip script", error);
+      } finally {
+        setPageclipLoading(false);
+      }
     }
-  }, [pageclipLoading]);
+
+    await ensureTurnstileScript();
+  }, [ensureTurnstileScript, pageclipLoading]);
+
+  useEffect(() => {
+    ensureTurnstileScript();
+  }, [ensureTurnstileScript]);
+
+  useEffect(() => {
+    const cleanup = () => {
+      if (turnstileWidgetIdRef.current) {
+        window.turnstile?.reset(turnstileWidgetIdRef.current);
+        turnstileWidgetIdRef.current = null;
+      }
+
+      const currentContainer = turnstileContainerRef.current;
+      if (currentContainer) {
+        currentContainer.innerHTML = "";
+      }
+    };
+
+    if (!turnstileReady || !turnstileSiteKey) {
+      return cleanup;
+    }
+
+    if (typeof window === "undefined" || !window.turnstile) {
+      return cleanup;
+    }
+
+    const container = turnstileContainerRef.current;
+    if (!container) {
+      return cleanup;
+    }
+
+    container.innerHTML = "";
+
+    try {
+      const turnstileTheme = theme === "dark" ? "dark" : "light";
+      const widgetId = window.turnstile.render(container, {
+        sitekey: turnstileSiteKey,
+        theme: turnstileTheme,
+        appearance: "always",
+        callback: (token: string) => {
+          setTurnstileToken(token);
+          setTurnstileError(null);
+        },
+        "error-callback": () => {
+          setTurnstileToken(null);
+          setTurnstileError(
+            "Verification failed to load. Please refresh the challenge.",
+          );
+        },
+        "expired-callback": () => {
+          setTurnstileToken(null);
+          setTurnstileError(
+            "Verification expired. Please complete the challenge again.",
+          );
+          if (turnstileWidgetIdRef.current) {
+            window.turnstile?.reset(turnstileWidgetIdRef.current);
+          }
+        },
+      } as TurnstileRenderOptions);
+
+      turnstileWidgetIdRef.current = widgetId;
+    } catch (error) {
+      safeConsoleError("Failed to render Turnstile widget", error);
+      setTurnstileError(
+        "Unable to show the verification challenge. Please reload and try again.",
+      );
+    }
+
+    return cleanup;
+  }, [theme, turnstileReady, turnstileSiteKey]);
 
   const sendButtonSurface = themedClass(
     theme,
     "bg-white text-accent border border-accent hover:bg-accent/10 shadow-md",
     "bg-accent text-white border border-accent/40 hover:bg-accent/90 shadow-lg shadow-accent/40",
   );
+  const isSubmitDisabled = isSubmitting || !turnstileToken;
+  const verificationHelperColor = themedClass(
+    theme,
+    "text-slate-500",
+    "text-slate-400",
+  );
+  const verificationErrorColor = themedClass(
+    theme,
+    "text-red-600",
+    "text-red-400",
+  );
+  const verificationSuccessColor = themedClass(
+    theme,
+    "text-emerald-600",
+    "text-emerald-400",
+  );
 
   const handleSubmit = useCallback(
     async (event: React.FormEvent<HTMLFormElement>) => {
       event.preventDefault();
+
+      if (isSubmitting) {
+        return;
+      }
 
       onErrorChange(null);
 
@@ -242,6 +443,23 @@ function ContactForm({
         onErrorChange(`Configuration Error: ${errorMsg}`);
         return;
       }
+
+      if (!turnstileSiteKey) {
+        const errorMsg =
+          "VITE_TURNSTILE_SITE_KEY (or VITE_TURNSTYLE_SITE) is missing or invalid.";
+        safeConsoleError(`Cannot submit form: ${errorMsg}`);
+        onErrorChange(`Configuration Error: ${errorMsg}`);
+        return;
+      }
+
+      if (!turnstileToken) {
+        setTurnstileError(
+          "Please complete the verification challenge before sending your message.",
+        );
+        return;
+      }
+
+      setIsSubmitting(true);
 
       const form = event.currentTarget;
 
@@ -269,6 +487,7 @@ function ContactForm({
       body.set("email", email);
       body.set("message", message);
       body.set("subject", subject);
+      body.set("cf-turnstile-response", turnstileToken);
 
       try {
         const response = await fetch(pageclipUrl, {
@@ -310,6 +529,11 @@ function ContactForm({
         }
         form.reset();
         onErrorChange(null);
+        setTurnstileToken(null);
+        setTurnstileError(null);
+        if (turnstileWidgetIdRef.current) {
+          window.turnstile?.reset(turnstileWidgetIdRef.current);
+        }
         // Optional: toast/snackbar could go here
       } catch (error) {
         // Check if this is a CORS/opaque response issue or a genuine network failure
@@ -323,6 +547,11 @@ function ContactForm({
           safeConsoleWarn("Possible CORS error after form submission", error);
           form.reset();
           onErrorChange(null);
+          setTurnstileToken(null);
+          setTurnstileError(null);
+          if (turnstileWidgetIdRef.current) {
+            window.turnstile?.reset(turnstileWidgetIdRef.current);
+          }
           return;
         } else {
           // This appears to be an actual network error
@@ -334,13 +563,28 @@ function ContactForm({
           );
           onErrorChange(`Network Error: ${errorMessage}`);
         }
+      } finally {
+        setIsSubmitting(false);
       }
     },
-    [pageclipApiKey, pageclipUrl, onErrorChange],
+    [
+      isSubmitting,
+      onErrorChange,
+      pageclipApiKey,
+      pageclipUrl,
+      turnstileSiteKey,
+      turnstileToken,
+    ],
   );
 
   if (!pageclipApiKey) {
     safeConsoleError("Contact form configuration error: API key not found");
+  }
+
+  if (!turnstileSiteKey) {
+    safeConsoleError(
+      "Contact form configuration error: Turnstile site key not found. Set VITE_TURNSTILE_SITE_KEY or VITE_TURNSTYLE_SITE.",
+    );
   }
 
   return (
@@ -480,16 +724,61 @@ function ContactForm({
           onFocus={handleFormFocus}
         />
       </label>
+      <div className="space-y-2">
+        <div
+          ref={turnstileContainerRef}
+          className="flex justify-center"
+          data-testid="turnstile-container"
+        />
+        {!turnstileToken && !turnstileError && (
+          <p
+            className={cn(
+              "text-center text-xs font-medium",
+              verificationHelperColor,
+            )}
+          >
+            Complete the verification above to enable Send message.
+          </p>
+        )}
+        {turnstileToken && !turnstileError && (
+          <p
+            className={cn(
+              "text-center text-xs font-medium",
+              verificationSuccessColor,
+            )}
+          >
+            Thanks! You&apos;re verified and ready to submit.
+          </p>
+        )}
+        {turnstileError && (
+          <p
+            className={cn(
+              "text-center text-xs font-semibold",
+              verificationErrorColor,
+            )}
+            role="alert"
+          >
+            {turnstileError}
+          </p>
+        )}
+      </div>
       <motion.button
         type="submit"
         className={cn(
           "pageclip-form__submit w-full rounded-2xl px-6 py-3 text-sm font-semibold transition",
           sendButtonSurface,
+          isSubmitDisabled && "cursor-not-allowed opacity-60",
         )}
-        whileHover={prefersReducedMotion ? undefined : { scale: 1.01 }}
-        whileTap={prefersReducedMotion ? undefined : { scale: 0.97 }}
+        disabled={isSubmitDisabled}
+        aria-disabled={isSubmitDisabled}
+        whileHover={
+          prefersReducedMotion || isSubmitDisabled ? undefined : { scale: 1.01 }
+        }
+        whileTap={
+          prefersReducedMotion || isSubmitDisabled ? undefined : { scale: 0.97 }
+        }
       >
-        <span>Send message</span>
+        <span>{isSubmitting ? "Sending..." : "Send message"}</span>
       </motion.button>
     </form>
   );
