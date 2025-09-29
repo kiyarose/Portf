@@ -789,8 +789,8 @@ export function FeedbackBubble({ className }: FeedbackBubbleProps) {
   // const pageclipApiKey = import.meta.env.VITE_PAGECLIP_API_KEY as
   //   | string
   //   | undefined;
-  
-  // Hardcoded for debugging - revert after testing  
+
+  // Hardcoded for debugging - revert after testing
   const pageclipApiKey = "YLDHAohhRJSQJX3izF30KRLNxy5NYhiz";
   const pageclipFormName = "Feedback";
   const pageclipUrl = pageclipApiKey

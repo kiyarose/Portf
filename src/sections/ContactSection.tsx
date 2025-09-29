@@ -290,7 +290,7 @@ function ContactForm({
   // const pageclipApiKey = import.meta.env.VITE_PAGECLIP_API_KEY as
   //   | string
   //   | undefined;
-  
+
   // Hardcoded for debugging - revert after testing
   const pageclipApiKey = "YLDHAohhRJSQJX3izF30KRLNxy5NYhiz";
   const pageclipFormName = "Contact_Me_Form";
