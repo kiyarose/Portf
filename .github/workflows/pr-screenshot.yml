@@ -20,6 +20,8 @@ on:
 jobs:
   e2e:
     runs-on: ubuntu-latest
+    env:
+      PORT: 4173  # Port for preview server and Playwright tests
 
     steps:
       - name: Checkout
@@ -49,10 +51,10 @@ jobs:
 
       # --- Added steps to start and wait for the preview server ---
       - name: Start preview server
-        run: npm run preview -- --port 4173 &
+        run: npm run preview -- --port $PORT &
 
       - name: Wait for server to be ready
-        run: npx wait-on http://localhost:4173
+        run: npx wait-on http://localhost:$PORT
       # -----------------------------------------------------------
 
       - name: Cache Playwright browsers

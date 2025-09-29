@@ -2,10 +2,8 @@ import { test } from "@playwright/test";
 import { AxeBuilder } from "@axe-core/playwright";
 // Use dynamic import for fs to avoid issues in ESM/test environments
 
-const URL = process.env.PREVIEW_URL || "http://localhost:4173/";
-
 // Add more routes as you grow:
-const routes = [URL];
+const routes = ["/"];
 
 test("collect axe violations (JSON only)", async ({ page }) => {
   const allViolations = [];
