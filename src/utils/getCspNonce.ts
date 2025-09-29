@@ -5,7 +5,8 @@ declare global {
   }
 }
 
-const META_CSP_NONCE_SELECTOR = 'meta[name="csp-nonce"], meta[name="csp_nonce"]';
+const META_CSP_NONCE_SELECTOR =
+  'meta[name="csp-nonce"], meta[name="csp_nonce"]';
 
 const getAttributeNonce = (element: Element | null): string | undefined => {
   if (!element) {
@@ -66,10 +67,5 @@ export const getCspNonce = (): string | undefined => {
     return undefined;
   }
 
-  return (
-    readMetaNonce() ??
-    readWindowNonce() ??
-    readScriptNonce()
-  );
+  return readMetaNonce() ?? readWindowNonce() ?? readScriptNonce();
 };
-

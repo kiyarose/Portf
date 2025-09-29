@@ -58,7 +58,8 @@ const TURNSTILE_SCRIPT_SRC =
 const rawTurnstileSiteKey =
   (import.meta.env.VITE_TURNSTILE_SITE_KEY ??
     import.meta.env.VITE_TURNSTYLE_SITE ??
-    "") || "";
+    "") ||
+  "";
 const trimmedTurnstileSiteKey = rawTurnstileSiteKey.trim();
 const TURNSTILE_SITE_KEY = trimmedTurnstileSiteKey
   ? trimmedTurnstileSiteKey
@@ -82,7 +83,10 @@ type TurnstileRenderOptions = {
 declare global {
   interface Window {
     turnstile?: {
-      render: (container: HTMLElement, options: TurnstileRenderOptions) => string;
+      render: (
+        container: HTMLElement,
+        options: TurnstileRenderOptions,
+      ) => string;
       reset: (id?: string) => void;
       getResponse?: (id?: string) => string | undefined;
     };
@@ -276,7 +280,8 @@ function ContactForm({
   const { theme } = useTheme();
   const formRef = useRef<HTMLFormElement>(null);
   const [pageclipLoading, setPageclipLoading] = useState(false);
-  const [turnstileReady, setTurnstileReady] = useState<boolean>(turnstileLoaded);
+  const [turnstileReady, setTurnstileReady] =
+    useState<boolean>(turnstileLoaded);
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
   const [turnstileError, setTurnstileError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
