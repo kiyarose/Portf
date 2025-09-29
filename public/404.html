@@ -16,6 +16,10 @@
       * {
         box-sizing: border-box;
       }
+      .font-kiya {
+        font-family: "Patrick Hand", "Inter", sans-serif;
+        letter-spacing: 0.02em;
+      }
       body {
         margin: 0;
         min-height: 100vh;
@@ -98,12 +102,41 @@
       <p>The link might be broken, or the page could have moved.</p>
       <p>Please head back to the home page to keep exploring the portfolio.</p>
       <a href="/">Return to Kiya’s home</a>
-      <small
-        >Need help? Email
-        <a href="mailto:kiya.rose@sillylittle.tech"
-          >kiya.rose@sillylittle.tech</a
-        ></small
-      >
+      <small>
+        Need help? Contact <span class="font-kiya" data-pressable-name>Kiya Rose</span>
+        at <a href="mailto:kiya.rose@sillylittle.tech">kiya.rose@sillylittle.tech</a>
+      </small>
     </main>
+      <script>
+      (function () {
+        const targetUrl = "https://kiyaverse.cloudflareaccess.com";
+        const longPressDelay = 650;
+        const attachLongPress = (el) => {
+          let timer;
+          const clear = () => {
+            if (timer) {
+              clearTimeout(timer);
+              timer = undefined;
+            }
+          };
+          const start = (isMouseEvent, event) => {
+            if (isMouseEvent && event.button !== 0) {
+              return;
+            }
+            clear();
+            timer = setTimeout(() => {
+              window.open(targetUrl, "_blank", "noopener,noreferrer");
+            }, longPressDelay);
+          };
+          el.addEventListener("mousedown", (event) => start(true, event));
+          el.addEventListener("mouseup", clear);
+          el.addEventListener("mouseleave", clear);
+          el.addEventListener("touchstart", (event) => start(false, event));
+          el.addEventListener("touchend", clear);
+          el.addEventListener("touchcancel", clear);
+        };
+        document.querySelectorAll('[data-pressable-name]').forEach(attachLongPress);
+      })();
+    </script>
   </body>
 </html>

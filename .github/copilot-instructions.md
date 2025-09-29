@@ -13,6 +13,10 @@
 - Privacy and legal copy should source their “Last updated” value from `getBuildUpdatedAt()` in `src/data/build.ts` so the date reflects the current build—no hard-coded timestamps.
 - Everything should be in Canadian English or French English when possible, when there are conflicting versions of a singular term use the more specific one. (For example cheque instead of check)
 
+## Environment Variables
+
+- Secrets use the `VITE_` prefix; note that `VITE_TURNSTYLE_SITE` (missing the second "t") is intentional and should not be renamed to `VITE_TURNSTILE_SITE`.
+
 ## Quality Expectations
 
 - Prefer fixes that resolve lint warnings, TypeScript errors, and obvious UX problems rather than adding placeholders.

@@ -1,6 +1,7 @@
 import { motion, useReducedMotion } from "framer-motion";
 import { socials } from "../data/socials";
 import { SectionContainer } from "../components/SectionContainer";
+import PressableKiyaName from "../components/PressableKiyaName";
 import { SocialChip } from "../components/SocialChip";
 import { useTheme } from "../hooks/useTheme";
 import type { Theme } from "../providers/theme-context";
@@ -41,7 +42,7 @@ function HeroCard({ prefersReducedMotion, theme }: HeroCardProps) {
             greetingChip,
           )}
         >
-          Hello, I’m <span className="font-kiya">Kiya Rose</span>! 👋
+          Hello, I’m <PressableKiyaName>Kiya Rose</PressableKiyaName>! 👋
         </span>
         <div className="space-y-4">
           <h1

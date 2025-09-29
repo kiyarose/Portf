@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import { Icon } from "@iconify/react";
 import { DecorativeBackground } from "../components/DecorativeBackground";
 import { SiteFooter } from "../components/SiteFooter";
+import PressableKiyaName from "../components/PressableKiyaName";
 import { useTheme } from "../hooks/useTheme";
 import { themedClass } from "../utils/themeClass";
 import { cn } from "../utils/cn";
@@ -384,7 +385,7 @@ function PolicyIntro() {
   return (
     <p className={cn(paragraphClass, "mt-4")}>
       Your privacy matters. This Privacy Policy explains how I,{" "}
-      <span className="font-kiya">Kiya Rose</span>, collect, use, and safeguard
+      <PressableKiyaName>Kiya Rose</PressableKiyaName>, collect, use, and safeguard
       personal information when you visit{" "}
       <a href="https://sillylittle.tech" rel="noreferrer">
         sillylittle.tech

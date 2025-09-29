@@ -16,6 +16,7 @@ import { themedClass } from "./utils/themeClass";
 import { DecorativeBackground } from "./components/DecorativeBackground";
 import { SiteFooter } from "./components/SiteFooter";
 import { FeedbackBubble } from "./components/FeedbackBubble";
+import PressableKiyaName from "./components/PressableKiyaName";
 
 const sections = [
   { id: "hero", label: "Home", icon: "material-symbols:home-rounded" },
@@ -105,7 +106,7 @@ function LogoLink({ theme }: { theme: Theme }) {
         className="text-xl text-accent sm:text-2xl"
         aria-hidden="true"
       />
-      <span className="font-kiya">Kiya Rose</span>
+      <PressableKiyaName>Kiya Rose</PressableKiyaName>
     </a>
   );
 }
