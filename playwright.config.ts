@@ -5,20 +5,20 @@ async function findAvailablePort(startPort: number = 4173): Promise<number> {
   return new Promise((resolve, reject) => {
     const tryPort = (port: number) => {
       const server = createServer();
-      
+
       server.listen(port, () => {
         server.close(() => resolve(port));
       });
-      
-      server.on('error', (err: NodeJS.ErrnoException) => {
-        if (err.code === 'EADDRINUSE') {
+
+      server.on("error", (err: NodeJS.ErrnoException) => {
+        if (err.code === "EADDRINUSE") {
           tryPort(port + 1);
         } else {
           reject(err);
         }
       });
     };
-    
+
     tryPort(startPort);
   });
 }
