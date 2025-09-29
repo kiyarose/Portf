@@ -9,7 +9,9 @@ test("collect axe violations (JSON only)", async ({ page }) => {
   const allViolations = [];
 
   for (const url of routes) {
-    await page.goto(url, { waitUntil: "networkidle" });
+    await page.goto(url, { waitUntil: "domcontentloaded" });
+    await page.waitForLoadState("load");
+    await page.waitForLoadState("networkidle", { timeout: 5_000 }).catch(() => undefined);
     // Use AxeBuilder directly instead of injectAxe
     const results = await new AxeBuilder({ page })
       .include("main")

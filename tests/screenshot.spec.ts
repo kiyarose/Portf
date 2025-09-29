@@ -110,7 +110,9 @@ test("homepage full-page screenshot", async ({ page }) => {
 
   for (const { fileName, viewport, theme } of variants) {
     await page.setViewportSize(viewport);
-    await page.goto("/", { waitUntil: "networkidle" });
+    await page.goto("/", { waitUntil: "domcontentloaded" });
+    await page.waitForLoadState("load");
+    await page.waitForLoadState("networkidle", { timeout: 5_000 }).catch(() => undefined);
     await ensureTheme(page, theme);
     await page.waitForTimeout(theme === "dark" ? 600 : 200);
     await waitForFonts(page);
