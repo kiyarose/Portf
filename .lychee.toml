@@ -1,12 +1,9 @@
-# Scan code + built site links
 max_concurrency = 8
 retry_wait_time = 2
 retry_count = 2
 accept = [200, 206, 301, 302, 429]
+timeout = 10
 exclude = [
   "mailto:*",
   "tel:*"
 ]
-timeout = "10s"
-# Example ignore if you hit rate limits:
-# exclude = ["https://twitter.com/*","https://x.com/*"]
