@@ -2,7 +2,7 @@
   "__meta": {
     "version": 1,
     "template": "export type ExperienceEntry = {\n  company: string;\n  role: string;\n  dates: string;\n  description?: string;\n  tech?: string[];\n};\n\nexport const experienceTimeline: ExperienceEntry[] = __DATA_PLACEHOLDER__experienceTimeline_184_1946__;\n",
-    "source": "education.ts",
+    "source": "experience.ts",
     "entries": [
       {
         "name": "experienceTimeline",
