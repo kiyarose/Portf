@@ -132,7 +132,14 @@ function relocateToolHtml(): Plugin {
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [react(), copyAdminAssets(), copyToolAssets(), relocateToolHtml()],
+
+  plugins: [
+    react(),
+    copyAdminAssets(),
+    copyToolAssets(),
+    organizeToolOutputs(),
+    emitAppShell(),
+  ],
   define: {
     __BUILD_TIME__: JSON.stringify(new Date().toISOString()),
   },
