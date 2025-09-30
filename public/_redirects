@@ -3,5 +3,9 @@
 
 /privacy-policy /index.html 200
 
+# Serve asset-style requests (paths containing an extension) directly so
+# they can 404 when the file is missing instead of falling back to the SPA.
+/*.* /404.html 404
+
 # Fallback all other extension-less routes to the SPA entry point.
 /* /index.html 200
