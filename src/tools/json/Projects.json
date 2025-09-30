@@ -2,7 +2,7 @@
   "__meta": {
     "version": 1,
     "template": "export type Project = {\n  title: string;\n  description: string;\n  tech: string[];\n  link?: string;\n};\n\nexport const projects: Project[] = __DATA_PLACEHOLDER__projects_138_727__;\n",
-    "source": "education.ts",
+    "source": "projects.ts",
     "entries": [
       {
         "name": "projects",
