@@ -7,6 +7,7 @@ const distDir = path.join(rootDir, "dist");
 const outputDir = path.join(distDir, "tools");
 
 const copiedSummary = { pages: 0, assets: 0 };
+const spaShellFilename = "app-shell";
 
 async function ensureDir(dir) {
   await fs.mkdir(dir, { recursive: true });
@@ -81,6 +82,17 @@ async function main() {
     entries.map((entry) => processEntry(path.join(sourceDir, entry), [entry])),
   );
 
+  const spaShellSource = path.join(distDir, "index.html");
+  const spaShellDestination = path.join(distDir, spaShellFilename);
+  try {
+    await fs.access(spaShellSource);
+    await fs.copyFile(spaShellSource, spaShellDestination);
+  } catch (error) {
+    throw new Error(
+      `Unable to create SPA shell fallback: missing source file at ${spaShellSource}`,
+    );
+  }
+
   const summaryParts = [];
   if (copiedSummary.pages > 0) {
     summaryParts.push(
@@ -96,6 +108,9 @@ async function main() {
     summaryParts.length > 0 ? summaryParts.join(", ") : "no files";
   console.log(
     `Copied ${summary} into ${path.relative(rootDir, outputDir) || "."}`,
+  );
+  console.log(
+    `Created SPA shell fallback at ${path.relative(rootDir, spaShellDestination)}`,
   );
 }
 

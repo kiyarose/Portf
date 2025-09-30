@@ -5,9 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "tsc -b && vite build && npm run build:tools",
     "build:tools": "node tools/build-tools.mjs",
-    "build:pages": "npm run build && npm run build:tools",
+    "build:pages": "npm run build",
     "lint": "eslint .",
     "preview": "vite preview --strictPort",
     "css:watch": "postcss src/index.css --config . --output dist/style.css --watch",

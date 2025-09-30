@@ -7,4 +7,4 @@
 /tools/* /tools/:splat 200
 
 # Fallback all other extension-less routes to the SPA entry point.
-/* /index.html 200
+/* /app-shell 200
