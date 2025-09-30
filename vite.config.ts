@@ -16,10 +16,7 @@ const __dirname = dirname(__filename);
 const ADMIN_ASSETS_DIR = resolve(__dirname, "admin-assets");
 const TOOLS_DIR = resolve(__dirname, "src/tools");
 
-const TOOL_PAGES = [
-  { slug: "visualizeme" },
-  { slug: "convert" },
-];
+const TOOL_PAGES = [{ slug: "visualizeme" }, { slug: "convert" }];
 
 const TOOL_HTML_INPUTS: Record<string, string> = Object.fromEntries(
   TOOL_PAGES.map((page) => [
