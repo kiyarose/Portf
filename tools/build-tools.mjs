@@ -38,7 +38,10 @@ async function processEntry(entryPath, relativeSegments) {
   if (stats.isDirectory()) {
     const children = await fs.readdir(entryPath);
     for (const child of children) {
-      await processEntry(path.join(entryPath, child), [...relativeSegments, child]);
+      await processEntry(path.join(entryPath, child), [
+        ...relativeSegments,
+        child,
+      ]);
     }
     return;
   }
@@ -81,13 +84,20 @@ async function main() {
 
   const summaryParts = [];
   if (copiedSummary.pages > 0) {
-    summaryParts.push(`${copiedSummary.pages} HTML page${copiedSummary.pages === 1 ? "" : "s"}`);
+    summaryParts.push(
+      `${copiedSummary.pages} HTML page${copiedSummary.pages === 1 ? "" : "s"}`,
+    );
   }
   if (copiedSummary.assets > 0) {
-    summaryParts.push(`${copiedSummary.assets} asset${copiedSummary.assets === 1 ? "" : "s"}`);
+    summaryParts.push(
+      `${copiedSummary.assets} asset${copiedSummary.assets === 1 ? "" : "s"}`,
+    );
   }
-  const summary = summaryParts.length > 0 ? summaryParts.join(", ") : "no files";
-  console.log(`Copied ${summary} into ${path.relative(rootDir, outputDir) || "."}`);
+  const summary =
+    summaryParts.length > 0 ? summaryParts.join(", ") : "no files";
+  console.log(
+    `Copied ${summary} into ${path.relative(rootDir, outputDir) || "."}`,
+  );
 }
 
 main().catch((error) => {
