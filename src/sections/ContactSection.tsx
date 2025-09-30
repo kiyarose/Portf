@@ -9,6 +9,7 @@ import { useTheme } from "../hooks/useTheme";
 import { themedClass } from "../utils/themeClass";
 import { cn } from "../utils/cn";
 import { navigateTo } from "../utils/navigation";
+import { getCspNonce } from "../utils/getCspNonce";
 
 const EMAIL = "kiya.rose@sillylittle.tech";
 
@@ -33,6 +34,11 @@ const loadPageclip = (): Promise<void> => {
     script.src = "https://s.pageclip.co/v1/pageclip.js";
     script.charset = "utf-8";
     script.crossOrigin = "anonymous";
+    const nonce = getCspNonce();
+    if (nonce) {
+      script.nonce = nonce;
+      script.setAttribute("nonce", nonce);
+    }
     script.onload = () => {
       pageclipLoaded = true;
       resolve();
@@ -49,9 +55,11 @@ const loadPageclip = (): Promise<void> => {
 
 const TURNSTILE_SCRIPT_SRC =
   "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
+const DEFAULT_TURNSTYLE_SITE_KEY = "0x4AAAAAAB33nR-Wv_kJwwAA";
 const rawTurnstileSiteKey =
   (import.meta.env.VITE_TURNSTILE_SITE_KEY ??
     import.meta.env.VITE_TURNSTYLE_SITE ??
+    DEFAULT_TURNSTYLE_SITE_KEY ??
     "") ||
   "";
 const trimmedTurnstileSiteKey = rawTurnstileSiteKey.trim();
@@ -59,10 +67,17 @@ const TURNSTILE_SITE_KEY = trimmedTurnstileSiteKey
   ? trimmedTurnstileSiteKey
   : undefined;
 
-const turnstileLoader = {
-  loaded: false,
-  promise: null as Promise<void> | null,
-};
+const DEFAULT_PAGECLIP_API_KEY = "YLDHAohhRJSQJX3izF30KRLNxy5NYhiz";
+const rawPageclipApiKey = (import.meta.env.VITE_PAGECLIP_API_KEY ??
+  DEFAULT_PAGECLIP_API_KEY ??
+  "") as string | undefined;
+const trimmedPageclipApiKey = (rawPageclipApiKey ?? "").trim();
+const PAGECLIP_API_KEY = trimmedPageclipApiKey
+  ? trimmedPageclipApiKey
+  : undefined;
+
+let turnstileLoaded = false;
+let turnstilePromise: Promise<void> | null = null;
 
 type TurnstileRenderOptions = {
   sitekey: string;
@@ -94,32 +109,37 @@ const loadTurnstile = (): Promise<void> => {
     return Promise.resolve();
   }
 
-  if (turnstileLoader.loaded) {
+  if (turnstileLoaded) {
     return Promise.resolve();
   }
 
-  if (turnstileLoader.promise) {
-    return turnstileLoader.promise;
+  if (turnstilePromise) {
+    return turnstilePromise;
   }
 
-  turnstileLoader.promise = new Promise((resolve, reject) => {
+  turnstilePromise = new Promise((resolve, reject) => {
     const script = document.createElement("script");
     script.src = TURNSTILE_SCRIPT_SRC;
     script.async = true;
     script.defer = true;
     script.crossOrigin = "anonymous";
+    const nonce = getCspNonce();
+    if (nonce) {
+      script.nonce = nonce;
+      script.setAttribute("nonce", nonce);
+    }
     script.onload = () => {
-      turnstileLoader.loaded = true;
+      turnstileLoaded = true;
       resolve();
     };
     script.onerror = () => {
-      turnstileLoader.promise = null;
+      turnstilePromise = null;
       reject(new Error("Failed to load Turnstile script"));
     };
     document.head.appendChild(script);
   });
 
-  return turnstileLoader.promise;
+  return turnstilePromise;
 };
 
 const isLikelyCorsError = (error: unknown): boolean => {
@@ -271,9 +291,8 @@ function ContactForm({
   const { theme } = useTheme();
   const formRef = useRef<HTMLFormElement>(null);
   const [pageclipLoading, setPageclipLoading] = useState(false);
-  const [turnstileReady, setTurnstileReady] = useState<boolean>(
-    turnstileLoader.loaded,
-  );
+  const [turnstileReady, setTurnstileReady] =
+    useState<boolean>(turnstileLoaded);
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
   const [turnstileError, setTurnstileError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -283,9 +302,7 @@ function ContactForm({
   const turnstileSiteKey = TURNSTILE_SITE_KEY;
 
   // Use the env var (public key) to build the Pageclip URL.
-  const pageclipApiKey = import.meta.env.VITE_PAGECLIP_API_KEY as
-    | string
-    | undefined;
+  const pageclipApiKey = PAGECLIP_API_KEY;
   const pageclipFormName = "Contact_Me_Form";
   const pageclipUrl = pageclipApiKey
     ? `https://send.pageclip.co/${pageclipApiKey}/${pageclipFormName}`
@@ -299,7 +316,7 @@ function ContactForm({
       return;
     }
 
-    if (turnstileLoader.loaded) {
+    if (turnstileLoaded) {
       setTurnstileReady(true);
       return;
     }
@@ -340,29 +357,17 @@ function ContactForm({
   }, [ensureTurnstileScript]);
 
   useEffect(() => {
-    const cleanup = () => {
-      if (turnstileWidgetIdRef.current) {
-        window.turnstile?.reset(turnstileWidgetIdRef.current);
-        turnstileWidgetIdRef.current = null;
-      }
-
-      const currentContainer = turnstileContainerRef.current;
-      if (currentContainer) {
-        currentContainer.innerHTML = "";
-      }
-    };
-
     if (!turnstileReady || !turnstileSiteKey) {
-      return cleanup;
+      return;
     }
 
     if (typeof window === "undefined" || !window.turnstile) {
-      return cleanup;
+      return;
     }
 
     const container = turnstileContainerRef.current;
     if (!container) {
-      return cleanup;
+      return;
     }
 
     container.innerHTML = "";
@@ -402,7 +407,13 @@ function ContactForm({
       );
     }
 
-    return cleanup;
+    return () => {
+      if (turnstileWidgetIdRef.current) {
+        window.turnstile?.reset(turnstileWidgetIdRef.current);
+        turnstileWidgetIdRef.current = null;
+      }
+      container.innerHTML = "";
+    };
   }, [theme, turnstileReady, turnstileSiteKey]);
 
   const sendButtonSurface = themedClass(
@@ -747,7 +758,7 @@ function ContactForm({
               verificationSuccessColor,
             )}
           >
-            Thanks! You&apos;re verified and ready to submit.
+            Thanks! You're verified and ready to submit.
           </p>
         )}
         {turnstileError && (

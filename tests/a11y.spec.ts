@@ -2,16 +2,18 @@ import { test } from "@playwright/test";
 import { AxeBuilder } from "@axe-core/playwright";
 // Use dynamic import for fs to avoid issues in ESM/test environments
 
-const URL = process.env.PREVIEW_URL || "http://localhost:4173/";
-
 // Add more routes as you grow:
-const routes = [URL];
+const routes = ["/"];
 
 test("collect axe violations (JSON only)", async ({ page }) => {
   const allViolations = [];
 
   for (const url of routes) {
-    await page.goto(url, { waitUntil: "networkidle" });
+    await page.goto(url, { waitUntil: "domcontentloaded" });
+    await page.waitForLoadState("load");
+    await page
+      .waitForLoadState("networkidle", { timeout: 5_000 })
+      .catch(() => undefined);
     // Use AxeBuilder directly instead of injectAxe
     const results = await new AxeBuilder({ page })
       .include("main")
