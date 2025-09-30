@@ -8,7 +8,7 @@
 # Preserve the legacy slug while the new route propagates.
 
 /tools/visualiseme /src/tools/visualizeme.html 301
-/tools/* /src/tools/:splat 200!
+/tools/* /src/tools/:splat 200
 
 # Fallback all other extension-less routes to the SPA entry point.
 /* /index.html 200!
