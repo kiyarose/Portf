@@ -3,20 +3,44 @@
   X-Content-Type-Options: nosniff
   X-Frame-Options: DENY
   Referrer-Policy: strict-origin-when-cross-origin
-  Permissions-Policy: camera=(), microphone=(), geolocation=()
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=()
   Cross-Origin-Opener-Policy: same-origin-allow-popups
-  Content-Security-Policy: default-src 'self'; img-src 'self' data: https://www.googletagmanager.com; script-src 'self' https://s.pageclip.co https://www.googletagmanager.com https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://s.pageclip.co; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://send.pageclip.co https://api.iconify.design https://www.googletagmanager.com https://www.google-analytics.com https://challenges.cloudflare.com; frame-src 'self' https://challenges.cloudflare.com; object-src 'none'; base-uri 'self'; form-action 'self' https://send.pageclip.co; frame-ancestors 'none'; manifest-src 'self';
+  Cross-Origin-Embedder-Policy: credentialless
+  Cross-Origin-Resource-Policy: cross-origin
+  Content-Security-Policy: default-src 'self';
+    img-src 'self' data: https://www.googletagmanager.com;
+    script-src 'self' https://s.pageclip.co https://www.googletagmanager.com https://challenges.cloudflare.com;
+    style-src 'self' 'sha256-9KDHKoEVnMXql8z3K+/c/QDKf1IpzMgibQw6JilU/2E=' https://fonts.googleapis.com https://s.pageclip.co;
+    font-src 'self' https://fonts.gstatic.com;
+    connect-src 'self' https://send.pageclip.co https://api.iconify.design https://www.googletagmanager.com https://www.google-analytics.com https://challenges.cloudflare.com;
+    frame-src 'self' https://challenges.cloudflare.com;
+    object-src 'none';
+    base-uri 'self';
+    form-action 'self' https://send.pageclip.co;
+    frame-ancestors 'none';
+    manifest-src 'self';
   Access-Control-Allow-Origin: *
   Access-Control-Allow-Methods: GET, OPTIONS
+  Cache-Control: public, max-age=300, must-revalidate
 
+# HTML pages - shorter cache for dynamic content
+/**/*.html
+  Cache-Control: public, max-age=300, must-revalidate
+
+# Static assets get longer cache
 /assets/*
   Cache-Control: public, max-age=31536000, immutable
 
 /admin-assets/*
   Cache-Control: public, max-age=31536000, immutable
 
-/robots.txt
-  Cache-Control: public, max-age=3600
+# API endpoints and dynamic content
+/api/*
+  Cache-Control: no-cache, no-store, must-revalidate
 
-/sitemap.xml
-  Cache-Control: public, max-age=3600
+# Specific static files
+/favicon.svg
+  Cache-Control: public, max-age=86400
+
+/vite.svg
+  Cache-Control: public, max-age=86400
