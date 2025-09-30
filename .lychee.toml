@@ -7,5 +7,6 @@ exclude = [
   "mailto:*",
   "tel:*"
 ]
+timeout = "10s"
 # Example ignore if you hit rate limits:
 # exclude = ["https://twitter.com/*","https://x.com/*"]
