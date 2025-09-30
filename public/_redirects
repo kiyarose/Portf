@@ -3,6 +3,7 @@
 
 /privacy-policy /index.html 200
 
+/tools/visualiseme /tools/visualizeme 200
 /tools/* /tools/:splat 200
 
 # Fallback all other extension-less routes to the SPA entry point.
