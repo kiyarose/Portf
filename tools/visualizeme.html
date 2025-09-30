@@ -1465,15 +1465,26 @@
         return haystack.includes(term.toLowerCase());
       }
 
-      function applyTransform() {
-        if (!viewportGroup) {
+      let transformFrame = null;
+      function requestTransformUpdate() {
+        if (transformFrame !== null) {
           return;
         }
+        transformFrame = requestAnimationFrame(() => {
+          transformFrame = null;
+          if (!viewportGroup) {
+            return;
+          }
+          viewportGroup.setAttribute(
+            "transform",
+            `translate(${panZoom.x}, ${panZoom.y}) scale(${panZoom.scale})`,
+          );
+        });
+      }
+
+      function applyTransform() {
         panZoom.scale = Math.min(MAX_SCALE, Math.max(MIN_SCALE, panZoom.scale));
-        viewportGroup.setAttribute(
-          "transform",
-          `translate(${panZoom.x}, ${panZoom.y}) scale(${panZoom.scale})`,
-        );
+        requestTransformUpdate();
       }
 
       function resetPanZoom() {
