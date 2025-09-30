@@ -5,6 +5,7 @@ import {
   existsSync,
   mkdirSync,
   readdirSync,
+  rmSync,
   statSync,
 } from "node:fs";
 import { dirname, join, resolve } from "node:path";
@@ -94,9 +95,79 @@ function copyToolAssets(): Plugin {
   };
 }
 
+function organizeToolOutputs(): Plugin {
+  let resolvedOutDir = "";
+  let projectRoot = process.cwd();
+  return {
+    name: "organize-tool-outputs",
+    apply: "build",
+    configResolved(config) {
+      resolvedOutDir = config.build.outDir;
+      projectRoot = config.root;
+    },
+    closeBundle() {
+      const distRoot = resolve(projectRoot, resolvedOutDir);
+      const buildOutputDir = resolve(distRoot, "src", "tools");
+      for (const page of TOOL_PAGES) {
+        const fileName = `${page.slug}.html`;
+        const sourcePath = resolve(buildOutputDir, fileName);
+        if (!existsSync(sourcePath)) {
+          continue;
+        }
+        const flatDestination = resolve(distRoot, "tools", fileName);
+        const nestedDestination = resolve(
+          distRoot,
+          "tools",
+          page.slug,
+          "index.html",
+        );
+        mkdirSync(resolve(distRoot, "tools"), { recursive: true });
+        copyFileSync(sourcePath, flatDestination);
+        mkdirSync(dirname(nestedDestination), { recursive: true });
+        copyFileSync(sourcePath, nestedDestination);
+      }
+      const srcDir = resolve(distRoot, "src");
+      if (existsSync(srcDir)) {
+        rmSync(srcDir, { recursive: true, force: true });
+      }
+    },
+  };
+}
+
+function emitAppShell(): Plugin {
+  let resolvedOutDir = "";
+  let projectRoot = process.cwd();
+  return {
+    name: "emit-app-shell",
+    apply: "build",
+    configResolved(config) {
+      resolvedOutDir = config.build.outDir;
+      projectRoot = config.root;
+    },
+    closeBundle() {
+      const distRoot = resolve(projectRoot, resolvedOutDir);
+      const source = resolve(distRoot, "index.html");
+      const destination = resolve(distRoot, "app-shell");
+      if (!existsSync(source)) {
+        this.warn(
+          `Skipping app shell copy; source file not found at ${source}`,
+        );
+        return;
+      }
+      copyFileSync(source, destination);
+    },
+  };
+}
+
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [react(), copyAdminAssets(), copyToolAssets()],
+  plugins: [
+    react(),
+    copyAdminAssets(),
+    copyToolAssets(),
+    organizeToolOutputs(),
+    emitAppShell(),
+  ],
   define: {
     __BUILD_TIME__: JSON.stringify(new Date().toISOString()),
   },
