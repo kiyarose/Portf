@@ -19,7 +19,7 @@ Configure these variables in your local `.env` file and in the Cloudflare Pages 
 
 ## Deployment
 
-- Build with `npm run build` (output in `dist/`), then deploy using Wrangler: `npx wrangler pages deploy dist --project-name kiyaverse`.
+- Build with `npm run build` (output in `dist/`), then deploy using Wrangler: `npx wrangler pages deploy dist --project-name kiyaverse --compatibility-date=2024-06-01`.
 - GitHub Actions ([`cloudflare-pages-preview.yml`](.github/workflows/cloudflare-pages-preview.yml) and [`cloudflare-pages-merge.yml`](.github/workflows/cloudflare-pages-merge.yml)) run linting, build the bundle, and publish to Cloudflare Pages when enabled. Provide the following repository secrets for automation:
   - `CLOUDFLARE_ACCOUNT_ID`
   - `CLOUDFLARE_API_TOKEN` (Pages `Edit` + `Deployments` permissions)
