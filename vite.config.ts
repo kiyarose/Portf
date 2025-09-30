@@ -96,11 +96,7 @@ function copyToolAssets(): Plugin {
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [
-    react(),
-    copyAdminAssets(),
-    copyToolAssets(),
-  ],
+  plugins: [react(), copyAdminAssets(), copyToolAssets()],
   define: {
     __BUILD_TIME__: JSON.stringify(new Date().toISOString()),
   },
