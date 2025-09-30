@@ -16,7 +16,7 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { Icon } from "@iconify/react";
-import { motion, useReducedMotion } from "framer-motion";
+import { useReducedMotion } from "framer-motion";
 import React, { useCallback } from "react";
 import { SectionContainer } from "../components/SectionContainer";
 import { SectionHeader } from "../components/SectionHeader";
@@ -31,10 +31,12 @@ function SortableSkill({
   id,
   label,
   isDeveloping,
+  prefersReducedMotion,
 }: {
   id: string;
   label: string;
   isDeveloping?: boolean;
+  prefersReducedMotion: boolean;
 }) {
   const {
     attributes,
@@ -46,7 +48,7 @@ function SortableSkill({
   } = useSortable({ id });
   const style = {
     transform: CSS.Transform.toString(transform),
-    transition,
+    transition: prefersReducedMotion ? "none" : transition,
   };
   const { theme } = useTheme();
   const surfaceClass = themedClass(
@@ -68,21 +70,18 @@ function SortableSkill({
   const skillIcon = skillIcons[label];
 
   return (
-    <motion.li
+    <li
       ref={setNodeRef}
       style={style}
-      layout
       {...attributes}
       {...listeners}
       className={cn(
-        "select-none rounded-full px-5 py-2 text-sm font-medium shadow-md transition-colors",
+        "flex select-none items-center gap-2 rounded-full px-5 py-2 text-sm font-medium shadow-md transition-colors",
         surfaceClass,
         isDeveloping ? developingClass : stableBorderClass,
-        "select-none rounded-full px-5 py-2 text-sm font-medium shadow-md transition-colors flex items-center gap-2",
-        "bg-white/80 text-slate-700 dark:bg-slate-800/70 dark:text-slate-200",
-        isDeveloping
-          ? "border-2 border-dashed border-accent/60 bg-accent/10 text-accent dark:border-accent/60 dark:bg-accent/20 dark:text-accent"
-          : "border border-slate-200/60 dark:border-slate-700/60",
+        prefersReducedMotion
+          ? ""
+          : "will-change-transform transition-transform duration-150 ease-out",
         isDragging && "ring-2 ring-accent",
       )}
     >
@@ -94,7 +93,7 @@ function SortableSkill({
         />
       )}
       {label}
-    </motion.li>
+    </li>
   );
 }
 
@@ -120,20 +119,17 @@ function SkillsBoard({
       onDragEnd={onDragEnd}
     >
       <SortableContext items={skills} strategy={horizontalListSortingStrategy}>
-        <motion.ul
-          layout
-          className="flex flex-wrap gap-3"
-          transition={{ staggerChildren: prefersReducedMotion ? 0 : 0.05 }}
-        >
+        <ul className="flex flex-wrap gap-3">
           {skills.map((skill) => (
             <SortableSkill
               key={skill}
               id={skill}
               label={skill}
               isDeveloping={developingSkills.has(skill)}
+              prefersReducedMotion={prefersReducedMotion}
             />
           ))}
-        </motion.ul>
+        </ul>
       </SortableContext>
     </DndContext>
   );

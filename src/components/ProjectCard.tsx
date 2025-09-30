@@ -1,13 +1,5 @@
 import { Icon } from "@iconify/react";
-import {
-  motion,
-  useMotionValue,
-  useReducedMotion,
-  useSpring,
-  useTransform,
-} from "framer-motion";
-import { useCallback } from "react";
-import type { MouseEvent } from "react";
+import { useReducedMotion } from "framer-motion";
 import type { Project } from "../data/projects";
 import { getSkillIcon } from "../data/skills";
 import { cn } from "../utils/cn";
@@ -19,10 +11,8 @@ interface ProjectCardProps {
 }
 
 export function ProjectCard({ project }: ProjectCardProps) {
-  const prefersReducedMotion = useReducedMotion();
+  const prefersReducedMotion = useReducedMotion() ?? false;
   const { theme } = useTheme();
-  const x = useMotionValue(0);
-  const y = useMotionValue(0);
   const techChipClass = cn(
     "chip flex items-center gap-2 !px-3 !py-1 text-xs font-medium",
     themedClass(
@@ -32,43 +22,15 @@ export function ProjectCard({ project }: ProjectCardProps) {
     ),
   );
 
-  const springX = useSpring(x, { stiffness: 150, damping: 12 });
-  const springY = useSpring(y, { stiffness: 150, damping: 12 });
-
-  const rotateX = useTransform(springY, [-30, 30], [8, -8]);
-  const rotateY = useTransform(springX, [-30, 30], [-8, 8]);
-
-  const handleMouseMove = useCallback(
-    (event: MouseEvent<HTMLDivElement>) => {
-      if (prefersReducedMotion) return;
-      const { left, top, width, height } =
-        event.currentTarget.getBoundingClientRect();
-      const offsetX = event.clientX - left;
-      const offsetY = event.clientY - top;
-      const centerX = width / 2;
-      const centerY = height / 2;
-      x.set(((offsetX - centerX) / centerX) * 30);
-      y.set(((offsetY - centerY) / centerY) * 30);
-    },
-    [prefersReducedMotion, x, y],
-  );
-
-  const handleMouseLeave = useCallback(() => {
-    if (prefersReducedMotion) return;
-    x.set(0);
-    y.set(0);
-  }, [prefersReducedMotion, x, y]);
-
   return (
-    <motion.div
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
+    <div
       className={cn(
         "card-surface h-full space-y-4 border",
         themedClass(theme, "border-white/30", "border-slate-700/60"),
+        prefersReducedMotion
+          ? "transition-colors"
+          : "transform-gpu transition-transform duration-200 ease-out hover:-translate-y-1 hover:shadow-lg",
       )}
-      style={prefersReducedMotion ? undefined : { rotateX, rotateY }}
-      whileHover={prefersReducedMotion ? undefined : { translateY: -6 }}
     >
       <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <h3
@@ -116,6 +78,6 @@ export function ProjectCard({ project }: ProjectCardProps) {
           <span aria-hidden="true">→</span>
         </a>
       ) : null}
-    </motion.div>
+    </div>
   );
 }
