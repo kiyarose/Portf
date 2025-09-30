@@ -1016,6 +1016,38 @@
       let hoverPathCache = new Map();
       let activeHoverPathKey = null;
 
+      const ts = window.ts;
+      const hasTypeScript = typeof ts !== "undefined" && ts !== null;
+      let printer = null;
+      let printerSourceFile = null;
+
+      if (hasTypeScript) {
+        printer = ts.createPrinter({ newLine: ts.NewLineKind.LineFeed });
+        printerSourceFile = ts.createSourceFile(
+          "converter.ts",
+          "",
+          ts.ScriptTarget.Latest,
+          false,
+          ts.ScriptKind.TS,
+        );
+      } else {
+        if (inputModeSelect) {
+          inputModeSelect.value = "json";
+          const tsOption = inputModeSelect.querySelector('option[value="ts"]');
+          if (tsOption) {
+            tsOption.disabled = true;
+            tsOption.textContent = "TypeScript (unavailable)";
+          }
+        }
+        if (downloadTsButton) {
+          downloadTsButton.disabled = true;
+        }
+        showStatus(
+          "TypeScript support is unavailable. JSON mode remains fully functional.",
+          "error",
+        );
+      }
+
       function showStatus(message, kind = "success") {
         statusBox.textContent = message;
         statusBox.className =
@@ -1056,14 +1088,6 @@
       }
 
       const PLACEHOLDER_PREFIX = "__DATA_PLACEHOLDER__";
-      const printer = ts.createPrinter({ newLine: ts.NewLineKind.LineFeed });
-      const printerSourceFile = ts.createSourceFile(
-        "converter.ts",
-        "",
-        ts.ScriptTarget.Latest,
-        false,
-        ts.ScriptKind.TS,
-      );
 
       function unwrapLiteral(node) {
         if (!node) {
@@ -1292,6 +1316,9 @@
       }
 
       function createLiteralFromValue(value) {
+        if (!hasTypeScript || !ts) {
+          throw new Error("TypeScript support is not available.");
+        }
         if (value === null) {
           return ts.factory.createNull();
         }
@@ -1334,6 +1361,9 @@
       }
 
       function formatValueForTs(value, baseIndent = "") {
+        if (!hasTypeScript || !ts || !printer || !printerSourceFile) {
+          throw new Error("TypeScript support is not available.");
+        }
         const literal = createLiteralFromValue(value);
         const printed = printer.printNode(
           ts.EmitHint.Expression,
@@ -1367,6 +1397,11 @@
       }
 
       function convertTsSourceToJson(sourceText, sourceName = "module.ts") {
+        if (!hasTypeScript || !ts) {
+          throw new Error(
+            "TypeScript input cannot be processed because the compiler failed to load.",
+          );
+        }
         const scriptKind = sourceName.toLowerCase().endsWith(".tsx")
           ? ts.ScriptKind.TSX
           : ts.ScriptKind.TS;
@@ -1403,6 +1438,11 @@
       }
 
       function convertJsonToTs(meta, data) {
+        if (!hasTypeScript || !ts) {
+          throw new Error(
+            "TypeScript export is unavailable because the compiler failed to load.",
+          );
+        }
         if (
           !meta ||
           typeof meta !== "object" ||
@@ -1495,7 +1535,8 @@
 
       function updateDownloadButtons(hasDiagram) {
         downloadSvgButton.disabled = !hasDiagram;
-        downloadTsButton.disabled = !hasDiagram || !conversionMeta;
+        downloadTsButton.disabled =
+          !hasTypeScript || !hasDiagram || !conversionMeta;
       }
 
       function getPathKey(path) {
@@ -2450,6 +2491,13 @@
         }
 
         if (inputMode === "ts") {
+          if (!hasTypeScript || !ts) {
+            showStatus(
+              "TypeScript input cannot be processed because the compiler failed to load.",
+              "error",
+            );
+            return false;
+          }
           try {
             const sourceName = tsSourcePath || "module.ts";
             const { meta, data } = convertTsSourceToJson(rawText, sourceName);
@@ -2619,11 +2667,23 @@
         }
         const extension = file.name.split(".").pop()?.toLowerCase();
         if (extension === "ts" || extension === "tsx") {
-          if (inputModeSelect) {
-            inputModeSelect.value = "ts";
+          if (!hasTypeScript || !ts) {
+            showStatus(
+              "TypeScript files cannot be parsed because the compiler failed to load.",
+              "error",
+            );
+            if (inputModeSelect) {
+              inputModeSelect.value = "json";
+            }
+            inputMode = "json";
+            tsSourcePath = null;
+          } else {
+            if (inputModeSelect) {
+              inputModeSelect.value = "ts";
+            }
+            inputMode = "ts";
+            tsSourcePath = file.name;
           }
-          inputMode = "ts";
-          tsSourcePath = file.name;
         } else {
           if (inputModeSelect) {
             inputModeSelect.value = "json";
@@ -2641,6 +2701,15 @@
 
       if (inputModeSelect) {
         inputModeSelect.addEventListener("change", () => {
+          if (inputModeSelect.value === "ts" && (!hasTypeScript || !ts)) {
+            inputModeSelect.value = "json";
+            showStatus(
+              "TypeScript mode is unavailable because the compiler failed to load.",
+              "error",
+            );
+            inputMode = "json";
+            return;
+          }
           inputMode = inputModeSelect.value;
         });
       }
@@ -2656,6 +2725,13 @@
       });
       downloadSvgButton.addEventListener("click", downloadSvg);
       downloadTsButton.addEventListener("click", () => {
+        if (!hasTypeScript || !ts) {
+          showStatus(
+            "TypeScript export is unavailable because the compiler failed to load.",
+            "error",
+          );
+          return;
+        }
         if (!conversionMeta) {
           showStatus(
             "No TypeScript metadata available. Load a TypeScript module first.",
