@@ -3,8 +3,8 @@
 
 /privacy-policy /index.html 200
 
-/tools/convert /src/tools/convert.html 200
-/tools/visualizeme /src/tools/visualizeme.html 200
+/tools/convert 200
+/tools/visualizeme 200
 # Preserve the legacy slug while the new route propagates.
 
 /tools/visualiseme /src/tools/visualizeme.html 301
