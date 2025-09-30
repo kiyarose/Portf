@@ -2,7 +2,7 @@
   "__meta": {
     "version": 1,
     "template": "export const socials = __DATA_PLACEHOLDER__socials_23_527__ as const;\n",
-    "source": "education.ts",
+    "source": "socials.ts",
     "entries": [
       {
         "name": "socials",
