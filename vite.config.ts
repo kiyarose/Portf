@@ -122,10 +122,7 @@ function relocateToolHtml(): Plugin {
         copyFileSync(sourcePath, destinationPath);
       }
 
-      const distSrcDir = resolve(distRoot, "src");
-      if (existsSync(distSrcDir)) {
-        rmSync(distSrcDir, { recursive: true, force: true });
-      }
+      rmSync(builtHtmlDir, { recursive: true, force: true });
     },
   };
 }
