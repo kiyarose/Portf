@@ -4,9 +4,7 @@
 name = "kiyaverse"
 compatibility_date = "2024-05-17"
 pages_build_output_dir = "dist"
-
-[build]
-command = "npm run build:pages"
+build_command = "npm run build:pages"
 
 # Uncomment to surface non-sensitive environment variables when needed.
 # [vars]

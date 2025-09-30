@@ -37,12 +37,11 @@ async function processEntry(entryPath, relativeSegments) {
 
   if (stats.isDirectory()) {
     const children = await fs.readdir(entryPath);
-    for (const child of children) {
-      await processEntry(path.join(entryPath, child), [
-        ...relativeSegments,
-        child,
-      ]);
-    }
+    await Promise.all(
+      children.map((child) =>
+        processEntry(path.join(entryPath, child), [...relativeSegments, child])
+      )
+    );
     return;
   }
 
@@ -78,9 +77,11 @@ async function main() {
   await ensureDir(outputDir);
 
   const entries = await fs.readdir(sourceDir);
-  for (const entry of entries) {
-    await processEntry(path.join(sourceDir, entry), [entry]);
-  }
+  await Promise.all(
+    entries.map((entry) =>
+      processEntry(path.join(sourceDir, entry), [entry])
+    )
+  );
 
   const summaryParts = [];
   if (copiedSummary.pages > 0) {
