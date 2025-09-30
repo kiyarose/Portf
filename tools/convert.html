@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -19,10 +19,26 @@
       body {
         margin: 0;
         min-height: 100vh;
-        font-family: "Inter", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
-          "Segoe UI", sans-serif;
-        background: radial-gradient(circle at top, rgba(249, 115, 22, 0.12), transparent 55%),
-          radial-gradient(circle at bottom, rgba(236, 72, 153, 0.12), transparent 50%), var(--bg);
+        font-family:
+          "Inter",
+          ui-sans-serif,
+          system-ui,
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          sans-serif;
+        background:
+          radial-gradient(
+            circle at top,
+            rgba(249, 115, 22, 0.12),
+            transparent 55%
+          ),
+          radial-gradient(
+            circle at bottom,
+            rgba(236, 72, 153, 0.12),
+            transparent 50%
+          ),
+          var(--bg);
         color: var(--text);
         display: flex;
         justify-content: center;
@@ -75,7 +91,11 @@
       }
 
       .mode-toggle button.active {
-        background: linear-gradient(135deg, rgba(249, 115, 22, 0.9), rgba(236, 72, 153, 0.9));
+        background: linear-gradient(
+          135deg,
+          rgba(249, 115, 22, 0.9),
+          rgba(236, 72, 153, 0.9)
+        );
         color: #0f172a;
         font-weight: 600;
         box-shadow: 0 8px 24px rgba(249, 115, 22, 0.35);
@@ -108,7 +128,9 @@
         color: var(--text);
         padding: 16px;
         font-size: 0.95rem;
-        font-family: "JetBrains Mono", "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+        font-family:
+          "JetBrains Mono", "SFMono-Regular", Consolas, "Liberation Mono",
+          monospace;
         resize: vertical;
       }
 
@@ -138,12 +160,18 @@
         border-radius: 999px;
         padding: 12px 22px;
         font-size: 0.95rem;
-        background: linear-gradient(135deg, rgba(249, 115, 22, 0.9), rgba(236, 72, 153, 0.9));
+        background: linear-gradient(
+          135deg,
+          rgba(249, 115, 22, 0.9),
+          rgba(236, 72, 153, 0.9)
+        );
         color: #0f172a;
         font-weight: 600;
         cursor: pointer;
         box-shadow: 0 14px 24px rgba(236, 72, 153, 0.22);
-        transition: transform 0.16s ease, box-shadow 0.16s ease;
+        transition:
+          transform 0.16s ease,
+          box-shadow 0.16s ease;
       }
 
       button.secondary {
@@ -213,17 +241,25 @@
       <section class="card">
         <h1 class="font-kiya">Kiya Rose Data Converter</h1>
         <p>
-          Round-trip your `src/data` modules between TypeScript and JSON. Works entirely in the
-          browser—drop a file, pick the exports, and convert without leaving your machine.
+          Round-trip your `src/data` modules between TypeScript and JSON. Works
+          entirely in the browser—drop a file, pick the exports, and convert
+          without leaving your machine.
         </p>
       </section>
 
       <section class="card">
         <div class="mode-toggle" role="tablist">
-          <button type="button" class="active" data-mode="ts-to-json" role="tab">
+          <button
+            type="button"
+            class="active"
+            data-mode="ts-to-json"
+            role="tab"
+          >
             TypeScript → JSON
           </button>
-          <button type="button" data-mode="json-to-ts" role="tab">JSON → TypeScript</button>
+          <button type="button" data-mode="json-to-ts" role="tab">
+            JSON → TypeScript
+          </button>
         </div>
       </section>
 
@@ -231,11 +267,18 @@
         <div class="grid two-columns">
           <label>
             TypeScript input
-            <textarea id="ts-input" placeholder="Paste your exported data module here"></textarea>
+            <textarea
+              id="ts-input"
+              placeholder="Paste your exported data module here"
+            ></textarea>
           </label>
           <label>
             JSON output
-            <textarea id="json-output" placeholder="Result appears here" readonly></textarea>
+            <textarea
+              id="json-output"
+              placeholder="Result appears here"
+              readonly
+            ></textarea>
           </label>
         </div>
         <div class="grid" style="margin-top: 24px">
@@ -246,17 +289,29 @@
             </label>
             <label style="flex: 1 1 220px">
               Source path stored in metadata
-              <input id="ts-source" type="text" placeholder="src/data/projects.ts" />
+              <input
+                id="ts-source"
+                type="text"
+                placeholder="src/data/projects.ts"
+              />
             </label>
             <label style="flex: 1 1 220px">
               Load `.ts` file
-              <input id="ts-file" type="file" accept=".ts,.tsx,text/x-typescript" />
+              <input
+                id="ts-file"
+                type="file"
+                accept=".ts,.tsx,text/x-typescript"
+              />
             </label>
           </div>
         </div>
         <div class="actions">
-          <button class="primary" id="ts-convert" type="button">Convert to JSON</button>
-          <button class="secondary" id="ts-download" type="button" disabled>Download JSON</button>
+          <button class="primary" id="ts-convert" type="button">
+            Convert to JSON
+          </button>
+          <button class="secondary" id="ts-download" type="button" disabled>
+            Download JSON
+          </button>
         </div>
         <div class="status" id="ts-status" style="display: none"></div>
       </section>
@@ -265,11 +320,18 @@
         <div class="grid two-columns">
           <label>
             JSON input
-            <textarea id="json-input" placeholder="Paste JSON generated by this tool"></textarea>
+            <textarea
+              id="json-input"
+              placeholder="Paste JSON generated by this tool"
+            ></textarea>
           </label>
           <label>
             TypeScript output
-            <textarea id="ts-output" placeholder="Reconstructed module appears here" readonly></textarea>
+            <textarea
+              id="ts-output"
+              placeholder="Reconstructed module appears here"
+              readonly
+            ></textarea>
           </label>
         </div>
         <div class="grid" style="margin-top: 24px">
@@ -280,20 +342,31 @@
             </label>
             <label style="flex: 1 1 220px">
               Override output path
-              <input id="json-target" type="text" placeholder="src/data/projects.ts" />
+              <input
+                id="json-target"
+                type="text"
+                placeholder="src/data/projects.ts"
+              />
             </label>
             <label style="flex: 1 1 220px">
               Load `.json` file
-              <input id="json-file" type="file" accept=".json,application/json" />
+              <input
+                id="json-file"
+                type="file"
+                accept=".json,application/json"
+              />
             </label>
           </div>
           <p class="note">
-            The JSON must include the `__meta` block that the converter generates. Placeholders are
-            replaced using the stored template, so manual edits outside selected exports stay intact.
+            The JSON must include the `__meta` block that the converter
+            generates. Placeholders are replaced using the stored template, so
+            manual edits outside selected exports stay intact.
           </p>
         </div>
         <div class="actions">
-          <button class="primary" id="json-convert" type="button">Convert to TypeScript</button>
+          <button class="primary" id="json-convert" type="button">
+            Convert to TypeScript
+          </button>
           <button class="secondary" id="json-download" type="button" disabled>
             Download TypeScript
           </button>
@@ -344,7 +417,9 @@
           return node.elements.map((element) => {
             const literal = unwrapLiteral(element);
             if (ts.isSpreadElement(literal)) {
-              throw new Error("Spread elements are not supported in export literals");
+              throw new Error(
+                "Spread elements are not supported in export literals",
+              );
             }
             return evaluateLiteral(literal);
           });
@@ -359,7 +434,10 @@
             let key;
             if (ts.isIdentifier(name)) {
               key = name.text;
-            } else if (ts.isStringLiteralLike(name) || ts.isNumericLiteral(name)) {
+            } else if (
+              ts.isStringLiteralLike(name) ||
+              ts.isNumericLiteral(name)
+            ) {
               key = name.text;
             } else {
               throw new Error("Unsupported property name in export literal");
@@ -369,7 +447,9 @@
           return result;
         }
 
-        throw new Error("Encountered an unsupported expression while reading export literal");
+        throw new Error(
+          "Encountered an unsupported expression while reading export literal",
+        );
       }
 
       function computeBaseIndent(sourceText, valueStart) {
@@ -387,7 +467,9 @@
       }
 
       function buildTemplate(sourceText, entries) {
-        const ordered = [...entries].sort((a, b) => a.valueStart - b.valueStart);
+        const ordered = [...entries].sort(
+          (a, b) => a.valueStart - b.valueStart,
+        );
         let cursor = 0;
         let result = "";
         for (const entry of ordered) {
@@ -410,7 +492,10 @@
 
         if (Array.isArray(value)) {
           const elements = value.map((item) => createLiteralFromValue(item));
-          return ts.factory.createArrayLiteralExpression(elements, elements.length > 0);
+          return ts.factory.createArrayLiteralExpression(
+            elements,
+            elements.length > 0,
+          );
         }
 
         switch (typeof value) {
@@ -427,9 +512,15 @@
               const nameNode = isIdentifierCandidate(key)
                 ? ts.factory.createIdentifier(key)
                 : ts.factory.createStringLiteral(key);
-              return ts.factory.createPropertyAssignment(nameNode, createLiteralFromValue(item));
+              return ts.factory.createPropertyAssignment(
+                nameNode,
+                createLiteralFromValue(item),
+              );
             });
-            return ts.factory.createObjectLiteralExpression(entries, entries.length > 0);
+            return ts.factory.createObjectLiteralExpression(
+              entries,
+              entries.length > 0,
+            );
           }
           default:
             throw new Error(`Unsupported value type: ${typeof value}`);
@@ -438,7 +529,11 @@
 
       function formatValueForTs(value, baseIndent) {
         const literal = createLiteralFromValue(value);
-        const printed = printer.printNode(ts.EmitHint.Expression, literal, printerSourceFile);
+        const printed = printer.printNode(
+          ts.EmitHint.Expression,
+          literal,
+          printerSourceFile,
+        );
         const lines = printed.split("\n");
         if (lines.length === 1) {
           return lines[0];
@@ -456,7 +551,9 @@
           const remainder = leading % 4;
           const level = (leading - remainder) / 4;
           const adjustedIndent = `${indentPrefix}${"  ".repeat(level)}${remainder > 0 ? " ".repeat(remainder) : ""}`;
-          formatted.push(`${adjustedIndent}${match ? match[2] : line.trimStart()}`);
+          formatted.push(
+            `${adjustedIndent}${match ? match[2] : line.trimStart()}`,
+          );
         }
         return formatted.join("\n");
       }
@@ -484,7 +581,10 @@
             continue;
           }
           for (const declaration of statement.declarationList.declarations) {
-            if (!ts.isIdentifier(declaration.name) || !declaration.initializer) {
+            if (
+              !ts.isIdentifier(declaration.name) ||
+              !declaration.initializer
+            ) {
               continue;
             }
             const name = declaration.name.text;
@@ -520,13 +620,17 @@
         if (pickSet) {
           for (const name of pickSet) {
             if (!seen.has(name)) {
-              throw new Error(`Requested export \`${name}\` was not found or convertible`);
+              throw new Error(
+                `Requested export \`${name}\` was not found or convertible`,
+              );
             }
           }
         }
 
         if (entries.length === 0) {
-          throw new Error("No convertible exported arrays or objects were found");
+          throw new Error(
+            "No convertible exported arrays or objects were found",
+          );
         }
 
         const template = buildTemplate(sourceText, entries);
@@ -534,7 +638,10 @@
       }
 
       function convertTsToJson(sourceText, picks, sourcePath) {
-        const { entries, values, template } = collectExportEntries(sourceText, picks);
+        const { entries, values, template } = collectExportEntries(
+          sourceText,
+          picks,
+        );
         const metaEntries = entries.map((entry) => ({
           name: entry.name,
           placeholder: entry.placeholder,
@@ -564,7 +671,9 @@
         }
 
         if (!parsed.__meta || typeof parsed.__meta !== "object") {
-          throw new Error("Missing __meta block. Use JSON generated by this converter.");
+          throw new Error(
+            "Missing __meta block. Use JSON generated by this converter.",
+          );
         }
         if (parsed.__meta.version !== VERSION) {
           throw new Error(
@@ -572,9 +681,13 @@
           );
         }
 
-        const entries = Array.isArray(parsed.__meta.entries) ? parsed.__meta.entries : [];
+        const entries = Array.isArray(parsed.__meta.entries)
+          ? parsed.__meta.entries
+          : [];
         if (!parsed.__meta.template || entries.length === 0) {
-          throw new Error("Metadata is incomplete; cannot restore TypeScript module.");
+          throw new Error(
+            "Metadata is incomplete; cannot restore TypeScript module.",
+          );
         }
 
         const pickSet = picks && picks.size > 0 ? new Set(picks) : null;
@@ -590,7 +703,10 @@
           if (!(entry.name in parsed)) {
             throw new Error(`JSON data missing export \`${entry.name}\``);
           }
-          const replacement = formatValueForTs(parsed[entry.name], entry.baseIndent ?? "");
+          const replacement = formatValueForTs(
+            parsed[entry.name],
+            entry.baseIndent ?? "",
+          );
           if (!output.includes(entry.placeholder)) {
             throw new Error(
               `Placeholder for export \`${entry.name}\` is missing. JSON may be corrupted.`,
@@ -599,7 +715,8 @@
           output = output.replace(entry.placeholder, replacement);
         }
 
-        const targetPath = overrideTarget || parsed.__meta.source || "restored.ts";
+        const targetPath =
+          overrideTarget || parsed.__meta.source || "restored.ts";
         return { text: output, targetPath };
       }
 
@@ -704,7 +821,11 @@
         tsDownloadButton.disabled = true;
         try {
           const picks = parsePicks(tsPicksInput.value);
-          const result = convertTsToJson(tsInput.value, picks, tsSourceInput.value.trim());
+          const result = convertTsToJson(
+            tsInput.value,
+            picks,
+            tsSourceInput.value.trim(),
+          );
           jsonOutput.value = result;
           tsDownloadButton.disabled = false;
           showStatus(
@@ -713,7 +834,11 @@
             "success",
           );
         } catch (error) {
-          showStatus(tsStatus, error instanceof Error ? error.message : String(error), "error");
+          showStatus(
+            tsStatus,
+            error instanceof Error ? error.message : String(error),
+            "error",
+          );
         }
       });
 
@@ -739,9 +864,17 @@
           tsOutput.value = text;
           jsonDownloadButton.dataset.filename = targetPath || "restored.ts";
           jsonDownloadButton.disabled = false;
-          showStatus(jsonStatus, `Rebuilt module as \`${targetPath}\`.`, "success");
+          showStatus(
+            jsonStatus,
+            `Rebuilt module as \`${targetPath}\`.`,
+            "success",
+          );
         } catch (error) {
-          showStatus(jsonStatus, error instanceof Error ? error.message : String(error), "error");
+          showStatus(
+            jsonStatus,
+            error instanceof Error ? error.message : String(error),
+            "error",
+          );
         }
       });
 

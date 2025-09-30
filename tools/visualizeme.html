@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -29,14 +29,29 @@
       body {
         margin: 0;
         min-height: 100vh;
-        font-family: "Inter", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
-          "Segoe UI", sans-serif;
+        font-family:
+          "Inter",
+          ui-sans-serif,
+          system-ui,
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          sans-serif;
         color: var(--text);
         display: flex;
         justify-content: center;
         padding: 40px 16px 80px;
-        background: radial-gradient(circle at top left, rgba(255, 255, 255, 0.85) 0%, transparent 55%),
-          radial-gradient(circle at bottom right, rgba(236, 72, 153, 0.08) 0%, transparent 55%),
+        background:
+          radial-gradient(
+            circle at top left,
+            rgba(255, 255, 255, 0.85) 0%,
+            transparent 55%
+          ),
+          radial-gradient(
+            circle at bottom right,
+            rgba(236, 72, 153, 0.08) 0%,
+            transparent 55%
+          ),
           var(--bg);
         position: relative;
         overflow: hidden;
@@ -47,9 +62,13 @@
         position: absolute;
         inset: 0;
         background:
-          linear-gradient(90deg, rgba(148, 163, 184, 0.06) 1px, transparent 0) repeat-x,
-          linear-gradient(0deg, rgba(148, 163, 184, 0.06) 1px, transparent 0) repeat-y;
-        background-size: 64px 64px, 64px 64px;
+          linear-gradient(90deg, rgba(148, 163, 184, 0.06) 1px, transparent 0)
+            repeat-x,
+          linear-gradient(0deg, rgba(148, 163, 184, 0.06) 1px, transparent 0)
+            repeat-y;
+        background-size:
+          64px 64px,
+          64px 64px;
         pointer-events: none;
         z-index: 0;
       }
@@ -58,7 +77,11 @@
         content: "";
         position: absolute;
         inset: -20% -20% 50% 40%;
-        background: radial-gradient(circle, rgba(236, 72, 153, 0.12), transparent 60%);
+        background: radial-gradient(
+          circle,
+          rgba(236, 72, 153, 0.12),
+          transparent 60%
+        );
         filter: blur(60px);
         pointer-events: none;
         z-index: 0;
@@ -82,7 +105,9 @@
           0 4px 12px rgba(15, 23, 42, 0.05);
         position: relative;
         overflow: hidden;
-        transition: transform 0.25s ease, box-shadow 0.25s ease;
+        transition:
+          transform 0.25s ease,
+          box-shadow 0.25s ease;
       }
 
       .card::before,
@@ -90,7 +115,11 @@
         content: "";
         position: absolute;
         inset: -40% 45% 40% -40%;
-        background: linear-gradient(135deg, rgba(236, 72, 153, 0.1), rgba(249, 115, 22, 0.1));
+        background: linear-gradient(
+          135deg,
+          rgba(236, 72, 153, 0.1),
+          rgba(249, 115, 22, 0.1)
+        );
         transform: rotate(12deg);
         filter: blur(60px);
         opacity: 0.7;
@@ -99,7 +128,11 @@
 
       .card::after {
         inset: 45% -35% -35% 45%;
-        background: linear-gradient(135deg, rgba(59, 130, 246, 0.12), rgba(236, 72, 153, 0.08));
+        background: linear-gradient(
+          135deg,
+          rgba(59, 130, 246, 0.12),
+          rgba(236, 72, 153, 0.08)
+        );
         transform: rotate(-8deg);
       }
 
@@ -199,7 +232,9 @@
         color: var(--text-strong);
         padding: 16px;
         font-size: 0.95rem;
-        font-family: "JetBrains Mono", "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+        font-family:
+          "JetBrains Mono", "SFMono-Regular", Consolas, "Liberation Mono",
+          monospace;
         resize: vertical;
         box-shadow: inset 0 1px 2px rgba(148, 163, 184, 0.18);
       }
@@ -246,9 +281,15 @@
         font-weight: 600;
         cursor: pointer;
         color: #0f172a;
-        background: linear-gradient(135deg, rgba(249, 115, 22, 0.96), rgba(236, 72, 153, 0.92));
+        background: linear-gradient(
+          135deg,
+          rgba(249, 115, 22, 0.96),
+          rgba(236, 72, 153, 0.92)
+        );
         box-shadow: 0 12px 24px rgba(236, 72, 153, 0.24);
-        transition: transform 0.16s ease, box-shadow 0.16s ease;
+        transition:
+          transform 0.16s ease,
+          box-shadow 0.16s ease;
       }
 
       button.secondary {
@@ -318,7 +359,11 @@
       .viewer-card {
         display: grid;
         gap: 22px;
-        background: linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(248, 250, 252, 0.92));
+        background: linear-gradient(
+          180deg,
+          rgba(255, 255, 255, 0.95),
+          rgba(248, 250, 252, 0.92)
+        );
         border-radius: 24px;
         padding: 28px;
         border: 1px solid rgba(209, 213, 219, 0.55);
@@ -349,7 +394,11 @@
       .diagram-container {
         border-radius: 22px;
         border: 1px dashed rgba(148, 163, 184, 0.28);
-        background: linear-gradient(180deg, rgba(248, 250, 252, 0.8), rgba(241, 245, 249, 0.7));
+        background: linear-gradient(
+          180deg,
+          rgba(248, 250, 252, 0.8),
+          rgba(241, 245, 249, 0.7)
+        );
         padding: 24px;
         overflow: auto;
         height: clamp(560px, 70vh, 860px);
@@ -374,11 +423,16 @@
       svg path.tree-edge {
         stroke: url(#edgeGradient);
         stroke-width: 1.6;
-        transition: stroke 0.25s ease, opacity 0.25s ease;
+        transition:
+          stroke 0.25s ease,
+          opacity 0.25s ease;
       }
 
       .tree-node rect {
-        transition: transform 0.18s ease, stroke 0.18s ease, fill 0.18s ease;
+        transition:
+          transform 0.18s ease,
+          stroke 0.18s ease,
+          fill 0.18s ease;
         transform-origin: center;
       }
 
@@ -506,7 +560,11 @@
         content: "";
         position: absolute;
         inset: -30% -20% 30% 50%;
-        background: linear-gradient(135deg, rgba(236, 72, 153, 0.12), rgba(249, 115, 22, 0.1));
+        background: linear-gradient(
+          135deg,
+          rgba(236, 72, 153, 0.12),
+          rgba(249, 115, 22, 0.1)
+        );
         filter: blur(50px);
         pointer-events: none;
       }
@@ -549,7 +607,9 @@
         border: 1px solid rgba(209, 213, 219, 0.65);
         background: rgba(248, 250, 252, 0.9);
         color: var(--text);
-        font-family: "JetBrains Mono", "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+        font-family:
+          "JetBrains Mono", "SFMono-Regular", Consolas, "Liberation Mono",
+          monospace;
         padding: 16px;
         font-size: 0.95rem;
         resize: vertical;
@@ -598,7 +658,11 @@
         content: "";
         position: absolute;
         inset: -25% -15% 45% 35%;
-        background: linear-gradient(135deg, rgba(236, 72, 153, 0.1), rgba(249, 115, 22, 0.08));
+        background: linear-gradient(
+          135deg,
+          rgba(236, 72, 153, 0.1),
+          rgba(249, 115, 22, 0.08)
+        );
         filter: blur(60px);
         pointer-events: none;
       }
@@ -648,7 +712,9 @@
         border: 1px solid rgba(209, 213, 219, 0.65);
         background: rgba(248, 250, 252, 0.92);
         color: var(--text-strong);
-        font-family: "JetBrains Mono", "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+        font-family:
+          "JetBrains Mono", "SFMono-Regular", Consolas, "Liberation Mono",
+          monospace;
         padding: 18px;
         font-size: 0.93rem;
         resize: vertical;
@@ -704,8 +770,9 @@
       <section class="card">
         <h1 class="font-kiya">Kiya Rose JSON Diagrammer</h1>
         <p>
-          Paste, drop, or describe JSON and this tool sketches an interactive diagram. Toggle nodes,
-          search paths, and export the structure as SVG—no network or build step required.
+          Paste, drop, or describe JSON and this tool sketches an interactive
+          diagram. Toggle nodes, search paths, and export the structure as
+          SVG—no network or build step required.
         </p>
       </section>
 
@@ -715,7 +782,8 @@
             <div>
               <h2 class="panel-title">Data Source</h2>
               <p class="panel-subtitle">
-                Load a TypeScript or JSON data module. Use the advanced editor for manual tweaks.
+                Load a TypeScript or JSON data module. Use the advanced editor
+                for manual tweaks.
               </p>
             </div>
             <button class="ghost" id="open-json-editor" type="button">
@@ -749,9 +817,13 @@
               </select>
             </label>
             <div class="actions">
-              <button class="primary" id="render" type="button">Render diagram</button>
+              <button class="primary" id="render" type="button">
+                Render diagram
+              </button>
               <button class="secondary" id="clear" type="button">Clear</button>
-              <button class="ghost" id="load-sample" type="button">Load sample</button>
+              <button class="ghost" id="load-sample" type="button">
+                Load sample
+              </button>
             </div>
           </div>
           <div class="status" id="status" style="display: none"></div>
@@ -762,58 +834,106 @@
             <div class="search-group">
               <label>
                 Search nodes
-                <input id="search" type="text" placeholder="name, email, user[0].id" />
+                <input
+                  id="search"
+                  type="text"
+                  placeholder="name, email, user[0].id"
+                />
               </label>
-            <button class="ghost" id="expand-all" type="button">Expand all</button>
-            <button class="ghost" id="collapse-all" type="button">Collapse all</button>
-            <button class="ghost" id="download-svg" type="button" disabled>Download SVG</button>
-            <button class="ghost" id="download-ts" type="button" disabled>Download TypeScript</button>
-          </div>
+              <button class="ghost" id="expand-all" type="button">
+                Expand all
+              </button>
+              <button class="ghost" id="collapse-all" type="button">
+                Collapse all
+              </button>
+              <button class="ghost" id="download-svg" type="button" disabled>
+                Download SVG
+              </button>
+              <button class="ghost" id="download-ts" type="button" disabled>
+                Download TypeScript
+              </button>
+            </div>
             <span class="badge" id="stats" hidden></span>
           </div>
           <div class="diagram-container" id="diagram">
             <div class="empty-state" id="empty-state">
               <h2>Waiting for JSON</h2>
-              <p>Render a diagram to explore objects, arrays, and nested values at a glance.</p>
+              <p>
+                Render a diagram to explore objects, arrays, and nested values
+                at a glance.
+              </p>
             </div>
           </div>
         </div>
       </section>
 
       <div id="node-modal" class="node-modal" aria-hidden="true">
-        <div class="node-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="node-modal-title">
+        <div
+          class="node-modal__dialog"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="node-modal-title"
+        >
           <div class="node-modal__header">
-            <h2 class="node-modal__title" id="node-modal-title">Node details</h2>
-            <button class="node-modal__close" id="node-modal-close" type="button" aria-label="Close node editor">
+            <h2 class="node-modal__title" id="node-modal-title">
+              Node details
+            </h2>
+            <button
+              class="node-modal__close"
+              id="node-modal-close"
+              type="button"
+              aria-label="Close node editor"
+            >
               &times;
             </button>
           </div>
           <div id="node-modal-meta"></div>
           <textarea id="node-modal-editor" spellcheck="false"></textarea>
           <div class="node-modal__actions">
-            <button class="ghost" id="node-modal-reset" type="button">Reset value</button>
-            <button class="primary" id="node-modal-apply" type="button">Save changes</button>
+            <button class="ghost" id="node-modal-reset" type="button">
+              Reset value
+            </button>
+            <button class="primary" id="node-modal-apply" type="button">
+              Save changes
+            </button>
           </div>
         </div>
       </div>
 
       <div id="json-modal" class="json-modal" aria-hidden="true">
-        <div class="json-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="json-modal-title">
+        <div
+          class="json-modal__dialog"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="json-modal-title"
+        >
           <div class="json-modal__header">
             <div>
-              <h2 class="json-modal__title" id="json-modal-title">Advanced JSON Editor</h2>
+              <h2 class="json-modal__title" id="json-modal-title">
+                Advanced JSON Editor
+              </h2>
               <p class="json-modal__subtitle">
-                Make manual edits to the generated JSON representation. Apply changes to re-render the tree.
+                Make manual edits to the generated JSON representation. Apply
+                changes to re-render the tree.
               </p>
             </div>
-            <button class="json-modal__close" id="json-modal-close" type="button" aria-label="Close JSON editor">
+            <button
+              class="json-modal__close"
+              id="json-modal-close"
+              type="button"
+              aria-label="Close JSON editor"
+            >
               &times;
             </button>
           </div>
           <textarea id="json-modal-editor" spellcheck="false"></textarea>
           <div class="json-modal__actions">
-            <button class="ghost" id="json-modal-reset" type="button">Revert</button>
-            <button class="primary" id="json-modal-apply" type="button">Apply &amp; Render</button>
+            <button class="ghost" id="json-modal-reset" type="button">
+              Revert
+            </button>
+            <button class="primary" id="json-modal-apply" type="button">
+              Apply &amp; Render
+            </button>
           </div>
         </div>
       </div>
@@ -892,7 +1012,8 @@
 
       function showStatus(message, kind = "success") {
         statusBox.textContent = message;
-        statusBox.className = kind === "error" ? "status error" : "status success";
+        statusBox.className =
+          kind === "error" ? "status error" : "status success";
         statusBox.style.display = "block";
       }
 
@@ -945,7 +1066,10 @@
         if (ts.isAsExpression(node) || ts.isTypeAssertionExpression?.(node)) {
           return unwrapLiteral(node.expression);
         }
-        if (ts.isSatisfiesExpression?.(node) || ts.isNonNullExpression?.(node)) {
+        if (
+          ts.isSatisfiesExpression?.(node) ||
+          ts.isNonNullExpression?.(node)
+        ) {
           return unwrapLiteral(node.expression);
         }
         if (ts.isParenthesizedExpression(node)) {
@@ -960,10 +1084,14 @@
         if (ts.isArrayLiteralExpression(literal)) {
           return literal.elements.map((element) => {
             if (ts.isOmittedExpression(element)) {
-              throw new Error("Array holes are not supported in exported literals.");
+              throw new Error(
+                "Array holes are not supported in exported literals.",
+              );
             }
             if (ts.isSpreadElement(element)) {
-              throw new Error("Spread elements are not supported in exported arrays.");
+              throw new Error(
+                "Spread elements are not supported in exported arrays.",
+              );
             }
             return evaluateLiteral(element);
           });
@@ -973,16 +1101,23 @@
           const result = {};
           for (const prop of literal.properties) {
             if (!ts.isPropertyAssignment(prop)) {
-              throw new Error("Only standard property assignments are supported in exported objects.");
+              throw new Error(
+                "Only standard property assignments are supported in exported objects.",
+              );
             }
 
             let key;
             if (ts.isIdentifier(prop.name)) {
               key = prop.name.text;
-            } else if (ts.isStringLiteralLike(prop.name) || ts.isNumericLiteral(prop.name)) {
+            } else if (
+              ts.isStringLiteralLike(prop.name) ||
+              ts.isNumericLiteral(prop.name)
+            ) {
               key = prop.name.text;
             } else {
-              throw new Error("Unsupported property name in exported object literal.");
+              throw new Error(
+                "Unsupported property name in exported object literal.",
+              );
             }
 
             result[key] = evaluateLiteral(prop.initializer);
@@ -998,7 +1133,9 @@
           if (literal.templateSpans.length === 0) {
             return literal.head.text;
           }
-          throw new Error("Template expressions with interpolations are not supported.");
+          throw new Error(
+            "Template expressions with interpolations are not supported.",
+          );
         }
 
         if (ts.isNumericLiteral(literal)) {
@@ -1006,7 +1143,10 @@
         }
 
         if (ts.isPrefixUnaryExpression(literal)) {
-          if (literal.operator === ts.SyntaxKind.MinusToken && ts.isNumericLiteral(literal.operand)) {
+          if (
+            literal.operator === ts.SyntaxKind.MinusToken &&
+            ts.isNumericLiteral(literal.operand)
+          ) {
             return -Number(literal.operand.text);
           }
           throw new Error("Unsupported unary expression in exported literal.");
@@ -1022,7 +1162,9 @@
           return null;
         }
 
-        throw new Error("Encountered an unsupported expression while parsing the export literal.");
+        throw new Error(
+          "Encountered an unsupported expression while parsing the export literal.",
+        );
       }
 
       function computeBaseIndent(sourceText, valueStart) {
@@ -1044,40 +1186,49 @@
         const values = {};
         const seen = new Set();
 
-      for (const statement of sourceFile.statements) {
-        if (!ts.isVariableStatement(statement)) {
-          if (ts.isExportAssignment(statement)) {
-            const expression = unwrapLiteral(statement.expression);
-            if (
-              ts.isArrayLiteralExpression(expression) ||
-              ts.isObjectLiteralExpression(expression)
-            ) {
-              const name = "default";
-              if (seen.has(name)) {
-                throw new Error("Duplicate default export detected.");
+        for (const statement of sourceFile.statements) {
+          if (!ts.isVariableStatement(statement)) {
+            if (ts.isExportAssignment(statement)) {
+              const expression = unwrapLiteral(statement.expression);
+              if (
+                ts.isArrayLiteralExpression(expression) ||
+                ts.isObjectLiteralExpression(expression)
+              ) {
+                const name = "default";
+                if (seen.has(name)) {
+                  throw new Error("Duplicate default export detected.");
+                }
+
+                const value = evaluateLiteral(expression);
+                const valueStart = expression.getStart(sourceFile);
+                const valueEnd = expression.getEnd();
+                const placeholder = `${PLACEHOLDER_PREFIX}${name}_${valueStart}_${valueEnd}__`;
+                const baseIndent = computeBaseIndent(sourceText, valueStart);
+
+                entries.push({
+                  name,
+                  valueStart,
+                  valueEnd,
+                  placeholder,
+                  baseIndent,
+                });
+                values[name] = value;
+                seen.add(name);
               }
-
-              const value = evaluateLiteral(expression);
-              const valueStart = expression.getStart(sourceFile);
-              const valueEnd = expression.getEnd();
-              const placeholder = `${PLACEHOLDER_PREFIX}${name}_${valueStart}_${valueEnd}__`;
-              const baseIndent = computeBaseIndent(sourceText, valueStart);
-
-              entries.push({ name, valueStart, valueEnd, placeholder, baseIndent });
-              values[name] = value;
-              seen.add(name);
             }
+            continue;
           }
-          continue;
-        }
 
-        const modifiers = ts.getCombinedModifierFlags(statement);
-        if ((modifiers & ts.ModifierFlags.Export) === 0) {
-          continue;
+          const modifiers = ts.getCombinedModifierFlags(statement);
+          if ((modifiers & ts.ModifierFlags.Export) === 0) {
+            continue;
           }
 
           for (const declaration of statement.declarationList.declarations) {
-            if (!ts.isIdentifier(declaration.name) || !declaration.initializer) {
+            if (
+              !ts.isIdentifier(declaration.name) ||
+              !declaration.initializer
+            ) {
               continue;
             }
 
@@ -1100,7 +1251,13 @@
             const placeholder = `${PLACEHOLDER_PREFIX}${name}_${valueStart}_${valueEnd}__`;
             const baseIndent = computeBaseIndent(sourceText, valueStart);
 
-            entries.push({ name, valueStart, valueEnd, placeholder, baseIndent });
+            entries.push({
+              name,
+              valueStart,
+              valueEnd,
+              placeholder,
+              baseIndent,
+            });
             values[name] = value;
             seen.add(name);
           }
@@ -1135,7 +1292,10 @@
 
         if (Array.isArray(value)) {
           const elements = value.map((item) => createLiteralFromValue(item));
-          return ts.factory.createArrayLiteralExpression(elements, elements.length > 0);
+          return ts.factory.createArrayLiteralExpression(
+            elements,
+            elements.length > 0,
+          );
         }
 
         switch (typeof value) {
@@ -1152,9 +1312,15 @@
               const nameNode = isIdentifierCandidate(key)
                 ? ts.factory.createIdentifier(key)
                 : ts.factory.createStringLiteral(key);
-              return ts.factory.createPropertyAssignment(nameNode, createLiteralFromValue(item));
+              return ts.factory.createPropertyAssignment(
+                nameNode,
+                createLiteralFromValue(item),
+              );
             });
-            return ts.factory.createObjectLiteralExpression(properties, properties.length > 0);
+            return ts.factory.createObjectLiteralExpression(
+              properties,
+              properties.length > 0,
+            );
           }
           default:
             throw new Error(`Unsupported value type: ${typeof value}`);
@@ -1163,7 +1329,11 @@
 
       function formatValueForTs(value, baseIndent = "") {
         const literal = createLiteralFromValue(value);
-        const printed = printer.printNode(ts.EmitHint.Expression, literal, printerSourceFile);
+        const printed = printer.printNode(
+          ts.EmitHint.Expression,
+          literal,
+          printerSourceFile,
+        );
         const lines = printed.split("\n");
 
         if (lines.length === 1) {
@@ -1182,7 +1352,9 @@
           const remainder = leading % 4;
           const level = (leading - remainder) / 4;
           const adjustedIndent = `${baseIndent}${"  ".repeat(level)}${remainder > 0 ? " ".repeat(remainder) : ""}`;
-          formatted.push(`${adjustedIndent}${match ? match[2] : line.trimStart()}`);
+          formatted.push(
+            `${adjustedIndent}${match ? match[2] : line.trimStart()}`,
+          );
         }
 
         return formatted.join("\n");
@@ -1203,7 +1375,9 @@
         const { entries, values } = collectTsExports(sourceFile, sourceText);
 
         if (entries.length === 0) {
-          throw new Error("No convertible exported arrays or objects were found in the TypeScript module.");
+          throw new Error(
+            "No convertible exported arrays or objects were found in the TypeScript module.",
+          );
         }
 
         const template = buildTemplate(sourceText, entries);
@@ -1223,8 +1397,15 @@
       }
 
       function convertJsonToTs(meta, data) {
-        if (!meta || typeof meta !== "object" || !meta.template || !Array.isArray(meta.entries)) {
-          throw new Error("Missing conversion metadata. Load a TypeScript module first.");
+        if (
+          !meta ||
+          typeof meta !== "object" ||
+          !meta.template ||
+          !Array.isArray(meta.entries)
+        ) {
+          throw new Error(
+            "Missing conversion metadata. Load a TypeScript module first.",
+          );
         }
 
         let output = meta.template;
@@ -1238,7 +1419,10 @@
             throw new Error(`JSON data is missing export \`${entry.name}\`.`);
           }
 
-          const replacement = formatValueForTs(data[entry.name], entry.baseIndent ?? "");
+          const replacement = formatValueForTs(
+            data[entry.name],
+            entry.baseIndent ?? "",
+          );
 
           if (!output.includes(entry.placeholder)) {
             throw new Error(
@@ -1266,7 +1450,11 @@
         if (conversionMeta) {
           const metaClone = cloneData(conversionMeta);
           const dataClone = cloneData(dataModel);
-          if (dataClone && typeof dataClone === "object" && !Array.isArray(dataClone)) {
+          if (
+            dataClone &&
+            typeof dataClone === "object" &&
+            !Array.isArray(dataClone)
+          ) {
             return { __meta: metaClone, ...dataClone };
           }
           return { __meta: metaClone, value: dataClone };
@@ -1309,7 +1497,9 @@
           return ROOT_KEY;
         }
         return path
-          .map((segment) => (typeof segment === "number" ? `[${segment}]` : segment))
+          .map((segment) =>
+            typeof segment === "number" ? `[${segment}]` : segment,
+          )
           .join(".");
       }
 
@@ -1457,11 +1647,14 @@
 
       function matchesSearch(node, term) {
         const valueString =
-          typeof node.value === "object" ? JSON.stringify(node.value) : String(node.value);
+          typeof node.value === "object"
+            ? JSON.stringify(node.value)
+            : String(node.value);
         const pathString = pathToDisplay(node.path);
         const label = node.label || "";
         const summary = node.summary || "";
-        const haystack = `${label} ${summary} ${pathString} ${valueString}`.toLowerCase();
+        const haystack =
+          `${label} ${summary} ${pathString} ${valueString}`.toLowerCase();
         return haystack.includes(term.toLowerCase());
       }
 
@@ -1561,11 +1754,18 @@
           event.preventDefault();
           const delta = event.deltaY * WHEEL_SENSITIVITY;
           const scaleFactor = Math.exp(-delta / 180);
-          const newScale = Math.min(MAX_SCALE, Math.max(MIN_SCALE, panZoom.scale * scaleFactor));
+          const newScale = Math.min(
+            MAX_SCALE,
+            Math.max(MIN_SCALE, panZoom.scale * scaleFactor),
+          );
           const localPoint = getLocalPoint(event);
 
-          panZoom.x = localPoint.x - (localPoint.x - panZoom.x) * (newScale / panZoom.scale);
-          panZoom.y = localPoint.y - (localPoint.y - panZoom.y) * (newScale / panZoom.scale);
+          panZoom.x =
+            localPoint.x -
+            (localPoint.x - panZoom.x) * (newScale / panZoom.scale);
+          panZoom.y =
+            localPoint.y -
+            (localPoint.y - panZoom.y) * (newScale / panZoom.scale);
           panZoom.scale = newScale;
           applyTransform();
         };
@@ -1616,10 +1816,19 @@
         const minY = Math.min(...ys);
         const maxY = Math.max(...ys);
 
-        const width = Math.max(960, maxX - minX + NodeWidth + DiagramPadding * 2);
-        const height = Math.max(640, maxY - minY + NodeHeight + DiagramPadding * 2);
+        const width = Math.max(
+          960,
+          maxX - minX + NodeWidth + DiagramPadding * 2,
+        );
+        const height = Math.max(
+          640,
+          maxY - minY + NodeHeight + DiagramPadding * 2,
+        );
 
-        const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+        const svg = document.createElementNS(
+          "http://www.w3.org/2000/svg",
+          "svg",
+        );
         svg.setAttribute("viewBox", `0 0 ${width} ${height}`);
         svg.setAttribute("width", width);
         svg.setAttribute("height", height);
@@ -1627,7 +1836,10 @@
         svg.style.minHeight = "100%";
 
         const defs = document.createElementNS(svg.namespaceURI, "defs");
-        const edgeGradient = document.createElementNS(svg.namespaceURI, "linearGradient");
+        const edgeGradient = document.createElementNS(
+          svg.namespaceURI,
+          "linearGradient",
+        );
         edgeGradient.setAttribute("id", "edgeGradient");
         edgeGradient.setAttribute("x1", "0%");
         edgeGradient.setAttribute("y1", "0%");
@@ -1707,7 +1919,9 @@
           rect.setAttribute("height", `${NodeHeight}`);
           rect.setAttribute(
             "fill",
-            collapsed.get(node.pathKey) ? "rgba(148, 163, 184, 0.12)" : "var(--node)",
+            collapsed.get(node.pathKey)
+              ? "rgba(148, 163, 184, 0.12)"
+              : "var(--node)",
           );
           rect.setAttribute("stroke", "var(--node-border)");
           rect.setAttribute("stroke-width", "1.3");
@@ -1785,7 +1999,8 @@
         applyTransform();
 
         const totalNodes = nodes.length;
-        const depth = Math.max(...nodes.map((node) => node.y)) / VerticalSpacing + 1;
+        const depth =
+          Math.max(...nodes.map((node) => node.y)) / VerticalSpacing + 1;
         statsBadge.textContent = `${totalNodes} node${totalNodes === 1 ? "" : "s"} • depth ${Math.round(depth)}`;
         statsBadge.hidden = false;
 
@@ -2056,7 +2271,8 @@
         let target = dataModel;
         for (let index = 0; index < path.length - 1; index += 1) {
           const segment = path[index];
-          target = typeof segment === "number" ? target[segment] : target[segment];
+          target =
+            typeof segment === "number" ? target[segment] : target[segment];
         }
         const last = path[path.length - 1];
         if (typeof last === "number") {
@@ -2074,14 +2290,23 @@
         try {
           return JSON.parse(rawValue);
         } catch (error) {
-          if (Array.isArray(currentValue) || (currentValue && typeof currentValue === "object")) {
-            throw new Error("Provide valid JSON for objects or arrays (use double quotes).");
+          if (
+            Array.isArray(currentValue) ||
+            (currentValue && typeof currentValue === "object")
+          ) {
+            throw new Error(
+              "Provide valid JSON for objects or arrays (use double quotes).",
+            );
           }
           return rawValue;
         }
       }
 
-      function commitNodeChange(pathKey, editorValue, { showStatusMessage = false } = {}) {
+      function commitNodeChange(
+        pathKey,
+        editorValue,
+        { showStatusMessage = false } = {},
+      ) {
         if (!tree) {
           return false;
         }
@@ -2133,7 +2358,11 @@
         return true;
       }
 
-      function rebuildTree({ preserveSelection = true, preserveCollapsed = true, resetPan = false } = {}) {
+      function rebuildTree({
+        preserveSelection = true,
+        preserveCollapsed = true,
+        resetPan = false,
+      } = {}) {
         if (dataModel === null || typeof dataModel === "undefined") {
           renderTree(null);
           return;
@@ -2156,7 +2385,12 @@
         }
 
         nodeIdCounter = 0;
-        tree = buildTree(dataModel, rootLabelInput.value.trim() || "root", [], null);
+        tree = buildTree(
+          dataModel,
+          rootLabelInput.value.trim() || "root",
+          [],
+          null,
+        );
         nodeIndex = new Map();
         indexTree(tree);
         renderTree(tree);
@@ -2182,13 +2416,23 @@
             dataModel = cloneData(data);
             collapsed = new Map([[ROOT_KEY, false]]);
             updateJsonTextarea({ refreshTimestamp: false });
-            rebuildTree({ preserveSelection: false, preserveCollapsed: false, resetPan: true });
-            showStatus(`Converted ${tsSourcePath || "module.ts"} to JSON.`, "success");
+            rebuildTree({
+              preserveSelection: false,
+              preserveCollapsed: false,
+              resetPan: true,
+            });
+            showStatus(
+              `Converted ${tsSourcePath || "module.ts"} to JSON.`,
+              "success",
+            );
             return true;
           } catch (error) {
             renderTree(null);
             updateDownloadButtons(false);
-            showStatus(error instanceof Error ? error.message : String(error), "error");
+            showStatus(
+              error instanceof Error ? error.message : String(error),
+              "error",
+            );
             return false;
           }
         }
@@ -2220,7 +2464,11 @@
 
         collapsed = new Map([[ROOT_KEY, false]]);
         updateJsonTextarea({ refreshTimestamp: false });
-        rebuildTree({ preserveSelection: false, preserveCollapsed: false, resetPan: true });
+        rebuildTree({
+          preserveSelection: false,
+          preserveCollapsed: false,
+          resetPan: true,
+        });
         showStatus("Diagram generated successfully.", "success");
         return true;
       }
@@ -2292,7 +2540,11 @@
         selectedNodeId = null;
         rootLabelInput.value = "portfolio";
         updateJsonTextarea({ refreshTimestamp: false });
-        rebuildTree({ preserveSelection: false, preserveCollapsed: false, resetPan: true });
+        rebuildTree({
+          preserveSelection: false,
+          preserveCollapsed: false,
+          resetPan: true,
+        });
         showStatus("Loaded sample portfolio data.", "success");
       }
 
@@ -2363,16 +2615,22 @@
       downloadSvgButton.addEventListener("click", downloadSvg);
       downloadTsButton.addEventListener("click", () => {
         if (!conversionMeta) {
-          showStatus("No TypeScript metadata available. Load a TypeScript module first.", "error");
+          showStatus(
+            "No TypeScript metadata available. Load a TypeScript module first.",
+            "error",
+          );
           return;
         }
         try {
           const targetData =
-            dataModel && typeof dataModel === "object" && !Array.isArray(dataModel)
+            dataModel &&
+            typeof dataModel === "object" &&
+            !Array.isArray(dataModel)
               ? dataModel
               : { value: dataModel };
           const tsText = convertJsonToTs(conversionMeta, targetData);
-          const baseCandidate = tsSourcePath || conversionMeta.source || "data.ts";
+          const baseCandidate =
+            tsSourcePath || conversionMeta.source || "data.ts";
           const baseName = baseCandidate.split(/[\\/]/).pop() || "data.ts";
           const sanitized = baseName.replace(/[\s]+/g, "-");
           const filename = sanitized.match(/\.tsx?$/)
@@ -2381,7 +2639,10 @@
           downloadText(filename, tsText, "text/typescript");
           showStatus(`Exported ${filename}.`, "success");
         } catch (error) {
-          showStatus(error instanceof Error ? error.message : String(error), "error");
+          showStatus(
+            error instanceof Error ? error.message : String(error),
+            "error",
+          );
         }
       });
 
@@ -2430,7 +2691,9 @@
           showStatus("Select a node before applying changes.", "error");
           return;
         }
-        commitNodeChange(selectedPathKey, nodeModalEditor.value, { showStatusMessage: true });
+        commitNodeChange(selectedPathKey, nodeModalEditor.value, {
+          showStatusMessage: true,
+        });
       });
 
       nodeModalReset.addEventListener("click", () => {
@@ -2479,6 +2742,5 @@
 
       clearAll();
     </script>
-
   </body>
 </html>
