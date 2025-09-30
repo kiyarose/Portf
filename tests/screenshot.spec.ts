@@ -82,11 +82,12 @@ async function ensureTheme(page: Page, theme: "light" | "dark") {
       document.documentElement.classList.contains("dark") ? "dark" : "light",
     );
 
-  for (let attempt = 0; attempt < 2; attempt += 1) {
+  for (let attempt = 0; attempt < 3; attempt += 1) {
     const current = await getCurrentTheme();
     if (current === theme) {
       await page.evaluate((nextTheme) => {
         window.localStorage.setItem("kiya-theme", nextTheme);
+        window.localStorage.setItem("kiya-theme-user-set", "true");
       }, theme);
       return;
     }
@@ -95,16 +96,33 @@ async function ensureTheme(page: Page, theme: "light" | "dark") {
       name: /toggle light or dark theme/i,
     });
     await toggle.click();
-    await page.waitForTimeout(600);
+
+    await page
+      .waitForFunction(
+        (expectedTheme) =>
+          document.documentElement.classList.contains("dark") ===
+          (expectedTheme === "dark"),
+        theme,
+        { timeout: 3_000 },
+      )
+      .catch(() => undefined);
+
+    if ((await getCurrentTheme()) === theme) {
+      await page.evaluate((nextTheme) => {
+        window.localStorage.setItem("kiya-theme", nextTheme);
+        window.localStorage.setItem("kiya-theme-user-set", "true");
+      }, theme);
+      return;
+    }
+
+    await page.waitForTimeout(1_000);
   }
 
-  const finalTheme = await getCurrentTheme();
-  if (finalTheme !== theme) {
-    throw new Error(`Unable to set theme to ${theme}`);
-  }
+  throw new Error(`Unable to set theme to ${theme}`);
 }
 
 test("homepage full-page screenshot", async ({ page }) => {
+  test.setTimeout(60_000);
   const outDir = path.join(process.cwd(), "playwright-logs");
   fs.mkdirSync(outDir, { recursive: true });
 
