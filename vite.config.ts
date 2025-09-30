@@ -27,7 +27,7 @@ const TOOL_HTML_INPUTS: Record<string, string> = Object.fromEntries(
 const TOOL_ASSET_DIRECTORIES = [
   {
     source: resolve(TOOLS_DIR, "json"),
-    relative: ["src", "tools", "json"],
+    relative: ["tools", "json"],
   },
 ];
 
