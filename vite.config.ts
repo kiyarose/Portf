@@ -13,6 +13,23 @@ import { fileURLToPath } from "node:url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const ADMIN_ASSETS_DIR = resolve(__dirname, "admin-assets");
+const TOOLS_DIR = resolve(__dirname, "src/tools");
+
+const TOOL_SLUGS = ["visualizeme", "convert"] as const;
+
+const TOOL_HTML_INPUTS: Record<string, string> = Object.fromEntries(
+  TOOL_SLUGS.map((slug) => [
+    `tools/${slug}.html`,
+    resolve(TOOLS_DIR, `${slug}.html`),
+  ]),
+);
+
+const TOOL_ASSET_DIRECTORIES = [
+  {
+    source: resolve(TOOLS_DIR, "json"),
+    relative: ["tools", "json"],
+  },
+];
 
 function copyDirectory(source: string, destination: string) {
   if (!existsSync(destination)) {
@@ -51,10 +68,44 @@ function copyAdminAssets(): Plugin {
   };
 }
 
+function copyToolAssets(): Plugin {
+  let resolvedOutDir = "";
+  let projectRoot = process.cwd();
+  return {
+    name: "copy-tool-assets",
+    apply: "build",
+    configResolved(config) {
+      resolvedOutDir = config.build.outDir;
+      projectRoot = config.root;
+    },
+    generateBundle() {
+      const targetRoot = resolve(projectRoot, resolvedOutDir);
+      for (const directory of TOOL_ASSET_DIRECTORIES) {
+        if (!existsSync(directory.source)) {
+          continue;
+        }
+        const destination = resolve(targetRoot, ...directory.relative);
+        if (!existsSync(destination)) {
+          mkdirSync(destination, { recursive: true });
+        }
+        copyDirectory(directory.source, destination);
+      }
+    },
+  };
+}
+
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [react(), copyAdminAssets()],
+  plugins: [react(), copyAdminAssets(), copyToolAssets()],
   define: {
     __BUILD_TIME__: JSON.stringify(new Date().toISOString()),
+  },
+  build: {
+    rollupOptions: {
+      input: {
+        main: resolve(__dirname, "index.html"),
+        ...TOOL_HTML_INPUTS,
+      },
+    },
   },
 });
