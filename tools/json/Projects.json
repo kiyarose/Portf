@@ -1,0 +1,46 @@
+{
+  "__meta": {
+    "version": 1,
+    "template": "export type Project = {\n  title: string;\n  description: string;\n  tech: string[];\n  link?: string;\n};\n\nexport const projects: Project[] = __DATA_PLACEHOLDER__projects_138_727__;\n",
+    "source": "education.ts",
+    "entries": [
+      {
+        "name": "projects",
+        "placeholder": "__DATA_PLACEHOLDER__projects_138_727__",
+        "baseIndent": ""
+      }
+    ],
+    "generatedAt": "2025-09-30T16:53:05.121Z"
+  },
+  "projects": [
+    {
+      "title": "SillyLittleFiles",
+      "description": "A VPN program & documentation focused on secure remote access for small teams.",
+      "tech": [
+        "ProtonVPN",
+        "OpenVPN",
+        "JavaScript"
+      ]
+    },
+    {
+      "title": "Enterprise Virtualization Project",
+      "description": "A class project involving enterprise hardware and virtualization.",
+      "tech": [
+        "HPE",
+        "Windows Server",
+        "VMWare",
+        "ILO"
+      ]
+    },
+    {
+      "title": "Placeholder",
+      "description": "Hopefully I will gain more cool things to show off once I progress my career.",
+      "tech": [
+        "Hope",
+        "Dreams",
+        "Passion",
+        "Love"
+      ]
+    }
+  ]
+}

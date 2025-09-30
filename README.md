@@ -29,4 +29,5 @@ The repository needs a `FIREBASE_SERVICE_ACCOUNT_KIYAVERSE` secret with deploy a
 
 ## JSON visualization helper
 
-- Open `tools/json-visualizer.html` locally to inspect JSON structures with pan/zoom navigation, inline value editing, search, expand/collapse controls, and SVG export—handy when shaping the portfolio data files.
+- Open `tools/json-visualizer.html` locally to inspect JSON structures with pan/zoom navigation, modal node editing, search, expand/collapse controls, and SVG export.
+- Switch the input mode to load TypeScript data modules directly; the tool converts exports into JSON for editing and can export the updated module back to TypeScript once you save.

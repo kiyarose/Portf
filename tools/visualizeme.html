@@ -110,7 +110,8 @@
       }
 
       input[type="text"],
-      input[type="file"] {
+      input[type="file"],
+      select {
         background: rgba(15, 23, 42, 0.58);
         border: 1px solid var(--border);
         border-radius: 16px;
@@ -369,6 +370,7 @@
         margin: 0;
       }
     </style>
+    <script src="https://cdn.jsdelivr.net/npm/typescript@5.9.2/lib/typescript.js"></script>
   </head>
   <body>
     <main class="app">
@@ -388,12 +390,23 @@
           </label>
           <div class="sidebar-controls">
             <label>
-              Load `.json` file
-              <input id="json-file" type="file" accept=".json,application/json" />
+              Load `.json` or `.ts` file
+              <input
+                id="json-file"
+                type="file"
+                accept=".json,.ts,.tsx,application/json,text/typescript,text/plain"
+              />
             </label>
             <label>
               Root label (optional)
               <input id="root-label" type="text" placeholder="data" />
+            </label>
+            <label>
+              Input mode
+              <select id="input-mode">
+                <option value="json">JSON</option>
+                <option value="ts">TypeScript (data module)</option>
+              </select>
             </label>
             <div class="actions">
               <button class="primary" id="render" type="button">Render diagram</button>
@@ -411,10 +424,11 @@
                 Search nodes
                 <input id="search" type="text" placeholder="name, email, user[0].id" />
               </label>
-              <button class="ghost" id="expand-all" type="button">Expand all</button>
-              <button class="ghost" id="collapse-all" type="button">Collapse all</button>
-              <button class="ghost" id="download-svg" type="button" disabled>Download SVG</button>
-            </div>
+            <button class="ghost" id="expand-all" type="button">Expand all</button>
+            <button class="ghost" id="collapse-all" type="button">Collapse all</button>
+            <button class="ghost" id="download-svg" type="button" disabled>Download SVG</button>
+            <button class="ghost" id="download-ts" type="button" disabled>Download TypeScript</button>
+          </div>
             <span class="badge" id="stats" hidden></span>
           </div>
           <div class="diagram-container" id="diagram">
@@ -465,7 +479,8 @@
       const searchInput = document.getElementById("search");
       const expandAllButton = document.getElementById("expand-all");
       const collapseAllButton = document.getElementById("collapse-all");
-      const downloadButton = document.getElementById("download-svg");
+      const downloadSvgButton = document.getElementById("download-svg");
+      const downloadTsButton = document.getElementById("download-ts");
       const statsBadge = document.getElementById("stats");
       const nodeModal = document.getElementById("node-modal");
       const nodeModalTitle = document.getElementById("node-modal-title");
@@ -495,6 +510,10 @@
       let selectedPathKey = null;
       let selectedNodePath = null;
       let selectedNodeId = null;
+      let conversionMeta = null;
+      let tsSourcePath = null;
+      const inputModeSelect = document.getElementById("input-mode");
+      let inputMode = inputModeSelect ? inputModeSelect.value : "json";
 
       function showStatus(message, kind = "success") {
         statusBox.textContent = message;
@@ -532,6 +551,354 @@
           return value.length > 32 ? `${value.slice(0, 32)}…` : value;
         }
         return String(value);
+      }
+
+      const PLACEHOLDER_PREFIX = "__DATA_PLACEHOLDER__";
+      const printer = ts.createPrinter({ newLine: ts.NewLineKind.LineFeed });
+      const printerSourceFile = ts.createSourceFile(
+        "converter.ts",
+        "",
+        ts.ScriptTarget.Latest,
+        false,
+        ts.ScriptKind.TS,
+      );
+
+      function unwrapLiteral(node) {
+        if (!node) {
+          return node;
+        }
+        if (ts.isAsExpression(node) || ts.isTypeAssertionExpression?.(node)) {
+          return unwrapLiteral(node.expression);
+        }
+        if (ts.isSatisfiesExpression?.(node) || ts.isNonNullExpression?.(node)) {
+          return unwrapLiteral(node.expression);
+        }
+        if (ts.isParenthesizedExpression(node)) {
+          return unwrapLiteral(node.expression);
+        }
+        return node;
+      }
+
+      function evaluateLiteral(node) {
+        const literal = unwrapLiteral(node);
+
+        if (ts.isArrayLiteralExpression(literal)) {
+          return literal.elements.map((element) => {
+            if (ts.isOmittedExpression(element)) {
+              throw new Error("Array holes are not supported in exported literals.");
+            }
+            if (ts.isSpreadElement(element)) {
+              throw new Error("Spread elements are not supported in exported arrays.");
+            }
+            return evaluateLiteral(element);
+          });
+        }
+
+        if (ts.isObjectLiteralExpression(literal)) {
+          const result = {};
+          for (const prop of literal.properties) {
+            if (!ts.isPropertyAssignment(prop)) {
+              throw new Error("Only standard property assignments are supported in exported objects.");
+            }
+
+            let key;
+            if (ts.isIdentifier(prop.name)) {
+              key = prop.name.text;
+            } else if (ts.isStringLiteralLike(prop.name) || ts.isNumericLiteral(prop.name)) {
+              key = prop.name.text;
+            } else {
+              throw new Error("Unsupported property name in exported object literal.");
+            }
+
+            result[key] = evaluateLiteral(prop.initializer);
+          }
+          return result;
+        }
+
+        if (ts.isStringLiteralLike(literal)) {
+          return literal.text;
+        }
+
+        if (ts.isTemplateExpression(literal)) {
+          if (literal.templateSpans.length === 0) {
+            return literal.head.text;
+          }
+          throw new Error("Template expressions with interpolations are not supported.");
+        }
+
+        if (ts.isNumericLiteral(literal)) {
+          return Number(literal.text);
+        }
+
+        if (ts.isPrefixUnaryExpression(literal)) {
+          if (literal.operator === ts.SyntaxKind.MinusToken && ts.isNumericLiteral(literal.operand)) {
+            return -Number(literal.operand.text);
+          }
+          throw new Error("Unsupported unary expression in exported literal.");
+        }
+
+        if (literal.kind === ts.SyntaxKind.TrueKeyword) {
+          return true;
+        }
+        if (literal.kind === ts.SyntaxKind.FalseKeyword) {
+          return false;
+        }
+        if (literal.kind === ts.SyntaxKind.NullKeyword) {
+          return null;
+        }
+
+        throw new Error("Encountered an unsupported expression while parsing the export literal.");
+      }
+
+      function computeBaseIndent(sourceText, valueStart) {
+        const lineStart = sourceText.lastIndexOf("\n", valueStart - 1) + 1;
+        let indent = "";
+        for (let index = lineStart; index < sourceText.length; index += 1) {
+          const char = sourceText[index];
+          if (char === " " || char === "\t") {
+            indent += char;
+            continue;
+          }
+          break;
+        }
+        return indent;
+      }
+
+      function collectTsExports(sourceFile, sourceText) {
+        const entries = [];
+        const values = {};
+        const seen = new Set();
+
+        for (const statement of sourceFile.statements) {
+          if (!ts.isVariableStatement(statement)) {
+            continue;
+          }
+
+          const modifiers = ts.getCombinedModifierFlags(statement);
+          if ((modifiers & ts.ModifierFlags.Export) === 0) {
+            continue;
+          }
+
+          for (const declaration of statement.declarationList.declarations) {
+            if (!ts.isIdentifier(declaration.name) || !declaration.initializer) {
+              continue;
+            }
+
+            const name = declaration.name.text;
+            if (seen.has(name)) {
+              throw new Error(`Duplicate export named \`${name}\` was found.`);
+            }
+
+            const literalNode = unwrapLiteral(declaration.initializer);
+            if (
+              !ts.isArrayLiteralExpression(literalNode) &&
+              !ts.isObjectLiteralExpression(literalNode)
+            ) {
+              continue;
+            }
+
+            const value = evaluateLiteral(literalNode);
+            const valueStart = literalNode.getStart(sourceFile);
+            const valueEnd = literalNode.getEnd();
+            const placeholder = `${PLACEHOLDER_PREFIX}${name}_${valueStart}_${valueEnd}__`;
+            const baseIndent = computeBaseIndent(sourceText, valueStart);
+
+            entries.push({ name, valueStart, valueEnd, placeholder, baseIndent });
+            values[name] = value;
+            seen.add(name);
+          }
+        }
+
+        return { entries, values };
+      }
+
+      function buildTemplate(sourceText, entries) {
+        const sorted = [...entries].sort((a, b) => a.valueStart - b.valueStart);
+        let cursor = 0;
+        let template = "";
+
+        for (const entry of sorted) {
+          template += sourceText.slice(cursor, entry.valueStart);
+          template += entry.placeholder;
+          cursor = entry.valueEnd;
+        }
+
+        template += sourceText.slice(cursor);
+        return template;
+      }
+
+      function isIdentifierCandidate(text) {
+        return /^[A-Za-z_$][A-Za-z0-9_$]*$/.test(text);
+      }
+
+      function createLiteralFromValue(value) {
+        if (value === null) {
+          return ts.factory.createNull();
+        }
+
+        if (Array.isArray(value)) {
+          const elements = value.map((item) => createLiteralFromValue(item));
+          return ts.factory.createArrayLiteralExpression(elements, elements.length > 0);
+        }
+
+        switch (typeof value) {
+          case "string":
+            return ts.factory.createStringLiteral(value);
+          case "number":
+            return Number.isFinite(value)
+              ? ts.factory.createNumericLiteral(value)
+              : ts.factory.createStringLiteral(String(value));
+          case "boolean":
+            return value ? ts.factory.createTrue() : ts.factory.createFalse();
+          case "object": {
+            const properties = Object.entries(value).map(([key, item]) => {
+              const nameNode = isIdentifierCandidate(key)
+                ? ts.factory.createIdentifier(key)
+                : ts.factory.createStringLiteral(key);
+              return ts.factory.createPropertyAssignment(nameNode, createLiteralFromValue(item));
+            });
+            return ts.factory.createObjectLiteralExpression(properties, properties.length > 0);
+          }
+          default:
+            throw new Error(`Unsupported value type: ${typeof value}`);
+        }
+      }
+
+      function formatValueForTs(value, baseIndent = "") {
+        const literal = createLiteralFromValue(value);
+        const printed = printer.printNode(ts.EmitHint.Expression, literal, printerSourceFile);
+        const lines = printed.split("\n");
+
+        if (lines.length === 1) {
+          return lines[0];
+        }
+
+        const formatted = [lines[0]];
+        for (let index = 1; index < lines.length; index += 1) {
+          const line = lines[index];
+          if (line.length === 0) {
+            formatted.push(line);
+            continue;
+          }
+          const match = line.match(/^(\s*)(.*)$/);
+          const leading = match ? match[1].length : 0;
+          const remainder = leading % 4;
+          const level = (leading - remainder) / 4;
+          const adjustedIndent = `${baseIndent}${"  ".repeat(level)}${remainder > 0 ? " ".repeat(remainder) : ""}`;
+          formatted.push(`${adjustedIndent}${match ? match[2] : line.trimStart()}`);
+        }
+
+        return formatted.join("\n");
+      }
+
+      function convertTsSourceToJson(sourceText, sourceName = "module.ts") {
+        const scriptKind = sourceName.toLowerCase().endsWith(".tsx")
+          ? ts.ScriptKind.TSX
+          : ts.ScriptKind.TS;
+        const sourceFile = ts.createSourceFile(
+          sourceName,
+          sourceText,
+          ts.ScriptTarget.Latest,
+          true,
+          scriptKind,
+        );
+
+        const { entries, values } = collectTsExports(sourceFile, sourceText);
+
+        if (entries.length === 0) {
+          throw new Error("No convertible exported arrays or objects were found in the TypeScript module.");
+        }
+
+        const template = buildTemplate(sourceText, entries);
+        const meta = {
+          version: 1,
+          template,
+          source: sourceName,
+          entries: entries.map(({ name, placeholder, baseIndent }) => ({
+            name,
+            placeholder,
+            baseIndent,
+          })),
+          generatedAt: new Date().toISOString(),
+        };
+
+        return { meta, data: values };
+      }
+
+      function convertJsonToTs(meta, data) {
+        if (!meta || typeof meta !== "object" || !meta.template || !Array.isArray(meta.entries)) {
+          throw new Error("Missing conversion metadata. Load a TypeScript module first.");
+        }
+
+        let output = meta.template;
+
+        for (const entry of meta.entries) {
+          if (!entry || !entry.name || !entry.placeholder) {
+            throw new Error("Conversion metadata is malformed.");
+          }
+
+          if (!(entry.name in data)) {
+            throw new Error(`JSON data is missing export \`${entry.name}\`.`);
+          }
+
+          const replacement = formatValueForTs(data[entry.name], entry.baseIndent ?? "");
+
+          if (!output.includes(entry.placeholder)) {
+            throw new Error(
+              `Placeholder for export \`${entry.name}\` was not found in the template. The metadata may be out of sync.`,
+            );
+          }
+
+          output = output.replace(entry.placeholder, replacement);
+        }
+
+        return output;
+      }
+
+      function cloneData(value) {
+        if (value === null || typeof value !== "object") {
+          return value;
+        }
+        if (typeof structuredClone === "function") {
+          return structuredClone(value);
+        }
+        return JSON.parse(JSON.stringify(value));
+      }
+
+      function getSerializablePayload() {
+        if (conversionMeta) {
+          const metaClone = cloneData(conversionMeta);
+          const dataClone = cloneData(dataModel);
+          if (dataClone && typeof dataClone === "object" && !Array.isArray(dataClone)) {
+            return { __meta: metaClone, ...dataClone };
+          }
+          return { __meta: metaClone, value: dataClone };
+        }
+        return cloneData(dataModel);
+      }
+
+      function updateJsonTextarea({ refreshTimestamp = false } = {}) {
+        if (conversionMeta && refreshTimestamp) {
+          conversionMeta.generatedAt = new Date().toISOString();
+        }
+
+        const payload = getSerializablePayload();
+        if (typeof payload === "undefined") {
+          jsonInput.value = "";
+          return;
+        }
+
+        try {
+          jsonInput.value = JSON.stringify(payload, null, 2);
+        } catch (error) {
+          // Fallback in case of unexpected serialization issues.
+          jsonInput.value = "";
+        }
+      }
+
+      function updateDownloadButtons(hasDiagram) {
+        downloadSvgButton.disabled = !hasDiagram;
+        downloadTsButton.disabled = !hasDiagram || !conversionMeta;
       }
 
       function getPathKey(path) {
@@ -783,7 +1150,7 @@
           emptyState.hidden = false;
           svgElement = null;
           viewportGroup = null;
-          downloadButton.disabled = true;
+          updateDownloadButtons(false);
           statsBadge.hidden = true;
           if (nodeModal.classList.contains("is-open")) {
             closeNodeModal();
@@ -940,7 +1307,6 @@
         diagramContainer.innerHTML = "";
         diagramContainer.appendChild(svg);
         emptyState.hidden = true;
-        downloadButton.disabled = false;
         svgElement = svg;
         diagramContainer.classList.remove("panning");
         setupPanZoomHandlers(svg);
@@ -964,6 +1330,7 @@
         statsBadge.hidden = false;
 
         restoreSelection();
+        updateDownloadButtons(true);
       }
 
       function updateModalContent(node) {
@@ -1173,7 +1540,7 @@
         }
 
         updateDataModel(node.path, newValue);
-        jsonInput.value = JSON.stringify(dataModel, null, 2);
+        updateJsonTextarea({ refreshTimestamp: true });
         rebuildTree({ preserveSelection: true });
 
         if (nodeModal.classList.contains("is-open")) {
@@ -1197,7 +1564,7 @@
       }
 
       function rebuildTree({ preserveSelection = true, preserveCollapsed = true, resetPan = false } = {}) {
-        if (!dataModel) {
+        if (dataModel === null || typeof dataModel === "undefined") {
           renderTree(null);
           return;
         }
@@ -1205,7 +1572,14 @@
           collapsed = new Map([[ROOT_KEY, false]]);
         }
         if (!preserveSelection) {
-          closeNodeModal();
+          if (nodeModal.classList.contains("is-open")) {
+            closeNodeModal();
+            clearStatus();
+          } else {
+            selectedPathKey = null;
+            selectedNodePath = null;
+            selectedNodeId = null;
+          }
         }
         if (resetPan) {
           resetPanZoom();
@@ -1218,39 +1592,80 @@
 
       function renderFromInput() {
         clearStatus();
-        const text = jsonInput.value.trim();
-        if (!text) {
-          showStatus("Provide JSON to render a diagram.", "error");
+        const rawText = jsonInput.value.trim();
+        if (!rawText) {
+          showStatus(
+            `Provide ${inputMode === "ts" ? "TypeScript" : "JSON"} input to render a diagram.`,
+            "error",
+          );
           return;
         }
+
+        if (inputMode === "ts") {
+          try {
+            const sourceName = tsSourcePath || "module.ts";
+            const { meta, data } = convertTsSourceToJson(rawText, sourceName);
+            conversionMeta = meta;
+            tsSourcePath = meta.source || sourceName;
+            dataModel = cloneData(data);
+            collapsed = new Map([[ROOT_KEY, false]]);
+            updateJsonTextarea({ refreshTimestamp: false });
+            rebuildTree({ preserveSelection: false, preserveCollapsed: false, resetPan: true });
+            showStatus(`Converted ${tsSourcePath || "module.ts"} to JSON.`, "success");
+          } catch (error) {
+            renderTree(null);
+            updateDownloadButtons(false);
+            showStatus(error instanceof Error ? error.message : String(error), "error");
+          }
+          return;
+        }
+
         let parsed;
         try {
-          parsed = JSON.parse(text);
+          parsed = JSON.parse(rawText);
         } catch (error) {
           showStatus("Input is not valid JSON.", "error");
           return;
         }
-        dataModel = parsed;
-        jsonInput.value = JSON.stringify(parsed, null, 2);
+
+        if (
+          parsed &&
+          typeof parsed === "object" &&
+          !Array.isArray(parsed) &&
+          parsed.__meta &&
+          parsed.__meta.template
+        ) {
+          conversionMeta = parsed.__meta;
+          tsSourcePath = conversionMeta.source || tsSourcePath;
+          const { __meta, ...rest } = parsed;
+          dataModel = Object.keys(rest).length > 0 ? rest : {};
+        } else {
+          conversionMeta = null;
+          tsSourcePath = null;
+          dataModel = parsed;
+        }
+
         collapsed = new Map([[ROOT_KEY, false]]);
-        selectedPathKey = null;
-        selectedNodePath = null;
-        selectedNodeId = null;
-        resetPanZoom();
-        rebuildTree({ preserveSelection: false, preserveCollapsed: false });
+        updateJsonTextarea({ refreshTimestamp: false });
+        rebuildTree({ preserveSelection: false, preserveCollapsed: false, resetPan: true });
         showStatus("Diagram generated successfully.", "success");
       }
 
       function clearAll() {
         dataModel = null;
         tree = null;
+        conversionMeta = null;
+        tsSourcePath = null;
         jsonInput.value = "";
-        rootLabelInput.value = "";
+        if (inputModeSelect) {
+          inputModeSelect.value = "json";
+        }
+        inputMode = "json";
         collapsed = new Map([[ROOT_KEY, false]]);
         selectedPathKey = null;
         selectedNodePath = null;
         selectedNodeId = null;
-        resetPanZoom();
+        panInitialized = false;
         renderTree(null);
         clearStatus();
       }
@@ -1282,15 +1697,20 @@
             { label: "LinkedIn", url: "https://linkedin.com/in/kiyarose" },
           ],
         };
-        jsonInput.value = JSON.stringify(sample, null, 2);
-        rootLabelInput.value = "portfolio";
-        dataModel = sample;
+        if (inputModeSelect) {
+          inputModeSelect.value = "json";
+        }
+        inputMode = "json";
+        conversionMeta = null;
+        tsSourcePath = null;
+        dataModel = cloneData(sample);
         collapsed = new Map([[ROOT_KEY, false]]);
         selectedPathKey = null;
         selectedNodePath = null;
         selectedNodeId = null;
-        resetPanZoom();
-        rebuildTree({ preserveSelection: false, preserveCollapsed: false });
+        rootLabelInput.value = "portfolio";
+        updateJsonTextarea({ refreshTimestamp: false });
+        rebuildTree({ preserveSelection: false, preserveCollapsed: false, resetPan: true });
         showStatus("Loaded sample portfolio data.", "success");
       }
 
@@ -1301,11 +1721,15 @@
         const clone = svgElement.cloneNode(true);
         const serializer = new XMLSerializer();
         const svgString = serializer.serializeToString(clone);
-        const blob = new Blob([svgString], { type: "image/svg+xml" });
+        downloadText("json-diagram.svg", svgString, "image/svg+xml");
+      }
+
+      function downloadText(filename, text, mimeType = "text/plain") {
+        const blob = new Blob([text], { type: mimeType });
         const url = URL.createObjectURL(blob);
         const link = document.createElement("a");
         link.href = url;
-        link.download = "json-diagram.svg";
+        link.download = filename;
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
@@ -1317,6 +1741,20 @@
         if (!file) {
           return;
         }
+        const extension = file.name.split(".").pop()?.toLowerCase();
+        if (extension === "ts" || extension === "tsx") {
+          if (inputModeSelect) {
+            inputModeSelect.value = "ts";
+          }
+          inputMode = "ts";
+          tsSourcePath = file.name;
+        } else {
+          if (inputModeSelect) {
+            inputModeSelect.value = "json";
+          }
+          inputMode = "json";
+          tsSourcePath = null;
+        }
         const reader = new FileReader();
         reader.onload = () => {
           jsonInput.value = String(reader.result ?? "");
@@ -1324,6 +1762,12 @@
         };
         reader.readAsText(file);
       });
+
+      if (inputModeSelect) {
+        inputModeSelect.addEventListener("change", () => {
+          inputMode = inputModeSelect.value;
+        });
+      }
 
       renderButton.addEventListener("click", renderFromInput);
       clearButton.addEventListener("click", clearAll);
@@ -1334,7 +1778,30 @@
       collapseAllButton.addEventListener("click", () => {
         collapseAllNodes();
       });
-      downloadButton.addEventListener("click", downloadSvg);
+      downloadSvgButton.addEventListener("click", downloadSvg);
+      downloadTsButton.addEventListener("click", () => {
+        if (!conversionMeta) {
+          showStatus("No TypeScript metadata available. Load a TypeScript module first.", "error");
+          return;
+        }
+        try {
+          const targetData =
+            dataModel && typeof dataModel === "object" && !Array.isArray(dataModel)
+              ? dataModel
+              : { value: dataModel };
+          const tsText = convertJsonToTs(conversionMeta, targetData);
+          const baseCandidate = tsSourcePath || conversionMeta.source || "data.ts";
+          const baseName = baseCandidate.split(/[\\/]/).pop() || "data.ts";
+          const sanitized = baseName.replace(/[\s]+/g, "-");
+          const filename = sanitized.match(/\.tsx?$/)
+            ? sanitized.replace(/\.tsx?$/, ".ts")
+            : `${sanitized}.ts`;
+          downloadText(filename, tsText, "text/typescript");
+          showStatus(`Exported ${filename}.`, "success");
+        } catch (error) {
+          showStatus(error instanceof Error ? error.message : String(error), "error");
+        }
+      });
 
       searchInput.addEventListener("input", () => {
         searchTerm = searchInput.value.trim();

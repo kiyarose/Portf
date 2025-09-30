@@ -1,0 +1,38 @@
+{
+  "__meta": {
+    "version": 1,
+    "template": "export type EducationEntry = {\n  school: string;\n  program: string;\n  dates: string;\n  tech?: string[];\n};\n\nexport const educationTimeline: EducationEntry[] = __DATA_PLACEHOLDER__educationTimeline_159_522__;\n",
+    "source": "education.ts",
+    "entries": [
+      {
+        "name": "educationTimeline",
+        "placeholder": "__DATA_PLACEHOLDER__educationTimeline_159_522__",
+        "baseIndent": ""
+      }
+    ],
+    "generatedAt": "2025-09-30T16:52:16.539Z"
+  },
+  "educationTimeline": [
+    {
+      "school": "Colorado Mountain College",
+      "program": "Medical Billing and Coding",
+      "dates": "2025 – 2026",
+      "tech": [
+        "Medical Coding",
+        "Health Informatics",
+        "Excel"
+      ]
+    },
+    {
+      "school": "Greater Altoona CTC",
+      "program": "Computer and Networking Technology",
+      "dates": "2019 — Jun 2025",
+      "tech": [
+        "Networking",
+        "Windows",
+        "Cisco",
+        "Linux"
+      ]
+    }
+  ]
+}

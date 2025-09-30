@@ -1,0 +1,41 @@
+{
+  "__meta": {
+    "version": 1,
+    "template": "export const socials = __DATA_PLACEHOLDER__socials_23_527__ as const;\n",
+    "source": "education.ts",
+    "entries": [
+      {
+        "name": "socials",
+        "placeholder": "__DATA_PLACEHOLDER__socials_23_527__",
+        "baseIndent": ""
+      }
+    ],
+    "generatedAt": "2025-09-30T16:53:49.708Z"
+  },
+  "socials": [
+    {
+      "id": "github",
+      "label": "GitHub",
+      "href": "https://github.com/kiyarose",
+      "icon": "mdi:github"
+    },
+    {
+      "id": "instagram",
+      "label": "Instagram",
+      "href": "https://instagram.com/kitadire",
+      "icon": "mdi:instagram"
+    },
+    {
+      "id": "linkedin",
+      "label": "LinkedIn",
+      "href": "https://linkedin.com/in/kiyarose",
+      "icon": "mdi:linkedin"
+    },
+    {
+      "id": "bluesky",
+      "label": "Bluesky",
+      "href": "https://bsky.app/profile/sillylittle.tech",
+      "icon": "simple-icons:bluesky"
+    }
+  ]
+}
