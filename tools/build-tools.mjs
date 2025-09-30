@@ -39,8 +39,8 @@ async function processEntry(entryPath, relativeSegments) {
     const children = await fs.readdir(entryPath);
     await Promise.all(
       children.map((child) =>
-        processEntry(path.join(entryPath, child), [...relativeSegments, child])
-      )
+        processEntry(path.join(entryPath, child), [...relativeSegments, child]),
+      ),
     );
     return;
   }
@@ -78,9 +78,7 @@ async function main() {
 
   const entries = await fs.readdir(sourceDir);
   await Promise.all(
-    entries.map((entry) =>
-      processEntry(path.join(sourceDir, entry), [entry])
-    )
+    entries.map((entry) => processEntry(path.join(sourceDir, entry), [entry])),
   );
 
   const summaryParts = [];
