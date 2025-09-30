@@ -5,6 +5,7 @@ import {
   existsSync,
   mkdirSync,
   readdirSync,
+  rmSync,
   statSync,
 } from "node:fs";
 import { dirname, join, resolve } from "node:path";
@@ -13,6 +14,26 @@ import { fileURLToPath } from "node:url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const ADMIN_ASSETS_DIR = resolve(__dirname, "admin-assets");
+const TOOLS_DIR = resolve(__dirname, "src/tools");
+
+const TOOL_PAGES = [
+  { slug: "visualizeme" },
+  { slug: "convert" },
+];
+
+const TOOL_HTML_INPUTS: Record<string, string> = Object.fromEntries(
+  TOOL_PAGES.map((page) => [
+    `tools/${page.slug}`,
+    resolve(TOOLS_DIR, `${page.slug}.html`),
+  ]),
+);
+
+const TOOL_ASSET_DIRECTORIES = [
+  {
+    source: resolve(TOOLS_DIR, "json"),
+    relative: ["tools", "json"],
+  },
+];
 
 function copyDirectory(source: string, destination: string) {
   if (!existsSync(destination)) {
@@ -51,10 +72,112 @@ function copyAdminAssets(): Plugin {
   };
 }
 
+function copyToolAssets(): Plugin {
+  let resolvedOutDir = "";
+  let projectRoot = process.cwd();
+  return {
+    name: "copy-tool-assets",
+    apply: "build",
+    configResolved(config) {
+      resolvedOutDir = config.build.outDir;
+      projectRoot = config.root;
+    },
+    generateBundle() {
+      const targetRoot = resolve(projectRoot, resolvedOutDir);
+      for (const directory of TOOL_ASSET_DIRECTORIES) {
+        if (!existsSync(directory.source)) {
+          continue;
+        }
+        const destination = resolve(targetRoot, ...directory.relative);
+        rmSync(destination, { recursive: true, force: true });
+        copyDirectory(directory.source, destination);
+      }
+    },
+  };
+}
+
+function organizeToolOutputs(): Plugin {
+  let resolvedOutDir = "";
+  let projectRoot = process.cwd();
+  return {
+    name: "organize-tool-outputs",
+    apply: "build",
+    configResolved(config) {
+      resolvedOutDir = config.build.outDir;
+      projectRoot = config.root;
+    },
+    closeBundle() {
+      const distRoot = resolve(projectRoot, resolvedOutDir);
+      const buildOutputDir = resolve(distRoot, "src", "tools");
+      for (const page of TOOL_PAGES) {
+        const fileName = `${page.slug}.html`;
+        const sourcePath = resolve(buildOutputDir, fileName);
+        if (!existsSync(sourcePath)) {
+          continue;
+        }
+        const flatDestination = resolve(distRoot, "tools", fileName);
+        const nestedDestination = resolve(
+          distRoot,
+          "tools",
+          page.slug,
+          "index.html",
+        );
+        mkdirSync(resolve(distRoot, "tools"), { recursive: true });
+        copyFileSync(sourcePath, flatDestination);
+        mkdirSync(dirname(nestedDestination), { recursive: true });
+        copyFileSync(sourcePath, nestedDestination);
+      }
+      const srcDir = resolve(distRoot, "src");
+      if (existsSync(srcDir)) {
+        rmSync(srcDir, { recursive: true, force: true });
+      }
+    },
+  };
+}
+
+function emitAppShell(): Plugin {
+  let resolvedOutDir = "";
+  let projectRoot = process.cwd();
+  return {
+    name: "emit-app-shell",
+    apply: "build",
+    configResolved(config) {
+      resolvedOutDir = config.build.outDir;
+      projectRoot = config.root;
+    },
+    closeBundle() {
+      const distRoot = resolve(projectRoot, resolvedOutDir);
+      const source = resolve(distRoot, "index.html");
+      const destination = resolve(distRoot, "app-shell");
+      if (!existsSync(source)) {
+        this.warn(
+          `Skipping app shell copy; source file not found at ${source}`,
+        );
+        return;
+      }
+      copyFileSync(source, destination);
+    },
+  };
+}
+
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [react(), copyAdminAssets()],
+  plugins: [
+    react(),
+    copyAdminAssets(),
+    copyToolAssets(),
+    organizeToolOutputs(),
+    emitAppShell(),
+  ],
   define: {
     __BUILD_TIME__: JSON.stringify(new Date().toISOString()),
+  },
+  build: {
+    rollupOptions: {
+      input: {
+        main: resolve(__dirname, "index.html"),
+        ...TOOL_HTML_INPUTS,
+      },
+    },
   },
 });

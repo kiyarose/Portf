@@ -5,16 +5,15 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build && npm run build:tools",
-    "build:tools": "node tools/build-tools.mjs",
+    "build": "tsc -b && vite build",
     "build:pages": "npm run build",
     "lint": "eslint .",
     "preview": "vite preview --strictPort",
     "css:watch": "postcss src/index.css --config . --output dist/style.css --watch",
     "css:build": "postcss src/index.css --config . --output dist/style.css",
     "test:e2e": "playwright test",
-    "data:to-json": "node tools/data-converter.mjs to-json",
-    "data:to-ts": "node tools/data-converter.mjs to-ts"
+    "data:to-json": "node src/tools/data-converter.mjs to-json",
+    "data:to-ts": "node src/tools/data-converter.mjs to-ts"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",
