@@ -24,7 +24,7 @@
   Cache-Control: public, max-age=300, must-revalidate
 
 # HTML pages - shorter cache for dynamic content
-/*.html
+/**/*.html
   Cache-Control: public, max-age=300, must-revalidate
 
 # Static assets get longer cache
