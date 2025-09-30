@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Data Converter</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+      :root {
+        color-scheme: light dark;
+        --accent: #f97316;
+        --accent-muted: #ec4899;
+        --bg: #0f172a;
+        --surface: rgba(15, 23, 42, 0.82);
+        --text: #e2e8f0;
+        --text-muted: #94a3b8;
+        --border: rgba(148, 163, 184, 0.35);
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: "Inter", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+          "Segoe UI", sans-serif;
+        background: radial-gradient(circle at top, rgba(249, 115, 22, 0.12), transparent 55%),
+          radial-gradient(circle at bottom, rgba(236, 72, 153, 0.12), transparent 50%), var(--bg);
+        color: var(--text);
+        display: flex;
+        justify-content: center;
+        padding: 40px 16px 80px;
+      }
+
+      .app {
+        width: min(1080px, 100%);
+        display: grid;
+        gap: 24px;
+      }
+
+      .card {
+        background: var(--surface);
+        backdrop-filter: blur(22px);
+        border-radius: 28px;
+        padding: 28px;
+        border: 1px solid var(--border);
+        box-shadow: 0 18px 45px rgba(15, 23, 42, 0.35);
+      }
+
+      h1 {
+        margin: 0;
+        font-size: clamp(1.8rem, 4vw, 2.4rem);
+        font-weight: 700;
+      }
+
+      p {
+        margin: 8px 0 0;
+        color: var(--text-muted);
+        line-height: 1.6;
+      }
+
+      .mode-toggle {
+        display: inline-flex;
+        padding: 6px;
+        border-radius: 999px;
+        background: rgba(148, 163, 184, 0.12);
+      }
+
+      .mode-toggle button {
+        border: none;
+        background: transparent;
+        color: var(--text-muted);
+        padding: 10px 20px;
+        border-radius: 999px;
+        font-size: 0.95rem;
+        cursor: pointer;
+        transition: all 0.18s ease;
+      }
+
+      .mode-toggle button.active {
+        background: linear-gradient(135deg, rgba(249, 115, 22, 0.9), rgba(236, 72, 153, 0.9));
+        color: #0f172a;
+        font-weight: 600;
+        box-shadow: 0 8px 24px rgba(249, 115, 22, 0.35);
+      }
+
+      .grid {
+        display: grid;
+        gap: 24px;
+      }
+
+      @media (min-width: 960px) {
+        .grid.two-columns {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+
+      label {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        font-size: 0.95rem;
+        color: var(--text-muted);
+      }
+
+      textarea {
+        min-height: 260px;
+        border-radius: 20px;
+        border: 1px solid var(--border);
+        background: rgba(15, 23, 42, 0.58);
+        color: var(--text);
+        padding: 16px;
+        font-size: 0.95rem;
+        font-family: "JetBrains Mono", "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+        resize: vertical;
+      }
+
+      input[type="text"],
+      input[type="file"] {
+        background: rgba(15, 23, 42, 0.58);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 12px 14px;
+        color: var(--text);
+        font-size: 0.95rem;
+      }
+
+      input[type="file"] {
+        padding: 10px;
+      }
+
+      .actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 16px;
+      }
+
+      button.primary {
+        border: none;
+        border-radius: 999px;
+        padding: 12px 22px;
+        font-size: 0.95rem;
+        background: linear-gradient(135deg, rgba(249, 115, 22, 0.9), rgba(236, 72, 153, 0.9));
+        color: #0f172a;
+        font-weight: 600;
+        cursor: pointer;
+        box-shadow: 0 14px 24px rgba(236, 72, 153, 0.22);
+        transition: transform 0.16s ease, box-shadow 0.16s ease;
+      }
+
+      button.secondary {
+        border-radius: 999px;
+        border: 1px solid rgba(236, 72, 153, 0.45);
+        padding: 12px 22px;
+        font-size: 0.95rem;
+        color: var(--text);
+        background: transparent;
+        cursor: pointer;
+        transition: all 0.16s ease;
+      }
+
+      button.primary:disabled,
+      button.secondary:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        box-shadow: none;
+      }
+
+      button.primary:not(:disabled):hover {
+        transform: translateY(-1px);
+        box-shadow: 0 18px 32px rgba(236, 72, 153, 0.28);
+      }
+
+      button.secondary:not(:disabled):hover {
+        border-color: rgba(249, 115, 22, 0.55);
+        color: var(--accent);
+      }
+
+      .status {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        border-radius: 16px;
+        padding: 14px 18px;
+        font-size: 0.9rem;
+        background: rgba(15, 23, 42, 0.58);
+        border: 1px solid rgba(148, 163, 184, 0.24);
+      }
+
+      .status.success {
+        border-color: rgba(34, 197, 94, 0.45);
+        color: #bbf7d0;
+      }
+
+      .status.error {
+        border-color: rgba(248, 113, 113, 0.6);
+        color: #fecaca;
+      }
+
+      .pill-inputs {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+
+      .note {
+        font-size: 0.85rem;
+        color: var(--text-muted);
+      }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/typescript@5.9.2/lib/typescript.js"></script>
+  </head>
+  <body>
+    <main class="app">
+      <section class="card">
+        <h1 class="font-kiya">Kiya Rose Data Converter</h1>
+        <p>
+          Round-trip your `src/data` modules between TypeScript and JSON. Works entirely in the
+          browser—drop a file, pick the exports, and convert without leaving your machine.
+        </p>
+      </section>
+
+      <section class="card">
+        <div class="mode-toggle" role="tablist">
+          <button type="button" class="active" data-mode="ts-to-json" role="tab">
+            TypeScript → JSON
+          </button>
+          <button type="button" data-mode="json-to-ts" role="tab">JSON → TypeScript</button>
+        </div>
+      </section>
+
+      <section class="card" id="ts-to-json-panel">
+        <div class="grid two-columns">
+          <label>
+            TypeScript input
+            <textarea id="ts-input" placeholder="Paste your exported data module here"></textarea>
+          </label>
+          <label>
+            JSON output
+            <textarea id="json-output" placeholder="Result appears here" readonly></textarea>
+          </label>
+        </div>
+        <div class="grid" style="margin-top: 24px">
+          <div class="pill-inputs">
+            <label style="flex: 1 1 220px">
+              Optional export filter (comma separated)
+              <input id="ts-picks" type="text" placeholder="projects,skills" />
+            </label>
+            <label style="flex: 1 1 220px">
+              Source path stored in metadata
+              <input id="ts-source" type="text" placeholder="src/data/projects.ts" />
+            </label>
+            <label style="flex: 1 1 220px">
+              Load `.ts` file
+              <input id="ts-file" type="file" accept=".ts,.tsx,text/x-typescript" />
+            </label>
+          </div>
+        </div>
+        <div class="actions">
+          <button class="primary" id="ts-convert" type="button">Convert to JSON</button>
+          <button class="secondary" id="ts-download" type="button" disabled>Download JSON</button>
+        </div>
+        <div class="status" id="ts-status" style="display: none"></div>
+      </section>
+
+      <section class="card" id="json-to-ts-panel" hidden>
+        <div class="grid two-columns">
+          <label>
+            JSON input
+            <textarea id="json-input" placeholder="Paste JSON generated by this tool"></textarea>
+          </label>
+          <label>
+            TypeScript output
+            <textarea id="ts-output" placeholder="Reconstructed module appears here" readonly></textarea>
+          </label>
+        </div>
+        <div class="grid" style="margin-top: 24px">
+          <div class="pill-inputs">
+            <label style="flex: 1 1 220px">
+              Optional export filter (comma separated)
+              <input id="json-picks" type="text" placeholder="projects" />
+            </label>
+            <label style="flex: 1 1 220px">
+              Override output path
+              <input id="json-target" type="text" placeholder="src/data/projects.ts" />
+            </label>
+            <label style="flex: 1 1 220px">
+              Load `.json` file
+              <input id="json-file" type="file" accept=".json,application/json" />
+            </label>
+          </div>
+          <p class="note">
+            The JSON must include the `__meta` block that the converter generates. Placeholders are
+            replaced using the stored template, so manual edits outside selected exports stay intact.
+          </p>
+        </div>
+        <div class="actions">
+          <button class="primary" id="json-convert" type="button">Convert to TypeScript</button>
+          <button class="secondary" id="json-download" type="button" disabled>
+            Download TypeScript
+          </button>
+        </div>
+        <div class="status" id="json-status" style="display: none"></div>
+      </section>
+    </main>
+
+    <script>
+      const PLACEHOLDER_PREFIX = "__DATA_PLACEHOLDER__";
+      const VERSION = 1;
+      const printerSourceFile = ts.createSourceFile(
+        "converter.ts",
+        "",
+        ts.ScriptTarget.Latest,
+        false,
+        ts.ScriptKind.TS,
+      );
+      const printer = ts.createPrinter({ newLine: ts.NewLineKind.LineFeed });
+
+      function unwrapLiteral(node) {
+        if (ts.isAsExpression(node) || ts.isTypeAssertionExpression(node)) {
+          return unwrapLiteral(node.expression);
+        }
+        if (ts.isParenthesizedExpression(node)) {
+          return unwrapLiteral(node.expression);
+        }
+        return node;
+      }
+
+      function evaluateLiteral(node) {
+        if (ts.isStringLiteralLike(node)) {
+          return node.text;
+        }
+        if (ts.isNumericLiteral(node)) {
+          return Number(node.text);
+        }
+        if (node.kind === ts.SyntaxKind.TrueKeyword) {
+          return true;
+        }
+        if (node.kind === ts.SyntaxKind.FalseKeyword) {
+          return false;
+        }
+        if (node.kind === ts.SyntaxKind.NullKeyword) {
+          return null;
+        }
+        if (ts.isArrayLiteralExpression(node)) {
+          return node.elements.map((element) => {
+            const literal = unwrapLiteral(element);
+            if (ts.isSpreadElement(literal)) {
+              throw new Error("Spread elements are not supported in export literals");
+            }
+            return evaluateLiteral(literal);
+          });
+        }
+        if (ts.isObjectLiteralExpression(node)) {
+          const result = {};
+          for (const property of node.properties) {
+            if (!ts.isPropertyAssignment(property)) {
+              throw new Error("Only simple property assignments are supported");
+            }
+            const name = property.name;
+            let key;
+            if (ts.isIdentifier(name)) {
+              key = name.text;
+            } else if (ts.isStringLiteralLike(name) || ts.isNumericLiteral(name)) {
+              key = name.text;
+            } else {
+              throw new Error("Unsupported property name in export literal");
+            }
+            result[key] = evaluateLiteral(unwrapLiteral(property.initializer));
+          }
+          return result;
+        }
+
+        throw new Error("Encountered an unsupported expression while reading export literal");
+      }
+
+      function computeBaseIndent(sourceText, valueStart) {
+        const lineStart = sourceText.lastIndexOf("\n", valueStart - 1) + 1;
+        let indent = "";
+        for (let index = lineStart; index < sourceText.length; index += 1) {
+          const char = sourceText[index];
+          if (char === " " || char === "\t") {
+            indent += char;
+            continue;
+          }
+          break;
+        }
+        return indent;
+      }
+
+      function buildTemplate(sourceText, entries) {
+        const ordered = [...entries].sort((a, b) => a.valueStart - b.valueStart);
+        let cursor = 0;
+        let result = "";
+        for (const entry of ordered) {
+          result += sourceText.slice(cursor, entry.valueStart);
+          result += entry.placeholder;
+          cursor = entry.valueEnd;
+        }
+        result += sourceText.slice(cursor);
+        return result;
+      }
+
+      function isIdentifierCandidate(text) {
+        return /^[A-Za-z_$][A-Za-z0-9_$]*$/.test(text);
+      }
+
+      function createLiteralFromValue(value) {
+        if (value === null) {
+          return ts.factory.createNull();
+        }
+
+        if (Array.isArray(value)) {
+          const elements = value.map((item) => createLiteralFromValue(item));
+          return ts.factory.createArrayLiteralExpression(elements, elements.length > 0);
+        }
+
+        switch (typeof value) {
+          case "string":
+            return ts.factory.createStringLiteral(value);
+          case "number":
+            return Number.isFinite(value)
+              ? ts.factory.createNumericLiteral(value)
+              : ts.factory.createStringLiteral(String(value));
+          case "boolean":
+            return value ? ts.factory.createTrue() : ts.factory.createFalse();
+          case "object": {
+            const entries = Object.entries(value).map(([key, item]) => {
+              const nameNode = isIdentifierCandidate(key)
+                ? ts.factory.createIdentifier(key)
+                : ts.factory.createStringLiteral(key);
+              return ts.factory.createPropertyAssignment(nameNode, createLiteralFromValue(item));
+            });
+            return ts.factory.createObjectLiteralExpression(entries, entries.length > 0);
+          }
+          default:
+            throw new Error(`Unsupported value type: ${typeof value}`);
+        }
+      }
+
+      function formatValueForTs(value, baseIndent) {
+        const literal = createLiteralFromValue(value);
+        const printed = printer.printNode(ts.EmitHint.Expression, literal, printerSourceFile);
+        const lines = printed.split("\n");
+        if (lines.length === 1) {
+          return lines[0];
+        }
+        const indentPrefix = baseIndent ?? "";
+        const formatted = [lines[0]];
+        for (let index = 1; index < lines.length; index += 1) {
+          const line = lines[index];
+          if (line.length === 0) {
+            formatted.push(line);
+            continue;
+          }
+          const match = line.match(/^(\s*)(.*)$/);
+          const leading = match ? match[1].length : 0;
+          const remainder = leading % 4;
+          const level = (leading - remainder) / 4;
+          const adjustedIndent = `${indentPrefix}${"  ".repeat(level)}${remainder > 0 ? " ".repeat(remainder) : ""}`;
+          formatted.push(`${adjustedIndent}${match ? match[2] : line.trimStart()}`);
+        }
+        return formatted.join("\n");
+      }
+
+      function collectExportEntries(sourceText, picks) {
+        const sourceFile = ts.createSourceFile(
+          "input.ts",
+          sourceText,
+          ts.ScriptTarget.Latest,
+          true,
+          ts.ScriptKind.TS,
+        );
+
+        const pickSet = picks && picks.size > 0 ? new Set(picks) : null;
+        const entries = [];
+        const values = {};
+        const seen = new Set();
+
+        for (const statement of sourceFile.statements) {
+          if (!ts.isVariableStatement(statement)) {
+            continue;
+          }
+          const modifiers = ts.getCombinedModifierFlags(statement);
+          if ((modifiers & ts.ModifierFlags.Export) === 0) {
+            continue;
+          }
+          for (const declaration of statement.declarationList.declarations) {
+            if (!ts.isIdentifier(declaration.name) || !declaration.initializer) {
+              continue;
+            }
+            const name = declaration.name.text;
+            if (pickSet && !pickSet.has(name)) {
+              continue;
+            }
+            const literalNode = unwrapLiteral(declaration.initializer);
+            if (
+              !ts.isArrayLiteralExpression(literalNode) &&
+              !ts.isObjectLiteralExpression(literalNode)
+            ) {
+              continue;
+            }
+            if (seen.has(name)) {
+              throw new Error(`Duplicate export named ${name}`);
+            }
+            const valueStart = literalNode.getStart(sourceFile);
+            const valueEnd = literalNode.getEnd();
+            const placeholder = `${PLACEHOLDER_PREFIX}${name}_${valueStart}_${valueEnd}__`;
+            const baseIndent = computeBaseIndent(sourceText, valueStart);
+            values[name] = evaluateLiteral(literalNode);
+            entries.push({
+              name,
+              valueStart,
+              valueEnd,
+              placeholder,
+              baseIndent,
+            });
+            seen.add(name);
+          }
+        }
+
+        if (pickSet) {
+          for (const name of pickSet) {
+            if (!seen.has(name)) {
+              throw new Error(`Requested export \`${name}\` was not found or convertible`);
+            }
+          }
+        }
+
+        if (entries.length === 0) {
+          throw new Error("No convertible exported arrays or objects were found");
+        }
+
+        const template = buildTemplate(sourceText, entries);
+        return { entries, values, template };
+      }
+
+      function convertTsToJson(sourceText, picks, sourcePath) {
+        const { entries, values, template } = collectExportEntries(sourceText, picks);
+        const metaEntries = entries.map((entry) => ({
+          name: entry.name,
+          placeholder: entry.placeholder,
+          baseIndent: entry.baseIndent,
+        }));
+        const output = {
+          __meta: {
+            version: VERSION,
+            template,
+            source: sourcePath ?? "",
+            entries: metaEntries,
+            generatedAt: new Date().toISOString(),
+          },
+        };
+        for (const entry of entries) {
+          output[entry.name] = values[entry.name];
+        }
+        return JSON.stringify(output, null, 2);
+      }
+
+      function convertJsonToTs(jsonText, picks, overrideTarget) {
+        let parsed;
+        try {
+          parsed = JSON.parse(jsonText);
+        } catch (error) {
+          throw new Error("Input is not valid JSON");
+        }
+
+        if (!parsed.__meta || typeof parsed.__meta !== "object") {
+          throw new Error("Missing __meta block. Use JSON generated by this converter.");
+        }
+        if (parsed.__meta.version !== VERSION) {
+          throw new Error(
+            `Unsupported metadata version ${parsed.__meta.version}. Expected ${VERSION}.`,
+          );
+        }
+
+        const entries = Array.isArray(parsed.__meta.entries) ? parsed.__meta.entries : [];
+        if (!parsed.__meta.template || entries.length === 0) {
+          throw new Error("Metadata is incomplete; cannot restore TypeScript module.");
+        }
+
+        const pickSet = picks && picks.size > 0 ? new Set(picks) : null;
+        let output = parsed.__meta.template;
+
+        for (const entry of entries) {
+          if (!entry || !entry.name || !entry.placeholder) {
+            throw new Error("Encountered malformed metadata entry");
+          }
+          if (pickSet && !pickSet.has(entry.name)) {
+            continue;
+          }
+          if (!(entry.name in parsed)) {
+            throw new Error(`JSON data missing export \`${entry.name}\``);
+          }
+          const replacement = formatValueForTs(parsed[entry.name], entry.baseIndent ?? "");
+          if (!output.includes(entry.placeholder)) {
+            throw new Error(
+              `Placeholder for export \`${entry.name}\` is missing. JSON may be corrupted.`,
+            );
+          }
+          output = output.replace(entry.placeholder, replacement);
+        }
+
+        const targetPath = overrideTarget || parsed.__meta.source || "restored.ts";
+        return { text: output, targetPath };
+      }
+
+      function parsePicks(input) {
+        if (!input) {
+          return null;
+        }
+        const items = input
+          .split(",")
+          .map((item) => item.trim())
+          .filter(Boolean);
+        return items.length > 0 ? new Set(items) : null;
+      }
+
+      function showStatus(element, message, kind) {
+        element.textContent = message;
+        element.className = `status ${kind}`;
+        element.style.display = "flex";
+      }
+
+      function clearStatus(element) {
+        element.style.display = "none";
+        element.textContent = "";
+      }
+
+      function setMode(mode) {
+        tsPanel.hidden = mode !== "ts-to-json";
+        jsonPanel.hidden = mode !== "json-to-ts";
+        for (const button of modeButtons) {
+          button.classList.toggle("active", button.dataset.mode === mode);
+        }
+      }
+
+      function downloadText(filename, text) {
+        const blob = new Blob([text], { type: "text/plain" });
+        const url = URL.createObjectURL(blob);
+        const anchor = document.createElement("a");
+        anchor.href = url;
+        anchor.download = filename;
+        document.body.appendChild(anchor);
+        anchor.click();
+        document.body.removeChild(anchor);
+        setTimeout(() => URL.revokeObjectURL(url), 2000);
+      }
+
+      const tsPanel = document.getElementById("ts-to-json-panel");
+      const jsonPanel = document.getElementById("json-to-ts-panel");
+      const modeButtons = document.querySelectorAll(".mode-toggle button");
+      const tsInput = document.getElementById("ts-input");
+      const jsonOutput = document.getElementById("json-output");
+      const tsPicksInput = document.getElementById("ts-picks");
+      const tsSourceInput = document.getElementById("ts-source");
+      const tsFileInput = document.getElementById("ts-file");
+      const tsConvertButton = document.getElementById("ts-convert");
+      const tsDownloadButton = document.getElementById("ts-download");
+      const tsStatus = document.getElementById("ts-status");
+      const jsonInput = document.getElementById("json-input");
+      const tsOutput = document.getElementById("ts-output");
+      const jsonPicksInput = document.getElementById("json-picks");
+      const jsonTargetInput = document.getElementById("json-target");
+      const jsonFileInput = document.getElementById("json-file");
+      const jsonConvertButton = document.getElementById("json-convert");
+      const jsonDownloadButton = document.getElementById("json-download");
+      const jsonStatus = document.getElementById("json-status");
+
+      for (const button of modeButtons) {
+        button.addEventListener("click", () => setMode(button.dataset.mode));
+      }
+
+      tsFileInput.addEventListener("change", (event) => {
+        const file = event.target.files?.[0];
+        if (!file) {
+          return;
+        }
+        const reader = new FileReader();
+        reader.onload = () => {
+          tsInput.value = String(reader.result ?? "");
+          if (!tsSourceInput.value) {
+            tsSourceInput.value = file.name;
+          }
+        };
+        reader.readAsText(file);
+      });
+
+      jsonFileInput.addEventListener("change", (event) => {
+        const file = event.target.files?.[0];
+        if (!file) {
+          return;
+        }
+        const reader = new FileReader();
+        reader.onload = () => {
+          jsonInput.value = String(reader.result ?? "");
+          if (!jsonTargetInput.value) {
+            jsonTargetInput.value = file.name.replace(/\.json$/i, ".ts");
+          }
+        };
+        reader.readAsText(file);
+      });
+
+      tsConvertButton.addEventListener("click", () => {
+        clearStatus(tsStatus);
+        tsDownloadButton.disabled = true;
+        try {
+          const picks = parsePicks(tsPicksInput.value);
+          const result = convertTsToJson(tsInput.value, picks, tsSourceInput.value.trim());
+          jsonOutput.value = result;
+          tsDownloadButton.disabled = false;
+          showStatus(
+            tsStatus,
+            `Converted to JSON with ${JSON.parse(result).__meta.entries.length} export(s).`,
+            "success",
+          );
+        } catch (error) {
+          showStatus(tsStatus, error instanceof Error ? error.message : String(error), "error");
+        }
+      });
+
+      tsDownloadButton.addEventListener("click", () => {
+        downloadText(
+          (tsSourceInput.value.trim() || "data")
+            .replace(/\.(tsx?)$/i, "")
+            .concat(".json"),
+          jsonOutput.value,
+        );
+      });
+
+      jsonConvertButton.addEventListener("click", () => {
+        clearStatus(jsonStatus);
+        jsonDownloadButton.disabled = true;
+        try {
+          const picks = parsePicks(jsonPicksInput.value);
+          const { text, targetPath } = convertJsonToTs(
+            jsonInput.value,
+            picks,
+            jsonTargetInput.value.trim(),
+          );
+          tsOutput.value = text;
+          jsonDownloadButton.dataset.filename = targetPath || "restored.ts";
+          jsonDownloadButton.disabled = false;
+          showStatus(jsonStatus, `Rebuilt module as \`${targetPath}\`.`, "success");
+        } catch (error) {
+          showStatus(jsonStatus, error instanceof Error ? error.message : String(error), "error");
+        }
+      });
+
+      jsonDownloadButton.addEventListener("click", () => {
+        const filename = jsonDownloadButton.dataset.filename || "restored.ts";
+        downloadText(filename, tsOutput.value);
+      });
+    </script>
+  </body>
+</html>

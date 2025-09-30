@@ -10,7 +10,9 @@
     "preview": "vite preview --strictPort",
     "css:watch": "postcss src/index.css --config . --output dist/style.css --watch",
     "css:build": "postcss src/index.css --config . --output dist/style.css",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "data:to-json": "node tools/data-converter.mjs to-json",
+    "data:to-ts": "node tools/data-converter.mjs to-ts"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",
