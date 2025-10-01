@@ -34,7 +34,7 @@ jobs:
         # Export LCOV report from the generated result bundle
         # The output file will be named 'coverage.lcov' within the '$DashCam!' directory.
         xcrun llvm-cov export -format="lcov" \
-          "$DashCam!/TestResults.xcresult/Logs/Test/*.xcactivitylog/Coverage.profdata" \
+          "$DashCam!/TestResults.xcresult/Coverage.profdata" \
           > "$DashCam!/coverage.lcov"
 
     - name: Install DeepSource CLI
