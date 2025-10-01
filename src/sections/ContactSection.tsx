@@ -16,41 +16,50 @@ const EMAIL = "kiya.rose@sillylittle.tech";
 const STRICT_CORS_PATTERNS = ["cors", "cross-origin", "opaque response"];
 const GENERIC_CORS_PATTERNS = ["load failed", "failed to fetch"];
 
-// Simple lazy loading for pageclip script
+const PAGECLIP_STYLE_SELECTOR = "style[data-pageclip-styles]";
+const PAGECLIP_INLINE_STYLES = [
+  ".pageclip-form__submit {",
+  "  display: inline-flex;",
+  "  align-items: center;",
+  "  justify-content: center;",
+  "}",
+].join("\n");
+
+// Simple lazy loading for pageclip affordances (no external script required)
 let pageclipLoaded = false;
-let pageclipPromise: Promise<void> | null = null;
 
 const loadPageclip = (): Promise<void> => {
   if (pageclipLoaded) {
     return Promise.resolve();
   }
 
-  if (pageclipPromise) {
-    return pageclipPromise;
+  if (typeof document === "undefined") {
+    return Promise.resolve();
   }
 
-  pageclipPromise = new Promise((resolve, reject) => {
-    const script = document.createElement("script");
-    script.src = "https://s.pageclip.co/v1/pageclip.js";
-    script.charset = "utf-8";
-    script.crossOrigin = "anonymous";
-    const nonce = getCspNonce();
-    if (nonce) {
-      script.nonce = nonce;
-      script.setAttribute("nonce", nonce);
-    }
-    script.onload = () => {
-      pageclipLoaded = true;
-      resolve();
-    };
-    script.onerror = () => {
-      pageclipPromise = null; // Reset so we can try again
-      reject(new Error("Failed to load pageclip script"));
-    };
-    document.head.appendChild(script);
-  });
+  try {
+    const head = document.head;
 
-  return pageclipPromise;
+    if (!head) {
+      return Promise.resolve();
+    }
+
+    const existingStyles = head.querySelector(PAGECLIP_STYLE_SELECTOR);
+
+    if (!existingStyles) {
+      const style = document.createElement("style");
+      style.type = "text/css";
+      style.setAttribute("data-pageclip-styles", "inline");
+      style.textContent = PAGECLIP_INLINE_STYLES;
+      head.appendChild(style);
+    }
+
+    pageclipLoaded = true;
+  } catch (error) {
+    safeConsoleError("Failed to inject Pageclip affordance styles", error);
+  }
+
+  return Promise.resolve();
 };
 
 const TURNSTILE_SCRIPT_SRC =
