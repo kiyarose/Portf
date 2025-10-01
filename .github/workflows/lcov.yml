@@ -27,24 +27,13 @@ jobs:
         # Navigate to the project directory
         cd "\$DashCam!"
         
-        # Build the project and test targets first to ensure test bundles are created
-        # Disable code signing for CI environment (not needed for tests, including UI tests)
-        # Use explicit derivedDataPath to ensure build and test use the same location
-        xcodebuild build-for-testing \
+        # Run tests with code coverage enabled
+        # Using single 'test' command instead of split build-for-testing/test-without-building
+        # to avoid test bundle loading issues in CI
+        xcodebuild test \
           -project "DashCam.xcodeproj" \
           -scheme "DashCam" \
           -destination "platform=macOS" \
-          -derivedDataPath "BuildDir" \
-          CODE_SIGN_IDENTITY="" \
-          CODE_SIGNING_REQUIRED=NO \
-          CODE_SIGNING_ALLOWED=NO
-        
-        # Run tests with code coverage enabled using the same derivedDataPath
-        xcodebuild test-without-building \
-          -project "DashCam.xcodeproj" \
-          -scheme "DashCam" \
-          -destination "platform=macOS" \
-          -derivedDataPath "BuildDir" \
           -enableCodeCoverage YES \
           CODE_SIGN_IDENTITY="" \
           CODE_SIGNING_REQUIRED=NO \
