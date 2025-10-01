@@ -1,14 +1,4 @@
 /* eslint-env node */
-const {
-  console,
-  URL,
-  setTimeout,
-  clearTimeout,
-  setInterval,
-  clearInterval,
-} = globalThis;
-const global = globalThis;
-
 import fs from "node:fs";
 import path from "node:path";
 import process from "node:process";
@@ -16,6 +6,10 @@ import vm from "node:vm";
 import { createRequire } from "node:module";
 import { pathToFileURL } from "node:url";
 import ts from "typescript";
+
+const { console, URL, setTimeout, clearTimeout, setInterval, clearInterval } =
+  globalThis;
+const global = globalThis;
 
 const VERSION = 1;
 const PLACEHOLDER_PREFIX = "__DATA_PLACEHOLDER__";
