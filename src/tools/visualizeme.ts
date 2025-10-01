@@ -959,7 +959,11 @@ function handleNodePointerDown(event, pathKey) {
   if (!svgElement) {
     return;
   }
-  if (event.button !== 0 && event.pointerType !== "touch" && event.pointerType !== "pen") {
+  if (
+    event.button !== 0 &&
+    event.pointerType !== "touch" &&
+    event.pointerType !== "pen"
+  ) {
     return;
   }
   const target = event.target;
@@ -1057,10 +1061,18 @@ function attachNodeDragHandlers(group, pathKey) {
   if (!group) {
     return;
   }
-  group.addEventListener("pointerdown", (event) => handleNodePointerDown(event, pathKey));
-  group.addEventListener("pointermove", (event) => handleNodePointerMove(event, pathKey));
-  group.addEventListener("pointerup", (event) => handleNodePointerUp(event, pathKey));
-  group.addEventListener("pointercancel", (event) => handleNodePointerUp(event, pathKey));
+  group.addEventListener("pointerdown", (event) =>
+    handleNodePointerDown(event, pathKey),
+  );
+  group.addEventListener("pointermove", (event) =>
+    handleNodePointerMove(event, pathKey),
+  );
+  group.addEventListener("pointerup", (event) =>
+    handleNodePointerUp(event, pathKey),
+  );
+  group.addEventListener("pointercancel", (event) =>
+    handleNodePointerUp(event, pathKey),
+  );
 }
 
 function pruneCustomPositions() {
