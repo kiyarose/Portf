@@ -10,6 +10,7 @@ permissions:
   issues: write
   pull-requests: write
   contents: read
+  repository-projects: write
 
 env:
   PROJECT_NAME: "Portfolio Devmt"
