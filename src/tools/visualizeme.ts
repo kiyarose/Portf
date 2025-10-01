@@ -29,6 +29,7 @@ const NodeWidth = 160;
 const NodeHeight = 60;
 const NodeRadius = 18;
 const DiagramPadding = 40;
+const CollapsedNodeFill = "rgba(148, 163, 184, 0.12)";
 const ROOT_KEY = "__root__";
 
 const jsonInput = requireElement<HTMLTextAreaElement>("json-source");
@@ -1060,7 +1061,7 @@ function renderTree(root) {
     rect.setAttribute("height", `${NodeHeight}`);
     rect.setAttribute(
       "fill",
-      collapsed.get(node.pathKey) ? "rgba(148, 163, 184, 0.12)" : "var(--node)",
+      collapsed.get(node.pathKey) ? CollapsedNodeFill : "var(--node)",
     );
     rect.setAttribute("stroke", "var(--node-border)");
     rect.setAttribute("stroke-width", "1.3");
@@ -1185,7 +1186,7 @@ function highlightSelected(nodeId) {
     } else {
       rect.setAttribute(
         "fill",
-        collapsed.get(pathKey) ? "rgba(15, 23, 42, 0.82)" : "var(--node)",
+        collapsed.get(pathKey) ? CollapsedNodeFill : "var(--node)",
       );
       rect.setAttribute("stroke", "var(--node-border)");
     }
