@@ -26,7 +26,6 @@ Configure these variables in your local `.env` file and in the Cloudflare Pages 
   - `VITE_PAGECLIP_API_KEY`
   - `VITE_TURNSTILE_SITE_KEY` (and/or `VITE_TURNSTYLE_SITE` for legacy naming)
 
-
 The repository needs a `FIREBASE_SERVICE_ACCOUNT_KIYAVERSE` secret with deploy access to the `kiyaverse` Firebase project.
 
 ## Data conversion helper
@@ -40,4 +39,3 @@ The repository needs a `FIREBASE_SERVICE_ACCOUNT_KIYAVERSE` secret with deploy a
 
 - Open `src/tools/visualizeme.html` locally to inspect JSON structures with pan/zoom navigation, modal node editing, search, expand/collapse controls, and SVG export.
 - Switch the input mode to load TypeScript data modules directly; the tool converts exports into JSON for editing and can export the updated module back to TypeScript once you save.
-
