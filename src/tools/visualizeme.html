@@ -419,6 +419,18 @@
       }
 
       svg [data-node-id] {
+        cursor: grab;
+      }
+
+      svg [data-node-id].is-dragging {
+        cursor: grabbing;
+      }
+
+      .diagram-container.dragging-node {
+        cursor: grabbing;
+      }
+
+      svg text.toggle-icon {
         cursor: pointer;
       }
 
