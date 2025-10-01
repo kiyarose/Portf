@@ -22,24 +22,29 @@ jobs:
       # You might need to adjust the scheme and destination to match your project setup.
       # The output LCOV file will be placed directly in the '$DashCam!' directory.
       run: |
+        set -e  # Exit immediately if any command fails
+        
         # Navigate to the project directory
         cd "\$DashCam!"
         
         # Build the project and test targets first to ensure test bundles are created
         # Disable code signing for CI environment (not needed for tests, including UI tests)
+        # Use explicit derivedDataPath to ensure build and test use the same location
         xcodebuild build-for-testing \
           -project "DashCam.xcodeproj" \
           -scheme "DashCam" \
           -destination "platform=macOS" \
+          -derivedDataPath "BuildDir" \
           CODE_SIGN_IDENTITY="" \
           CODE_SIGNING_REQUIRED=NO \
           CODE_SIGNING_ALLOWED=NO
         
-        # Run tests with code coverage enabled
+        # Run tests with code coverage enabled using the same derivedDataPath
         xcodebuild test-without-building \
           -project "DashCam.xcodeproj" \
           -scheme "DashCam" \
           -destination "platform=macOS" \
+          -derivedDataPath "BuildDir" \
           -enableCodeCoverage YES \
           CODE_SIGN_IDENTITY="" \
           CODE_SIGNING_REQUIRED=NO \
