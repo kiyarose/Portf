@@ -38,9 +38,7 @@ jobs:
           > "$DashCam!/coverage.lcov"
 
     - name: Install DeepSource CLI
-      run: |
-        curl https://deepsource.io/cli | sh
-        sudo mv deepsource /usr/local/bin/
+      uses: deepsource/cli-action@v1
 
     - name: Upload Swift LCOV report to DeepSource
       env:
