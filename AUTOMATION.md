@@ -11,12 +11,12 @@ This repository now includes automated workflows to streamline issue and pull re
 
 ### 2. Project Board Management
 
-- **Auto-assignment**: New issues are automatically added to the "Portfolio Devmt" project and placed in the backlog.
-- **Status updates**: Issue and PR statuses are automatically updated based on their relationship:
-  - Issues move to "In Progress" when a linked PR is opened
-  - Both issues and PRs move to "In Review" when the PR is ready for review (not draft)
-  - Issues move to "Done" when linked PRs are merged
-  - Issues return to "Backlog" if linked PRs are closed without merging
+- **Auto-assignment**: New issues are automatically added to the "Portfolio Devmt" project and placed in the "Backlog" status.
+- **Status updates**: Issue statuses are automatically updated based on their relationship with pull requests:
+  - Issues move to "In Progress" when a linked PR is opened (including draft PRs)
+  - Issues move to "In Review" when the PR is ready for review (not draft) or when the PR is merged
+  - GitHub's built-in automation handles moving issues to "Done" when linked PRs are closed/merged
+  - The workflow handles multiple PRs linked to a single issue by updating status for each transition
 
 ### 3. Milestone Synchronization
 
@@ -43,9 +43,10 @@ The automation detects issue-PR relationships through:
 The automation is implemented through several GitHub Actions workflows:
 
 - `sync-issue-labels.yml`: Handles bidirectional label synchronization
-- `project-automation.yml`: Manages project board status updates
-- `github-projects-integration.yml`: Integrates with GitHub Projects (beta)
-- `automation-suite.yml`: Comprehensive workflow combining all features
+- `project-board-automation.yml`: **Main workflow** - Manages project board status updates using GitHub Projects v2 API
+- `project-automation.yml`: Legacy workflow with placeholder implementations
+- `github-projects-integration.yml`: Legacy workflow with partial GraphQL integration
+- `automation-suite.yml`: Comprehensive workflow combining label and milestone features
 
 ## Setup Requirements
 
