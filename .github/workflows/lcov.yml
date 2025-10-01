@@ -1,9 +1,12 @@
 name: Generate and Upload LCOV Coverage to DeepSource
 
 on:
+  push:
+    branches:
+      - main # This triggers the workflow on direct pushes to the 'main' branch
   pull_request:
     branches:
-      - main # Adjust to your default branch if it's not 'main'
+      - '*' # This triggers the workflow on pull requests targeting *any* branch
 
 jobs:
   swift_coverage:
