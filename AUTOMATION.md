@@ -24,6 +24,13 @@ This repository now includes automated workflows to streamline issue and pull re
 - If an issue has a milestone but its linked PR doesn't, the milestone is copied to the PR
 - If a PR has a milestone but its linked issue doesn't, the milestone is copied to the issue
 
+### 4. ZAP Scan Issue Auto-Labeling
+
+- Issues with titles containing "ZAP Scan Baseline Report" are automatically labeled
+- Applied labels: `Meta`, `Stylistic`, `javascript`, `meta:seq`, `ZAP!`
+- Existing labels on the issue are preserved and the new labels are added
+- Works for both newly created issues and when issue titles are edited
+
 ## How Linking Works
 
 The automation detects issue-PR relationships through:
@@ -46,7 +53,7 @@ The automation is implemented through several GitHub Actions workflows:
 - `project-board-automation.yml`: **Main workflow** - Manages project board status updates using GitHub Projects v2 API
 - `project-automation.yml`: Legacy workflow with placeholder implementations
 - `github-projects-integration.yml`: Legacy workflow with partial GraphQL integration
-- `automation-suite.yml`: Comprehensive workflow combining label and milestone features
+- `label-zap-issues.yml`: Automatically labels ZAP Scan Baseline Report issues
 
 ## Setup Requirements
 
