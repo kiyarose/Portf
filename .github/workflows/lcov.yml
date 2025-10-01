@@ -25,31 +25,32 @@ jobs:
         # Build and test the Swift project with code coverage enabled
         # Using -project instead of -workspace since DashCam.xcodeproj exists
         xcodebuild test \
-          -project "$DashCam!/DashCam.xcodeproj" \
+          -project "\$DashCam!/DashCam.xcodeproj" \
           -scheme "DashCam" \
           -destination "platform=macOS" \
           -enableCodeCoverage YES \
-          -resultBundlePath "$DashCam!/TestResults.xcresult"
+          -resultBundlePath "\$DashCam!/TestResults.xcresult"
 
         # Export LCOV report from the generated result bundle
         # The output file will be named 'coverage.lcov' within the '$DashCam!' directory.
         xcrun llvm-cov export -format="lcov" \
-          "$DashCam!/TestResults.xcresult/Coverage.profdata" \
-          > "$DashCam!/coverage.lcov"
+          "\$DashCam!/TestResults.xcresult/Coverage.profdata" \
+          > "\$DashCam!/coverage.lcov"
 
     - name: Install DeepSource CLI
       run: |
         curl https://deepsource.io/cli | sh
-        sudo mv deepsource /usr/local/bin/
+        # The installer places the binary in ./bin/deepsource
+        sudo mv ./bin/deepsource /usr/local/bin/
 
     - name: Upload Swift LCOV report to DeepSource
       env:
         DEEPSOURCE_DSN: ${{ secrets.DEEPSOURCE_DSN }} # Ensure this secret is configured in your repository
       run: |
-        if [ -f "$DashCam!/coverage.lcov" ]; then
-          deepsource report --analyzer test-coverage --key swift --value "$DashCam!/coverage.lcov"
+        if [ -f "\$DashCam!/coverage.lcov" ]; then
+          deepsource report --analyzer test-coverage --key swift --value "\$DashCam!/coverage.lcov"
         else
-          echo "Swift LCOV report not found at $DashCam!/coverage.lcov"
+          echo "Swift LCOV report not found at \$DashCam!/coverage.lcov"
           exit 1
         fi
 
@@ -84,7 +85,8 @@ jobs:
     - name: Install DeepSource CLI
       run: |
         curl https://deepsource.io/cli | sh
-        sudo mv deepsource /usr/local/bin/
+        # The installer places the binary in ./bin/deepsource
+        sudo mv ./bin/deepsource /usr/local/bin/
 
     - name: Upload JavaScript/TypeScript LCOV report to DeepSource
       env:
