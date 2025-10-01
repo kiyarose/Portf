@@ -2,7 +2,7 @@
 /* eslint-disable-next-line @typescript-eslint/ban-ts-comment */
 // @ts-nocheck
 
-import * as TypeScript from "typescript/lib/typescript";
+import TypeScript from "typescript/lib/typescript";
 
 declare global {
   interface Window {
@@ -321,8 +321,11 @@ function collectTsExports(sourceFile, sourceText) {
       continue;
     }
 
-    const modifiers = ts.getCombinedModifierFlags(statement);
-    if ((modifiers & ts.ModifierFlags.Export) === 0) {
+    const hasExportModifier =
+      statement.modifiers?.some(
+        (modifier) => modifier.kind === ts.SyntaxKind.ExportKeyword,
+      ) ?? false;
+    if (!hasExportModifier) {
       continue;
     }
 
@@ -595,7 +598,8 @@ function updateJsonTextarea({ refreshTimestamp = false } = {}) {
       jsonModalEditor.value = jsonInput.value;
     }
   } catch (error) {
-    void error;
+    const message = error instanceof Error ? error.message : String(error);
+    console.warn("Failed to serialize JSON payload:", message);
     // Fallback in case of unexpected serialization issues.
     jsonInput.value = "";
   }
@@ -1018,8 +1022,8 @@ function renderTree(root) {
       const endX = child.x - minX + DiagramPadding + NodeWidth / 2;
       const endY = child.y - minY + DiagramPadding;
       const controlOffset = (endY - startY) / 2;
-      const d = `M ${startX} ${startY} C ${startX} ${startY + controlOffset}, ${endX} ${endY - controlOffset}, ${endX} ${endY}`;
-      path.setAttribute("d", d);
+      const pathDefinition = `M ${startX} ${startY} C ${startX} ${startY + controlOffset}, ${endX} ${endY - controlOffset}, ${endX} ${endY}`;
+      path.setAttribute("d", pathDefinition);
       const edgeKey = `${node.pathKey}->${child.pathKey}`;
       path.dataset.edge = "true";
       path.dataset.from = node.pathKey;
@@ -1389,17 +1393,25 @@ function updateDataModel(path, newValue) {
     dataModel = newValue;
     return;
   }
+
   let target = dataModel;
   for (let index = 0; index < path.length - 1; index += 1) {
+    if (!target || typeof target !== "object") {
+      throw new Error("Cannot update value on a non-object path segment.");
+    }
     const segment = path[index];
-    target = typeof segment === "number" ? target[segment] : target[segment];
+    target = target[segment];
   }
-  const last = path[path.length - 1];
-  if (typeof last === "number") {
-    target[last] = newValue;
-  } else {
-    target[last] = newValue;
+
+  if (!target || typeof target !== "object") {
+    throw new Error("Cannot update value on a non-object target.");
   }
+
+  const lastSegment = path[path.length - 1];
+  if (typeof lastSegment !== "string" && typeof lastSegment !== "number") {
+    throw new Error("Unsupported path segment type.");
+  }
+  target[lastSegment] = newValue;
 }
 
 function parseEditorValue(rawValue, currentValue) {
@@ -1410,7 +1422,8 @@ function parseEditorValue(rawValue, currentValue) {
   try {
     return JSON.parse(rawValue);
   } catch (error) {
-    void error;
+    const message = error instanceof Error ? error.message : String(error);
+    console.warn("Failed to parse editor value as JSON:", message);
     if (
       Array.isArray(currentValue) ||
       (currentValue && typeof currentValue === "object")
@@ -1562,7 +1575,8 @@ function renderFromInput() {
   try {
     parsed = JSON.parse(rawText);
   } catch (error) {
-    void error;
+    const message = error instanceof Error ? error.message : String(error);
+    console.warn("Failed to parse JSON input:", message);
     showStatus("Input is not valid JSON.", "error");
     return false;
   }
@@ -1776,8 +1790,9 @@ downloadTsButton.addEventListener("click", () => {
     const baseCandidate = tsSourcePath || conversionMeta.source || "data.ts";
     const baseName = baseCandidate.split(/[\\/]/).pop() || "data.ts";
     const sanitized = baseName.replace(/[\s]+/g, "-");
-    const filename = sanitized.match(/\.tsx?$/)
-      ? sanitized.replace(/\.tsx?$/, ".ts")
+    const tsExtensionPattern = /\.tsx?$/;
+    const filename = tsExtensionPattern.test(sanitized)
+      ? sanitized.replace(tsExtensionPattern, ".ts")
       : `${sanitized}.ts`;
     downloadText(filename, tsText, "text/typescript");
     showStatus(`Exported ${filename}.`, "success");

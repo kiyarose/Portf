@@ -295,7 +295,7 @@ function createLiteralFromValue(value) {
         : ts.factory.createStringLiteral(String(value));
     case "boolean":
       return value ? ts.factory.createTrue() : ts.factory.createFalse();
-    case "object":
+    case "object": {
       if (Array.isArray(value)) {
         const elements = value.map((item) => createLiteralFromValue(item));
         return ts.factory.createArrayLiteralExpression(
@@ -319,6 +319,7 @@ function createLiteralFromValue(value) {
         entries,
         entries.length > 0,
       );
+    }
     default:
       throw new Error(`Unsupported value type: ${typeof value}`);
   }
@@ -527,47 +528,44 @@ function main() {
 
   if (!command || command === "-h" || command === "--help") {
     printHelp();
-    process.exit(command ? 0 : 1);
+    if (!command) {
+      throw new Error("No command provided.");
+    }
+    return;
   }
 
   const options = parseArgs(rest);
 
   if (options.help) {
     printHelp();
-    process.exit(0);
+    return;
   }
 
   if (options.inputs.length === 0) {
-    console.error("No input files provided.");
     printHelp();
-    process.exit(1);
+    throw new Error("No input files provided.");
   }
 
   if (options.out && options.inputs.length > 1) {
-    console.error(
-      "--out can only be used when processing a single input file.",
-    );
-    process.exit(1);
+    throw new Error("--out can only be used when processing a single input file.");
   }
 
-  try {
-    if (command === "to-json") {
-      for (const input of options.inputs) {
-        convertTsToJson(input, options);
-      }
-    } else if (command === "to-ts") {
-      for (const input of options.inputs) {
-        convertJsonToTs(input, options);
-      }
-    } else {
-      console.error(`Unknown command: ${command}`);
-      printHelp();
-      process.exit(1);
+  if (command === "to-json") {
+    for (const input of options.inputs) {
+      convertTsToJson(input, options);
     }
-  } catch (error) {
-    console.error(error instanceof Error ? error.message : error);
-    process.exit(1);
+    return;
   }
+
+  if (command === "to-ts") {
+    for (const input of options.inputs) {
+      convertJsonToTs(input, options);
+    }
+    return;
+  }
+
+  printHelp();
+  throw new Error(`Unknown command: ${command}`);
 }
 
 main();
