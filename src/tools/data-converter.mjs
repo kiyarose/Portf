@@ -547,7 +547,9 @@ function main() {
   }
 
   if (options.out && options.inputs.length > 1) {
-    throw new Error("--out can only be used when processing a single input file.");
+    throw new Error(
+      "--out can only be used when processing a single input file.",
+    );
   }
 
   if (command === "to-json") {
