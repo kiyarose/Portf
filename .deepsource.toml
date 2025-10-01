@@ -3,6 +3,13 @@ version = 1
 [[analyzers]]
 name = "test-coverage"
 enabled = true
+  [analyzers.meta]
+  coverage_path = [
+    "$DashCam!/**/*.lcov",
+    "src/**/*.lcov",
+    "src/**/*.info" 
+  ]
+  coverage_format = "lcov"
 
 [[analyzers]]
 name = "swift"
