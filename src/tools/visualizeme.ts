@@ -99,6 +99,13 @@ let activeHoverPathKey = null;
 let printer = null;
 let printerSourceFile = null;
 
+function forceJsonMode() {
+  if (inputModeSelect) {
+    inputModeSelect.value = "json";
+  }
+  inputMode = "json";
+}
+
 if (hasTypeScript) {
   printer = ts.createPrinter({ newLine: ts.NewLineKind.LineFeed });
   printerSourceFile = ts.createSourceFile(
@@ -1294,6 +1301,7 @@ function openJsonModal() {
   if (!jsonModal) {
     return;
   }
+  forceJsonMode();
   jsonModalEditor.value = jsonInput.value;
   jsonModal.classList.add("is-open");
   jsonModal.setAttribute("aria-hidden", "false");
@@ -1819,6 +1827,7 @@ if (openJsonEditorButton) {
 }
 
 jsonModalApply.addEventListener("click", () => {
+  forceJsonMode();
   jsonInput.value = jsonModalEditor.value;
   const succeeded = renderFromInput();
   if (succeeded) {
