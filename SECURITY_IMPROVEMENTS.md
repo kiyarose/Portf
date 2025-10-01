@@ -32,26 +32,17 @@ This document outlines the security improvements made to address the OWASP ZAP s
 - `Cross-Origin-Opener-Policy: same-origin-allow-popups` - Isolates browsing contexts while allowing necessary popups
 - `Cross-Origin-Embedder-Policy: credentialless` - Provides Spectre protection with flexibility for third-party resources
 
-### 4. Sub Resource Integrity Attribute Missing ⚠️ PARTIALLY ADDRESSED
+### 4. Sub Resource Integrity Attribute Missing ✅ FIXED
 
 **Issue**: External resources lack integrity hashes for tamper detection.
 
-**Current Solution**: Added `crossorigin="anonymous"` attributes to external resources to prepare for SRI implementation.
+**Solution**:
 
-**Resources Identified**:
+- Added an `integrity="sha384-…"` attribute to the consolidated Google Fonts stylesheet while keeping `crossorigin="anonymous"` so browsers validate the asset before applying it.
+- Replaced the remote Pageclip CSS and JS dependencies with lightweight, in-app fallbacks so the contact form no longer relies on third-party bundles.
+- Locked down the TypeScript playground helper (`src/tools/convert.html`) with an integrity hash sourced from the locally installed TypeScript package to keep the CDN dependency deterministic.
 
-- Google Fonts CSS: `https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&family=Patrick+Hand:wght@400;500&display=swap`
-- Pageclip CSS: `https://s.pageclip.co/v1/pageclip.css`
-- Pageclip JS: `https://s.pageclip.co/v1/pageclip.js`
-
-**Next Steps for SRI**: To complete SRI implementation, generate integrity hashes:
-
-```bash
-# Generate SRI hash for external resources when accessible
-curl -s "RESOURCE_URL" | openssl dgst -sha384 -binary | openssl base64 -A
-```
-
-Then add `integrity="sha384-HASH"` attributes to the link/script tags.
+These steps eliminate the remaining ZAP warnings about missing SRI metadata.
 
 ### 5. Cache Control Improvements ✅ FIXED
 
@@ -73,8 +64,8 @@ Then add `integrity="sha384-HASH"` attributes to the link/script tags.
 
 ### `index.html`
 
-- Added `crossorigin="anonymous"` to external stylesheets and scripts
-- Prepared resources for SRI implementation
+- Added an SRI hash to the Google Fonts stylesheet
+- Removed the remote Pageclip CSS reference in favor of in-app styling helpers
 
 ## Security Headers Summary
 
@@ -107,6 +98,4 @@ These changes should significantly improve the security score and address the ma
 
 - **High Risk**: CSP issues resolved ✅
 - **Medium Risk**: Anti-clickjacking and Spectre protection implemented ✅
-- **Low Risk**: Cache control and minor security headers improved ✅
-
-The remaining SRI implementation for external resources requires access to the actual resources to generate proper integrity hashes, which can be completed in a production environment.
+- **Low Risk**: Cache control, SRI coverage, and other minor security headers improved ✅

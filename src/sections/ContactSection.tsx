@@ -16,41 +16,27 @@ const EMAIL = "kiya.rose@sillylittle.tech";
 const STRICT_CORS_PATTERNS = ["cors", "cross-origin", "opaque response"];
 const GENERIC_CORS_PATTERNS = ["load failed", "failed to fetch"];
 
-// Simple lazy loading for pageclip script
-let pageclipLoaded = false;
-let pageclipPromise: Promise<void> | null = null;
+const PAGECLIP_STYLE_SELECTOR = "style[data-pageclip-styles]";
+const PAGECLIP_INLINE_STYLES = [
+  ".pageclip-form__submit {",
+  "  display: inline-flex;",
+  "  align-items: center;",
+  "  justify-content: center;",
+  "}",
+].join("\n");
 
-const loadPageclip = (): Promise<void> => {
-  if (pageclipLoaded) {
-    return Promise.resolve();
+const getPageclipStyleElement = (): HTMLStyleElement | null => {
+  if (typeof document === "undefined") {
+    return null;
   }
 
-  if (pageclipPromise) {
-    return pageclipPromise;
+  const head = document.head;
+
+  if (!head) {
+    return null;
   }
 
-  pageclipPromise = new Promise((resolve, reject) => {
-    const script = document.createElement("script");
-    script.src = "https://s.pageclip.co/v1/pageclip.js";
-    script.charset = "utf-8";
-    script.crossOrigin = "anonymous";
-    const nonce = getCspNonce();
-    if (nonce) {
-      script.nonce = nonce;
-      script.setAttribute("nonce", nonce);
-    }
-    script.onload = () => {
-      pageclipLoaded = true;
-      resolve();
-    };
-    script.onerror = () => {
-      pageclipPromise = null; // Reset so we can try again
-      reject(new Error("Failed to load pageclip script"));
-    };
-    document.head.appendChild(script);
-  });
-
-  return pageclipPromise;
+  return head.querySelector<HTMLStyleElement>(PAGECLIP_STYLE_SELECTOR);
 };
 
 const TURNSTILE_SCRIPT_SRC =
@@ -290,7 +276,8 @@ function ContactForm({
 }: ContactFormProps) {
   const { theme } = useTheme();
   const formRef = useRef<HTMLFormElement>(null);
-  const [pageclipLoading, setPageclipLoading] = useState(false);
+  const pageclipLoadedRef = useRef<boolean>(Boolean(getPageclipStyleElement()));
+  const pageclipPromiseRef = useRef<Promise<void> | null>(null);
   const [turnstileReady, setTurnstileReady] =
     useState<boolean>(turnstileLoaded);
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
@@ -336,21 +323,69 @@ function ContactForm({
     onErrorChange(null);
   }, [onErrorChange]);
 
+  const ensurePageclipStyles = useCallback((): Promise<void> => {
+    if (pageclipLoadedRef.current) {
+      return Promise.resolve();
+    }
+
+    if (typeof document === "undefined") {
+      return Promise.resolve();
+    }
+
+    if (pageclipPromiseRef.current) {
+      return pageclipPromiseRef.current;
+    }
+
+    const injectionPromise = new Promise<void>((resolve, reject) => {
+      try {
+        const head = document.head;
+
+        if (!head) {
+          throw new Error("Document.head is unavailable for Pageclip styles");
+        }
+
+        const existingStyles = head.querySelector(PAGECLIP_STYLE_SELECTOR);
+
+        if (!existingStyles) {
+          const style = document.createElement("style");
+          style.type = "text/css";
+          style.setAttribute("data-pageclip-styles", "inline");
+          style.textContent = PAGECLIP_INLINE_STYLES;
+          head.appendChild(style);
+        }
+
+        pageclipLoadedRef.current = true;
+        resolve();
+      } catch (error) {
+        safeConsoleError("Failed to inject Pageclip affordance styles", error);
+        reject(
+          error instanceof Error
+            ? error
+            : new Error("Failed to inject Pageclip affordance styles"),
+        );
+      }
+    }).finally(() => {
+      pageclipPromiseRef.current = null;
+
+      if (!pageclipLoadedRef.current) {
+        pageclipLoadedRef.current = Boolean(getPageclipStyleElement());
+      }
+    });
+
+    pageclipPromiseRef.current = injectionPromise;
+    return injectionPromise;
+  }, []);
+
   // Load pageclip on first form interaction
   const handleFormFocus = useCallback(async () => {
-    if (!pageclipLoaded && !pageclipLoading) {
-      setPageclipLoading(true);
-      try {
-        await loadPageclip();
-      } catch (error) {
-        safeConsoleWarn("Failed to load pageclip script", error);
-      } finally {
-        setPageclipLoading(false);
-      }
+    try {
+      await ensurePageclipStyles();
+    } catch (error) {
+      safeConsoleWarn("Failed to load Pageclip affordance styles", error);
     }
 
     await ensureTurnstileScript();
-  }, [ensureTurnstileScript, pageclipLoading]);
+  }, [ensurePageclipStyles, ensureTurnstileScript]);
 
   useEffect(() => {
     ensureTurnstileScript();
