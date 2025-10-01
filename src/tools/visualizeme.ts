@@ -1092,6 +1092,10 @@ function renderTree(root) {
       );
       toggle.textContent = collapsed.get(node.pathKey) ? "+" : "−";
       toggle.classList.add("toggle-icon");
+      toggle.addEventListener("click", (event) => {
+        event.stopPropagation();
+        toggleNode(node.pathKey);
+      });
       group.appendChild(toggle);
     }
 
