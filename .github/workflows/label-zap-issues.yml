@@ -23,8 +23,9 @@ jobs:
             
             console.log(`Checking issue #${issueNumber}: "${issueTitle}"`);
             
-            // Check if the issue title contains "ZAP Scan Baseline Report"
-            if (issueTitle.includes('ZAP Scan Baseline Report')) {
+            // Configurable pattern for ZAP Scan Baseline Report (case-insensitive)
+            const zapPattern = 'ZAP Scan Baseline Report';
+            if (issueTitle.toLowerCase().includes(zapPattern.toLowerCase())) {
               console.log('✅ Issue title matches ZAP Scan Baseline Report pattern');
               
               // Define the labels to apply
