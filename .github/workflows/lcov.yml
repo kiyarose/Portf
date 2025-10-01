@@ -27,11 +27,14 @@ jobs:
         
         # Build and test the Swift project with code coverage enabled
         # Using -project instead of -workspace since DashCam.xcodeproj exists
+        # Disable code signing for CI environment (not needed for tests)
         xcodebuild test \
           -project "DashCam.xcodeproj" \
           -scheme "DashCam" \
           -destination "platform=macOS" \
           -enableCodeCoverage YES \
+          CODE_SIGN_IDENTITY="" \
+          CODE_SIGNING_REQUIRED=NO \
           -resultBundlePath "TestResults.xcresult"
 
         # Export LCOV report from the generated result bundle
