@@ -25,10 +25,18 @@ jobs:
         # Navigate to the project directory
         cd "\$DashCam!"
         
-        # Build and test the Swift project with code coverage enabled
-        # Using -project instead of -workspace since DashCam.xcodeproj exists
+        # Build the project and test targets first to ensure test bundles are created
         # Disable code signing for CI environment (not needed for tests, including UI tests)
-        xcodebuild test \
+        xcodebuild build-for-testing \
+          -project "DashCam.xcodeproj" \
+          -scheme "DashCam" \
+          -destination "platform=macOS" \
+          CODE_SIGN_IDENTITY="" \
+          CODE_SIGNING_REQUIRED=NO \
+          CODE_SIGNING_ALLOWED=NO
+        
+        # Run tests with code coverage enabled
+        xcodebuild test-without-building \
           -project "DashCam.xcodeproj" \
           -scheme "DashCam" \
           -destination "platform=macOS" \
