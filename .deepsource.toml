@@ -4,11 +4,11 @@ version = 1
 name = "test-coverage"
 enabled = true
   [analyzers.meta.reports.swift]
-  coverage_path = "$DashCam!/coverage.lcov" 
+  coverage_path = "$DashCam!/coverage.lcov"
   coverage_format = "lcov"
 
   [analyzers.meta.reports.js-ts]
-  coverage_path = "src/coverage/lcov.info" 
+  coverage_path = "src/coverage/lcov.info"
   coverage_format = "lcov"
 
 [[analyzers]]
