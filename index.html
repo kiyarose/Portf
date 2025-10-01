@@ -18,16 +18,9 @@
       rel="stylesheet"
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&family=Patrick+Hand:wght@400;500&display=swap"
       crossorigin="anonymous"
+      integrity="sha384-lkLzLduGGllfQ/F+xzhLk92HUNDjeHa6k921d6GBK6CUGBNMmi90yK1z1Sg9zDM5"
     />
-    <!-- Preconnect to pageclip for faster loading when needed -->
-    <link rel="preconnect" href="https://s.pageclip.co" crossorigin />
-    <!-- Load pageclip CSS for contact form -->
-    <link
-      rel="stylesheet"
-      href="https://s.pageclip.co/v1/pageclip.css"
-      media="screen"
-      crossorigin="anonymous"
-    />
+    <!-- Pageclip styling ships with the app bundle to avoid extra external pulls -->
     <title>Kiya Rose | Portfolio</title>
   </head>
   <body>
@@ -43,6 +36,6 @@
     <!-- End Google Tag Manager (noscript) -->
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
-    <!-- Pageclip.js will be loaded dynamically when contact form is interacted with -->
+    <!-- Pageclip affordances load on demand via in-app utilities -->
   </body>
 </html>

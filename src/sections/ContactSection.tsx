@@ -16,41 +16,39 @@ const EMAIL = "kiya.rose@sillylittle.tech";
 const STRICT_CORS_PATTERNS = ["cors", "cross-origin", "opaque response"];
 const GENERIC_CORS_PATTERNS = ["load failed", "failed to fetch"];
 
-// Simple lazy loading for pageclip script
+// Simple lazy loading for pageclip affordances (no external script required)
 let pageclipLoaded = false;
-let pageclipPromise: Promise<void> | null = null;
 
 const loadPageclip = (): Promise<void> => {
   if (pageclipLoaded) {
     return Promise.resolve();
   }
 
-  if (pageclipPromise) {
-    return pageclipPromise;
+  pageclipLoaded = true;
+
+  if (typeof document === "undefined") {
+    return Promise.resolve();
   }
 
-  pageclipPromise = new Promise((resolve, reject) => {
-    const script = document.createElement("script");
-    script.src = "https://s.pageclip.co/v1/pageclip.js";
-    script.charset = "utf-8";
-    script.crossOrigin = "anonymous";
-    const nonce = getCspNonce();
-    if (nonce) {
-      script.nonce = nonce;
-      script.setAttribute("nonce", nonce);
-    }
-    script.onload = () => {
-      pageclipLoaded = true;
-      resolve();
-    };
-    script.onerror = () => {
-      pageclipPromise = null; // Reset so we can try again
-      reject(new Error("Failed to load pageclip script"));
-    };
-    document.head.appendChild(script);
-  });
+  const existingStyles = document.head.querySelector(
+    "style[data-pageclip-styles]",
+  );
 
-  return pageclipPromise;
+  if (!existingStyles) {
+    const style = document.createElement("style");
+    style.type = "text/css";
+    style.setAttribute("data-pageclip-styles", "inline");
+    style.textContent = `
+.pageclip-form__submit {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+`;
+    document.head.appendChild(style);
+  }
+
+  return Promise.resolve();
 };
 
 const TURNSTILE_SCRIPT_SRC =
