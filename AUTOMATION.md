@@ -77,6 +77,8 @@ For full functionality, you need to:
 
 ### New Issue Created
 
+
+
 When a new issue is opened:
 
 1. Workflow triggers on `issues: opened` event
@@ -84,25 +86,33 @@ When a new issue is opened:
 3. Adds the issue to the project using `addProjectV2ItemById` mutation
 4. Sets the issue status to "Backlog"
 
+
+
 ### Pull Request Opened
 
 When a PR is opened that references an issue:
 
 1. Workflow triggers on `pull_request: opened` event
 2. Extracts linked issue numbers from PR title and body
+
 3. Finds each linked issue in the project
+
 4. Updates status to "In Progress"
 
 ### Pull Request Ready for Review
 
+
 When a draft PR is marked as ready for review:
+
 
 1. Workflow triggers on `pull_request: ready_for_review` event
 2. Updates linked issues to "In Review" status
 
 ### Pull Request Merged
 
+
 When a PR is merged:
+
 
 1. Workflow triggers on `pull_request: closed` event
 2. Checks if PR was merged (not just closed)
@@ -126,12 +136,14 @@ The workflow handles edge cases:
 
 ## Customization
 
+
 The workflows can be customized by:
 
 - Modifying the project name in `github-projects-integration.yml`
 - Adjusting status names to match your project board setup
 - Adding or removing label synchronization rules
 - Customizing the issue detection patterns
+
 
 ## Troubleshooting
 
@@ -140,6 +152,7 @@ The workflows can be customized by:
 - Check the Actions tab in your repository to see workflow execution logs
 - Ensure proper permissions are granted to GitHub Actions (Settings > Actions > General)
 - Verify that issue references use the correct format
+
 - For project board integration, you may need additional tokens or permissions
 
 ### Project Automation Specific
