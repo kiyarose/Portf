@@ -7,7 +7,35 @@
 		<key>DashCam.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
+			<integer>1</integer>
+		</dict>
+		<key>DashCamTests.xcscheme_^#shared#^_</key>
+		<dict>
+			<key>orderHint</key>
 			<integer>0</integer>
+		</dict>
+		<key>DashCamUITests.xcscheme_^#shared#^_</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>2</integer>
+		</dict>
+	</dict>
+	<key>SuppressBuildableAutocreation</key>
+	<dict>
+		<key>C23427032E81884800C1AF73</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>C23427132E81884C00C1AF73</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>C234271D2E81884C00C1AF73</key>
+		<dict>
+			<key>primary</key>
+			<true/>
 		</dict>
 	</dict>
 </dict>
