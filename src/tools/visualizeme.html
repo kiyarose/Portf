@@ -1,0 +1,946 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>JSON Diagram Visualizer</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+      :root {
+        color-scheme: light;
+        --accent: #f97316;
+        --accent-muted: #ec4899;
+        --accent-soft: rgba(249, 115, 22, 0.08);
+        --bg: #f6f7fb;
+        --surface: #ffffff;
+        --surface-soft: #f9fafc;
+        --surface-glass: rgba(255, 255, 255, 0.7);
+        --text: #1f2937;
+        --text-strong: #111827;
+        --text-muted: #6b7280;
+        --border: rgba(203, 213, 225, 0.55);
+        --node: #ffffff;
+        --node-border: rgba(148, 163, 184, 0.35);
+        --node-selected: rgba(249, 115, 22, 0.15);
+        --node-highlight: rgba(236, 72, 153, 0.18);
+        --edge-default: rgba(148, 163, 184, 0.45);
+        --edge-highlight: rgba(249, 115, 22, 0.88);
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family:
+          "Inter",
+          ui-sans-serif,
+          system-ui,
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          sans-serif;
+        color: var(--text);
+        padding: 40px 16px 80px;
+        background:
+          radial-gradient(
+            circle at top left,
+            rgba(255, 255, 255, 0.85) 0%,
+            transparent 55%
+          ),
+          radial-gradient(
+            circle at bottom right,
+            rgba(236, 72, 153, 0.08) 0%,
+            transparent 55%
+          ),
+          var(--bg);
+        position: relative;
+        overflow-x: hidden;
+        overflow-y: auto;
+      }
+
+      body::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background:
+          linear-gradient(90deg, rgba(148, 163, 184, 0.06) 1px, transparent 0)
+            repeat-x,
+          linear-gradient(0deg, rgba(148, 163, 184, 0.06) 1px, transparent 0)
+            repeat-y;
+        background-size:
+          64px 64px,
+          64px 64px;
+        pointer-events: none;
+        z-index: 0;
+      }
+
+      body::after {
+        content: "";
+        position: absolute;
+        inset: -12% -12% 52% 42%;
+        background: radial-gradient(
+          circle at 35% 35%,
+          rgba(236, 72, 153, 0.08),
+          transparent 65%
+        );
+        opacity: 0.75;
+        pointer-events: none;
+        z-index: 0;
+      }
+
+      .app {
+        position: relative;
+        z-index: 1;
+        width: min(1200px, 100%);
+        margin: 0 auto;
+        display: grid;
+        gap: 24px;
+      }
+
+      .card {
+        background: var(--surface);
+        border-radius: 24px;
+        padding: 28px;
+        border: 1px solid var(--border);
+        box-shadow:
+          0 18px 35px rgba(15, 23, 42, 0.08),
+          0 4px 12px rgba(15, 23, 42, 0.05);
+        position: relative;
+        overflow: hidden;
+        transition:
+          transform 0.25s ease,
+          box-shadow 0.25s ease;
+      }
+
+      .card::before,
+      .card::after {
+        content: "";
+        position: absolute;
+        inset: -40% 45% 40% -40%;
+        background: linear-gradient(
+          135deg,
+          rgba(236, 72, 153, 0.08),
+          rgba(249, 115, 22, 0.08)
+        );
+        transform: rotate(12deg);
+        opacity: 0.6;
+        pointer-events: none;
+      }
+
+      .card::after {
+        inset: 45% -35% -35% 45%;
+        background: linear-gradient(
+          135deg,
+          rgba(59, 130, 246, 0.12),
+          rgba(236, 72, 153, 0.08)
+        );
+        transform: rotate(-8deg);
+      }
+
+      .card:hover {
+        transform: translateY(-4px);
+        box-shadow:
+          0 22px 45px rgba(15, 23, 42, 0.14),
+          0 8px 18px rgba(15, 23, 42, 0.08);
+      }
+
+      h1 {
+        margin: 0;
+        font-size: clamp(1.8rem, 4vw, 2.4rem);
+      }
+
+      p {
+        margin: 8px 0 0;
+        color: var(--text-muted);
+        line-height: 1.6;
+      }
+
+      .controls-grid {
+        display: grid;
+        gap: 18px;
+      }
+
+      .columns {
+        display: grid;
+        gap: 24px;
+      }
+
+      @media (min-width: 960px) {
+        .columns {
+          grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);
+          align-items: stretch;
+        }
+      }
+
+      @media (min-width: 960px) {
+        .controls-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .input-card {
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+      }
+
+      .input-summary {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 18px;
+      }
+
+      .panel-title {
+        margin: 0;
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--text-strong);
+      }
+
+      .panel-subtitle {
+        margin: 6px 0 0;
+        font-size: 0.92rem;
+        color: var(--text-muted);
+        max-width: 28rem;
+      }
+
+      .hidden-json-input {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+      }
+
+      label {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        font-size: 0.95rem;
+        color: var(--text-muted);
+      }
+
+      textarea {
+        min-height: 240px;
+        border-radius: 20px;
+        border: 1px solid rgba(209, 213, 219, 0.6);
+        background: rgba(255, 255, 255, 0.92);
+        color: var(--text-strong);
+        padding: 16px;
+        font-size: 0.95rem;
+        font-family:
+          "JetBrains Mono", "SFMono-Regular", Consolas, "Liberation Mono",
+          monospace;
+        resize: vertical;
+        box-shadow: inset 0 1px 2px rgba(148, 163, 184, 0.18);
+      }
+
+      input[type="text"],
+      input[type="file"],
+      select {
+        background: rgba(255, 255, 255, 0.92);
+        border: 1px solid rgba(209, 213, 219, 0.6);
+        border-radius: 16px;
+        padding: 12px 14px;
+        color: var(--text-strong);
+        font-size: 0.95rem;
+        box-shadow: inset 0 1px 1px rgba(148, 163, 184, 0.16);
+      }
+
+      textarea:focus,
+      input[type="text"]:focus,
+      input[type="file"]:focus,
+      select:focus {
+        outline: none;
+        border-color: rgba(249, 115, 22, 0.45);
+        box-shadow:
+          0 0 0 3px rgba(249, 115, 22, 0.12),
+          inset 0 1px 2px rgba(148, 163, 184, 0.2);
+      }
+
+      input[type="file"] {
+        padding: 10px 12px;
+      }
+
+      .actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 10px;
+      }
+
+      button.primary {
+        border: none;
+        border-radius: 999px;
+        padding: 12px 24px;
+        font-size: 0.95rem;
+        font-weight: 600;
+        cursor: pointer;
+        color: #0f172a;
+        background: linear-gradient(
+          135deg,
+          rgba(249, 115, 22, 0.96),
+          rgba(236, 72, 153, 0.92)
+        );
+        box-shadow: 0 12px 24px rgba(236, 72, 153, 0.24);
+        transition:
+          transform 0.16s ease,
+          box-shadow 0.16s ease;
+      }
+
+      button.secondary {
+        border-radius: 999px;
+        border: 1px solid rgba(236, 72, 153, 0.3);
+        padding: 12px 24px;
+        font-size: 0.95rem;
+        color: var(--text);
+        background: rgba(236, 72, 153, 0.08);
+        cursor: pointer;
+        transition: all 0.16s ease;
+      }
+
+      button.ghost {
+        border-radius: 999px;
+        border: 1px solid rgba(148, 163, 184, 0.28);
+        padding: 10px 18px;
+        font-size: 0.9rem;
+        color: var(--text-muted);
+        background: rgba(255, 255, 255, 0.7);
+        cursor: pointer;
+        transition: all 0.16s ease;
+      }
+
+      button:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        box-shadow: none;
+      }
+
+      button.primary:not(:disabled):hover {
+        transform: translateY(-1px);
+        box-shadow: 0 18px 32px rgba(236, 72, 153, 0.3);
+      }
+
+      button.secondary:not(:disabled):hover {
+        border-color: rgba(249, 115, 22, 0.55);
+        background: rgba(249, 115, 22, 0.12);
+        color: var(--accent);
+      }
+
+      button.ghost:not(:disabled):hover {
+        color: var(--accent-muted);
+        border-color: rgba(236, 72, 153, 0.32);
+        background: rgba(236, 72, 153, 0.12);
+      }
+
+      .status {
+        margin-top: 16px;
+        border-radius: 18px;
+        padding: 14px 18px;
+        font-size: 0.9rem;
+        background: rgba(255, 255, 255, 0.9);
+        border: 1px solid rgba(209, 213, 219, 0.7);
+      }
+
+      .status.error {
+        border-color: rgba(248, 113, 113, 0.55);
+        color: #b91c1c;
+      }
+
+      .status.success {
+        border-color: rgba(34, 197, 94, 0.35);
+        color: #15803d;
+      }
+
+      .viewer-card {
+        display: grid;
+        gap: 22px;
+        background: linear-gradient(
+          180deg,
+          rgba(255, 255, 255, 0.95),
+          rgba(248, 250, 252, 0.92)
+        );
+        border-radius: 24px;
+        padding: 28px;
+        border: 1px solid rgba(209, 213, 219, 0.55);
+        box-shadow:
+          inset 0 1px 0 rgba(255, 255, 255, 0.8),
+          0 22px 40px rgba(15, 23, 42, 0.1);
+      }
+
+      .viewer-header {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 16px;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .search-group {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+
+      .search-group input {
+        min-width: 220px;
+      }
+
+      .diagram-container {
+        border-radius: 22px;
+        border: 1px dashed rgba(148, 163, 184, 0.28);
+        background: linear-gradient(
+          180deg,
+          rgba(248, 250, 252, 0.8),
+          rgba(241, 245, 249, 0.7)
+        );
+        padding: 24px;
+        overflow: auto;
+        height: clamp(560px, 70vh, 860px);
+        cursor: grab;
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
+        contain: layout paint;
+        backface-visibility: hidden;
+      }
+
+      .diagram-container.panning {
+        cursor: grabbing;
+      }
+
+      svg {
+        display: block;
+        width: 100%;
+        height: auto;
+        shape-rendering: optimizeSpeed;
+      }
+
+      svg [data-node-id] {
+        cursor: pointer;
+      }
+
+      svg path.tree-edge {
+        stroke: url(#edgeGradient);
+        stroke-width: 1.6;
+        transition:
+          stroke 0.25s ease,
+          opacity 0.25s ease;
+        pointer-events: none;
+      }
+
+      .tree-node rect {
+        transition:
+          transform 0.18s ease,
+          stroke 0.18s ease,
+          fill 0.18s ease;
+        transform-origin: center;
+        will-change: transform, fill, stroke;
+      }
+
+      .tree-node:hover rect {
+        transform: translateY(-1px);
+        stroke: rgba(249, 115, 22, 0.4);
+        fill: rgba(255, 255, 255, 0.98);
+      }
+
+      .tree-node.hover-path rect {
+        transform: translateY(-1px);
+        stroke: rgba(249, 115, 22, 0.45);
+        fill: rgba(255, 255, 255, 0.98);
+      }
+
+      .tree-node.search-hit rect {
+        stroke: rgba(236, 72, 153, 0.45);
+        stroke-width: 2.1;
+        fill: rgba(255, 255, 255, 0.96);
+      }
+
+      .tree-node text.node-label,
+      .tree-node text.node-meta {
+        transition: opacity 0.2s ease;
+      }
+
+      .tree-node:hover text.node-meta {
+        opacity: 0.95;
+      }
+
+      .tree-node.hover-path text.node-meta {
+        opacity: 0.95;
+      }
+
+      .tree-node.search-hit text.node-label {
+        fill: var(--accent);
+      }
+
+      svg text.node-label {
+        font-size: 13px;
+        font-weight: 600;
+        fill: var(--text-strong);
+      }
+
+      svg text.node-meta {
+        font-size: 12px;
+        fill: var(--text-muted);
+      }
+
+      svg path.hover-path-edge {
+        stroke: var(--edge-highlight);
+        stroke-width: 2.2;
+        stroke-dasharray: 12 14;
+        stroke-linecap: round;
+        animation: hoverPathFlow 0.9s linear infinite;
+      }
+
+      svg g.hover-path rect {
+        stroke: var(--accent);
+        stroke-width: 2.2;
+        stroke-dasharray: 6 4;
+        stroke-linecap: round;
+        transform: translateY(-1px);
+      }
+
+      @keyframes hoverPathFlow {
+        to {
+          stroke-dashoffset: -26;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .card,
+        .viewer-card,
+        .tree-node rect,
+        svg path.tree-edge,
+        button,
+        .diagram-container {
+          transition: none !important;
+        }
+
+        .card:hover,
+        .tree-node:hover rect {
+          transform: none;
+        }
+
+        svg path.hover-path-edge {
+          animation: none;
+        }
+      }
+
+      .node-modal {
+        position: fixed;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(15, 23, 42, 0.35);
+        backdrop-filter: blur(14px);
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.2s ease;
+        z-index: 40;
+      }
+
+      .node-modal.is-open {
+        opacity: 1;
+        pointer-events: auto;
+      }
+
+      .node-modal__dialog {
+        background: #ffffff;
+        border-radius: 28px;
+        border: 1px solid rgba(209, 213, 219, 0.65);
+        box-shadow: 0 28px 60px rgba(15, 23, 42, 0.14);
+        padding: 28px;
+        width: min(560px, 90vw);
+        display: grid;
+        gap: 18px;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .node-modal__dialog::before {
+        content: "";
+        position: absolute;
+        inset: -30% -20% 30% 50%;
+        background: linear-gradient(
+          135deg,
+          rgba(236, 72, 153, 0.12),
+          rgba(249, 115, 22, 0.1)
+        );
+        filter: blur(50px);
+        pointer-events: none;
+      }
+
+      .node-modal__dialog > * {
+        position: relative;
+        z-index: 1;
+      }
+
+      .node-modal__header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 16px;
+      }
+
+      .node-modal__title {
+        margin: 0;
+        font-size: 1.25rem;
+        color: var(--accent);
+      }
+
+      .node-modal__close {
+        appearance: none;
+        border: none;
+        background: rgba(249, 115, 22, 0.12);
+        color: var(--accent);
+        width: 36px;
+        height: 36px;
+        border-radius: 999px;
+        font-size: 1.25rem;
+        cursor: pointer;
+        display: grid;
+        place-items: center;
+      }
+
+      #node-modal-editor {
+        min-height: 220px;
+        border-radius: 18px;
+        border: 1px solid rgba(209, 213, 219, 0.65);
+        background: rgba(248, 250, 252, 0.9);
+        color: var(--text);
+        font-family:
+          "JetBrains Mono", "SFMono-Regular", Consolas, "Liberation Mono",
+          monospace;
+        padding: 16px;
+        font-size: 0.95rem;
+        resize: vertical;
+      }
+
+      .node-modal__actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        justify-content: flex-end;
+      }
+
+      .json-modal {
+        position: fixed;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(15, 23, 42, 0.35);
+        backdrop-filter: blur(14px);
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.2s ease;
+        z-index: 40;
+      }
+
+      .json-modal.is-open {
+        opacity: 1;
+        pointer-events: auto;
+      }
+
+      .json-modal__dialog {
+        background: #ffffff;
+        border-radius: 28px;
+        border: 1px solid rgba(209, 213, 219, 0.65);
+        box-shadow: 0 28px 60px rgba(15, 23, 42, 0.14);
+        padding: 32px;
+        width: min(760px, 92vw);
+        display: grid;
+        gap: 20px;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .json-modal__dialog::before {
+        content: "";
+        position: absolute;
+        inset: -25% -15% 45% 35%;
+        background: linear-gradient(
+          135deg,
+          rgba(236, 72, 153, 0.1),
+          rgba(249, 115, 22, 0.08)
+        );
+        filter: blur(60px);
+        pointer-events: none;
+      }
+
+      .json-modal__dialog > * {
+        position: relative;
+        z-index: 1;
+      }
+
+      .json-modal__header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 18px;
+      }
+
+      .json-modal__title {
+        margin: 0;
+        font-size: 1.25rem;
+        color: var(--text-strong);
+      }
+
+      .json-modal__subtitle {
+        margin: 6px 0 0;
+        color: var(--text-muted);
+        font-size: 0.95rem;
+        max-width: 30rem;
+      }
+
+      .json-modal__close {
+        appearance: none;
+        border: none;
+        background: rgba(148, 163, 184, 0.18);
+        color: var(--accent);
+        width: 40px;
+        height: 40px;
+        border-radius: 999px;
+        font-size: 1.35rem;
+        cursor: pointer;
+        display: grid;
+        place-items: center;
+      }
+
+      #json-modal-editor {
+        min-height: 340px;
+        border-radius: 20px;
+        border: 1px solid rgba(209, 213, 219, 0.65);
+        background: rgba(248, 250, 252, 0.92);
+        color: var(--text-strong);
+        font-family:
+          "JetBrains Mono", "SFMono-Regular", Consolas, "Liberation Mono",
+          monospace;
+        padding: 18px;
+        font-size: 0.93rem;
+        resize: vertical;
+        box-shadow: inset 0 1px 2px rgba(148, 163, 184, 0.2);
+      }
+
+      .json-modal__actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 12px;
+      }
+
+      #node-modal-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        align-items: center;
+        font-size: 0.85rem;
+        color: var(--text-muted);
+      }
+
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 4px 12px;
+        border-radius: 999px;
+        border: 1px solid rgba(249, 115, 22, 0.4);
+        color: var(--accent);
+        font-size: 0.75rem;
+        background: rgba(249, 115, 22, 0.16);
+      }
+
+      .empty-state {
+        text-align: center;
+        color: var(--text-muted);
+        padding: 60px 20px;
+      }
+
+      .empty-state h2 {
+        margin-bottom: 8px;
+        font-size: 1.2rem;
+      }
+
+      .empty-state p {
+        margin: 0;
+      }
+    </style>
+    <script type="module" src="./visualizeme.ts"></script>
+  </head>
+  <body>
+    <main class="app">
+      <section class="card">
+        <h1 class="font-kiya">Kiya Rose JSON Diagrammer</h1>
+        <p>
+          Paste, drop, or describe JSON and this tool sketches an interactive
+          diagram. Toggle nodes, search paths, and export the structure as
+          SVG—no network or build step required.
+        </p>
+      </section>
+
+      <section class="columns">
+        <div class="card input-card">
+          <div class="input-summary">
+            <div>
+              <h2 class="panel-title">Data Source</h2>
+              <p class="panel-subtitle">
+                Load a TypeScript or JSON data module. Use the advanced editor
+                for manual tweaks.
+              </p>
+            </div>
+            <button class="ghost" id="open-json-editor" type="button">
+              Advanced JSON Editor
+            </button>
+          </div>
+          <textarea
+            id="json-source"
+            class="hidden-json-input"
+            aria-hidden="true"
+            tabindex="-1"
+          ></textarea>
+          <div class="sidebar-controls">
+            <label>
+              Load `.json` or `.ts` file
+              <input
+                id="json-file"
+                type="file"
+                accept=".json,.ts,.tsx,application/json,text/typescript,text/plain"
+              />
+            </label>
+            <label>
+              Root label (optional)
+              <input id="root-label" type="text" placeholder="data" />
+            </label>
+            <label>
+              Input mode
+              <select id="input-mode">
+                <option value="json">JSON</option>
+                <option value="ts">TypeScript (data module)</option>
+              </select>
+            </label>
+            <div class="actions">
+              <button class="primary" id="render" type="button">
+                Render diagram
+              </button>
+              <button class="secondary" id="clear" type="button">Clear</button>
+              <button class="ghost" id="load-sample" type="button">
+                Load sample
+              </button>
+            </div>
+          </div>
+          <div class="status" id="status" style="display: none"></div>
+        </div>
+
+        <div class="card viewer-card">
+          <div class="viewer-header">
+            <div class="search-group">
+              <label>
+                Search nodes
+                <input
+                  id="search"
+                  type="text"
+                  placeholder="name, email, user[0].id"
+                />
+              </label>
+              <button class="ghost" id="expand-all" type="button">
+                Expand all
+              </button>
+              <button class="ghost" id="collapse-all" type="button">
+                Collapse all
+              </button>
+              <button class="ghost" id="download-svg" type="button" disabled>
+                Download SVG
+              </button>
+              <button class="ghost" id="download-ts" type="button" disabled>
+                Download TypeScript
+              </button>
+            </div>
+            <span class="badge" id="stats" hidden></span>
+          </div>
+          <div class="diagram-container" id="diagram">
+            <div class="empty-state" id="empty-state">
+              <h2>Waiting for JSON</h2>
+              <p>
+                Render a diagram to explore objects, arrays, and nested values
+                at a glance.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div id="node-modal" class="node-modal" aria-hidden="true">
+        <div
+          class="node-modal__dialog"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="node-modal-title"
+        >
+          <div class="node-modal__header">
+            <h2 class="node-modal__title" id="node-modal-title">
+              Node details
+            </h2>
+            <button
+              class="node-modal__close"
+              id="node-modal-close"
+              type="button"
+              aria-label="Close node editor"
+            >
+              &times;
+            </button>
+          </div>
+          <div id="node-modal-meta"></div>
+          <textarea id="node-modal-editor" spellcheck="false"></textarea>
+          <div class="node-modal__actions">
+            <button class="ghost" id="node-modal-reset" type="button">
+              Reset value
+            </button>
+            <button class="primary" id="node-modal-apply" type="button">
+              Save changes
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div id="json-modal" class="json-modal" aria-hidden="true">
+        <div
+          class="json-modal__dialog"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="json-modal-title"
+        >
+          <div class="json-modal__header">
+            <div>
+              <h2 class="json-modal__title" id="json-modal-title">
+                Advanced JSON Editor
+              </h2>
+              <p class="json-modal__subtitle">
+                Make manual edits to the generated JSON representation. Apply
+                changes to re-render the tree.
+              </p>
+            </div>
+            <button
+              class="json-modal__close"
+              id="json-modal-close"
+              type="button"
+              aria-label="Close JSON editor"
+            >
+              &times;
+            </button>
+          </div>
+          <textarea id="json-modal-editor" spellcheck="false"></textarea>
+          <div class="json-modal__actions">
+            <button class="ghost" id="json-modal-reset" type="button">
+              Revert
+            </button>
+            <button class="primary" id="json-modal-apply" type="button">
+              Apply &amp; Render
+            </button>
+          </div>
+        </div>
+      </div>
+    </main>
+  </body>
+</html>

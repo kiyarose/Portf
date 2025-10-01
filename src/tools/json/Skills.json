@@ -1,0 +1,27 @@
+{
+  "__meta": {
+    "version": 1,
+    "template": "export const defaultSkills = __DATA_PLACEHOLDER__defaultSkills_29_240__ as const;\n\nconst skillIconEntries = [\n  [\"information technology skills\", \"material-symbols:memory-alt-rounded\"],\n  [\"customer service\", \"material-symbols:handshake-rounded\"],\n  [\"gaining med admin skills\", \"material-symbols:medical-services-rounded\"],\n  [\"community engagement\", \"material-symbols:diversity-3-rounded\"],\n  [\"technical leadership\", \"material-symbols:engineering-rounded\"],\n  [\"team leadership\", \"material-symbols:groups-3-rounded\"],\n  [\"administration\", \"material-symbols:badge-rounded\"],\n  [\"voter registration\", \"mdi:vote\"],\n  [\"canvassing\", \"material-symbols:campaign-rounded\"],\n  [\"sales\", \"material-symbols:point-of-sale-rounded\"],\n  [\"picking\", \"mdi:hand-back-right\"],\n  [\"packing\", \"mdi:package-variant-closed\"],\n  [\"stowing\", \"material-symbols:inventory-2-rounded\"],\n  [\"unloading\", \"material-symbols:forklift\"],\n  [\"logistics\", \"mdi:truck-outline\"],\n  [\"research\", \"material-symbols:science-rounded\"],\n  [\"advocacy\", \"material-symbols:campaign-rounded\"],\n  [\"leadership\", \"material-symbols:verified-rounded\"],\n  [\"retail\", \"mdi:storefront-outline\"],\n  [\"order picking\", \"material-symbols:shopping-cart-rounded\"],\n  [\"product substitutions\", \"mdi:swap-horizontal\"],\n  [\"order staging\", \"material-symbols:inventory-rounded\"],\n  [\"order dispensing\", \"material-symbols:outbox-rounded\"],\n  [\"protonvpn\", \"simple-icons:protonvpn\"],\n  [\"openvpn\", \"simple-icons:openvpn\"],\n  [\"javascript\", \"simple-icons:javascript\"],\n  [\"hpe\", \"simple-icons:hewlettpackardenterprise\"],\n  [\"windows server\", \"mdi:microsoft-windows\"],\n  [\"vmware\", \"simple-icons:vmware\"],\n  [\"ilo\", \"mdi:server\"],\n  [\"hope\", \"material-symbols:emoji-emotions-rounded\"],\n  [\"dreams\", \"material-symbols:nightlight-rounded\"],\n  [\"passion\", \"material-symbols:favorite-rounded\"],\n  [\"love\", \"mdi:heart\"],\n  [\"networking\", \"material-symbols:network-node-rounded\"],\n  [\"windows\", \"mdi:microsoft-windows\"],\n  [\"cisco\", \"simple-icons:cisco\"],\n  [\"linux\", \"simple-icons:linux\"],\n  [\"medical coding\", \"material-symbols:prescriptions-rounded\"],\n  [\"health informatics\", \"material-symbols:monitor-heart-rounded\"],\n  [\"excel\", \"simple-icons:microsoftexcel\"],\n] as const;\n\nconst skillIconMap = skillIconEntries.reduce<Record<string, string>>(\n  (acc, [label, icon]) => {\n    acc[label] = icon;\n    return acc;\n  },\n  {},\n);\n\nexport function getSkillIcon(label: string): string | undefined {\n  return skillIconMap[label.trim().toLowerCase()];\n}\n",
+    "source": "skills.ts",
+    "entries": [
+      {
+        "name": "defaultSkills",
+        "placeholder": "__DATA_PLACEHOLDER__defaultSkills_29_240__",
+        "baseIndent": ""
+      }
+    ],
+    "generatedAt": "2025-09-30T16:53:32.513Z"
+  },
+  "defaultSkills": [
+    "Information Technology Skills",
+    "Customer Service",
+    "Gaining Med Admin skills",
+    "Technical Leadership",
+    "Team Leadership",
+    "Administration",
+    "Research",
+    "Advocacy",
+    "Sales",
+    "Logistics"
+  ]
+}
