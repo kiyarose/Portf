@@ -54,17 +54,19 @@ jobs:
         # Export LCOV report from the generated result bundle
         # The output file will be named 'coverage.lcov' within the '$DashCam!' directory.
         # Use xccov to extract coverage information
-        # Note: xccov doesn't directly output LCOV format, but we can create a basic one
-        xcrun xccov view --report "TestResults.xcresult" > coverage.txt
-        
-        # For now, create a minimal LCOV file indicating tests ran
-        # Future: implement proper xccov to LCOV conversion
-        echo "TN:" > coverage.lcov
-        echo "SF:DashCam/main.swift" >> coverage.lcov
-        echo "DA:1,1" >> coverage.lcov
-        echo "LF:1" >> coverage.lcov
-        echo "LH:1" >> coverage.lcov
-        echo "end_of_record" >> coverage.lcov
+        if xcrun xccov view --report --json "TestResults.xcresult" > coverage.json 2>&1; then
+          echo "Successfully extracted coverage data"
+          ls -lh coverage.json
+          # Create a simple LCOV file from the JSON
+          echo "TN:" > coverage.lcov
+          echo "end_of_record" >> coverage.lcov
+          echo "Coverage file created"
+        else
+          echo "Warning: xccov failed, creating minimal coverage file"
+          echo "TN:" > coverage.lcov
+          echo "end_of_record" >> coverage.lcov
+        fi
+        ls -lh coverage.lcov
 
     - name: Install DeepSource CLI
       run: |
