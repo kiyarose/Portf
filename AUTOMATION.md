@@ -30,6 +30,11 @@ This repository now includes automated workflows to streamline issue and pull re
 - Applied labels: `Meta`, `Stylistic`, `javascript`, `meta:seq`, `ZAP!`
 - Existing labels on the issue are preserved and the new labels are added
 - Works for both newly created issues and when issue titles are edited
+- **Title matching is case-insensitive.** For example, all of the following titles will trigger labeling:
+    - `ZAP Scan Baseline Report`
+    - `zap scan baseline report`
+    - `Weekly ZAP Scan Baseline Report (2024-06-01)`
+  Titles that do **not** contain the phrase (e.g., `ZAP Full Scan Report`, `Security Scan Results`) will **not** trigger labeling.
 
 ## How Linking Works
 
