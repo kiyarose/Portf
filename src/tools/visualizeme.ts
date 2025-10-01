@@ -10,9 +10,10 @@ declare global {
   }
 }
 
-const fallbackTs = typeof window !== 'undefined' ? window.ts : undefined;
-const ts = (TypeScript && Object.keys(TypeScript).length > 0 ? TypeScript : fallbackTs);
-const hasTypeScript = typeof ts !== 'undefined' && ts !== null;
+const fallbackTs = typeof window !== "undefined" ? window.ts : undefined;
+const ts =
+  TypeScript && Object.keys(TypeScript).length > 0 ? TypeScript : fallbackTs;
+const hasTypeScript = typeof ts !== "undefined" && ts !== null;
 
 function requireElement<T extends HTMLElement>(id: string): T {
   const element = document.getElementById(id);
@@ -30,34 +31,37 @@ const NodeRadius = 18;
 const DiagramPadding = 40;
 const ROOT_KEY = "__root__";
 
-const jsonInput = requireElement<HTMLTextAreaElement>('json-source');
-const fileInput = requireElement<HTMLInputElement>('json-file');
-const rootLabelInput = requireElement<HTMLInputElement>('root-label');
-const renderButton = requireElement<HTMLButtonElement>('render');
-const clearButton = requireElement<HTMLButtonElement>('clear');
-const loadSampleButton = requireElement<HTMLButtonElement>('load-sample');
-const statusBox = requireElement<HTMLDivElement>('status');
-const openJsonEditorButton = requireElement<HTMLButtonElement>('open-json-editor');
-const diagramContainer = requireElement<HTMLDivElement>('diagram');
-const emptyState = requireElement<HTMLDivElement>('empty-state');
-const searchInput = requireElement<HTMLInputElement>('search');
-const expandAllButton = requireElement<HTMLButtonElement>('expand-all');
-const collapseAllButton = requireElement<HTMLButtonElement>('collapse-all');
-const downloadSvgButton = requireElement<HTMLButtonElement>('download-svg');
-const downloadTsButton = requireElement<HTMLButtonElement>('download-ts');
-const statsBadge = requireElement<HTMLSpanElement>('stats');
-const nodeModal = requireElement<HTMLDivElement>('node-modal');
-const nodeModalTitle = requireElement<HTMLHeadingElement>('node-modal-title');
-const nodeModalMeta = requireElement<HTMLDivElement>('node-modal-meta');
-const nodeModalEditor = requireElement<HTMLTextAreaElement>('node-modal-editor');
-const nodeModalApply = requireElement<HTMLButtonElement>('node-modal-apply');
-const nodeModalReset = requireElement<HTMLButtonElement>('node-modal-reset');
-const nodeModalClose = requireElement<HTMLButtonElement>('node-modal-close');
-const jsonModal = requireElement<HTMLDivElement>('json-modal');
-const jsonModalEditor = requireElement<HTMLTextAreaElement>('json-modal-editor');
-const jsonModalApply = requireElement<HTMLButtonElement>('json-modal-apply');
-const jsonModalReset = requireElement<HTMLButtonElement>('json-modal-reset');
-const jsonModalClose = requireElement<HTMLButtonElement>('json-modal-close');
+const jsonInput = requireElement<HTMLTextAreaElement>("json-source");
+const fileInput = requireElement<HTMLInputElement>("json-file");
+const rootLabelInput = requireElement<HTMLInputElement>("root-label");
+const renderButton = requireElement<HTMLButtonElement>("render");
+const clearButton = requireElement<HTMLButtonElement>("clear");
+const loadSampleButton = requireElement<HTMLButtonElement>("load-sample");
+const statusBox = requireElement<HTMLDivElement>("status");
+const openJsonEditorButton =
+  requireElement<HTMLButtonElement>("open-json-editor");
+const diagramContainer = requireElement<HTMLDivElement>("diagram");
+const emptyState = requireElement<HTMLDivElement>("empty-state");
+const searchInput = requireElement<HTMLInputElement>("search");
+const expandAllButton = requireElement<HTMLButtonElement>("expand-all");
+const collapseAllButton = requireElement<HTMLButtonElement>("collapse-all");
+const downloadSvgButton = requireElement<HTMLButtonElement>("download-svg");
+const downloadTsButton = requireElement<HTMLButtonElement>("download-ts");
+const statsBadge = requireElement<HTMLSpanElement>("stats");
+const nodeModal = requireElement<HTMLDivElement>("node-modal");
+const nodeModalTitle = requireElement<HTMLHeadingElement>("node-modal-title");
+const nodeModalMeta = requireElement<HTMLDivElement>("node-modal-meta");
+const nodeModalEditor =
+  requireElement<HTMLTextAreaElement>("node-modal-editor");
+const nodeModalApply = requireElement<HTMLButtonElement>("node-modal-apply");
+const nodeModalReset = requireElement<HTMLButtonElement>("node-modal-reset");
+const nodeModalClose = requireElement<HTMLButtonElement>("node-modal-close");
+const jsonModal = requireElement<HTMLDivElement>("json-modal");
+const jsonModalEditor =
+  requireElement<HTMLTextAreaElement>("json-modal-editor");
+const jsonModalApply = requireElement<HTMLButtonElement>("json-modal-apply");
+const jsonModalReset = requireElement<HTMLButtonElement>("json-modal-reset");
+const jsonModalClose = requireElement<HTMLButtonElement>("json-modal-close");
 
 let dataModel = null;
 let tree = null;
@@ -80,7 +84,7 @@ let searchTerm = "";
 let selectedPathKey = null;
 let conversionMeta = null;
 let tsSourcePath = null;
-const inputModeSelect = requireElement<HTMLSelectElement>('input-mode');
+const inputModeSelect = requireElement<HTMLSelectElement>("input-mode");
 let inputMode = inputModeSelect ? inputModeSelect.value : "json";
 const SEARCH_DEBOUNCE_MS = 140;
 let searchDebounceId = null;
@@ -124,8 +128,7 @@ if (hasTypeScript) {
 
 function showStatus(message, kind = "success") {
   statusBox.textContent = message;
-  statusBox.className =
-    kind === "error" ? "status error" : "status success";
+  statusBox.className = kind === "error" ? "status error" : "status success";
   statusBox.style.display = "block";
 }
 
@@ -170,10 +173,7 @@ function unwrapLiteral(node) {
   if (ts.isAsExpression(node) || ts.isTypeAssertionExpression?.(node)) {
     return unwrapLiteral(node.expression);
   }
-  if (
-    ts.isSatisfiesExpression?.(node) ||
-    ts.isNonNullExpression?.(node)
-  ) {
+  if (ts.isSatisfiesExpression?.(node) || ts.isNonNullExpression?.(node)) {
     return unwrapLiteral(node.expression);
   }
   if (ts.isParenthesizedExpression(node)) {
@@ -188,9 +188,7 @@ function evaluateLiteral(node) {
   if (ts.isArrayLiteralExpression(literal)) {
     return literal.elements.map((element) => {
       if (ts.isOmittedExpression(element)) {
-        throw new Error(
-          "Array holes are not supported in exported literals.",
-        );
+        throw new Error("Array holes are not supported in exported literals.");
       }
       if (ts.isSpreadElement(element)) {
         throw new Error(
@@ -329,10 +327,7 @@ function collectTsExports(sourceFile, sourceText) {
     }
 
     for (const declaration of statement.declarationList.declarations) {
-      if (
-        !ts.isIdentifier(declaration.name) ||
-        !declaration.initializer
-      ) {
+      if (!ts.isIdentifier(declaration.name) || !declaration.initializer) {
         continue;
       }
 
@@ -462,9 +457,7 @@ function formatValueForTs(value, baseIndent = "") {
     const remainder = leading % 4;
     const level = (leading - remainder) / 4;
     const adjustedIndent = `${baseIndent}${"  ".repeat(level)}${remainder > 0 ? " ".repeat(remainder) : ""}`;
-    formatted.push(
-      `${adjustedIndent}${match ? match[2] : line.trimStart()}`,
-    );
+    formatted.push(`${adjustedIndent}${match ? match[2] : line.trimStart()}`);
   }
 
   return formatted.join("\n");
@@ -610,8 +603,7 @@ function updateJsonTextarea({ refreshTimestamp = false } = {}) {
 
 function updateDownloadButtons(hasDiagram) {
   downloadSvgButton.disabled = !hasDiagram;
-  downloadTsButton.disabled =
-    !hasTypeScript || !hasDiagram || !conversionMeta;
+  downloadTsButton.disabled = !hasTypeScript || !hasDiagram || !conversionMeta;
 }
 
 function getPathKey(path) {
@@ -619,9 +611,7 @@ function getPathKey(path) {
     return ROOT_KEY;
   }
   return path
-    .map((segment) =>
-      typeof segment === "number" ? `[${segment}]` : segment,
-    )
+    .map((segment) => (typeof segment === "number" ? `[${segment}]` : segment))
     .join(".");
 }
 
@@ -885,11 +875,9 @@ function setupPanZoomHandlers(svg) {
     const localPoint = getLocalPoint(event);
 
     panZoom.x =
-      localPoint.x -
-      (localPoint.x - panZoom.x) * (newScale / panZoom.scale);
+      localPoint.x - (localPoint.x - panZoom.x) * (newScale / panZoom.scale);
     panZoom.y =
-      localPoint.y -
-      (localPoint.y - panZoom.y) * (newScale / panZoom.scale);
+      localPoint.y - (localPoint.y - panZoom.y) * (newScale / panZoom.scale);
     panZoom.scale = newScale;
     applyTransform();
   };
@@ -921,7 +909,7 @@ function renderTree(root) {
     } else {
       highlightSelected(null);
       selectedPathKey = null;
-            }
+    }
     applySearchFilter();
     return;
   }
@@ -964,19 +952,10 @@ function renderTree(root) {
     deepestY = 0;
   }
 
-  const width = Math.max(
-    960,
-    maxX - minX + NodeWidth + DiagramPadding * 2,
-  );
-  const height = Math.max(
-    640,
-    maxY - minY + NodeHeight + DiagramPadding * 2,
-  );
+  const width = Math.max(960, maxX - minX + NodeWidth + DiagramPadding * 2);
+  const height = Math.max(640, maxY - minY + NodeHeight + DiagramPadding * 2);
 
-  const svg = document.createElementNS(
-    "http://www.w3.org/2000/svg",
-    "svg",
-  );
+  const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
   svg.setAttribute("viewBox", `0 0 ${width} ${height}`);
   svg.setAttribute("width", width);
   svg.setAttribute("height", height);
@@ -1070,9 +1049,7 @@ function renderTree(root) {
     rect.setAttribute("height", `${NodeHeight}`);
     rect.setAttribute(
       "fill",
-      collapsed.get(node.pathKey)
-        ? "rgba(148, 163, 184, 0.12)"
-        : "var(--node)",
+      collapsed.get(node.pathKey) ? "rgba(148, 163, 184, 0.12)" : "var(--node)",
     );
     rect.setAttribute("stroke", "var(--node-border)");
     rect.setAttribute("stroke-width", "1.3");
@@ -1340,12 +1317,12 @@ function restoreSelection() {
       clearStatus();
     } else {
       highlightSelected(null);
-            }
+    }
     return;
   }
   const node = findNodeByPathKey(tree, selectedPathKey);
   if (node) {
-      if (nodeModal.classList.contains("is-open")) {
+    if (nodeModal.classList.contains("is-open")) {
       updateModalContent(node);
     }
     highlightSelected(node.id);
@@ -1356,7 +1333,7 @@ function restoreSelection() {
     } else {
       highlightSelected(null);
       selectedPathKey = null;
-            }
+    }
   }
 }
 
@@ -1415,8 +1392,7 @@ function updateDataModel(path, newValue) {
   let target = dataModel;
   for (let index = 0; index < path.length - 1; index += 1) {
     const segment = path[index];
-    target =
-      typeof segment === "number" ? target[segment] : target[segment];
+    target = typeof segment === "number" ? target[segment] : target[segment];
   }
   const last = path[path.length - 1];
   if (typeof last === "number") {
@@ -1486,7 +1462,7 @@ function commitNodeChange(
   if (nodeModal.classList.contains("is-open")) {
     const refreshed = findNodeByPathKey(tree, pathKey);
     if (refreshed) {
-        updateModalContent(refreshed);
+      updateModalContent(refreshed);
       highlightSelected(refreshed.id);
     } else {
       closeNodeModal();
@@ -1519,19 +1495,14 @@ function rebuildTree({
       clearStatus();
     } else {
       selectedPathKey = null;
-            }
+    }
   }
   if (resetPan) {
     resetPanZoom();
   }
 
   nodeIdCounter = 0;
-  tree = buildTree(
-    dataModel,
-    rootLabelInput.value.trim() || "root",
-    [],
-    null,
-  );
+  tree = buildTree(dataModel, rootLabelInput.value.trim() || "root", [], null);
   nodeIndex = new Map();
   hoverPathCache = new Map();
   activeHoverPathKey = null;
@@ -1798,14 +1769,11 @@ downloadTsButton.addEventListener("click", () => {
   }
   try {
     const targetData =
-      dataModel &&
-      typeof dataModel === "object" &&
-      !Array.isArray(dataModel)
+      dataModel && typeof dataModel === "object" && !Array.isArray(dataModel)
         ? dataModel
         : { value: dataModel };
     const tsText = convertJsonToTs(conversionMeta, targetData);
-    const baseCandidate =
-      tsSourcePath || conversionMeta.source || "data.ts";
+    const baseCandidate = tsSourcePath || conversionMeta.source || "data.ts";
     const baseName = baseCandidate.split(/[\\/]/).pop() || "data.ts";
     const sanitized = baseName.replace(/[\s]+/g, "-");
     const filename = sanitized.match(/\.tsx?$/)
@@ -1814,10 +1782,7 @@ downloadTsButton.addEventListener("click", () => {
     downloadText(filename, tsText, "text/typescript");
     showStatus(`Exported ${filename}.`, "success");
   } catch (error) {
-    showStatus(
-      error instanceof Error ? error.message : String(error),
-      "error",
-    );
+    showStatus(error instanceof Error ? error.message : String(error), "error");
   }
 });
 
