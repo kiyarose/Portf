@@ -13,10 +13,10 @@ jobs:
       - run: npm ci
       - run: npm run build
       - name: Check links in repo
-        uses: lycheeverse/lychee-action@v1.9.0
+        uses: lycheeverse/lychee-action@v1.10.0
         with:
           args: --config ./.lychee.toml .
       - name: Check links in dist
-        uses: lycheeverse/lychee-action@v1.9.0
+        uses: lycheeverse/lychee-action@v1.10.0
         with:
           args: --config ./.lychee.toml dist
