@@ -95,6 +95,13 @@ let hoverNodeGroups = [];
 let hoverEdgePaths = [];
 let hoverPathCache = new Map();
 let activeHoverPathKey = null;
+let nodePositions = new Map();
+let nodeCustomPositions = new Map();
+let draggingNodeKey = null;
+let draggingPointerId = null;
+let dragStartPosition = { x: 0, y: 0 };
+let dragStartPoint = { x: 0, y: 0 };
+let dragMoved = false;
 
 let printer = null;
 let printerSourceFile = null;
@@ -900,37 +907,228 @@ function setupPanZoomHandlers(svg) {
   svg.addEventListener("wheel", handleWheel, { passive: false });
 }
 
-function renderTree(root) {
-  if (!root) {
-    clearHoverPath();
-    nodeElements = new Map();
-    edgeElements = new Map();
-    hoverPathCache = new Map();
-    activeHoverPathKey = null;
-    diagramContainer.innerHTML = "";
-    diagramContainer.appendChild(emptyState);
-    emptyState.hidden = false;
-    svgElement = null;
-    viewportGroup = null;
-    updateDownloadButtons(false);
-    statsBadge.hidden = true;
-    if (nodeModal.classList.contains("is-open")) {
-      closeNodeModal();
-      clearStatus();
-    } else {
-      highlightSelected(null);
-      selectedPathKey = null;
-    }
-    applySearchFilter();
+function applyPositionToGroupElement(group, position) {
+  if (!group || !position) {
+    return;
+  }
+  group.dataset.positionX = `${position.x}`;
+  group.dataset.positionY = `${position.y}`;
+  group.setAttribute("transform", `translate(${position.x}, ${position.y})`);
+}
+
+function updateEdgePath(edge) {
+  if (!edge) {
+    return;
+  }
+  const fromKey = edge.dataset.from;
+  const toKey = edge.dataset.to;
+  if (!fromKey || !toKey) {
+    return;
+  }
+  const fromPosition = nodePositions.get(fromKey);
+  const toPosition = nodePositions.get(toKey);
+  if (!fromPosition || !toPosition) {
     return;
   }
 
+  const startX = fromPosition.x + NodeWidth / 2;
+  const startY = fromPosition.y + NodeHeight;
+  const endX = toPosition.x + NodeWidth / 2;
+  const endY = toPosition.y;
+  const controlOffset = (endY - startY) / 2;
+  const pathDefinition = `M ${startX} ${startY} C ${startX} ${startY + controlOffset}, ${endX} ${endY - controlOffset}, ${endX} ${endY}`;
+  edge.setAttribute("d", pathDefinition);
+}
+
+function updateConnectedEdges(pathKey) {
+  if (!pathKey || edgeElements.size === 0) {
+    return;
+  }
+  edgeElements.forEach((edge) => {
+    if (!edge) {
+      return;
+    }
+    if (edge.dataset.from === pathKey || edge.dataset.to === pathKey) {
+      updateEdgePath(edge);
+    }
+  });
+}
+
+function handleNodePointerDown(event, pathKey) {
+  if (!svgElement) {
+    return;
+  }
+  if (event.button !== 0 && event.pointerType !== "touch" && event.pointerType !== "pen") {
+    return;
+  }
+  const target = event.target;
+  if (target?.closest?.(".toggle-icon")) {
+    return;
+  }
+  if (draggingNodeKey) {
+    return;
+  }
+  const group = nodeElements.get(pathKey);
+  const position = nodePositions.get(pathKey);
+  if (!group || !position) {
+    return;
+  }
+
+  delete group.dataset.dragged;
+
+  draggingNodeKey = pathKey;
+  draggingPointerId = event.pointerId;
+  dragStartPosition = { x: position.x, y: position.y };
+  dragStartPoint = getLocalPoint(event);
+  dragMoved = false;
+
+  event.stopPropagation();
+  group.classList.add("is-dragging");
+  diagramContainer.classList.add("dragging-node");
+  try {
+    group.setPointerCapture(event.pointerId);
+  } catch {
+    // ignore
+  }
+}
+
+function handleNodePointerMove(event, pathKey) {
+  if (pathKey !== draggingNodeKey || event.pointerId !== draggingPointerId) {
+    return;
+  }
+  const group = nodeElements.get(pathKey);
+  if (!group) {
+    return;
+  }
+
+  event.preventDefault();
+  const localPoint = getLocalPoint(event);
+  const dx = localPoint.x - dragStartPoint.x;
+  const dy = localPoint.y - dragStartPoint.y;
+  if (!dragMoved && Math.hypot(dx, dy) > 2) {
+    dragMoved = true;
+  }
+
+  const nextPosition = {
+    x: dragStartPosition.x + dx,
+    y: dragStartPosition.y + dy,
+  };
+  nodePositions.set(pathKey, { x: nextPosition.x, y: nextPosition.y });
+  applyPositionToGroupElement(group, nextPosition);
+  updateConnectedEdges(pathKey);
+}
+
+function handleNodePointerUp(event, pathKey) {
+  if (pathKey !== draggingNodeKey || event.pointerId !== draggingPointerId) {
+    return;
+  }
+  const group = nodeElements.get(pathKey);
+  if (group) {
+    group.classList.remove("is-dragging");
+    if (dragMoved) {
+      group.dataset.dragged = "true";
+    }
+    try {
+      group.releasePointerCapture(event.pointerId);
+    } catch {
+      // ignore
+    }
+  }
+
+  const finalPosition = nodePositions.get(pathKey);
+  if (dragMoved && finalPosition) {
+    nodeCustomPositions.set(pathKey, {
+      x: finalPosition.x,
+      y: finalPosition.y,
+    });
+    updateConnectedEdges(pathKey);
+  }
+
+  diagramContainer.classList.remove("dragging-node");
+  draggingNodeKey = null;
+  draggingPointerId = null;
+  dragStartPosition = { x: 0, y: 0 };
+  dragStartPoint = { x: 0, y: 0 };
+  dragMoved = false;
+}
+
+function attachNodeDragHandlers(group, pathKey) {
+  if (!group) {
+    return;
+  }
+  group.addEventListener("pointerdown", (event) => handleNodePointerDown(event, pathKey));
+  group.addEventListener("pointermove", (event) => handleNodePointerMove(event, pathKey));
+  group.addEventListener("pointerup", (event) => handleNodePointerUp(event, pathKey));
+  group.addEventListener("pointercancel", (event) => handleNodePointerUp(event, pathKey));
+}
+
+function pruneCustomPositions() {
+  if (!nodeIndex || nodeIndex.size === 0) {
+    return;
+  }
+  for (const key of [...nodeCustomPositions.keys()]) {
+    if (!nodeIndex.has(key)) {
+      nodeCustomPositions.delete(key);
+    }
+  }
+}
+
+function renderTree(root) {
+  if (!root) {
+    renderEmptyTree();
+    return;
+  }
+
+  const nodes = prepareRenderNodes(root);
+  const bounds = calculateDiagramBounds(nodes);
+  const { svg, edgesGroup, nodesGroup } = createSvgSkeleton(bounds);
+
+  populateNodePositions(nodes, bounds);
+  edgesGroup.appendChild(buildEdgesFragment(svg, nodes));
+  nodesGroup.appendChild(buildNodesFragment(svg, nodes, bounds));
+
+  finalizeTreeRender(svg, nodes.length, bounds);
+}
+
+function renderEmptyTree() {
+  clearHoverPath();
+  nodeElements = new Map();
+  edgeElements = new Map();
+  nodePositions = new Map();
+  hoverPathCache = new Map();
+  activeHoverPathKey = null;
+  diagramContainer.innerHTML = "";
+  diagramContainer.appendChild(emptyState);
+  emptyState.hidden = false;
+  svgElement = null;
+  viewportGroup = null;
+  nodeCustomPositions = new Map();
+  draggingNodeKey = null;
+  draggingPointerId = null;
+  diagramContainer.classList.remove("dragging-node");
+  updateDownloadButtons(false);
+  statsBadge.hidden = true;
+  if (nodeModal.classList.contains("is-open")) {
+    closeNodeModal();
+    clearStatus();
+  } else {
+    highlightSelected(null);
+    selectedPathKey = null;
+  }
+  applySearchFilter();
+}
+
+function prepareRenderNodes(root) {
   measure(root);
   clearHoverPath();
   nodeElements = new Map();
   edgeElements = new Map();
+  diagramContainer.classList.remove("dragging-node");
   assignPositions(root, 0, 0);
-  const nodes = collectVisibleNodes(root, []);
+  return collectVisibleNodes(root, []);
+}
+
+function calculateDiagramBounds(nodes) {
   let minX = Infinity;
   let maxX = -Infinity;
   let minY = Infinity;
@@ -966,13 +1164,37 @@ function renderTree(root) {
   const width = Math.max(960, maxX - minX + NodeWidth + DiagramPadding * 2);
   const height = Math.max(640, maxY - minY + NodeHeight + DiagramPadding * 2);
 
+  return { minX, maxX, minY, maxY, deepestY, width, height };
+}
+
+function createSvgSkeleton(bounds) {
+  const svg = createSvgElement(bounds.width, bounds.height);
+  svg.appendChild(buildEdgeGradient(svg));
+
+  const viewport = document.createElementNS(svg.namespaceURI, "g");
+  svg.appendChild(viewport);
+  viewportGroup = viewport;
+
+  const edgesGroup = createEdgesGroup(svg);
+  viewport.appendChild(edgesGroup);
+
+  const nodesGroup = document.createElementNS(svg.namespaceURI, "g");
+  viewport.appendChild(nodesGroup);
+
+  return { svg, edgesGroup, nodesGroup };
+}
+
+function createSvgElement(width, height) {
   const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
   svg.setAttribute("viewBox", `0 0 ${width} ${height}`);
   svg.setAttribute("width", width);
   svg.setAttribute("height", height);
   svg.style.minWidth = "100%";
   svg.style.minHeight = "100%";
+  return svg;
+}
 
+function buildEdgeGradient(svg) {
   const defs = document.createElementNS(svg.namespaceURI, "defs");
   const edgeGradient = document.createElementNS(
     svg.namespaceURI,
@@ -999,61 +1221,81 @@ function renderTree(root) {
 
   edgeGradient.append(edgeStop1, edgeStop2, edgeStop3);
   defs.append(edgeGradient);
+  return defs;
+}
 
-  svg.appendChild(defs);
-
-  const viewport = document.createElementNS(svg.namespaceURI, "g");
-  svg.appendChild(viewport);
-  viewportGroup = viewport;
-
+function createEdgesGroup(svg) {
   const edgesGroup = document.createElementNS(svg.namespaceURI, "g");
   edgesGroup.setAttribute("fill", "none");
   edgesGroup.setAttribute("stroke", "var(--edge-default)");
   edgesGroup.setAttribute("stroke-width", "1.6");
-  viewport.appendChild(edgesGroup);
+  return edgesGroup;
+}
 
-  const nodesGroup = document.createElementNS(svg.namespaceURI, "g");
-  viewport.appendChild(nodesGroup);
+function populateNodePositions(nodes, bounds) {
+  nodePositions = new Map();
+  for (const node of nodes) {
+    const basePosition = {
+      x: node.x - bounds.minX + DiagramPadding,
+      y: node.y - bounds.minY + DiagramPadding,
+    };
+    const customPosition = nodeCustomPositions.get(node.pathKey);
+    let appliedPosition = basePosition;
+    if (
+      customPosition &&
+      Number.isFinite(customPosition.x) &&
+      Number.isFinite(customPosition.y)
+    ) {
+      appliedPosition = customPosition;
+    } else if (customPosition) {
+      nodeCustomPositions.delete(node.pathKey);
+    }
+    nodePositions.set(node.pathKey, {
+      x: appliedPosition.x,
+      y: appliedPosition.y,
+    });
+  }
+}
 
+function buildEdgesFragment(svg, nodes) {
   const edgesFragment = document.createDocumentFragment();
-  const nodesFragment = document.createDocumentFragment();
-
   for (const node of nodes) {
     if (!node.visibleChildren || node.visibleChildren.length === 0) {
       continue;
     }
     for (const child of node.visibleChildren) {
       const path = document.createElementNS(svg.namespaceURI, "path");
-      const startX = node.x - minX + DiagramPadding + NodeWidth / 2;
-      const startY = node.y - minY + DiagramPadding + NodeHeight;
-      const endX = child.x - minX + DiagramPadding + NodeWidth / 2;
-      const endY = child.y - minY + DiagramPadding;
-      const controlOffset = (endY - startY) / 2;
-      const pathDefinition = `M ${startX} ${startY} C ${startX} ${startY + controlOffset}, ${endX} ${endY - controlOffset}, ${endX} ${endY}`;
-      path.setAttribute("d", pathDefinition);
       const edgeKey = `${node.pathKey}->${child.pathKey}`;
       path.dataset.edge = "true";
       path.dataset.from = node.pathKey;
       path.dataset.to = child.pathKey;
       path.classList.add("tree-edge");
       path.setAttribute("stroke", "url(#edgeGradient)");
+      updateEdgePath(path);
       edgeElements.set(edgeKey, path);
       edgesFragment.appendChild(path);
     }
   }
+  return edgesFragment;
+}
 
+function buildNodesFragment(svg, nodes, bounds) {
+  const nodesFragment = document.createDocumentFragment();
   for (const node of nodes) {
     const group = document.createElementNS(svg.namespaceURI, "g");
     group.dataset.nodeId = node.id;
     group.dataset.pathKey = node.pathKey;
     group.dataset.parentPathKey = node.parentPathKey ?? "";
     group.classList.add("tree-node");
-    const x = node.x - minX + DiagramPadding;
-    const y = node.y - minY + DiagramPadding;
+    const position = nodePositions.get(node.pathKey) ?? {
+      x: node.x - bounds.minX + DiagramPadding,
+      y: node.y - bounds.minY + DiagramPadding,
+    };
+    applyPositionToGroupElement(group, position);
 
     const rect = document.createElementNS(svg.namespaceURI, "rect");
-    rect.setAttribute("x", `${x}`);
-    rect.setAttribute("y", `${y}`);
+    rect.setAttribute("x", "0");
+    rect.setAttribute("y", "0");
     rect.setAttribute("rx", `${NodeRadius}`);
     rect.setAttribute("ry", `${NodeRadius}`);
     rect.setAttribute("width", `${NodeWidth}`);
@@ -1067,63 +1309,82 @@ function renderTree(root) {
     group.appendChild(rect);
 
     const label = document.createElementNS(svg.namespaceURI, "text");
-    label.setAttribute("x", `${x + 16}`);
-    label.setAttribute("y", `${y + 26}`);
+    label.setAttribute("x", "16");
+    label.setAttribute("y", "26");
     label.setAttribute("class", "node-label");
     label.textContent = node.label || "(root)";
     group.appendChild(label);
 
     const summary = document.createElementNS(svg.namespaceURI, "text");
-    summary.setAttribute("x", `${x + 16}`);
-    summary.setAttribute("y", `${y + 46}`);
+    summary.setAttribute("x", "16");
+    summary.setAttribute("y", "46");
     summary.setAttribute("class", "node-meta");
     summary.textContent = `${node.type} • ${node.summary}`;
     group.appendChild(summary);
 
     if (node.children && node.children.length > 0) {
-      const toggle = document.createElementNS(svg.namespaceURI, "text");
-      toggle.setAttribute("x", `${x + NodeWidth - 22}`);
-      toggle.setAttribute("y", `${y + 24}`);
-      toggle.setAttribute("fill", "var(--accent)");
-      toggle.setAttribute("font-size", "16");
-      toggle.setAttribute(
-        "font-family",
-        "Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
-      );
-      toggle.textContent = collapsed.get(node.pathKey) ? "+" : "−";
-      toggle.classList.add("toggle-icon");
-      toggle.addEventListener("click", (event) => {
-        event.stopPropagation();
-        toggleNode(node.pathKey);
-      });
-      group.appendChild(toggle);
+      group.appendChild(createToggleButton(svg, node));
     }
 
-    group.addEventListener("click", (event) => {
-      event.stopPropagation();
-      setSelectedNode(node);
-    });
+    attachNodeEventHandlers(group, node);
 
-    group.addEventListener("dblclick", (event) => {
-      event.stopPropagation();
-      toggleNode(node.pathKey);
-    });
-
-    group.addEventListener("mouseenter", () => {
-      highlightHoverPath(node.pathKey);
-    });
-
-    group.addEventListener("mouseleave", () => {
-      clearHoverPath();
-    });
-
-    nodesFragment.appendChild(group);
     nodeElements.set(node.pathKey, group);
+    attachNodeDragHandlers(group, node.pathKey);
+    nodesFragment.appendChild(group);
   }
+  return nodesFragment;
+}
 
-  edgesGroup.appendChild(edgesFragment);
-  nodesGroup.appendChild(nodesFragment);
+function createToggleButton(svg, node) {
+  const toggle = document.createElementNS(svg.namespaceURI, "text");
+  toggle.setAttribute("x", `${NodeWidth - 22}`);
+  toggle.setAttribute("y", "24");
+  toggle.setAttribute("fill", "var(--accent)");
+  toggle.setAttribute("font-size", "16");
+  toggle.setAttribute(
+    "font-family",
+    "Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+  );
+  toggle.textContent = collapsed.get(node.pathKey) ? "+" : "−";
+  toggle.classList.add("toggle-icon");
+  toggle.addEventListener("click", (event) => {
+    event.stopPropagation();
+    toggleNode(node.pathKey);
+  });
+  return toggle;
+}
 
+function attachNodeEventHandlers(group, node) {
+  group.addEventListener("click", (event) => {
+    if (group.dataset.dragged === "true") {
+      event.stopPropagation();
+      delete group.dataset.dragged;
+      return;
+    }
+    event.stopPropagation();
+    setSelectedNode(node);
+  });
+
+  group.addEventListener("dblclick", (event) => {
+    if (group.dataset.dragged === "true") {
+      event.stopPropagation();
+      delete group.dataset.dragged;
+      return;
+    }
+    event.stopPropagation();
+    toggleNode(node.pathKey);
+  });
+
+  group.addEventListener("mouseenter", () => {
+    highlightHoverPath(node.pathKey);
+  });
+
+  group.addEventListener("mouseleave", () => {
+    clearHoverPath();
+  });
+}
+
+function finalizeTreeRender(svg, totalNodes, bounds) {
   diagramContainer.replaceChildren(svg);
   emptyState.hidden = true;
   svgElement = svg;
@@ -1131,11 +1392,11 @@ function renderTree(root) {
   setupPanZoomHandlers(svg);
 
   if (!panInitialized) {
-    const containerWidth = diagramContainer.clientWidth || width;
-    const containerHeight = diagramContainer.clientHeight || height;
+    const containerWidth = diagramContainer.clientWidth || bounds.width;
+    const containerHeight = diagramContainer.clientHeight || bounds.height;
     panZoom.scale = INITIAL_SCALE;
-    const scaledWidth = width * panZoom.scale;
-    const scaledHeight = height * panZoom.scale;
+    const scaledWidth = bounds.width * panZoom.scale;
+    const scaledHeight = bounds.height * panZoom.scale;
     panZoom.x = (containerWidth - scaledWidth) / 2;
     panZoom.y = Math.max(48, (containerHeight - scaledHeight) / 2);
     panInitialized = true;
@@ -1143,8 +1404,7 @@ function renderTree(root) {
 
   applyTransform();
 
-  const totalNodes = nodes.length;
-  const depth = deepestY / VerticalSpacing + 1;
+  const depth = bounds.deepestY / VerticalSpacing + 1;
   statsBadge.textContent = `${totalNodes} node${totalNodes === 1 ? "" : "s"} • depth ${Math.round(depth)}`;
   statsBadge.hidden = false;
 
@@ -1532,6 +1792,7 @@ function rebuildTree({
   hoverPathCache = new Map();
   activeHoverPathKey = null;
   indexTree(tree);
+  pruneCustomPositions();
   renderTree(tree);
 }
 
@@ -1561,6 +1822,7 @@ function renderFromInput() {
       tsSourcePath = meta.source || sourceName;
       dataModel = cloneData(data);
       collapsed = new Map([[ROOT_KEY, false]]);
+      nodeCustomPositions = new Map();
       updateJsonTextarea({ refreshTimestamp: false });
       rebuildTree({
         preserveSelection: false,
@@ -1611,6 +1873,7 @@ function renderFromInput() {
   }
 
   collapsed = new Map([[ROOT_KEY, false]]);
+  nodeCustomPositions = new Map();
   updateJsonTextarea({ refreshTimestamp: false });
   rebuildTree({
     preserveSelection: false,
