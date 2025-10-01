@@ -256,7 +256,6 @@
 			mainGroup = C23426FB2E81884800C1AF73;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				C271188C2E83D9AC003F0CF7 /* XCRemoteSwiftPackageReference "playwright" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = C23427052E81884800C1AF73 /* Products */;
@@ -643,17 +642,6 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
-
-/* Begin XCRemoteSwiftPackageReference section */
-		C271188C2E83D9AC003F0CF7 /* XCRemoteSwiftPackageReference "playwright" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/microsoft/playwright";
-			requirement = {
-				branch = main;
-				kind = branch;
-			};
-		};
-/* End XCRemoteSwiftPackageReference section */
 	};
 	rootObject = C23426FC2E81884800C1AF73 /* Project object */;
 }

@@ -25,9 +25,6 @@ jobs:
         # Navigate to the project directory
         cd "\$DashCam!"
         
-        # Resolve package dependencies first
-        xcodebuild -resolvePackageDependencies -project "DashCam.xcodeproj" -scheme "DashCam"
-        
         # Build and test the Swift project with code coverage enabled
         # Using -project instead of -workspace since DashCam.xcodeproj exists
         xcodebuild test \
@@ -35,8 +32,6 @@ jobs:
           -scheme "DashCam" \
           -destination "platform=macOS" \
           -enableCodeCoverage YES \
-          -skipPackagePluginValidation \
-          -skipMacroValidation \
           -resultBundlePath "TestResults.xcresult"
 
         # Export LCOV report from the generated result bundle
