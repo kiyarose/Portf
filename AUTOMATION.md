@@ -76,33 +76,43 @@ For full functionality, you need to:
 ## How It Works
 
 ### New Issue Created
+
 When a new issue is opened:
+
 1. Workflow triggers on `issues: opened` event
 2. Uses GraphQL to find the "Portfolio Devmt" project
 3. Adds the issue to the project using `addProjectV2ItemById` mutation
 4. Sets the issue status to "Backlog"
 
 ### Pull Request Opened
+
 When a PR is opened that references an issue:
+
 1. Workflow triggers on `pull_request: opened` event
 2. Extracts linked issue numbers from PR title and body
 3. Finds each linked issue in the project
 4. Updates status to "In Progress"
 
 ### Pull Request Ready for Review
+
 When a draft PR is marked as ready for review:
+
 1. Workflow triggers on `pull_request: ready_for_review` event
 2. Updates linked issues to "In Review" status
 
 ### Pull Request Merged
+
 When a PR is merged:
+
 1. Workflow triggers on `pull_request: closed` event
 2. Checks if PR was merged (not just closed)
 3. Updates linked issues to "In Review" status
 4. GitHub's built-in project automation can then move them to "Done"
 
 ### Multiple PRs for One Issue
+
 The workflow handles edge cases:
+
 - If multiple PRs reference the same issue, each PR event updates the issue status
 - The status reflects the most recent PR action
 - Closed PRs without merging do not update issue status (to avoid moving issues backward)
@@ -126,12 +136,14 @@ The workflows can be customized by:
 ## Troubleshooting
 
 ### General Issues
+
 - Check the Actions tab in your repository to see workflow execution logs
 - Ensure proper permissions are granted to GitHub Actions (Settings > Actions > General)
 - Verify that issue references use the correct format
 - For project board integration, you may need additional tokens or permissions
 
 ### Project Automation Specific
+
 - **"Project not found" error**: Ensure your project is named exactly "Portfolio Devmt" (case-sensitive)
 - **"Status field not found" error**: Verify your project has a "Status" field with single-select options
 - **Issues not being added**: Check that the workflow has `repository-projects: write` permission
@@ -140,6 +152,7 @@ The workflows can be customized by:
 - **User vs Organization projects**: The workflow queries user projects - if using organization projects, modify the GraphQL query to use `organization(login: $owner)` instead of `user(login: $owner)`
 
 ### Testing the Workflow
+
 1. Create a test issue
 2. Check if it appears in your project's "Backlog" column
 3. Create a PR with "Fixes #[issue-number]" in the description
