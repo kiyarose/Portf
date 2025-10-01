@@ -22,20 +22,28 @@ jobs:
       # You might need to adjust the scheme and destination to match your project setup.
       # The output LCOV file will be placed directly in the '$DashCam!' directory.
       run: |
+        # Navigate to the project directory
+        cd "\$DashCam!"
+        
+        # Resolve package dependencies first
+        xcodebuild -resolvePackageDependencies -project "DashCam.xcodeproj" -scheme "DashCam"
+        
         # Build and test the Swift project with code coverage enabled
         # Using -project instead of -workspace since DashCam.xcodeproj exists
         xcodebuild test \
-          -project "\$DashCam!/DashCam.xcodeproj" \
+          -project "DashCam.xcodeproj" \
           -scheme "DashCam" \
           -destination "platform=macOS" \
           -enableCodeCoverage YES \
-          -resultBundlePath "\$DashCam!/TestResults.xcresult"
+          -skipPackagePluginValidation \
+          -skipMacroValidation \
+          -resultBundlePath "TestResults.xcresult"
 
         # Export LCOV report from the generated result bundle
         # The output file will be named 'coverage.lcov' within the '$DashCam!' directory.
         xcrun llvm-cov export -format="lcov" \
-          "\$DashCam!/TestResults.xcresult/Coverage.profdata" \
-          > "\$DashCam!/coverage.lcov"
+          "TestResults.xcresult/Coverage.profdata" \
+          > "coverage.lcov"
 
     - name: Install DeepSource CLI
       run: |
