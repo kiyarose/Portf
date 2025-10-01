@@ -71,7 +71,7 @@ jobs:
       # It also assumes you've configured your test runner to output LCOV reports to `src/coverage/`.
       # For Vitest, you can set `coverage.reportsDirectory: 'src/coverage'` in `vite.config.ts` or `vitest.config.ts`.
       # For Jest, you can set `coverageDirectory: 'src/coverage'` in `jest.config.js`.
-      run: npm test -- --coverage --coverageReporters=lcov --coverageDirectory=src/coverage
+      run: npm test -- --coverage.enabled --coverage.reporter=lcov --coverage.reportsDirectory=src/coverage
 
     - name: Install DeepSource CLI
       run: |
