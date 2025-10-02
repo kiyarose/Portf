@@ -5,16 +5,14 @@ export type Certification = {
   link?: string;
 };
 
-export const certifications: Certification[] = [
+export const CERTIFICATIONS_RESOURCE = "Certifications";
+
+export const certificationsFallback: Certification[] = [];
+
+export const certificationsPlaceholder: Certification[] = [
   {
-    name: "PSI GitHub Foundations",
-    issuer: "PSI",
-    date: "2024",
-    link: "https://www.credly.com/go/FZfrOlFD9pvCvNOiGFvTrA",
-  },
-  {
-    name: "AZ-900 Microsoft Azure Fundamentals",
-    issuer: "Microsoft",
-    date: "2024",
+    name: "Unable to load certifications",
+    issuer: "Please try again later.",
+    date: "—",
   },
 ];

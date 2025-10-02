@@ -32,7 +32,7 @@ The repository needs a `FIREBASE_SERVICE_ACCOUNT_KIYAVERSE` secret with deploy a
 
 - `npm run data:to-json -- src/data/projects.ts` exports convertible `export const` values to `src/data/projects.json` alongside round-trip metadata.
 - `npm run data:to-ts -- src/data/projects.json` restores the original TypeScript module (use `--overwrite` to replace an existing file).
-- Pass `--pick projects,educationTimeline` to work with specific exports when a file contains multiple arrays or objects.
+- Pass `--pick projectsFallback,educationFallback` to work with specific exports when a file contains multiple arrays or objects.
 - Open `src/tools/convert.html` in a browser for an all-in-one local UI that handles file drops, selective exports, and downloads without leaving the machine.
 
 ## JSON visualization helper

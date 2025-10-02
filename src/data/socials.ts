@@ -1,26 +1,19 @@
-export const socials = [
+export type SocialLink = {
+  id: string;
+  label: string;
+  href: string;
+  icon: string;
+};
+
+export const SOCIALS_RESOURCE = "Socials";
+
+export const socialsFallback: SocialLink[] = [];
+
+export const socialsPlaceholder: SocialLink[] = [
   {
-    id: "github",
-    label: "GitHub",
-    href: "https://github.com/kiyarose",
-    icon: "mdi:github",
+    id: "socials-unavailable",
+    label: "Socials unavailable",
+    href: "https://status.sillylittle.tech/",
+    icon: "mdi:alert-circle-outline",
   },
-  {
-    id: "instagram",
-    label: "Instagram",
-    href: "https://instagram.com/kitadire",
-    icon: "mdi:instagram",
-  },
-  {
-    id: "linkedin",
-    label: "LinkedIn",
-    href: "https://linkedin.com/in/kiyarose",
-    icon: "mdi:linkedin",
-  },
-  {
-    id: "bluesky",
-    label: "Bluesky",
-    href: "https://bsky.app/profile/sillylittle.tech",
-    icon: "simple-icons:bluesky",
-  },
-] as const;
+];

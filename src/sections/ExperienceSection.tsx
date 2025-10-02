@@ -1,13 +1,24 @@
 import { Icon } from "@iconify/react";
 import { motion, useReducedMotion } from "framer-motion";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import type { ChangeEvent, MouseEvent } from "react";
 
 import { SectionContainer } from "../components/SectionContainer";
 import { SectionHeader } from "../components/SectionHeader";
-import { experienceTimeline } from "../data/experience";
-import { defaultSkills, getSkillIcon } from "../data/skills";
+import {
+  EXPERIENCE_RESOURCE,
+  experienceFallback,
+  experiencePlaceholder,
+  type ExperienceEntry,
+} from "../data/experience";
+import {
+  SKILLS_RESOURCE,
+  getSkillIcon,
+  skillsFallback,
+  skillsPlaceholder,
+} from "../data/skills";
 import { useTheme } from "../hooks/useTheme";
+import { useRemoteData } from "../hooks/useRemoteData";
 import type { Theme } from "../providers/theme-context";
 import { themedClass } from "../utils/themeClass";
 import { cn } from "../utils/cn";
@@ -16,6 +27,16 @@ export function ExperienceSection() {
   const [activeIndex, setActiveIndex] = useState(0);
   const prefersReducedMotion = useReducedMotion() ?? false;
   const { theme } = useTheme();
+  const { data: experienceEntries } = useRemoteData<ExperienceEntry[]>({
+    resource: EXPERIENCE_RESOURCE,
+    fallbackData: experienceFallback,
+    placeholderData: experiencePlaceholder,
+  });
+  const { data: knownSkills } = useRemoteData<string[]>({
+    resource: SKILLS_RESOURCE,
+    fallbackData: skillsFallback,
+    placeholderData: skillsPlaceholder,
+  });
 
   const variants = useMemo(
     () => ({
@@ -24,6 +45,15 @@ export function ExperienceSection() {
     }),
     [],
   );
+
+  useEffect(() => {
+    setActiveIndex((current) => {
+      if (experienceEntries.length === 0) {
+        return 0;
+      }
+      return Math.min(current, experienceEntries.length - 1);
+    });
+  }, [experienceEntries]);
 
   const handleIndexChange = useCallback((next: number) => {
     if (!Number.isNaN(next)) {
@@ -34,11 +64,12 @@ export function ExperienceSection() {
   return (
     <SectionContainer id="experience" className="pb-20">
       <ExperienceCard
-        options={experienceTimeline}
+        options={experienceEntries}
         activeIndex={activeIndex}
         onChange={handleIndexChange}
         prefersReducedMotion={prefersReducedMotion}
         variants={variants}
+        knownSkills={knownSkills}
         theme={theme}
       />
     </SectionContainer>
@@ -46,7 +77,7 @@ export function ExperienceSection() {
 }
 
 type ExperienceCardProps = {
-  options: typeof experienceTimeline;
+  options: ExperienceEntry[];
   activeIndex: number;
   onChange: (index: number) => void;
   prefersReducedMotion: boolean;
@@ -54,6 +85,7 @@ type ExperienceCardProps = {
     enter: { opacity: number; y: number };
     center: { opacity: number; y: number };
   };
+  knownSkills: string[];
   theme: Theme;
 };
 function ExperienceCard({
@@ -62,9 +94,19 @@ function ExperienceCard({
   onChange,
   prefersReducedMotion,
   variants,
+  knownSkills,
   theme,
 }: Readonly<ExperienceCardProps>) {
-  const activeItem = options[activeIndex];
+  const safeEntry =
+    options.length > 0
+      ? options[Math.min(activeIndex, options.length - 1)]
+      : experiencePlaceholder[0];
+
+  if (!safeEntry) {
+    return null;
+  }
+
+  const activeItem = safeEntry;
 
   return (
     <div className="card-surface space-y-8">
@@ -86,6 +128,7 @@ function ExperienceCard({
           entry={activeItem}
           prefersReducedMotion={prefersReducedMotion}
           variants={variants}
+          knownSkills={knownSkills}
           theme={theme}
         />
       </div>
@@ -94,7 +137,7 @@ function ExperienceCard({
 }
 
 type TimelineColumnProps = {
-  options: typeof experienceTimeline;
+  options: ExperienceEntry[];
   activeIndex: number;
   onChange: (index: number) => void;
   theme: Theme;
@@ -198,12 +241,13 @@ function TimelineColumn({
 }
 
 type DetailsCardProps = {
-  entry: (typeof experienceTimeline)[number];
+  entry: ExperienceEntry;
   prefersReducedMotion: boolean;
   variants: {
     enter: { opacity: number; y: number };
     center: { opacity: number; y: number };
   };
+  knownSkills: string[];
   theme: Theme;
 };
 
@@ -211,6 +255,7 @@ function DetailsCard({
   entry,
   prefersReducedMotion,
   variants,
+  knownSkills,
   theme,
 }: Readonly<DetailsCardProps>) {
   const chipBaseClass =
@@ -228,7 +273,7 @@ function DetailsCard({
       "!bg-slate-800/80 text-slate-200",
     ),
   );
-  const mainSkills = defaultSkills;
+  const mainSkills = knownSkills;
   return (
     <motion.div
       key={entry.company + entry.role}

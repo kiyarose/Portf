@@ -1,9 +1,15 @@
 import { motion, useReducedMotion } from "framer-motion";
-import { socials } from "../data/socials";
+import {
+  SOCIALS_RESOURCE,
+  socialsFallback,
+  socialsPlaceholder,
+  type SocialLink,
+} from "../data/socials";
 import { SectionContainer } from "../components/SectionContainer";
 import AdminHint from "../components/AdminHint";
 import { SocialChip } from "../components/SocialChip";
 import { useTheme } from "../hooks/useTheme";
+import { useRemoteData } from "../hooks/useRemoteData";
 import type { Theme } from "../providers/theme-context";
 import { themedClass } from "../utils/themeClass";
 import { cn } from "../utils/cn";
@@ -11,9 +17,10 @@ import { cn } from "../utils/cn";
 type HeroCardProps = {
   prefersReducedMotion: boolean;
   theme: Theme;
+  socialLinks: SocialLink[];
 };
 
-function HeroCard({ prefersReducedMotion, theme }: HeroCardProps) {
+function HeroCard({ prefersReducedMotion, theme, socialLinks }: HeroCardProps) {
   const surfaceGradient = themedClass(
     theme,
     "from-white/90 via-[#ffe9f2]/80 to-accent/15",
@@ -59,7 +66,7 @@ function HeroCard({ prefersReducedMotion, theme }: HeroCardProps) {
           </p>
         </div>
         <div className="flex flex-wrap gap-3">
-          {socials.map((social) => (
+          {socialLinks.map((social) => (
             <SocialChip key={social.id} {...social} />
           ))}
         </div>
@@ -83,10 +90,19 @@ function HeroCard({ prefersReducedMotion, theme }: HeroCardProps) {
 export function HeroSection() {
   const prefersReducedMotion = useReducedMotion() ?? false;
   const { theme } = useTheme();
+  const { data: socialLinks } = useRemoteData<SocialLink[]>({
+    resource: SOCIALS_RESOURCE,
+    fallbackData: socialsFallback,
+    placeholderData: socialsPlaceholder,
+  });
 
   return (
     <SectionContainer id="hero" className="pt-32 pb-20">
-      <HeroCard prefersReducedMotion={prefersReducedMotion} theme={theme} />
+      <HeroCard
+        prefersReducedMotion={prefersReducedMotion}
+        theme={theme}
+        socialLinks={socialLinks}
+      />
     </SectionContainer>
   );
 }

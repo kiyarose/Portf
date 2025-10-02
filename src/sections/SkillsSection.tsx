@@ -20,8 +20,13 @@ import { motion, useReducedMotion } from "framer-motion";
 import React, { useCallback } from "react";
 import { SectionContainer } from "../components/SectionContainer";
 import { SectionHeader } from "../components/SectionHeader";
-import { defaultSkills } from "../data/skills";
+import {
+  SKILLS_RESOURCE,
+  skillsFallback,
+  skillsPlaceholder,
+} from "../data/skills";
 import { useLocalStorage } from "../hooks/useLocalStorage";
+import { useRemoteData } from "../hooks/useRemoteData";
 import { useTheme } from "../hooks/useTheme";
 import { cn } from "../utils/cn";
 import { themedClass } from "../utils/themeClass";
@@ -140,23 +145,34 @@ function SkillsBoard({
 }
 
 export function SkillsSection() {
-  const [skills, setSkills] = useLocalStorage<string[]>("kiya-skills-order", [
-    ...defaultSkills,
-  ]);
+  const { data: remoteSkills } = useRemoteData<string[]>({
+    resource: SKILLS_RESOURCE,
+    fallbackData: skillsFallback,
+    placeholderData: skillsPlaceholder,
+  });
+  const [skills, setSkills] = useLocalStorage<string[]>(
+    "kiya-skills-order",
+    skillsFallback,
+  );
   const prefersReducedMotion = useReducedMotion() ?? false;
 
   // Migrate skills: ensure all default skills are included
   React.useEffect(() => {
     setSkills((current) => {
-      const missingSkills = defaultSkills.filter(
-        (skill) => !current.includes(skill),
+      const currentSet = new Set(remoteSkills);
+      const preserved = current.filter((skill) => currentSet.has(skill));
+      const missing = remoteSkills.filter(
+        (skill) => !preserved.includes(skill),
       );
-      if (missingSkills.length > 0) {
-        return [...current, ...missingSkills];
+      const next = [...preserved, ...missing];
+
+      if (next.length === current.length && next.every((v, i) => v === current[i])) {
+        return current;
       }
-      return current;
+
+      return next.length > 0 ? next : remoteSkills;
     });
-  }, [setSkills]);
+  }, [remoteSkills, setSkills]);
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
