@@ -366,10 +366,6 @@ function ContactForm({
       }
     }).finally(() => {
       pageclipPromiseRef.current = null;
-
-      if (!pageclipLoadedRef.current) {
-        pageclipLoadedRef.current = Boolean(getPageclipStyleElement());
-      }
     });
 
     pageclipPromiseRef.current = injectionPromise;
