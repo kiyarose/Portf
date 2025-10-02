@@ -10,6 +10,11 @@
       content="The page you requested could not be found on the Kiya Rose portfolio."
     />
     <style>
+      @font-face {
+        font-family: "Nanum Pen Script";
+        src: url("/fonts/NanumPenScript-Regular.ttf") format("truetype");
+        font-display: swap;
+      }
       :root {
         color-scheme: light dark;
       }
@@ -17,7 +22,7 @@
         box-sizing: border-box;
       }
       .font-kiya {
-        font-family: "Patrick Hand", "Inter", sans-serif;
+        font-family: "Nanum Pen Script", "Inter", sans-serif;
         letter-spacing: 0.02em;
       }
       body {
@@ -101,13 +106,11 @@
       <h1>We can’t find that page</h1>
       <p>The link might be broken, or the page could have moved.</p>
       <p>Please head back to the home page to keep exploring the portfolio.</p>
-      <a href="/">Return to Kiya’s home</a>
+      <a href="/">Go back Home</a>
       <small>
         Need help? Contact
         <span class="font-kiya" data-pressable-name>Kiya Rose</span> at
-        <a href="mailto:kiya.rose@sillylittle.tech"
-          >kiya.rose@sillylittle.tech</a
-        >
+        <span>kiya [dot] rose [at] sillylittle [dot] tech</span>
       </small>
     </main>
     <script>
