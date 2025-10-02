@@ -115,6 +115,98 @@ interface FeedbackBubbleProps {
   className?: string;
 }
 
+interface ErrorNotificationProps {
+  errorMessage: string;
+  theme: Theme;
+  prefersReducedMotion: boolean | null;
+  onDismiss: () => void;
+  onContactFormNavigation: (e: React.MouseEvent<HTMLAnchorElement>) => void;
+}
+
+function ErrorNotification({
+  errorMessage,
+  theme,
+  prefersReducedMotion,
+  onDismiss,
+  onContactFormNavigation,
+}: ErrorNotificationProps) {
+  return (
+    <motion.div
+      initial={
+        prefersReducedMotion ? false : { opacity: 0, y: -10, scale: 0.95 }
+      }
+      animate={
+        prefersReducedMotion ? undefined : { opacity: 1, y: 0, scale: 1 }
+      }
+      exit={
+        prefersReducedMotion
+          ? undefined
+          : { opacity: 0, y: -10, scale: 0.95 }
+      }
+      transition={{ duration: 0.3, ease: "easeOut" }}
+      className={cn(
+        "rounded-xl border p-3",
+        themedClass(
+          theme,
+          "border-red-200 bg-red-50",
+          "border-red-800/60 bg-red-900/20",
+        ),
+      )}
+    >
+      <div className="flex items-start gap-2">
+        <Icon
+          icon="material-symbols:error-rounded"
+          className={cn(
+            "mt-0.5 text-sm",
+            themedClass(theme, "text-red-600", "text-red-400"),
+          )}
+          aria-hidden="true"
+        />
+        <div className="flex-1">
+          <p
+            className={cn(
+              "text-xs",
+              themedClass(theme, "text-red-800", "text-red-200"),
+            )}
+          >
+            {errorMessage}
+          </p>
+          <p
+            className={cn(
+              "mt-2 text-xs",
+              themedClass(theme, "text-red-700", "text-red-300"),
+            )}
+          >
+            Please try using the{" "}
+            <a
+              href="#contact"
+              className="underline font-medium hover:text-accent"
+              onClick={onContactFormNavigation}
+            >
+              contact form
+            </a>{" "}
+            instead.
+          </p>
+          <button
+            type="button"
+            onClick={onDismiss}
+            className={cn(
+              "mt-1 text-xs font-medium transition-colors",
+              themedClass(
+                theme,
+                "text-red-600 hover:text-red-700",
+                "text-red-400 hover:text-red-300",
+              ),
+            )}
+          >
+            Dismiss
+          </button>
+        </div>
+      </div>
+    </motion.div>
+  );
+}
+
 interface FeedbackFormProps {
   onSubmit: (data: FeedbackFormData, turnstileToken: string) => Promise<void>;
   onClose: () => void;
@@ -380,79 +472,13 @@ function FeedbackForm({
     <form onSubmit={handleSubmit} className="space-y-4">
       {/* Error notification */}
       {errorMessage && (
-        <motion.div
-          initial={
-            prefersReducedMotion ? false : { opacity: 0, y: -10, scale: 0.95 }
-          }
-          animate={
-            prefersReducedMotion ? undefined : { opacity: 1, y: 0, scale: 1 }
-          }
-          exit={
-            prefersReducedMotion
-              ? undefined
-              : { opacity: 0, y: -10, scale: 0.95 }
-          }
-          transition={{ duration: 0.3, ease: "easeOut" }}
-          className={cn(
-            "rounded-xl border p-3",
-            themedClass(
-              theme,
-              "border-red-200 bg-red-50",
-              "border-red-800/60 bg-red-900/20",
-            ),
-          )}
-        >
-          <div className="flex items-start gap-2">
-            <Icon
-              icon="material-symbols:error-rounded"
-              className={cn(
-                "mt-0.5 text-sm",
-                themedClass(theme, "text-red-600", "text-red-400"),
-              )}
-              aria-hidden="true"
-            />
-            <div className="flex-1">
-              <p
-                className={cn(
-                  "text-xs",
-                  themedClass(theme, "text-red-800", "text-red-200"),
-                )}
-              >
-                {errorMessage}
-              </p>
-              <p
-                className={cn(
-                  "mt-2 text-xs",
-                  themedClass(theme, "text-red-700", "text-red-300"),
-                )}
-              >
-                Please try using the{" "}
-                <a
-                  href="#contact"
-                  className="underline font-medium hover:text-accent"
-                  onClick={handleContactFormNavigation}
-                >
-                  contact form
-                </a>{" "}
-                instead.
-              </p>
-              <button
-                type="button"
-                onClick={handleDismissError}
-                className={cn(
-                  "mt-1 text-xs font-medium transition-colors",
-                  themedClass(
-                    theme,
-                    "text-red-600 hover:text-red-700",
-                    "text-red-400 hover:text-red-300",
-                  ),
-                )}
-              >
-                Dismiss
-              </button>
-            </div>
-          </div>
-        </motion.div>
+        <ErrorNotification
+          errorMessage={errorMessage}
+          theme={theme}
+          prefersReducedMotion={prefersReducedMotion}
+          onDismiss={handleDismissError}
+          onContactFormNavigation={handleContactFormNavigation}
+        />
       )}
 
       <label className={labelClass}>
