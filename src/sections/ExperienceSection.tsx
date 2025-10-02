@@ -35,14 +35,12 @@ export function ExperienceSection() {
     fallbackData: experienceFallback,
     placeholderData: experiencePlaceholder,
   });
-  const {
-    data: knownSkills,
-    debugAttributes: knownSkillsDebugAttributes,
-  } = useRemoteData<string[]>({
-    resource: SKILLS_RESOURCE,
-    fallbackData: skillsFallback,
-    placeholderData: skillsPlaceholder,
-  });
+  const { data: knownSkills, debugAttributes: knownSkillsDebugAttributes } =
+    useRemoteData<string[]>({
+      resource: SKILLS_RESOURCE,
+      fallbackData: skillsFallback,
+      placeholderData: skillsPlaceholder,
+    });
 
   const variants = useMemo(
     () => ({
@@ -376,10 +374,10 @@ function DetailsCard({
                   <span>{item}</span>
                 </span>
               );
-           })}
-         </div>
-       </div>
-     )}
+            })}
+          </div>
+        </div>
+      )}
       {entry.description && (
         <div
           className={themedClass(

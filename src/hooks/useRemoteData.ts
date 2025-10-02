@@ -5,9 +5,7 @@ const DATA_BASE_URL = import.meta.env.DEV
   : "https://data.sillylittle.tech/data";
 
 const CACHE_NAMESPACE = "kiya-portfolio::remote-data" as const;
-const CACHE_TTL_MS = import.meta.env.DEV
-  ? 1000 * 60 * 5
-  : 1000 * 60 * 60 * 6;
+const CACHE_TTL_MS = import.meta.env.DEV ? 1000 * 60 * 5 : 1000 * 60 * 60 * 6;
 const BUILD_SIGNATURE =
   typeof __BUILD_TIME__ === "string" ? __BUILD_TIME__ : "dev-local";
 const CACHE_KEY_PREFIX = `${CACHE_NAMESPACE}::${BUILD_SIGNATURE}::` as const;
@@ -120,9 +118,7 @@ export function useRemoteData<TData>(
         if (fallbackCache) {
           setData(fallbackCache.data);
           setStatus("loaded");
-          setCacheState(
-            isCacheFresh(fallbackCache.cachedAt) ? "hit" : "stale",
-          );
+          setCacheState(isCacheFresh(fallbackCache.cachedAt) ? "hit" : "stale");
           return;
         }
 
@@ -249,9 +245,7 @@ function extractJsonFromRtf(raw: string): string | null {
     result += char;
   }
 
-  let sanitized = result
-    .replace(/\\\r?\n/g, "\n")
-    .replace(/\\([{}])/g, "$1");
+  let sanitized = result.replace(/\\\r?\n/g, "\n").replace(/\\([{}])/g, "$1");
 
   sanitized = sanitized
     .split("\n")

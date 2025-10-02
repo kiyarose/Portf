@@ -148,14 +148,12 @@ function SkillsBoard({
 }
 
 export function SkillsSection() {
-  const {
-    data: remoteSkills,
-    debugAttributes: skillsDebugAttributes,
-  } = useRemoteData<string[]>({
-    resource: SKILLS_RESOURCE,
-    fallbackData: skillsFallback,
-    placeholderData: skillsPlaceholder,
-  });
+  const { data: remoteSkills, debugAttributes: skillsDebugAttributes } =
+    useRemoteData<string[]>({
+      resource: SKILLS_RESOURCE,
+      fallbackData: skillsFallback,
+      placeholderData: skillsPlaceholder,
+    });
   const [skills, setSkills] = useLocalStorage<string[]>(
     "kiya-skills-order",
     skillsFallback,

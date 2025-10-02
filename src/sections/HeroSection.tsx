@@ -90,14 +90,12 @@ function HeroCard({ prefersReducedMotion, theme, socialLinks }: HeroCardProps) {
 export function HeroSection() {
   const prefersReducedMotion = useReducedMotion() ?? false;
   const { theme } = useTheme();
-  const {
-    data: socialLinks,
-    debugAttributes: socialDebugAttributes,
-  } = useRemoteData<SocialLink[]>({
-    resource: SOCIALS_RESOURCE,
-    fallbackData: socialsFallback,
-    placeholderData: socialsPlaceholder,
-  });
+  const { data: socialLinks, debugAttributes: socialDebugAttributes } =
+    useRemoteData<SocialLink[]>({
+      resource: SOCIALS_RESOURCE,
+      fallbackData: socialsFallback,
+      placeholderData: socialsPlaceholder,
+    });
 
   return (
     <SectionContainer

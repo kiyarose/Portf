@@ -10,14 +10,12 @@ import {
 import { useRemoteData } from "../hooks/useRemoteData";
 
 export function ProjectsSection() {
-  const {
-    data: projectEntries,
-    debugAttributes: projectDebugAttributes,
-  } = useRemoteData<Project[]>({
-    resource: PROJECTS_RESOURCE,
-    fallbackData: projectsFallback,
-    placeholderData: projectsPlaceholder,
-  });
+  const { data: projectEntries, debugAttributes: projectDebugAttributes } =
+    useRemoteData<Project[]>({
+      resource: PROJECTS_RESOURCE,
+      fallbackData: projectsFallback,
+      placeholderData: projectsPlaceholder,
+    });
 
   return (
     <SectionContainer
