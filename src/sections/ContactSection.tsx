@@ -276,8 +276,12 @@ function ContactForm({
 }: ContactFormProps) {
   const { theme } = useTheme();
   const formRef = useRef<HTMLFormElement>(null);
-  const pageclipLoadedRef = useRef<boolean>(Boolean(getPageclipStyleElement()));
+  const pageclipLoadedRef = useRef<boolean>(false);
   const pageclipPromiseRef = useRef<Promise<void> | null>(null);
+
+  useEffect(() => {
+    pageclipLoadedRef.current = Boolean(getPageclipStyleElement());
+  }, []);
   const [turnstileReady, setTurnstileReady] =
     useState<boolean>(turnstileLoaded);
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
