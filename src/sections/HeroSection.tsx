@@ -38,7 +38,7 @@ function HeroCard({ prefersReducedMotion, theme }: HeroCardProps) {
       >
         <span
           className={cn(
-            "chip !text-accent text-sm font-medium uppercase tracking-wide",
+            "chip !text-accent text-sm font-medium tracking-wide",
             greetingChip,
           )}
         >

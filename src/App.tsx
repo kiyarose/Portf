@@ -99,7 +99,7 @@ function LogoLink({ theme }: { theme: Theme }) {
   return (
     <a
       href="#hero"
-      className={`flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.2em] ${labelColor} sm:gap-3`}
+      className={`flex items-center gap-2 text-sm font-semibold tracking-[0.2em] ${labelColor} sm:gap-3`}
     >
       <Icon
         icon="material-symbols:apps-rounded"
