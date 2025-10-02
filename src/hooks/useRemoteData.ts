@@ -198,12 +198,53 @@ function extractJsonFromRtf(raw: string): string | null {
   const markerIndex = raw.indexOf(marker);
   const body = markerIndex >= 0 ? raw.slice(markerIndex + marker.length) : raw;
   let result = "";
+  const dashMappings: Record<string, string> = {
+    endash: "–",
+    emdash: "—",
+    hyphen: "-",
+    minus: "-",
+  };
+  const cp1252Map: Record<number, string> = {
+    0x80: "€",
+    0x82: "‚",
+    0x83: "ƒ",
+    0x84: "„",
+    0x85: "…",
+    0x86: "†",
+    0x87: "‡",
+    0x88: "ˆ",
+    0x89: "‰",
+    0x8a: "Š",
+    0x8b: "‹",
+    0x8c: "Œ",
+    0x8e: "Ž",
+    0x91: "‘",
+    0x92: "’",
+    0x93: "“",
+    0x94: "”",
+    0x95: "•",
+    0x96: "–",
+    0x97: "—",
+    0x98: "˜",
+    0x99: "™",
+    0x9a: "š",
+    0x9b: "›",
+    0x9c: "œ",
+    0x9e: "ž",
+    0x9f: "Ÿ",
+  };
 
   for (let index = 0; index < body.length; index += 1) {
     const char = body[index];
 
     if (char === "\\") {
       const next = body[index + 1];
+
+      if (next === "-") {
+        result += "-";
+        index += 1;
+        continue;
+      }
 
       if (next === "{" || next === "}" || next === "\\") {
         result += next;
@@ -214,7 +255,8 @@ function extractJsonFromRtf(raw: string): string | null {
       if (next === "'") {
         const hex = body.slice(index + 2, index + 4);
         if (/^[0-9a-fA-F]{2}$/.test(hex)) {
-          result += String.fromCharCode(parseInt(hex, 16));
+          const code = Number.parseInt(hex, 16);
+          result += cp1252Map[code] ?? String.fromCharCode(code);
           index += 3;
           continue;
         }
@@ -229,8 +271,43 @@ function extractJsonFromRtf(raw: string): string | null {
           cursor += 1;
         }
 
+        const controlWord = body.slice(index + 1, cursor);
+        const normalizedControl = controlWord.toLowerCase();
+        let handledControlWord = false;
+
+        if (normalizedControl in dashMappings) {
+          result += dashMappings[normalizedControl];
+          handledControlWord = true;
+        } else {
+          const unicodeMatch = /^u(-?\d+)$/u.exec(normalizedControl);
+          if (unicodeMatch) {
+            const parsed = Number.parseInt(unicodeMatch[1] ?? "", 10);
+            if (Number.isInteger(parsed)) {
+              const codePoint = parsed < 0 ? 65536 + parsed : parsed;
+              try {
+                result += String.fromCodePoint(codePoint);
+                handledControlWord = true;
+              } catch (unicodeError) {
+                logCacheDebug(`Failed to decode \\u sequence ${controlWord}`, unicodeError);
+              }
+            }
+          }
+        }
+
         if (body[cursor] === " ") {
           cursor += 1;
+        }
+
+        if (handledControlWord) {
+          const fallbackChar = body[cursor];
+          if (fallbackChar === "'") {
+            const hex = body.slice(cursor + 1, cursor + 3);
+            if (/^[0-9a-fA-F]{2}$/.test(hex)) {
+              cursor += 3;
+            }
+          } else if (fallbackChar !== undefined) {
+            cursor += 1;
+          }
         }
 
         index = cursor - 1;
