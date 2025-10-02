@@ -1,13 +1,14 @@
 import { Icon } from "@iconify/react";
 import { motion, useReducedMotion, AnimatePresence } from "framer-motion";
-import { useCallback, useState, useEffect } from "react";
+import { useCallback, useState, useEffect, useRef } from "react";
 import { useTheme } from "../hooks/useTheme";
 import { useScrollProgress } from "../hooks/useScrollProgress";
 import type { Theme } from "../providers/theme-context";
 import { themedClass } from "../utils/themeClass";
 import { cn } from "../utils/cn";
-import { safeConsoleError } from "../utils/errorSanitizer";
+import { safeConsoleError, safeConsoleWarn } from "../utils/errorSanitizer";
 import { celebrateNew } from "../utils/confetti";
+import { getCspNonce } from "../utils/getCspNonce";
 import type {
   FeedbackFormData,
   FeedbackType,
@@ -20,12 +21,102 @@ const SHOW_AFTER_TIME = 30000; // 30 seconds
 // Scroll progress threshold (50% of page) to show feedback bubble
 const SHOW_AFTER_SCROLL_PROGRESS = 0.5; // 50%
 
+// Turnstile configuration
+const TURNSTILE_SCRIPT_SRC =
+  "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
+const DEFAULT_TURNSTYLE_SITE_KEY = "0x4AAAAAAB33nR-Wv_kJwwAA";
+const rawTurnstileSiteKey =
+  (import.meta.env.VITE_TURNSTILE_SITE_KEY ??
+    import.meta.env.VITE_TURNSTYLE_SITE ??
+    DEFAULT_TURNSTYLE_SITE_KEY ??
+    "") ||
+  "";
+const trimmedTurnstileSiteKey = rawTurnstileSiteKey.trim();
+const TURNSTILE_SITE_KEY = trimmedTurnstileSiteKey
+  ? trimmedTurnstileSiteKey
+  : undefined;
+
+const DEFAULT_PAGECLIP_API_KEY = "YLDHAohhRJSQJX3izF30KRLNxy5NYhiz";
+const rawPageclipApiKey = (import.meta.env.VITE_PAGECLIP_API_KEY ??
+  DEFAULT_PAGECLIP_API_KEY ??
+  "") as string | undefined;
+const trimmedPageclipApiKey = (rawPageclipApiKey ?? "").trim();
+const PAGECLIP_API_KEY = trimmedPageclipApiKey
+  ? trimmedPageclipApiKey
+  : undefined;
+
+let turnstileLoaded = false;
+let turnstilePromise: Promise<void> | null = null;
+
+type TurnstileRenderOptions = {
+  sitekey: string;
+  callback?: (token: string) => void;
+  "error-callback"?: () => void;
+  "expired-callback"?: () => void;
+  theme?: "light" | "dark" | "auto";
+  appearance?: "always" | "execute" | "interaction-only";
+  size?: "normal" | "compact";
+  action?: string;
+  cData?: string;
+};
+
+declare global {
+  interface Window {
+    turnstile?: {
+      render: (
+        container: HTMLElement,
+        options: TurnstileRenderOptions,
+      ) => string;
+      reset: (id?: string) => void;
+      getResponse?: (id?: string) => string | undefined;
+    };
+  }
+}
+
+const loadTurnstile = (): Promise<void> => {
+  if (typeof window === "undefined") {
+    return Promise.resolve();
+  }
+
+  if (turnstileLoaded) {
+    return Promise.resolve();
+  }
+
+  if (turnstilePromise) {
+    return turnstilePromise;
+  }
+
+  turnstilePromise = new Promise((resolve, reject) => {
+    const script = document.createElement("script");
+    script.src = TURNSTILE_SCRIPT_SRC;
+    script.async = true;
+    script.defer = true;
+    script.crossOrigin = "anonymous";
+    const nonce = getCspNonce();
+    if (nonce) {
+      script.nonce = nonce;
+      script.setAttribute("nonce", nonce);
+    }
+    script.onload = () => {
+      turnstileLoaded = true;
+      resolve();
+    };
+    script.onerror = () => {
+      turnstilePromise = null;
+      reject(new Error("Failed to load Turnstile script"));
+    };
+    document.head.appendChild(script);
+  });
+
+  return turnstilePromise;
+};
+
 interface FeedbackBubbleProps {
   className?: string;
 }
 
 interface FeedbackFormProps {
-  onSubmit: (data: FeedbackFormData) => Promise<void>;
+  onSubmit: (data: FeedbackFormData, turnstileToken: string) => Promise<void>;
   onClose: () => void;
   isSubmitting: boolean;
   errorMessage: string | null;
@@ -49,6 +140,105 @@ function FeedbackForm({
     feedbackDescription: "",
     impact: "site-wide",
   });
+
+  // Turnstile state
+  const [turnstileReady, setTurnstileReady] =
+    useState<boolean>(turnstileLoaded);
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
+  const [turnstileError, setTurnstileError] = useState<string | null>(null);
+  const turnstileContainerRef = useRef<HTMLDivElement | null>(null);
+  const turnstileWidgetIdRef = useRef<string | null>(null);
+
+  const turnstileSiteKey = TURNSTILE_SITE_KEY;
+
+  const ensureTurnstileScript = useCallback(async () => {
+    if (!turnstileSiteKey) {
+      setTurnstileError(
+        "Verification is unavailable right now. Please use the contact form.",
+      );
+      return;
+    }
+
+    if (turnstileLoaded) {
+      setTurnstileReady(true);
+      return;
+    }
+
+    try {
+      await loadTurnstile();
+      setTurnstileReady(true);
+    } catch (error) {
+      setTurnstileError(
+        "Unable to load the verification step. Please use the contact form.",
+      );
+      safeConsoleWarn("Failed to load Turnstile script", error);
+    }
+  }, [turnstileSiteKey]);
+
+  useEffect(() => {
+    ensureTurnstileScript();
+  }, [ensureTurnstileScript]);
+
+  useEffect(() => {
+    if (!turnstileReady || !turnstileSiteKey) {
+      return;
+    }
+
+    if (typeof window === "undefined" || !window.turnstile) {
+      return;
+    }
+
+    const container = turnstileContainerRef.current;
+    if (!container) {
+      return;
+    }
+
+    container.innerHTML = "";
+
+    try {
+      const turnstileTheme = theme === "dark" ? "dark" : "light";
+      const widgetId = window.turnstile.render(container, {
+        sitekey: turnstileSiteKey,
+        theme: turnstileTheme,
+        appearance: "always",
+        size: "compact",
+        callback: (token: string) => {
+          setTurnstileToken(token);
+          setTurnstileError(null);
+        },
+        "error-callback": () => {
+          setTurnstileToken(null);
+          setTurnstileError(
+            "Verification failed to load. Please use the contact form.",
+          );
+        },
+        "expired-callback": () => {
+          setTurnstileToken(null);
+          setTurnstileError(
+            "Verification expired. Please complete the challenge again.",
+          );
+          if (turnstileWidgetIdRef.current) {
+            window.turnstile?.reset(turnstileWidgetIdRef.current);
+          }
+        },
+      } as TurnstileRenderOptions);
+
+      turnstileWidgetIdRef.current = widgetId;
+    } catch (error) {
+      safeConsoleError("Failed to render Turnstile widget", error);
+      setTurnstileError(
+        "Unable to show the verification challenge. Please use the contact form.",
+      );
+    }
+
+    return () => {
+      if (turnstileWidgetIdRef.current) {
+        window.turnstile?.reset(turnstileWidgetIdRef.current);
+        turnstileWidgetIdRef.current = null;
+      }
+      container.innerHTML = "";
+    };
+  }, [theme, turnstileReady, turnstileSiteKey]);
 
   const handleDismissError = useCallback(() => {
     onErrorChange(null);
@@ -110,14 +300,28 @@ function FeedbackForm({
         return;
       }
 
+      if (!turnstileToken) {
+        setTurnstileError(
+          "Please complete the verification challenge before submitting.",
+        );
+        return;
+      }
+
       try {
-        await onSubmit(formData);
+        await onSubmit(formData, turnstileToken);
+        // Reset Turnstile on success
+        if (turnstileWidgetIdRef.current) {
+          window.turnstile?.reset(turnstileWidgetIdRef.current);
+        }
+        setTurnstileToken(null);
       } catch (error) {
         safeConsoleError("Feedback form submission failed", error);
-        onErrorChange("Failed to submit feedback. Please try again.");
+        onErrorChange(
+          "Failed to submit feedback. Please try using the contact form instead.",
+        );
       }
     },
-    [formData, onSubmit, onErrorChange],
+    [formData, onSubmit, onErrorChange, turnstileToken],
   );
 
   const inputClass = cn(
@@ -203,6 +407,29 @@ function FeedbackForm({
                 )}
               >
                 {errorMessage}
+              </p>
+              <p
+                className={cn(
+                  "mt-2 text-xs",
+                  themedClass(theme, "text-red-700", "text-red-300"),
+                )}
+              >
+                Please try using the{" "}
+                <a
+                  href="#contact"
+                  className="underline font-medium hover:text-accent"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    onClose();
+                    const contactSection = document.getElementById("contact");
+                    if (contactSection) {
+                      contactSection.scrollIntoView({ behavior: "smooth" });
+                    }
+                  }}
+                >
+                  contact form
+                </a>{" "}
+                instead.
               </p>
               <button
                 type="button"
@@ -292,6 +519,45 @@ function FeedbackForm({
         </select>
       </label>
 
+      {/* Turnstile Verification Widget */}
+      <div className="space-y-2">
+        <div
+          ref={turnstileContainerRef}
+          className="flex justify-center"
+          aria-label="Verification challenge"
+        />
+        {turnstileError && (
+          <p
+            className={cn(
+              "text-xs text-center",
+              themedClass(theme, "text-red-600", "text-red-400"),
+            )}
+          >
+            {turnstileError}
+          </p>
+        )}
+        {turnstileToken && !turnstileError && (
+          <p
+            className={cn(
+              "text-xs text-center",
+              themedClass(theme, "text-emerald-600", "text-emerald-400"),
+            )}
+          >
+            ✓ Verification complete
+          </p>
+        )}
+        {!turnstileReady && !turnstileError && (
+          <p
+            className={cn(
+              "text-xs text-center",
+              themedClass(theme, "text-slate-500", "text-slate-400"),
+            )}
+          >
+            Loading verification...
+          </p>
+        )}
+      </div>
+
       <div className="pt-2">
         <p
           className={cn(
@@ -343,11 +609,11 @@ function FeedbackForm({
               "px-4 py-3 text-sm",
               themedClass(
                 theme,
-                "bg-orange-500 text-white hover:bg-orange-600",
-                "bg-orange-500 text-white hover:bg-orange-600",
+                "bg-orange-500 text-white hover:bg-orange-600 disabled:bg-slate-300 disabled:text-slate-500",
+                "bg-orange-500 text-white hover:bg-orange-600 disabled:bg-slate-700 disabled:text-slate-500",
               ),
             )}
-            disabled={isSubmitting}
+            disabled={isSubmitting || !turnstileToken}
           >
             {isSubmitting ? "Submitting..." : "Send Feedback"}
           </button>
@@ -562,7 +828,7 @@ function ConfirmationDialog({
 interface FeedbackFormContainerProps {
   theme: Theme;
   prefersReducedMotion: boolean | null;
-  onSubmit: (data: FeedbackFormData) => Promise<void>;
+  onSubmit: (data: FeedbackFormData, turnstileToken: string) => Promise<void>;
   onClose: () => void;
   isSubmitting: boolean;
   errorMessage: string | null;
@@ -785,18 +1051,24 @@ export function FeedbackBubble({ className }: FeedbackBubbleProps) {
     }
   }, [scrollProgress, isVisible, triggerConfetti]);
 
-  const pageclipApiKey = import.meta.env.VITE_PAGECLIP_API_KEY as
-    | string
-    | undefined;
-  const pageclipFormName = "Feedback";
+  const pageclipApiKey = PAGECLIP_API_KEY;
+  const pageclipFormName = "Contact_Me_Form";
   const pageclipUrl = pageclipApiKey
     ? `https://send.pageclip.co/${pageclipApiKey}/${pageclipFormName}`
     : null;
 
   const handleSubmit = useCallback(
-    async (data: FeedbackFormData) => {
+    async (data: FeedbackFormData, turnstileToken: string) => {
       if (!pageclipApiKey || !pageclipUrl) {
         const errorMsg = "VITE_PAGECLIP_API_KEY is missing or invalid.";
+        safeConsoleError(`Cannot submit feedback: ${errorMsg}`);
+        setErrorMessage(`Configuration Error: ${errorMsg}`);
+        return;
+      }
+
+      if (!TURNSTILE_SITE_KEY) {
+        const errorMsg =
+          "VITE_TURNSTILE_SITE_KEY (or VITE_TURNSTYLE_SITE) is missing or invalid.";
         safeConsoleError(`Cannot submit feedback: ${errorMsg}`);
         setErrorMessage(`Configuration Error: ${errorMsg}`);
         return;
@@ -806,23 +1078,25 @@ export function FeedbackBubble({ className }: FeedbackBubbleProps) {
       setErrorMessage(null);
 
       try {
-        // Convert feedbackType to binary (0 for suggestion, 1 for bug as specified)
-        const feedbackTypeBinary = data.feedbackType === "bug" ? "1" : "0";
+        // Format the feedback data for the Contact_Me_Form endpoint
+        const feedbackTypeLabel = data.feedbackType === "bug" ? "Bug" : "Suggestion";
+        const subject = `[Feedback - ${feedbackTypeLabel}] ${data.feedbackTitle}`;
+        const message = `Feedback Type: ${feedbackTypeLabel}
+Impact Area: ${data.impact}
+
+${data.feedbackDescription}`;
 
         const body = new URLSearchParams();
         body.set("email", data.email);
-        body.set("feedbackType", feedbackTypeBinary);
-        body.set("subject", data.feedbackTitle); // Use subject field for PageClip
-        body.set("feedbackTitle", data.feedbackTitle);
-        body.set("feedbackDescription", data.feedbackDescription);
-        body.set("impact", data.impact);
+        body.set("name", "Feedback Submission");
+        body.set("subject", subject);
+        body.set("message", message);
+        body.set("cf-turnstile-response", turnstileToken);
 
         const response = await fetch(pageclipUrl, {
           method: "POST",
           body,
-          headers: {
-            "Content-Type": "application/x-www-form-urlencoded",
-          },
+          mode: "cors",
         });
 
         if (!response.ok) {
@@ -839,7 +1113,7 @@ export function FeedbackBubble({ className }: FeedbackBubbleProps) {
         }, 3000);
       } catch (error) {
         safeConsoleError("Feedback submission failed", error);
-        setErrorMessage("Failed to submit feedback. Please try again.");
+        setErrorMessage("Failed to submit feedback. Please try using the contact form instead.");
       } finally {
         setIsSubmitting(false);
       }
