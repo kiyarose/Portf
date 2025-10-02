@@ -1350,18 +1350,18 @@ ${data.feedbackDescription}`;
     }
   }, [pageclipApiKey, pageclipUrl, selectedThumb]);
 
-  const handleConfirmNo = useCallback(async () => {
-    // Submit sentiment silently before closing
-    await submitSentimentOnly();
-
-    // Show thank you notification
+  const handleConfirmNo = useCallback(() => {
+    // Immediately hide confirmation dialog and show thank you notification
+    setFeedbackStep("initial");
     setShowThankYou(true);
+
+    // Submit sentiment silently in the background (non-blocking)
+    submitSentimentOnly();
 
     // Hide the thank you notification after 2 seconds and reset state
     setTimeout(() => {
       setShowThankYou(false);
       setIsVisible(false);
-      setFeedbackStep("initial");
       setSelectedThumb(null);
     }, 2000);
   }, [submitSentimentOnly]);
