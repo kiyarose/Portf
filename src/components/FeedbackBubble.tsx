@@ -1315,8 +1315,14 @@ ${data.feedbackDescription}`;
       const body = new URLSearchParams();
       body.set("email", "sentiment-only@feedback.local");
       body.set("name", "Quick Sentiment");
-      body.set("subject", `[Quick Feedback] ${selectedThumb === "up" ? "Positive" : "Negative"} Experience`);
-      body.set("message", "User provided sentiment without additional details.");
+      body.set(
+        "subject",
+        `[Quick Feedback] ${selectedThumb === "up" ? "Positive" : "Negative"} Experience`,
+      );
+      body.set(
+        "message",
+        "User provided sentiment without additional details.",
+      );
       body.set("EXT", sentiment);
       // Note: Skipping Turnstile for quick sentiment-only submission
 
@@ -1347,16 +1353,16 @@ ${data.feedbackDescription}`;
   const handleConfirmNo = useCallback(async () => {
     // Submit sentiment silently before closing
     await submitSentimentOnly();
-    
+
     // Show thank you notification
     setShowThankYou(true);
-    
+
     // Hide the thank you notification after 2 seconds
     setTimeout(() => {
       setShowThankYou(false);
       setIsVisible(false);
     }, 2000);
-    
+
     setFeedbackStep("initial");
     setSelectedThumb(null);
   }, [submitSentimentOnly]);
