@@ -139,9 +139,7 @@ function ErrorNotification({
         prefersReducedMotion ? undefined : { opacity: 1, y: 0, scale: 1 }
       }
       exit={
-        prefersReducedMotion
-          ? undefined
-          : { opacity: 0, y: -10, scale: 0.95 }
+        prefersReducedMotion ? undefined : { opacity: 0, y: -10, scale: 0.95 }
       }
       transition={{ duration: 0.3, ease: "easeOut" }}
       className={cn(
