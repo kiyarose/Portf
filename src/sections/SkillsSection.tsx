@@ -166,7 +166,10 @@ export function SkillsSection() {
       );
       const next = [...preserved, ...missing];
 
-      if (next.length === current.length && next.every((v, i) => v === current[i])) {
+      if (
+        next.length === current.length &&
+        next.every((v, i) => v === current[i])
+      ) {
         return current;
       }
 
