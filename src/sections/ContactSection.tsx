@@ -763,6 +763,7 @@ function ContactForm({
             ),
           )}
           placeholder="Let me know how I can help."
+          required
           onFocus={handleFormFocus}
         />
       </label>
