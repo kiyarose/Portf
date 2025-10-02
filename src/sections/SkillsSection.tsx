@@ -169,7 +169,11 @@ export function SkillsSection() {
       if (
         next.length === current.length &&
         next.every((v, i) => v === current[i])
-      ) {
+
+      // Prevent infinite loop: if both arrays are empty, return current
+      if (next.length === 0 && remoteSkills.length === 0 && current.length === 0) {
+        return current;
+      }
         return current;
       }
 
