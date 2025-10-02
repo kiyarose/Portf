@@ -552,7 +552,7 @@ function FeedbackForm({
       <div className="space-y-2">
         <div
           ref={turnstileContainerRef}
-          className="flex justify-center"
+          className="flex justify-center items-center min-h-[65px] overflow-hidden"
           aria-label="Verification challenge"
         />
         {turnstileError && (
@@ -674,10 +674,12 @@ function ThumbsSelector({
   }, [onThumbClick]);
 
   const thumbsContainerClass = cn(
-    // Position higher to avoid clipping with scaled button (bottom-20 accounts for 1.2x scale)
-    "absolute bottom-20 right-0 rounded-2xl border p-4 shadow-2xl backdrop-blur-lg",
-    // Smaller on desktop, larger on mobile as requested
-    "w-64 sm:w-60",
+    // Fixed positioning to respect safe area
+    "fixed rounded-2xl border p-4 shadow-2xl backdrop-blur-lg",
+    // Position from bottom with safe spacing
+    "bottom-24 right-4 sm:bottom-20 sm:right-6",
+    // Constrain width to screen
+    "w-[calc(100vw-2rem)] max-w-[16rem] sm:max-w-[15rem]",
     themedClass(
       theme,
       "border-white/60 bg-white/90 text-slate-700",
@@ -779,10 +781,12 @@ function ConfirmationDialog({
   onNo,
 }: ConfirmationDialogProps) {
   const confirmContainerClass = cn(
-    // Position higher to avoid clipping with scaled button (bottom-20 accounts for 1.2x scale)
-    "absolute bottom-20 right-0 rounded-2xl border p-5 shadow-2xl backdrop-blur-lg",
-    // Mobile responsive width
-    "w-72 sm:w-80",
+    // Fixed positioning to respect safe area
+    "fixed rounded-2xl border p-5 shadow-2xl backdrop-blur-lg",
+    // Position from bottom with safe spacing
+    "bottom-24 right-4 sm:bottom-20 sm:right-6",
+    // Constrain width to screen
+    "w-[calc(100vw-2rem)] max-w-[18rem] sm:max-w-[20rem]",
     themedClass(
       theme,
       "border-white/60 bg-white/90 text-slate-700",
@@ -874,10 +878,14 @@ function FeedbackFormContainer({
   onErrorChange,
 }: FeedbackFormContainerProps) {
   const formContainerClass = cn(
-    // Position higher to avoid clipping with scaled button (bottom-20 accounts for 1.2x scale)
-    "absolute bottom-20 right-0 rounded-2xl border p-5 shadow-2xl backdrop-blur-lg",
+    // Fixed positioning to respect safe area - use fixed with inset spacing
+    "fixed rounded-2xl border p-5 shadow-2xl backdrop-blur-lg",
+    // Position from bottom with safe spacing, and from right
+    "bottom-24 right-4 sm:bottom-20 sm:right-6",
+    // Constrain max height to prevent overflow, enable scrolling if needed
+    "max-h-[calc(100vh-7rem)] sm:max-h-[calc(100vh-6rem)] overflow-y-auto",
     // Mobile responsive width - wider for better usability
-    "w-80 sm:w-96",
+    "w-[calc(100vw-2rem)] max-w-[20rem] sm:max-w-[24rem]",
     themedClass(
       theme,
       "border-white/60 bg-white/90 text-slate-700",
