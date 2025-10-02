@@ -78,3 +78,6 @@ $DashCam\!/.build/index-build/plugin-tools.yaml
 /$DashCam\!/.build
 /$DashCam\!/.build
 /$DashCam\!/.swiftpm
+
+# Fonts
+public/fonts/NanumPenScript-Regular.ttf
