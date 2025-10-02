@@ -1357,14 +1357,13 @@ ${data.feedbackDescription}`;
     // Show thank you notification
     setShowThankYou(true);
 
-    // Hide the thank you notification after 2 seconds
+    // Hide the thank you notification after 2 seconds and reset state
     setTimeout(() => {
       setShowThankYou(false);
       setIsVisible(false);
+      setFeedbackStep("initial");
+      setSelectedThumb(null);
     }, 2000);
-
-    setFeedbackStep("initial");
-    setSelectedThumb(null);
   }, [submitSentimentOnly]);
 
   const handleFormClose = useCallback(() => {
