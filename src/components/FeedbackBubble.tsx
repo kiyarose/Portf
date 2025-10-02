@@ -896,6 +896,65 @@ function ConfirmationDialog({
   );
 }
 
+interface ThankYouNotificationProps {
+  theme: Theme;
+  prefersReducedMotion: boolean | null;
+}
+
+function ThankYouNotification({
+  theme,
+  prefersReducedMotion,
+}: ThankYouNotificationProps) {
+  const notificationClass = cn(
+    // Fixed positioning to respect safe area
+    "fixed rounded-2xl border p-5 shadow-2xl backdrop-blur-lg",
+    // Position from bottom with safe spacing
+    "bottom-24 right-4 sm:bottom-20 sm:right-6",
+    // Constrain width to screen
+    "w-[calc(100vw-2rem)] max-w-[16rem] sm:max-w-[18rem]",
+    themedClass(
+      theme,
+      "border-white/60 bg-white/90 text-slate-700",
+      "border-slate-700/60 bg-slate-900/90 text-slate-300",
+    ),
+  );
+
+  return (
+    <motion.div
+      initial={
+        prefersReducedMotion ? undefined : { opacity: 0, scale: 0.9, y: 20 }
+      }
+      animate={
+        prefersReducedMotion ? undefined : { opacity: 1, scale: 1, y: 0 }
+      }
+      exit={
+        prefersReducedMotion ? undefined : { opacity: 0, scale: 0.9, y: 20 }
+      }
+      transition={{ duration: 0.2, ease: "easeOut" }}
+      className={notificationClass}
+    >
+      <div className="flex items-center justify-center gap-2">
+        <Icon
+          icon="material-symbols:check-circle-rounded"
+          className={cn(
+            "text-2xl",
+            themedClass(theme, "text-green-600", "text-green-400"),
+          )}
+          aria-hidden="true"
+        />
+        <p
+          className={cn(
+            "text-lg font-medium text-center",
+            themedClass(theme, "text-slate-700", "text-slate-300"),
+          )}
+        >
+          Thank you!
+        </p>
+      </div>
+    </motion.div>
+  );
+}
+
 interface FeedbackFormContainerProps {
   theme: Theme;
   prefersReducedMotion: boolean | null;
@@ -1079,6 +1138,7 @@ export function FeedbackBubble({ className }: FeedbackBubbleProps) {
   );
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [showThankYou, setShowThankYou] = useState(false);
 
   // Function to trigger confetti at the button location
   const triggerConfetti = useCallback(() => {
@@ -1241,13 +1301,65 @@ ${data.feedbackDescription}`;
     setFeedbackStep("form");
   }, []);
 
-  const handleConfirmNo = useCallback(() => {
+  // Silent submission for sentiment-only feedback (no additional details)
+  const submitSentimentOnly = useCallback(async () => {
+    if (!pageclipApiKey || !pageclipUrl || !selectedThumb) {
+      // If we can't submit, just mark as complete silently
+      sessionStorage.setItem("feedback-submitted", "true");
+      return;
+    }
+
+    try {
+      // Submit minimal data with just the sentiment
+      const sentiment = selectedThumb === "up" ? "P" : "N";
+      const body = new URLSearchParams();
+      body.set("email", "sentiment-only@feedback.local");
+      body.set("name", "Quick Sentiment");
+      body.set("subject", `[Quick Feedback] ${selectedThumb === "up" ? "Positive" : "Negative"} Experience`);
+      body.set("message", "User provided sentiment without additional details.");
+      body.set("EXT", sentiment);
+      // Note: Skipping Turnstile for quick sentiment-only submission
+
+      const response = await fetch(pageclipUrl, {
+        method: "POST",
+        body,
+        mode: "cors",
+      });
+
+      // Don't throw on non-OK response for this silent submission
+      // We'll treat any response (including CORS errors) as success
+      if (response.ok) {
+        try {
+          await response.json();
+        } catch {
+          // Ignore JSON parsing errors
+        }
+      }
+    } catch (error) {
+      // Silently handle any errors - we don't want to bother the user
+      safeConsoleWarn("Sentiment-only submission encountered an issue", error);
+    } finally {
+      // Always mark as submitted to prevent re-prompting
+      sessionStorage.setItem("feedback-submitted", "true");
+    }
+  }, [pageclipApiKey, pageclipUrl, selectedThumb]);
+
+  const handleConfirmNo = useCallback(async () => {
+    // Submit sentiment silently before closing
+    await submitSentimentOnly();
+    
+    // Show thank you notification
+    setShowThankYou(true);
+    
+    // Hide the thank you notification after 2 seconds
+    setTimeout(() => {
+      setShowThankYou(false);
+      setIsVisible(false);
+    }, 2000);
+    
     setFeedbackStep("initial");
     setSelectedThumb(null);
-    setIsVisible(false);
-    // Mark as completed in session storage to prevent reshowing
-    sessionStorage.setItem("feedback-submitted", "true");
-  }, []);
+  }, [submitSentimentOnly]);
 
   const handleFormClose = useCallback(() => {
     setFeedbackStep("initial");
@@ -1302,6 +1414,14 @@ ${data.feedbackDescription}`;
                 prefersReducedMotion={prefersReducedMotion}
                 onYes={handleConfirmYes}
                 onNo={handleConfirmNo}
+              />
+            )}
+
+            {/* Thank You Notification */}
+            {showThankYou && (
+              <ThankYouNotification
+                theme={theme}
+                prefersReducedMotion={prefersReducedMotion}
               />
             )}
 
