@@ -24,7 +24,7 @@ const SHOW_AFTER_SCROLL_PROGRESS = 0.5; // 50%
 // Turnstile configuration
 const TURNSTILE_SCRIPT_SRC =
   "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
-const DEFAULT_TURNSTYLE_SITE_KEY = "0x4AAAAAAB33nR-Wv_kJwwAA";
+const DEFAULT_TURNSTYLE_SITE_KEY = "0x4AAAAAAB4acfsOidxt5FKe";
 const rawTurnstileSiteKey =
   (import.meta.env.VITE_TURNSTILE_SITE_KEY ??
     import.meta.env.VITE_TURNSTYLE_SITE ??
