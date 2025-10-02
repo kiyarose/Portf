@@ -288,7 +288,10 @@ function extractJsonFromRtf(raw: string): string | null {
                 result += String.fromCodePoint(codePoint);
                 handledControlWord = true;
               } catch (unicodeError) {
-                logCacheDebug(`Failed to decode \\u sequence ${controlWord}`, unicodeError);
+                logCacheDebug(
+                  `Failed to decode \\u sequence ${controlWord}`,
+                  unicodeError,
+                );
               }
             }
           }
