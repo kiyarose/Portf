@@ -1079,7 +1079,8 @@ export function FeedbackBubble({ className }: FeedbackBubbleProps) {
 
       try {
         // Format the feedback data for the Contact_Me_Form endpoint
-        const feedbackTypeLabel = data.feedbackType === "bug" ? "Bug" : "Suggestion";
+        const feedbackTypeLabel =
+          data.feedbackType === "bug" ? "Bug" : "Suggestion";
         const subject = `[Feedback - ${feedbackTypeLabel}] ${data.feedbackTitle}`;
         const message = `Feedback Type: ${feedbackTypeLabel}
 Impact Area: ${data.impact}
@@ -1113,7 +1114,9 @@ ${data.feedbackDescription}`;
         }, 3000);
       } catch (error) {
         safeConsoleError("Feedback submission failed", error);
-        setErrorMessage("Failed to submit feedback. Please try using the contact form instead.");
+        setErrorMessage(
+          "Failed to submit feedback. Please try using the contact form instead.",
+        );
       } finally {
         setIsSubmitting(false);
       }
