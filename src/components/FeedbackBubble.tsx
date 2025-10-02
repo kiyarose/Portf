@@ -48,6 +48,41 @@ const PAGECLIP_API_KEY = trimmedPageclipApiKey
 let turnstileLoaded = false;
 let turnstilePromise: Promise<void> | null = null;
 
+const STRICT_CORS_PATTERNS = ["cors", "cross-origin", "opaque response"];
+const GENERIC_CORS_PATTERNS = ["load failed", "failed to fetch"];
+
+const isLikelyCorsError = (error: unknown): boolean => {
+  const message =
+    error instanceof Error
+      ? error.message
+      : typeof error === "string"
+        ? error
+        : "";
+  const normalizedMessage = message.toLowerCase();
+
+  if (
+    STRICT_CORS_PATTERNS.some((pattern) => normalizedMessage.includes(pattern))
+  ) {
+    return true;
+  }
+
+  const errorName =
+    error instanceof Error
+      ? error.name
+      : typeof error === "object" && error !== null && "name" in error
+        ? String((error as { name?: unknown }).name ?? "")
+        : "";
+  const isTypeError = errorName.toLowerCase().includes("typeerror");
+
+  if (!isTypeError) {
+    return false;
+  }
+
+  return GENERIC_CORS_PATTERNS.some((pattern) =>
+    normalizedMessage.includes(pattern),
+  );
+};
+
 type TurnstileRenderOptions = {
   sitekey: string;
   callback?: (token: string) => void;
@@ -1146,7 +1181,13 @@ ${data.feedbackDescription}`;
           throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
 
-        // Success - clear error and mark as submitted
+        // Success - parse response, clear error and mark as submitted
+        try {
+          await response.json();
+        } catch {
+          // If no JSON body, ignore CORS/response reading errors
+          // The form submission was successful if we reach this point
+        }
         setErrorMessage(null);
         setFeedbackStep("submitted");
         sessionStorage.setItem("feedback-submitted", "true");
@@ -1156,6 +1197,25 @@ ${data.feedbackDescription}`;
           setIsVisible(false);
         }, 3000);
       } catch (error) {
+        // Check if this is a CORS/opaque response issue or a genuine network failure
+        const isOffline =
+          typeof navigator !== "undefined" && navigator.onLine === false;
+        const likelyCorsError = !isOffline && isLikelyCorsError(error);
+
+        if (likelyCorsError) {
+          // We likely hit a CORS/read issue, but connectivity is intact.
+          // Treat it as a success: mark as submitted silently to avoid resubmits.
+          safeConsoleWarn("Possible CORS error after form submission", error);
+          setErrorMessage(null);
+          setFeedbackStep("submitted");
+          sessionStorage.setItem("feedback-submitted", "true");
+          setTimeout(() => {
+            setIsVisible(false);
+          }, 3000);
+          return;
+        }
+
+        // This appears to be an actual network error
         safeConsoleError("Feedback submission failed", error);
         setErrorMessage(
           "Failed to submit feedback. Please try using the contact form instead.",
