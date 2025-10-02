@@ -1235,6 +1235,7 @@ function buildEdgeGradient(svg) {
   edgeGradient.append(edgeStop1, edgeStop2, edgeStop3);
   defs.append(edgeGradient);
   nodePositions.clear();
+  return defs;
 }
 
 function createEdgesGroup(svg) {
