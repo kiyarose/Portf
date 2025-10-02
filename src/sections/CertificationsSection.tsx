@@ -16,14 +16,21 @@ import { cn } from "../utils/cn";
 export function CertificationsSection() {
   const prefersReducedMotion = useReducedMotion();
   const { theme } = useTheme();
-  const { data: certificationEntries } = useRemoteData<Certification[]>({
+  const {
+    data: certificationEntries,
+    debugAttributes: certificationDebugAttributes,
+  } = useRemoteData<Certification[]>({
     resource: CERTIFICATIONS_RESOURCE,
     fallbackData: certificationsFallback,
     placeholderData: certificationsPlaceholder,
   });
 
   return (
-    <SectionContainer id="certifications" className="pb-20">
+    <SectionContainer
+      id="certifications"
+      className="pb-20"
+      debugAttributes={certificationDebugAttributes}
+    >
       <div className="card-surface space-y-8">
         <SectionHeader
           id="certifications"

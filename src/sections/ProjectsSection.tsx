@@ -10,14 +10,21 @@ import {
 import { useRemoteData } from "../hooks/useRemoteData";
 
 export function ProjectsSection() {
-  const { data: projectEntries } = useRemoteData<Project[]>({
+  const {
+    data: projectEntries,
+    debugAttributes: projectDebugAttributes,
+  } = useRemoteData<Project[]>({
     resource: PROJECTS_RESOURCE,
     fallbackData: projectsFallback,
     placeholderData: projectsPlaceholder,
   });
 
   return (
-    <SectionContainer id="projects" className="pb-20">
+    <SectionContainer
+      id="projects"
+      className="pb-20"
+      debugAttributes={projectDebugAttributes}
+    >
       <div className="card-surface space-y-8">
         <SectionHeader
           id="projects"

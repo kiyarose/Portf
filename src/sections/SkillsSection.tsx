@@ -108,6 +108,7 @@ type SkillsBoardProps = {
   prefersReducedMotion: boolean;
   sensors: ReturnType<typeof useSensors>;
   onDragEnd: (event: DragEndEvent) => void;
+  debugAttributes?: Record<string, string>;
 };
 
 function SkillsBoard({
@@ -115,6 +116,7 @@ function SkillsBoard({
   prefersReducedMotion,
   sensors,
   onDragEnd,
+  debugAttributes,
 }: SkillsBoardProps) {
   const developingSkills = new Set(["Gaining Med Admin skills"]);
 
@@ -129,6 +131,7 @@ function SkillsBoard({
           layout
           className="flex flex-wrap gap-3"
           transition={{ staggerChildren: prefersReducedMotion ? 0 : 0.05 }}
+          {...(debugAttributes ?? {})}
         >
           {skills.map((skill) => (
             <SortableSkill
@@ -145,7 +148,10 @@ function SkillsBoard({
 }
 
 export function SkillsSection() {
-  const { data: remoteSkills } = useRemoteData<string[]>({
+  const {
+    data: remoteSkills,
+    debugAttributes: skillsDebugAttributes,
+  } = useRemoteData<string[]>({
     resource: SKILLS_RESOURCE,
     fallbackData: skillsFallback,
     placeholderData: skillsPlaceholder,
@@ -168,16 +174,17 @@ export function SkillsSection() {
 
       if (
         next.length === current.length &&
-        next.every((v, i) => v === current[i])
-
-      // Prevent infinite loop: if both arrays are empty, return current
-      if (next.length === 0 && remoteSkills.length === 0 && current.length === 0) {
-        return current;
-      }
+        next.every((value, index) => value === current[index])
+      ) {
         return current;
       }
 
-      return next.length > 0 ? next : remoteSkills;
+      if (next.length === 0) {
+        // Prevent infinite loops when both sources are empty or remote data drops out.
+        return current;
+      }
+
+      return next;
     });
   }, [remoteSkills, setSkills]);
 
@@ -204,7 +211,11 @@ export function SkillsSection() {
   );
 
   return (
-    <SectionContainer id="skills" className="pb-20">
+    <SectionContainer
+      id="skills"
+      className="pb-20"
+      debugAttributes={skillsDebugAttributes}
+    >
       <div className="card-surface space-y-8">
         <SectionHeader
           id="skills"
@@ -217,6 +228,7 @@ export function SkillsSection() {
           prefersReducedMotion={prefersReducedMotion}
           sensors={sensors}
           onDragEnd={handleDragEnd}
+          debugAttributes={skillsDebugAttributes}
         />
       </div>
     </SectionContainer>

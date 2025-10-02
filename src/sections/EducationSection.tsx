@@ -21,11 +21,12 @@ export function EducationSection() {
   const [activeIndex, setActiveIndex] = useState(0);
   const prefersReducedMotion = useReducedMotion() ?? false;
   const { theme } = useTheme();
-  const { data: educationEntries } = useRemoteData<EducationEntry[]>({
-    resource: EDUCATION_RESOURCE,
-    fallbackData: educationFallback,
-    placeholderData: educationPlaceholder,
-  });
+  const { data: educationEntries, debugAttributes: educationDebugAttributes } =
+    useRemoteData<EducationEntry[]>({
+      resource: EDUCATION_RESOURCE,
+      fallbackData: educationFallback,
+      placeholderData: educationPlaceholder,
+    });
 
   const variants = useMemo(
     () => ({
@@ -55,7 +56,11 @@ export function EducationSection() {
   );
 
   return (
-    <SectionContainer id="education" className="pb-20">
+    <SectionContainer
+      id="education"
+      className="pb-20"
+      debugAttributes={educationDebugAttributes}
+    >
       <EducationCard
         options={educationEntries}
         activeIndex={activeIndex}

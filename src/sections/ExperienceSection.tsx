@@ -27,12 +27,18 @@ export function ExperienceSection() {
   const [activeIndex, setActiveIndex] = useState(0);
   const prefersReducedMotion = useReducedMotion() ?? false;
   const { theme } = useTheme();
-  const { data: experienceEntries } = useRemoteData<ExperienceEntry[]>({
+  const {
+    data: experienceEntries,
+    debugAttributes: experienceDebugAttributes,
+  } = useRemoteData<ExperienceEntry[]>({
     resource: EXPERIENCE_RESOURCE,
     fallbackData: experienceFallback,
     placeholderData: experiencePlaceholder,
   });
-  const { data: knownSkills } = useRemoteData<string[]>({
+  const {
+    data: knownSkills,
+    debugAttributes: knownSkillsDebugAttributes,
+  } = useRemoteData<string[]>({
     resource: SKILLS_RESOURCE,
     fallbackData: skillsFallback,
     placeholderData: skillsPlaceholder,
@@ -62,7 +68,11 @@ export function ExperienceSection() {
   }, []);
 
   return (
-    <SectionContainer id="experience" className="pb-20">
+    <SectionContainer
+      id="experience"
+      className="pb-20"
+      debugAttributes={experienceDebugAttributes}
+    >
       <ExperienceCard
         options={experienceEntries}
         activeIndex={activeIndex}
@@ -70,6 +80,7 @@ export function ExperienceSection() {
         prefersReducedMotion={prefersReducedMotion}
         variants={variants}
         knownSkills={knownSkills}
+        knownSkillsAttributes={knownSkillsDebugAttributes}
         theme={theme}
       />
     </SectionContainer>
@@ -87,6 +98,7 @@ type ExperienceCardProps = {
   };
   knownSkills: string[];
   theme: Theme;
+  knownSkillsAttributes?: Record<string, string>;
 };
 function ExperienceCard({
   options,
@@ -96,6 +108,7 @@ function ExperienceCard({
   variants,
   knownSkills,
   theme,
+  knownSkillsAttributes,
 }: Readonly<ExperienceCardProps>) {
   const safeEntry =
     options.length > 0
@@ -129,6 +142,7 @@ function ExperienceCard({
           prefersReducedMotion={prefersReducedMotion}
           variants={variants}
           knownSkills={knownSkills}
+          knownSkillsAttributes={knownSkillsAttributes}
           theme={theme}
         />
       </div>
@@ -249,6 +263,7 @@ type DetailsCardProps = {
   };
   knownSkills: string[];
   theme: Theme;
+  knownSkillsAttributes?: Record<string, string>;
 };
 
 function DetailsCard({
@@ -257,6 +272,7 @@ function DetailsCard({
   variants,
   knownSkills,
   theme,
+  knownSkillsAttributes,
 }: Readonly<DetailsCardProps>) {
   const chipBaseClass =
     "chip flex items-center gap-2 !px-3 !py-1 text-xs font-medium";
@@ -313,7 +329,11 @@ function DetailsCard({
           >
             Skills
           </div>
-          <div className="flex flex-wrap gap-2">
+          <div
+            className="flex flex-wrap gap-2"
+            {...(knownSkillsAttributes ?? {})}
+          >
+            {/* Tag the rendered skill chips so we can spot remote data in DevTools. */}
             {entry.tech.map((item) => {
               const normalized = item.toLowerCase();
               const match = mainSkills.find(
@@ -356,10 +376,10 @@ function DetailsCard({
                   <span>{item}</span>
                 </span>
               );
-            })}
-          </div>
-        </div>
-      )}
+           })}
+         </div>
+       </div>
+     )}
       {entry.description && (
         <div
           className={themedClass(
