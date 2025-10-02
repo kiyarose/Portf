@@ -181,16 +181,16 @@ function FeedbackForm({
 
   useEffect(() => {
     if (!turnstileReady || !turnstileSiteKey) {
-      return;
+      return undefined;
     }
 
     if (typeof window === "undefined" || !window.turnstile) {
-      return;
+      return undefined;
     }
 
     const container = turnstileContainerRef.current;
     if (!container) {
-      return;
+      return undefined;
     }
 
     container.innerHTML = "";
@@ -243,6 +243,18 @@ function FeedbackForm({
   const handleDismissError = useCallback(() => {
     onErrorChange(null);
   }, [onErrorChange]);
+
+  const handleContactFormNavigation = useCallback(
+    (e: React.MouseEvent<HTMLAnchorElement>) => {
+      e.preventDefault();
+      onClose();
+      const contactSection = document.getElementById("contact");
+      if (contactSection) {
+        contactSection.scrollIntoView({ behavior: "smooth" });
+      }
+    },
+    [onClose],
+  );
 
   const handleEmailChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -418,14 +430,7 @@ function FeedbackForm({
                 <a
                   href="#contact"
                   className="underline font-medium hover:text-accent"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    onClose();
-                    const contactSection = document.getElementById("contact");
-                    if (contactSection) {
-                      contactSection.scrollIntoView({ behavior: "smooth" });
-                    }
-                  }}
+                  onClick={handleContactFormNavigation}
                 >
                   contact form
                 </a>{" "}
