@@ -44,7 +44,6 @@ export function useRemoteData<TData>(
         const response = await fetch(`${DATA_BASE_URL}/${resource}.json`, {
           method: "GET",
           headers: { Accept: "application/json" },
-          cache: "no-cache",
           signal: controller.signal,
         });
 
