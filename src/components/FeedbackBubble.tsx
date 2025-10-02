@@ -552,7 +552,10 @@ function FeedbackForm({
       <div className="space-y-2">
         <div
           ref={turnstileContainerRef}
-          className="flex justify-center items-center min-h-[65px] overflow-hidden"
+          className={cn(
+            "flex justify-center items-center overflow-hidden",
+            !turnstileToken && !turnstileError && "min-h-[65px]",
+          )}
           aria-label="Verification challenge"
         />
         {turnstileError && (
