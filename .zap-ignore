@@ -1,1 +1,3 @@
 10096    # Example: Missing Strict-Transport-Security on non-prod
+10055    # CSP: style-src unsafe-inline - Required for Framer Motion animations which use inline styles
+90003    # Sub Resource Integrity Attribute Missing - Google Fonts uses dynamic CSS per user-agent, SRI not compatible
