@@ -1133,6 +1133,8 @@ ${data.feedbackDescription}`;
         body.set("subject", subject);
         body.set("message", message);
         body.set("cf-turnstile-response", turnstileToken);
+        // Add EXT field with P (positive) or N (negative) based on thumb selection
+        body.set("EXT", selectedThumb === "up" ? "P" : "N");
 
         const response = await fetch(pageclipUrl, {
           method: "POST",
@@ -1144,7 +1146,8 @@ ${data.feedbackDescription}`;
           throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
 
-        // Success
+        // Success - clear error and mark as submitted
+        setErrorMessage(null);
         setFeedbackStep("submitted");
         sessionStorage.setItem("feedback-submitted", "true");
 
@@ -1161,7 +1164,7 @@ ${data.feedbackDescription}`;
         setIsSubmitting(false);
       }
     },
-    [pageclipApiKey, pageclipUrl],
+    [pageclipApiKey, pageclipUrl, selectedThumb],
   );
 
   const handleBubbleClick = useCallback(() => {
