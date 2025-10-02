@@ -20,8 +20,13 @@ import { motion, useReducedMotion } from "framer-motion";
 import React, { useCallback } from "react";
 import { SectionContainer } from "../components/SectionContainer";
 import { SectionHeader } from "../components/SectionHeader";
-import { defaultSkills } from "../data/skills";
+import {
+  SKILLS_RESOURCE,
+  skillsFallback,
+  skillsPlaceholder,
+} from "../data/skills";
 import { useLocalStorage } from "../hooks/useLocalStorage";
+import { useRemoteData } from "../hooks/useRemoteData";
 import { useTheme } from "../hooks/useTheme";
 import { cn } from "../utils/cn";
 import { themedClass } from "../utils/themeClass";
@@ -103,6 +108,7 @@ type SkillsBoardProps = {
   prefersReducedMotion: boolean;
   sensors: ReturnType<typeof useSensors>;
   onDragEnd: (event: DragEndEvent) => void;
+  debugAttributes?: Record<string, string>;
 };
 
 function SkillsBoard({
@@ -110,6 +116,7 @@ function SkillsBoard({
   prefersReducedMotion,
   sensors,
   onDragEnd,
+  debugAttributes,
 }: SkillsBoardProps) {
   const developingSkills = new Set(["Gaining Med Admin skills"]);
 
@@ -124,6 +131,7 @@ function SkillsBoard({
           layout
           className="flex flex-wrap gap-3"
           transition={{ staggerChildren: prefersReducedMotion ? 0 : 0.05 }}
+          {...(debugAttributes ?? {})}
         >
           {skills.map((skill) => (
             <SortableSkill
@@ -140,23 +148,43 @@ function SkillsBoard({
 }
 
 export function SkillsSection() {
-  const [skills, setSkills] = useLocalStorage<string[]>("kiya-skills-order", [
-    ...defaultSkills,
-  ]);
+  const { data: remoteSkills, debugAttributes: skillsDebugAttributes } =
+    useRemoteData<string[]>({
+      resource: SKILLS_RESOURCE,
+      fallbackData: skillsFallback,
+      placeholderData: skillsPlaceholder,
+    });
+  const [skills, setSkills] = useLocalStorage<string[]>(
+    "kiya-skills-order",
+    skillsFallback,
+  );
   const prefersReducedMotion = useReducedMotion() ?? false;
 
   // Migrate skills: ensure all default skills are included
   React.useEffect(() => {
     setSkills((current) => {
-      const missingSkills = defaultSkills.filter(
-        (skill) => !current.includes(skill),
+      const currentSet = new Set(remoteSkills);
+      const preserved = current.filter((skill) => currentSet.has(skill));
+      const missing = remoteSkills.filter(
+        (skill) => !preserved.includes(skill),
       );
-      if (missingSkills.length > 0) {
-        return [...current, ...missingSkills];
+      const next = [...preserved, ...missing];
+
+      if (
+        next.length === current.length &&
+        next.every((value, index) => value === current[index])
+      ) {
+        return current;
       }
-      return current;
+
+      if (next.length === 0) {
+        // Prevent infinite loops when both sources are empty or remote data drops out.
+        return current;
+      }
+
+      return next;
     });
-  }, [setSkills]);
+  }, [remoteSkills, setSkills]);
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
@@ -181,7 +209,11 @@ export function SkillsSection() {
   );
 
   return (
-    <SectionContainer id="skills" className="pb-20">
+    <SectionContainer
+      id="skills"
+      className="pb-20"
+      debugAttributes={skillsDebugAttributes}
+    >
       <div className="card-surface space-y-8">
         <SectionHeader
           id="skills"
@@ -194,6 +226,7 @@ export function SkillsSection() {
           prefersReducedMotion={prefersReducedMotion}
           sensors={sensors}
           onDragEnd={handleDragEnd}
+          debugAttributes={skillsDebugAttributes}
         />
       </div>
     </SectionContainer>

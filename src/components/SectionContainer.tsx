@@ -16,12 +16,14 @@ const variants = {
 type SectionContainerProps = PropsWithChildren<{
   id: string;
   className?: string;
+  debugAttributes?: Record<string, string>;
 }>;
 
 export function SectionContainer({
   id,
   className,
   children,
+  debugAttributes,
 }: SectionContainerProps) {
   const prefersReducedMotion = useReducedMotion();
 
@@ -35,6 +37,7 @@ export function SectionContainer({
       transition={{ duration: 0.6, ease: "easeOut" }}
       variants={prefersReducedMotion ? undefined : variants}
       className={cn("scroll-mt-28", className)}
+      {...(debugAttributes ?? {})}
     >
       {children}
     </motion.section>

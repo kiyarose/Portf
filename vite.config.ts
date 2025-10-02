@@ -100,6 +100,15 @@ export default defineConfig({
   define: {
     __BUILD_TIME__: JSON.stringify(new Date().toISOString()),
   },
+  server: {
+    proxy: {
+      "/__remote-data": {
+        target: "https://data.sillylittle.tech",
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/__remote-data/, ""),
+      },
+    },
+  },
   build: {
     rollupOptions: {
       input: {

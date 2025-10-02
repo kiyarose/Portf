@@ -1,12 +1,18 @@
 import { Icon } from "@iconify/react";
 import { motion, useReducedMotion } from "framer-motion";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import type { ChangeEvent } from "react";
 import { SectionContainer } from "../components/SectionContainer";
 import { SectionHeader } from "../components/SectionHeader";
-import { educationTimeline } from "../data/education";
+import {
+  EDUCATION_RESOURCE,
+  educationFallback,
+  educationPlaceholder,
+  type EducationEntry,
+} from "../data/education";
 import { getSkillIcon } from "../data/skills";
 import { useTheme } from "../hooks/useTheme";
+import { useRemoteData } from "../hooks/useRemoteData";
 import type { Theme } from "../providers/theme-context";
 import { themedClass } from "../utils/themeClass";
 import { cn } from "../utils/cn";
@@ -15,6 +21,12 @@ export function EducationSection() {
   const [activeIndex, setActiveIndex] = useState(0);
   const prefersReducedMotion = useReducedMotion() ?? false;
   const { theme } = useTheme();
+  const { data: educationEntries, debugAttributes: educationDebugAttributes } =
+    useRemoteData<EducationEntry[]>({
+      resource: EDUCATION_RESOURCE,
+      fallbackData: educationFallback,
+      placeholderData: educationPlaceholder,
+    });
 
   const variants = useMemo(
     () => ({
@@ -23,6 +35,15 @@ export function EducationSection() {
     }),
     [],
   );
+
+  useEffect(() => {
+    setActiveIndex((current) => {
+      if (educationEntries.length === 0) {
+        return 0;
+      }
+      return Math.min(current, educationEntries.length - 1);
+    });
+  }, [educationEntries]);
 
   const handleSelectChange = useCallback(
     (event: ChangeEvent<HTMLSelectElement>) => {
@@ -35,9 +56,13 @@ export function EducationSection() {
   );
 
   return (
-    <SectionContainer id="education" className="pb-20">
+    <SectionContainer
+      id="education"
+      className="pb-20"
+      debugAttributes={educationDebugAttributes}
+    >
       <EducationCard
-        options={educationTimeline}
+        options={educationEntries}
         activeIndex={activeIndex}
         onChange={handleSelectChange}
         prefersReducedMotion={prefersReducedMotion}
@@ -49,7 +74,7 @@ export function EducationSection() {
 }
 
 type EducationCardProps = {
-  options: typeof educationTimeline;
+  options: EducationEntry[];
   activeIndex: number;
   onChange: (event: ChangeEvent<HTMLSelectElement>) => void;
   prefersReducedMotion: boolean;
@@ -68,7 +93,16 @@ function EducationCard({
   variants,
   theme,
 }: EducationCardProps) {
-  const activeItem = options[activeIndex];
+  const safeEntry =
+    options.length > 0
+      ? options[Math.min(activeIndex, options.length - 1)]
+      : educationPlaceholder[0];
+
+  if (!safeEntry) {
+    return null;
+  }
+
+  const activeItem = safeEntry;
 
   return (
     <div className="card-surface space-y-8">
@@ -98,7 +132,7 @@ function EducationCard({
 }
 
 type TimelineColumnProps = {
-  options: typeof educationTimeline;
+  options: EducationEntry[];
   activeIndex: number;
   onChange: (event: ChangeEvent<HTMLSelectElement>) => void;
   theme: Theme;
@@ -152,7 +186,7 @@ function TimelineColumn({
 }
 
 type DetailsCardProps = {
-  entry: (typeof educationTimeline)[number];
+  entry: EducationEntry;
   prefersReducedMotion: boolean;
   variants: {
     enter: { opacity: number; y: number };

@@ -2,17 +2,35 @@ import { motion, useReducedMotion } from "framer-motion";
 import { Icon } from "@iconify/react";
 import { SectionContainer } from "../components/SectionContainer";
 import { SectionHeader } from "../components/SectionHeader";
-import { certifications } from "../data/certifications";
+import {
+  CERTIFICATIONS_RESOURCE,
+  certificationsFallback,
+  certificationsPlaceholder,
+  type Certification,
+} from "../data/certifications";
 import { useTheme } from "../hooks/useTheme";
+import { useRemoteData } from "../hooks/useRemoteData";
 import { themedClass } from "../utils/themeClass";
 import { cn } from "../utils/cn";
 
 export function CertificationsSection() {
   const prefersReducedMotion = useReducedMotion();
   const { theme } = useTheme();
+  const {
+    data: certificationEntries,
+    debugAttributes: certificationDebugAttributes,
+  } = useRemoteData<Certification[]>({
+    resource: CERTIFICATIONS_RESOURCE,
+    fallbackData: certificationsFallback,
+    placeholderData: certificationsPlaceholder,
+  });
 
   return (
-    <SectionContainer id="certifications" className="pb-20">
+    <SectionContainer
+      id="certifications"
+      className="pb-20"
+      debugAttributes={certificationDebugAttributes}
+    >
       <div className="card-surface space-y-8">
         <SectionHeader
           id="certifications"
@@ -21,7 +39,7 @@ export function CertificationsSection() {
           eyebrow="Validated Skills"
         />
         <div className="grid gap-4 sm:gap-6 md:grid-cols-2">
-          {certifications.map((cert, index) => (
+          {certificationEntries.map((cert, index) => (
             <motion.div
               key={cert.name}
               className={cn(

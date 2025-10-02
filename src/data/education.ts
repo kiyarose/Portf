@@ -5,17 +5,15 @@ export type EducationEntry = {
   tech?: string[];
 };
 
-export const educationTimeline: EducationEntry[] = [
+export const EDUCATION_RESOURCE = "Education";
+
+export const educationFallback: EducationEntry[] = [];
+
+export const educationPlaceholder: EducationEntry[] = [
   {
-    school: "Colorado Mountain College",
-    program: "Medical Billing and Coding",
-    dates: "2025 – 2026",
-    tech: ["Medical Coding", "Health Informatics", "Excel"],
-  },
-  {
-    school: "Greater Altoona CTC",
-    program: "Computer and Networking Technology",
-    dates: "2019 — Jun 2025",
-    tech: ["Networking", "Windows", "Cisco", "Linux"],
+    school: "Unable to load education timeline",
+    program: "We couldn't fetch the most recent education data.",
+    dates: "—",
+    tech: ["Please try again later"],
   },
 ];

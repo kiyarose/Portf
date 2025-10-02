@@ -1,15 +1,6 @@
-export const defaultSkills = [
-  "Information Technology Skills",
-  "Customer Service",
-  "Gaining Med Admin skills",
-  "Technical Leadership",
-  "Team Leadership",
-  "Administration",
-  "Research",
-  "Advocacy",
-  "Sales",
-  "Logistics",
-] as const;
+export const SKILLS_RESOURCE = "Skills";
+
+export const skillsFallback: string[] = [];
 
 const skillIconEntries = [
   ["information technology skills", "material-symbols:memory-alt-rounded"],
@@ -66,3 +57,8 @@ const skillIconMap = skillIconEntries.reduce<Record<string, string>>(
 export function getSkillIcon(label: string): string | undefined {
   return skillIconMap[label.trim().toLowerCase()];
 }
+
+export const skillsPlaceholder: string[] = [
+  "Unable to load skills",
+  "Please refresh to try again",
+];
