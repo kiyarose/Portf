@@ -35,7 +35,7 @@
 - Accent palette leans warm orange and pink (`accent.DEFAULT` `#f97316`, `accent.muted` `#ec4899`); dark mode remains deep slate—match those tones across new UI.
 - Use rounded Material Symbols icons for navigation, social chips, and headers to keep iconography consistent.
 - Drive animations with Framer Motion; always respect `prefers-reduced-motion` and provide sensible fallbacks (toggle animation uses short fade/slide, not full spins).
-- The custom `.font-kiya` (Patrick Hand) highlights the name “Kiya Rose”; apply it consistently when the name appears in new sections.
+- The custom `.font-kiya` (Nanum Pen Script) highlights the name “Kiya Rose”; apply it consistently when the name appears in new sections.
 - The footer should surface a dynamic current year, the typographic © symbol, the `.font-kiya` name, and the build label (prefix = last edit signature, suffix = render id) alongside the “Crafted with React, Tailwind CSS, and Firebase.” line, with a pill-style tooltip explaining the two segments.
 - Privacy and legal copy should pull their “Last updated” value from `getBuildUpdatedAt()` so the date reflects the latest build automatically—never hardcode the date.
 - Developing skills use a dotted accent pill—follow the existing `isDeveloping` pattern in `SkillsSection` when adding new skills.
