@@ -65,6 +65,7 @@ build/Release
 
 # PlayWright Test Reports
 playwright-report/
+test-results/
 
 # Lighthouse CI Reports
 .lighthouseci/
