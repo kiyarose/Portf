@@ -1,4 +1,5 @@
 {
+  "_comment": "NOTE: This firebase.json configuration is currently UNUSED. The site is deployed to Cloudflare Pages, which uses public/_headers instead. This file is kept for reference and potential future Firebase hosting deployment. All security headers must be mirrored in public/_headers to take effect.",
   "hosting": {
     "public": "dist",
     "ignore": [
