@@ -21,7 +21,8 @@ This provides Spectre-class vulnerability protection while maintaining compatibi
 
 **Issue**: robots.txt and favicon.svg were missing the HSTS header.
 
-**Solution**: 
+**Solution**:
+
 - Added explicit `Strict-Transport-Security` header configuration for `robots.txt` and `sitemap.xml` in `firebase.json`.
 - Updated the `**/*.@(js|css|svg)` pattern in `firebase.json` to include all security headers, ensuring favicon.svg and other SVG files receive proper security headers including HSTS.
 
@@ -29,7 +30,8 @@ This provides Spectre-class vulnerability protection while maintaining compatibi
 
 **Issue**: robots.txt and favicon.svg were missing the X-Content-Type-Options header.
 
-**Solution**: 
+**Solution**:
+
 - Added explicit `X-Content-Type-Options: nosniff` header configuration for `robots.txt` and `sitemap.xml` in `firebase.json`.
 - Updated the `**/*.@(js|css|svg)` pattern in `firebase.json` to include all security headers, ensuring favicon.svg and other SVG files receive X-Content-Type-Options along with other security headers.
 
