@@ -19,15 +19,19 @@ This provides Spectre-class vulnerability protection while maintaining compatibi
 
 #### 2. Strict-Transport-Security Header Not Set on robots.txt [10035]
 
-**Issue**: robots.txt was missing the HSTS header.
+**Issue**: robots.txt and favicon.svg were missing the HSTS header.
 
-**Solution**: Added explicit `Strict-Transport-Security` header configuration for `robots.txt` and `sitemap.xml` in `firebase.json`.
+**Solution**: 
+- Added explicit `Strict-Transport-Security` header configuration for `robots.txt` and `sitemap.xml` in `firebase.json`.
+- Updated the `**/*.@(js|css|svg)` pattern in `firebase.json` to include all security headers, ensuring favicon.svg and other SVG files receive proper security headers including HSTS.
 
 #### 3. X-Content-Type-Options Header Missing on robots.txt [10021]
 
-**Issue**: robots.txt was missing the X-Content-Type-Options header.
+**Issue**: robots.txt and favicon.svg were missing the X-Content-Type-Options header.
 
-**Solution**: Added explicit `X-Content-Type-Options: nosniff` header configuration for `robots.txt` and `sitemap.xml` in `firebase.json`.
+**Solution**: 
+- Added explicit `X-Content-Type-Options: nosniff` header configuration for `robots.txt` and `sitemap.xml` in `firebase.json`.
+- Updated the `**/*.@(js|css|svg)` pattern in `firebase.json` to include all security headers, ensuring favicon.svg and other SVG files receive X-Content-Type-Options along with other security headers.
 
 #### 4. Cross-Domain Misconfiguration [10098]
 
@@ -77,6 +81,7 @@ This provides Spectre-class vulnerability protection while maintaining compatibi
 
 - Added `Cross-Origin-Embedder-Policy: credentialless` header
 - Added explicit security headers for `robots.txt` and `sitemap.xml`
+- Updated `**/*.@(js|css|svg)` pattern to include all security headers (Strict-Transport-Security, X-Content-Type-Options, X-Frame-Options, Referrer-Policy, Permissions-Policy, Cross-Origin-Opener-Policy, Cross-Origin-Embedder-Policy, Content-Security-Policy) along with Cache-Control, ensuring SVG files like favicon.svg receive proper security headers
 
 ### `public/_headers`
 
@@ -87,6 +92,8 @@ This provides Spectre-class vulnerability protection while maintaining compatibi
 
 - Added exception for [10055] (CSP style-src unsafe-inline) with documentation
 - Added exception for [90003] (SRI missing on Google Fonts) with documentation
+- Added entries for fixed issues: [10098], [90004], [10035], [10021] with documentation explaining the fixes
+- Added entries for informational findings: [10094], [10027], [10109], [10049], [10015], [10050], [90005] with explanations
 
 ## Security Headers Summary
 
