@@ -13,7 +13,7 @@ The alerts in the screenshot were caused by **Vite's preview server not serving 
 When scanning `localhost:4173` before the fix:
 
 1. ❌ **Content Security Policy (CSP) Header Not Set [10038]** - 13 instances
-2. ❌ **Hidden File Found [Hidden File Finder]** - 5 instances  
+2. ❌ **Hidden File Found [Hidden File Finder]** - 5 instances
 3. ❌ **Missing Anti-clickjacking Header [10020]** - 13 instances
 4. ❌ **X-Content-Type-Options Header Missing [10021]** - 21 instances
 5. ℹ️ **Content-Type Header Empty** - Informational
@@ -69,7 +69,7 @@ Running OWASP ZAP baseline scan against `localhost:4173` after implementing the 
 ### ✅ Resolved Alerts
 
 1. ✅ **Content Security Policy (CSP) Header Not Set [10038]** - RESOLVED
-2. ✅ **Missing Anti-clickjacking Header [10020]** - RESOLVED  
+2. ✅ **Missing Anti-clickjacking Header [10020]** - RESOLVED
 3. ✅ **X-Content-Type-Options Header Missing [10021]** - RESOLVED
 4. ✅ **Strict-Transport-Security Header [10035]** - PASS
 5. ✅ **Cross-Domain Misconfiguration [10098]** - PASS
@@ -87,6 +87,7 @@ Running OWASP ZAP baseline scan against `localhost:4173` after implementing the 
 ## Verification
 
 ### Local Testing
+
 ```bash
 # Start preview server
 npm run build && npm run preview
@@ -96,6 +97,7 @@ curl -I http://localhost:4173/
 ```
 
 Headers confirmed present:
+
 - ✅ `Strict-Transport-Security: max-age=31536000; includeSubDomains; preload`
 - ✅ `X-Content-Type-Options: nosniff`
 - ✅ `X-Frame-Options: DENY`
@@ -108,11 +110,13 @@ Headers confirmed present:
 ### ZAP Scan Results
 
 **Before Fix:**
+
 ```
 FAIL-NEW: 0	FAIL-INPROG: 0	WARN-NEW: 5	WARN-INPROG: 0	INFO: 0	IGNORE: 0	PASS: 53
 ```
 
 **After Fix:**
+
 ```
 FAIL-NEW: 0	FAIL-INPROG: 0	WARN-NEW: 3	WARN-INPROG: 0	INFO: 0	IGNORE: 0	PASS: 55
 ```
@@ -133,15 +137,15 @@ The `public/_headers` file is correctly configured and will be served by Cloudfl
 
 ## Summary
 
-| Issue | Status | Notes |
-|-------|--------|-------|
-| CSP Header Not Set | ✅ Fixed | Now served in preview mode |
-| X-Frame-Options Missing | ✅ Fixed | Now served in preview mode |
-| X-Content-Type-Options Missing | ✅ Fixed | Now served in preview mode |
-| HSTS Missing | ✅ Fixed | Now served in preview mode |
-| CSP style-src unsafe-inline | ⚠️ Accepted | Required for Framer Motion |
-| Suspicious Comments | ℹ️ Informational | Build artifacts, no action needed |
-| Modern Web Application | ℹ️ Informational | Detection only, no action needed |
+| Issue                          | Status           | Notes                             |
+| ------------------------------ | ---------------- | --------------------------------- |
+| CSP Header Not Set             | ✅ Fixed         | Now served in preview mode        |
+| X-Frame-Options Missing        | ✅ Fixed         | Now served in preview mode        |
+| X-Content-Type-Options Missing | ✅ Fixed         | Now served in preview mode        |
+| HSTS Missing                   | ✅ Fixed         | Now served in preview mode        |
+| CSP style-src unsafe-inline    | ⚠️ Accepted      | Required for Framer Motion        |
+| Suspicious Comments            | ℹ️ Informational | Build artifacts, no action needed |
+| Modern Web Application         | ℹ️ Informational | Detection only, no action needed  |
 
 ## Testing Commands
 
