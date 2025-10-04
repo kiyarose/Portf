@@ -16,7 +16,8 @@ Issue #190 reported several security findings from a ZAP baseline scan against h
 
 **Finding**: Missing `Cross-Origin-Embedder-Policy` header on robots.txt and sitemap.xml.
 
-**Current Configuration**: 
+**Current Configuration**:
+
 - `public/_headers` includes `Cross-Origin-Embedder-Policy: credentialless` for all resources including `/robots.txt` and `/sitemap.xml` (lines 40, 51)
 - This provides Spectre-class vulnerability protection while maintaining compatibility with third-party resources
 
@@ -27,6 +28,7 @@ Issue #190 reported several security findings from a ZAP baseline scan against h
 **Finding**: robots.txt missing HSTS header.
 
 **Current Configuration**:
+
 - `public/_headers` line 34: `/robots.txt` includes `Strict-Transport-Security: max-age=31536000; includeSubDomains; preload`
 - `public/_headers` line 45: `/sitemap.xml` includes the same HSTS configuration
 - Forces HTTPS connections for these resources
@@ -38,6 +40,7 @@ Issue #190 reported several security findings from a ZAP baseline scan against h
 **Finding**: robots.txt missing X-Content-Type-Options header.
 
 **Current Configuration**:
+
 - `public/_headers` line 35: `/robots.txt` includes `X-Content-Type-Options: nosniff`
 - `public/_headers` line 46: `/sitemap.xml` includes the same configuration
 - Prevents MIME type sniffing attacks
@@ -49,6 +52,7 @@ Issue #190 reported several security findings from a ZAP baseline scan against h
 **Finding**: Overly permissive CORS headers detected.
 
 **Current Configuration**:
+
 - Verified no `Access-Control-Allow-Origin` headers in `public/_headers`
 - No wildcard CORS configurations present
 - Application doesn't require global CORS policies
@@ -59,12 +63,14 @@ Issue #190 reported several security findings from a ZAP baseline scan against h
 
 **Status**: ⚠️ ACCEPTED - Required for functionality
 
-**Reason**: 
+**Reason**:
+
 - Framer Motion animation library requires inline styles for dynamic animations
 - React component styling patterns use inline styles for dynamic theming
 - Removing would break core site functionality
 
 **Mitigation**:
+
 - All other CSP directives properly configured with specific origins
 - No user-generated content that could inject malicious styles
 - Defense-in-depth through other security headers (X-Frame-Options, X-Content-Type-Options, etc.)
@@ -74,11 +80,13 @@ Issue #190 reported several security findings from a ZAP baseline scan against h
 **Status**: ⚠️ ACCEPTED - Incompatible with Google Fonts
 
 **Reason**:
+
 - Google Fonts serves dynamic CSS based on user-agent and browser capabilities
 - CSS content varies per request to optimise font loading
 - SRI would break font loading for many users
 
 **Mitigation**:
+
 - Font stylesheet uses `crossorigin="anonymous"` attribute
 - CSP restricts font sources to trusted domains
 - Google Fonts is a trusted, well-known CDN with its own security measures
@@ -93,13 +101,14 @@ The following findings are informational only and do not represent actual securi
 - **[10049] Cache-related findings** - Proper cache headers already configured
 - **[10015] Re-examine Cache-control Directives** - Cache headers properly configured
 - **[10050] Retrieved from Cache** - Cached content working as expected
-- **[90005] Sec-Fetch-* Headers Missing** - These are request headers set by the browser, not response headers we can control
+- **[90005] Sec-Fetch-\* Headers Missing** - These are request headers set by the browser, not response headers we can control
 
 ## Security Headers Configuration Summary
 
 All resources served by the application include comprehensive security headers via `public/_headers`:
 
 ### General Resources (`/*`)
+
 ```
 Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
 X-Content-Type-Options: nosniff
@@ -112,13 +121,17 @@ Content-Security-Policy: [comprehensive policy with specific origins]
 ```
 
 ### Static Assets (`/assets/*`, `/admin-assets/*`, `/*.svg`)
+
 All general security headers plus:
+
 ```
 Cache-Control: public, max-age=31536000, immutable
 ```
 
 ### robots.txt and sitemap.xml
+
 All general security headers plus:
+
 ```
 Cache-Control: public, max-age=3600
 ```
@@ -130,18 +143,20 @@ Cache-Control: public, max-age=3600
 3. ✅ Confirmed no CORS wildcard headers present
 4. ✅ Verified build process copies `_headers` to dist folder
 5. ✅ Took BEFORE screenshots (web/mobile, light/dark modes)
-6. ✅ Updated `.zap-ignore` documentation to clarify fixes in both firebase.json and public/_headers
+6. ✅ Updated `.zap-ignore` documentation to clarify fixes in both firebase.json and public/\_headers
 7. ✅ Added `playwright-logs/` to `.gitignore`
 
 ## Testing Performed
 
 ### Build Verification
+
 - ✅ Site builds successfully without errors
 - ✅ Linting passes with no new issues
 - ✅ `_headers` file properly copied to dist/
 - ✅ All security headers correctly configured
 
 ### Visual Regression Testing
+
 - ✅ Captured full-page screenshots in 4 variants (web/mobile × light/dark)
 - ✅ No visual regressions expected (no code changes to application logic or styles)
 - ✅ Screenshots confirm site renders correctly with all security headers applied
@@ -155,13 +170,16 @@ When this PR is merged and deployed to Cloudflare Pages, the ZAP scan findings s
 ## Files Modified
 
 ### `.gitignore`
+
 - Added `playwright-logs/` to prevent committing screenshot artifacts
 
 ### `.zap-ignore`
+
 - Updated documentation to clarify fixes are in both `firebase.json` and `public/_headers`
 - Ensures ZAP scans understand these findings are addressed
 
 ### `SECURITY_ZAP_FIXES_190.md` (this file)
+
 - Comprehensive documentation of issue #190 analysis and verification
 
 ## Expected ZAP Scan Results After Deployment
