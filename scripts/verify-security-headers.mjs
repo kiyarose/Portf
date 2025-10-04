@@ -1,75 +1,81 @@
 #!/usr/bin/env node
 /**
  * Security Headers Synchronization Verification Script
- * 
+ *
  * This script verifies that security headers are synchronized across:
  * - public/_headers (Cloudflare Pages)
  * - firebase.json (Firebase Hosting)
  * - vite.config.ts (imports from security-headers.config.ts)
- * 
+ *
  * Run with: node scripts/verify-security-headers.mjs
  */
 
-import { readFileSync } from 'fs';
-import { resolve } from 'path';
-import { fileURLToPath } from 'url';
-import { dirname } from 'path';
+import { readFileSync } from "fs";
+import { resolve, dirname } from "path";
+import { fileURLToPath } from "url";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
-const rootDir = resolve(__dirname, '..');
+const rootDir = resolve(__dirname, "..");
 
-console.log('🔐 Security Headers Parity Verification');
-console.log('═'.repeat(80));
+console.log("🔐 Security Headers Parity Verification");
+console.log("═".repeat(80));
 console.log();
 
 // Check if vite.config.ts imports from master config
-console.log('🔍 Checking vite.config.ts...');
-const viteConfigPath = resolve(rootDir, 'vite.config.ts');
-const viteConfigContent = readFileSync(viteConfigPath, 'utf-8');
+console.log("🔍 Checking vite.config.ts...");
+const viteConfigPath = resolve(rootDir, "vite.config.ts");
+const viteConfigContent = readFileSync(viteConfigPath, "utf-8");
 
-const importsSecurityHeaders = viteConfigContent.includes('import { SECURITY_HEADERS }') &&
-                                viteConfigContent.includes('from "./security-headers.config"');
-const usesSecurityHeaders = viteConfigContent.includes('Object.entries(SECURITY_HEADERS)');
+const importsSecurityHeaders =
+  viteConfigContent.includes("import { SECURITY_HEADERS }") &&
+  viteConfigContent.includes('from "./security-headers.config"');
+const usesSecurityHeaders = viteConfigContent.includes(
+  "Object.entries(SECURITY_HEADERS)",
+);
 
 if (importsSecurityHeaders && usesSecurityHeaders) {
-  console.log('  ✅ Imports and uses SECURITY_HEADERS from master config');
+  console.log("  ✅ Imports and uses SECURITY_HEADERS from master config");
 } else {
-  console.error('  ❌ Does not properly import/use SECURITY_HEADERS from master config');
-  console.log('     Expected: import { SECURITY_HEADERS } from "./security-headers.config"');
-  console.log('     Expected: Object.entries(SECURITY_HEADERS)');
+  console.error(
+    "  ❌ Does not properly import/use SECURITY_HEADERS from master config",
+  );
+  console.log(
+    '     Expected: import { SECURITY_HEADERS } from "./security-headers.config"',
+  );
+  console.log("     Expected: Object.entries(SECURITY_HEADERS)");
   process.exit(1);
 }
 console.log();
 
 // Check that security-headers.config.ts exists
-console.log('🔍 Checking security-headers.config.ts...');
-const configPath = resolve(rootDir, 'security-headers.config.ts');
+console.log("🔍 Checking security-headers.config.ts...");
+const configPath = resolve(rootDir, "security-headers.config.ts");
 try {
-  const configContent = readFileSync(configPath, 'utf-8');
-  if (configContent.includes('export const SECURITY_HEADERS')) {
-    console.log('  ✅ Master security headers config exists');
+  const configContent = readFileSync(configPath, "utf-8");
+  if (configContent.includes("export const SECURITY_HEADERS")) {
+    console.log("  ✅ Master security headers config exists");
   } else {
-    console.error('  ❌ Master config does not export SECURITY_HEADERS');
+    console.error("  ❌ Master config does not export SECURITY_HEADERS");
     process.exit(1);
   }
 } catch {
-  console.error('  ❌ security-headers.config.ts not found');
+  console.error("  ❌ security-headers.config.ts not found");
   process.exit(1);
 }
 console.log();
 
 // Verify public/_headers and firebase.json have the required headers
-console.log('🔍 Checking public/_headers...');
-const headersFilePath = resolve(rootDir, 'public/_headers');
-const headersFileContent = readFileSync(headersFilePath, 'utf-8');
+console.log("🔍 Checking public/_headers...");
+const headersFilePath = resolve(rootDir, "public/_headers");
+const headersFileContent = readFileSync(headersFilePath, "utf-8");
 
 const requiredHeaders = [
-  'Strict-Transport-Security',
-  'X-Content-Type-Options',
-  'X-Frame-Options',
-  'Content-Security-Policy',
-  'Cross-Origin-Embedder-Policy',
+  "Strict-Transport-Security",
+  "X-Content-Type-Options",
+  "X-Frame-Options",
+  "Content-Security-Policy",
+  "Cross-Origin-Embedder-Policy",
 ];
 
 let headersValid = true;
@@ -80,13 +86,13 @@ for (const header of requiredHeaders) {
   }
 }
 if (headersValid) {
-  console.log('  ✅ All required security headers present');
+  console.log("  ✅ All required security headers present");
 }
 console.log();
 
-console.log('🔍 Checking firebase.json...');
-const firebaseJsonPath = resolve(rootDir, 'firebase.json');
-const firebaseJsonContent = readFileSync(firebaseJsonPath, 'utf-8');
+console.log("🔍 Checking firebase.json...");
+const firebaseJsonPath = resolve(rootDir, "firebase.json");
+const firebaseJsonContent = readFileSync(firebaseJsonPath, "utf-8");
 
 let firebaseValid = true;
 for (const header of requiredHeaders) {
@@ -96,28 +102,35 @@ for (const header of requiredHeaders) {
   }
 }
 if (firebaseValid) {
-  console.log('  ✅ All required security headers present');
+  console.log("  ✅ All required security headers present");
 }
 console.log();
 
 // Final result
-console.log('═'.repeat(80));
-if (importsSecurityHeaders && usesSecurityHeaders && headersValid && firebaseValid) {
-  console.log('✅ SUCCESS: Security headers configuration is valid!');
+console.log("═".repeat(80));
+if (
+  importsSecurityHeaders &&
+  usesSecurityHeaders &&
+  headersValid &&
+  firebaseValid
+) {
+  console.log("✅ SUCCESS: Security headers configuration is valid!");
   console.log();
-  console.log('📝 Note: vite.config.ts imports from the master config file.');
-  console.log('   To update headers, modify security-headers.config.ts');
-  console.log('   and ensure public/_headers and firebase.json stay in sync.');
-  console.log('═'.repeat(80));
+  console.log("📝 Note: vite.config.ts imports from the master config file.");
+  console.log("   To update headers, modify security-headers.config.ts");
+  console.log("   and ensure public/_headers and firebase.json stay in sync.");
+  console.log("═".repeat(80));
   process.exit(0);
 } else {
-  console.log('❌ FAILURE: Security headers configuration has issues!');
-  console.log('═'.repeat(80));
+  console.log("❌ FAILURE: Security headers configuration has issues!");
+  console.log("═".repeat(80));
   console.log();
-  console.log('Please ensure:');
-  console.log('  1. security-headers.config.ts exists and exports SECURITY_HEADERS');
-  console.log('  2. vite.config.ts imports and uses SECURITY_HEADERS');
-  console.log('  3. public/_headers contains all required headers');
-  console.log('  4. firebase.json contains all required headers');
+  console.log("Please ensure:");
+  console.log(
+    "  1. security-headers.config.ts exists and exports SECURITY_HEADERS",
+  );
+  console.log("  2. vite.config.ts imports and uses SECURITY_HEADERS");
+  console.log("  3. public/_headers contains all required headers");
+  console.log("  4. firebase.json contains all required headers");
   process.exit(1);
 }

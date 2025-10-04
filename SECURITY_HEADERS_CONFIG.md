@@ -5,6 +5,7 @@ This document explains the centralized security headers configuration system imp
 ## Problem
 
 Previously, security headers were duplicated across three files:
+
 1. `public/_headers` - for Cloudflare Pages
 2. `firebase.json` - for Firebase Hosting
 3. `vite.config.ts` - for local preview server
@@ -29,6 +30,7 @@ security-headers.config.ts  ← Master configuration
 **File:** `security-headers.config.ts`
 
 Contains:
+
 - `SECURITY_HEADERS` - Object with all security headers
 - `CACHE_HEADERS` - Cache control headers for different resource types
 - Helper functions for converting to different formats
@@ -75,10 +77,12 @@ npm run verify:security-headers
 ### Automated CI Check
 
 A GitHub Actions workflow (`security-headers-parity.yml`) automatically runs on:
+
 - Pull requests that modify security-related files
 - Pushes to main that modify security-related files
 
 The workflow will fail if:
+
 - `vite.config.ts` doesn't import from the master config
 - Required headers are missing from `public/_headers`
 - Required headers are missing from `firebase.json`
@@ -92,6 +96,7 @@ Edit `security-headers.config.ts` to add, remove, or modify headers.
 ### Step 2: Update Dependent Files
 
 Manually update:
+
 - `public/_headers` - Update header values to match master config
 - `firebase.json` - Update header values in the `headers` array
 
@@ -113,11 +118,13 @@ curl -I http://localhost:4173/
 ## Files Modified
 
 ### Created
+
 - `security-headers.config.ts` - Master configuration file
 - `scripts/verify-security-headers.mjs` - Verification script
 - `.github/workflows/security-headers-parity.yml` - CI verification workflow
 
 ### Modified
+
 - `vite.config.ts` - Now imports from master config
 - `package.json` - Added `verify:security-headers` script
 - `eslint.config.js` - Added scripts folder to Node.js config

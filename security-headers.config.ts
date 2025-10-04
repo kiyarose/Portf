@@ -1,12 +1,12 @@
 /**
  * Master Security Headers Configuration
- * 
+ *
  * This file defines all security headers in a centralized location.
  * These headers are used across:
  * - public/_headers (Cloudflare Pages)
  * - firebase.json (Firebase Hosting)
  * - vite.config.ts (Local preview server)
- * 
+ *
  * DO NOT modify headers in individual files - update this master config instead.
  */
 
