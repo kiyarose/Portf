@@ -43,7 +43,11 @@ const tsRecommended = Array.isArray(tseslint.configs.recommended)
   : [tseslint.configs.recommended];
 
 const nodeConfig = {
-  files: [".lighthouserc.{js,cjs}", "src/tools/**/*.{js,cjs,mjs}"], // Support both .js and .cjs
+  files: [
+    ".lighthouserc.{js,cjs}",
+    "src/tools/**/*.{js,cjs,mjs}",
+    "scripts/**/*.{js,cjs,mjs}",
+  ], // Support both .js and .cjs
   languageOptions: {
     ecmaVersion: 2020,
     globals: {

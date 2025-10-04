@@ -9,6 +9,7 @@ import {
 } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { SECURITY_HEADERS } from "./security-headers.config";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -94,9 +95,30 @@ function copyToolAssets(): Plugin {
   };
 }
 
+function serveSecurityHeaders(): Plugin {
+  return {
+    name: "serve-security-headers",
+    configurePreviewServer(server) {
+      server.middlewares.use((_req, res, next) => {
+        // Apply security headers from master config
+        for (const [key, value] of Object.entries(SECURITY_HEADERS)) {
+          res.setHeader(key, value);
+        }
+
+        next();
+      });
+    },
+  };
+}
+
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [react(), copyAdminAssets(), copyToolAssets()],
+  plugins: [
+    react(),
+    copyAdminAssets(),
+    copyToolAssets(),
+    serveSecurityHeaders(),
+  ],
   define: {
     __BUILD_TIME__: JSON.stringify(new Date().toISOString()),
   },

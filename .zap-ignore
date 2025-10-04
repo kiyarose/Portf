@@ -1,14 +1,17 @@
-10096    # Example: Missing Strict-Transport-Security on non-prod
-10055    # CSP: style-src unsafe-inline - Required for Framer Motion animations which use inline styles
-90003    # Sub Resource Integrity Attribute Missing - Google Fonts uses dynamic CSS per user-agent, SRI not compatible
-10098    # Cross-Domain Misconfiguration - Fixed in firebase.json and _headers by removing wildcard CORS
-90004    # Insufficient Site Isolation Against Spectre - Fixed with Cross-Origin-Embedder-Policy: credentialless
-10035    # Strict-Transport-Security Header Not Set - Fixed for robots.txt and sitemap.xml in firebase.json
-10021    # X-Content-Type-Options Header Missing - Fixed for robots.txt and sitemap.xml in firebase.json
-10094    # Base64 Disclosure - Informational: Build artifacts contain base64-encoded resources (expected behaviour)
-10027    # Information Disclosure - Suspicious Comments - Informational: No suspicious comments in production build
-10109    # Modern Web Application - Informational: Detection of modern web app technologies
-10049    # Non-Storable Content / Storable and Cacheable Content - Informational: Cache headers properly configured
-10015    # Re-examine Cache-control Directives - Informational: Cache headers properly configured in firebase.json
-10050    # Retrieved from Cache - Informational: Cached content working as expected
-90005    # Sec-Fetch-* Headers Missing - Informational: These are request headers set by browser, not response headers
+10096	IGNORE	(Example: Missing Strict-Transport-Security on non-prod)
+10055	IGNORE	(CSP: style-src unsafe-inline - Required for Framer Motion animations which use inline styles)
+90003	IGNORE	(Sub Resource Integrity Attribute Missing - Google Fonts uses dynamic CSS per user-agent, SRI not compatible)
+10098	IGNORE	(Cross-Domain Misconfiguration - Fixed in firebase.json and public/_headers by removing wildcard CORS)
+90004	IGNORE	(Insufficient Site Isolation Against Spectre - Fixed with Cross-Origin-Embedder-Policy: credentialless in public/_headers)
+10035	IGNORE	(Strict-Transport-Security Header Not Set - Fixed for robots.txt and sitemap.xml in firebase.json and public/_headers)
+10021	IGNORE	(X-Content-Type-Options Header Missing - Fixed for robots.txt and sitemap.xml in firebase.json and public/_headers)
+10094	IGNORE	(Base64 Disclosure - Informational: Build artifacts contain base64-encoded resources expected behaviour)
+10027	IGNORE	(Information Disclosure - Suspicious Comments - Informational: No suspicious comments in production build)
+10109	IGNORE	(Modern Web Application - Informational: Detection of modern web app technologies)
+10049	IGNORE	(Non-Storable Content / Storable and Cacheable Content - Informational: Cache headers properly configured)
+10015	IGNORE	(Re-examine Cache-control Directives - Informational: Cache headers properly configured)
+10050	IGNORE	(Retrieved from Cache - Informational: Cached content working as expected)
+90005	IGNORE	(Sec-Fetch-* Headers Missing - Informational: These are request headers set by browser not response headers)
+40035	IGNORE	(Hidden File Finder - Informational: Detection of common hidden files that don't exist in our build)
+
+
