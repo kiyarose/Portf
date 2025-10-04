@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 /**
  * Security Headers Synchronization Verification Script
  *
