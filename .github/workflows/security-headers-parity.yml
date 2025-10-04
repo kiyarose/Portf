@@ -1,0 +1,55 @@
+name: Security Headers Parity Check
+
+on:
+  pull_request:
+    paths:
+      - 'security-headers.config.ts'
+      - 'public/_headers'
+      - 'firebase.json'
+      - 'vite.config.ts'
+      - '.github/workflows/security-headers-parity.yml'
+  push:
+    branches:
+      - main
+    paths:
+      - 'security-headers.config.ts'
+      - 'public/_headers'
+      - 'firebase.json'
+      - 'vite.config.ts'
+
+permissions:
+  contents: read
+
+jobs:
+  verify-parity:
+    name: Verify Security Headers Synchronization
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Run security headers parity check
+        run: node scripts/verify-security-headers.mjs
+
+      - name: Comment on PR (if failed)
+        if: failure() && github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: '⚠️ **Security Headers Parity Check Failed**\n\n' +
+                    'The security headers are not synchronized across configuration files.\n\n' +
+                    'Please ensure that:\n' +
+                    '1. `security-headers.config.ts` contains the master configuration\n' +
+                    '2. `vite.config.ts` imports from the master config\n' +
+                    '3. `public/_headers` and `firebase.json` are updated to match\n\n' +
+                    'See the workflow logs for details.'
+            })

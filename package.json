@@ -12,6 +12,7 @@
     "css:watch": "postcss src/index.css --config . --output dist/style.css --watch",
     "css:build": "postcss src/index.css --config . --output dist/style.css",
     "test:e2e": "playwright test",
+    "verify:security-headers": "node scripts/verify-security-headers.mjs",
     "data:to-json": "node src/tools/data-converter.mjs to-json",
     "data:to-ts": "node src/tools/data-converter.mjs to-ts"
   },

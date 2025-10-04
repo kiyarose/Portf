@@ -9,6 +9,7 @@ import {
 } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { SECURITY_HEADERS } from "./security-headers.config";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -98,23 +99,9 @@ function serveSecurityHeaders(): Plugin {
   return {
     name: "serve-security-headers",
     configurePreviewServer(server) {
-      server.middlewares.use((req, res, next) => {
-        // Security headers for all responses
-        const headers: Record<string, string> = {
-          "Strict-Transport-Security":
-            "max-age=31536000; includeSubDomains; preload",
-          "X-Content-Type-Options": "nosniff",
-          "X-Frame-Options": "DENY",
-          "Referrer-Policy": "strict-origin-when-cross-origin",
-          "Permissions-Policy": "camera=(), microphone=(), geolocation=()",
-          "Cross-Origin-Opener-Policy": "same-origin-allow-popups",
-          "Cross-Origin-Embedder-Policy": "credentialless",
-          "Content-Security-Policy":
-            "default-src 'self'; img-src 'self' data: https://www.googletagmanager.com; script-src 'self' https://s.pageclip.co https://www.googletagmanager.com https://challenges.cloudflare.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://s.pageclip.co; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://send.pageclip.co https://api.iconify.design https://www.googletagmanager.com https://www.google-analytics.com https://challenges.cloudflare.com https://data.sillylittle.tech; frame-src 'self' https://challenges.cloudflare.com; object-src 'none'; base-uri 'self'; form-action 'self' https://send.pageclip.co; frame-ancestors 'none'; manifest-src 'self';",
-        };
-
-        // Apply headers to response
-        for (const [key, value] of Object.entries(headers)) {
+      server.middlewares.use((_req, res, next) => {
+        // Apply security headers from master config
+        for (const [key, value] of Object.entries(SECURITY_HEADERS)) {
           res.setHeader(key, value);
         }
 
