@@ -22,21 +22,24 @@ The ZAP scan findings reflect the state of the deployed site at the time of scan
 
 ## Security Headers Verified
 
-### For robots.txt (line 33-42 in public/_headers):
+### For robots.txt (line 33-42 in public/\_headers):
+
 - ✅ Strict-Transport-Security: `max-age=31536000; includeSubDomains; preload`
 - ✅ X-Content-Type-Options: `nosniff`
 - ✅ X-Frame-Options: `DENY`
 - ✅ Cross-Origin-Embedder-Policy: `credentialless`
 - ✅ All other security headers present
 
-### For sitemap.xml (line 44-53 in public/_headers):
+### For sitemap.xml (line 44-53 in public/\_headers):
+
 - ✅ Strict-Transport-Security: `max-age=31536000; includeSubDomains; preload`
 - ✅ X-Content-Type-Options: `nosniff`
 - ✅ X-Frame-Options: `DENY`
 - ✅ Cross-Origin-Embedder-Policy: `credentialless`
 - ✅ All other security headers present
 
-### For all resources (line 1-9 in public/_headers):
+### For all resources (line 1-9 in public/\_headers):
+
 - ✅ All security headers properly configured
 - ✅ No CORS wildcard headers present
 
@@ -47,13 +50,14 @@ When this PR is deployed to Cloudflare Pages, subsequent ZAP scans should show a
 ## Files Changed
 
 - `.gitignore` - Added `playwright-logs/` to exclude screenshot artifacts
-- `.zap-ignore` - Updated to clarify fixes are in both firebase.json and public/_headers
+- `.zap-ignore` - Updated to clarify fixes are in both firebase.json and public/\_headers
 - `SECURITY_ZAP_FIXES_190.md` - Comprehensive documentation of issue analysis
 - `VERIFICATION_SUMMARY.md` (this file) - Quick verification summary
 
 ## Visual Regression Testing
 
 All 8 screenshot variants captured:
+
 - Before/After: Web Light Mode (1440×900)
 - Before/After: Web Dark Mode (1440×900)
 - Before/After: Mobile Light Mode (390×844)
