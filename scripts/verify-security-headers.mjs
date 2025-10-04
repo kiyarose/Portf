@@ -43,7 +43,9 @@ if (importsSecurityHeaders && usesSecurityHeaders) {
     '     Expected: import { SECURITY_HEADERS } from "./security-headers.config"',
   );
   console.log("     Expected: Object.entries(SECURITY_HEADERS)");
-  process.exit(1);
+  throw new Error(
+    "vite.config.ts does not properly import/use SECURITY_HEADERS",
+  );
 }
 console.log();
 
@@ -56,11 +58,16 @@ try {
     console.log("  ✅ Master security headers config exists");
   } else {
     console.error("  ❌ Master config does not export SECURITY_HEADERS");
-    process.exit(1);
+    throw new Error(
+      "security-headers.config.ts does not export SECURITY_HEADERS",
+    );
   }
-} catch {
-  console.error("  ❌ security-headers.config.ts not found");
-  process.exit(1);
+} catch (error) {
+  if (error.code === "ENOENT") {
+    console.error("  ❌ security-headers.config.ts not found");
+    throw new Error("security-headers.config.ts not found");
+  }
+  throw error;
 }
 console.log();
 
@@ -119,7 +126,7 @@ if (
   console.log("   To update headers, modify security-headers.config.ts");
   console.log("   and ensure public/_headers and firebase.json stay in sync.");
   console.log("═".repeat(80));
-  process.exit(0);
+  // Script completed successfully
 } else {
   console.log("❌ FAILURE: Security headers configuration has issues!");
   console.log("═".repeat(80));
@@ -131,5 +138,5 @@ if (
   console.log("  2. vite.config.ts imports and uses SECURITY_HEADERS");
   console.log("  3. public/_headers contains all required headers");
   console.log("  4. firebase.json contains all required headers");
-  process.exit(1);
+  throw new Error("Security headers configuration validation failed");
 }

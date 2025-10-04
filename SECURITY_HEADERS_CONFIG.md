@@ -74,6 +74,8 @@ Run the verification script to check that all files are synchronized:
 npm run verify:security-headers
 ```
 
+**Note**: The script now throws errors instead of using `process.exit()` (following Node.js best practices). When the script exits with a non-zero code, it indicates validation failed.
+
 ### Automated CI Check
 
 A GitHub Actions workflow (`security-headers-parity.yml`) automatically runs on:
