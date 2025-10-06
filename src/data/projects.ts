@@ -13,7 +13,7 @@ export const projectsPlaceholder: Project[] = [
   {
     title: "Projects failed to load",
     description:
-      "We couldn't reach data.sillylittle.tech to fetch the latest projects.",
+      "We couldn't reach data.kiya.cat to fetch the latest projects.",
     tech: ["Connection issue"],
   },
 ];

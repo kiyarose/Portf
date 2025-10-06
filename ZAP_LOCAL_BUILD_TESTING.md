@@ -47,7 +47,7 @@ function serveSecurityHeaders(): Plugin {
           "Cross-Origin-Opener-Policy": "same-origin-allow-popups",
           "Cross-Origin-Embedder-Policy": "credentialless",
           "Content-Security-Policy":
-            "default-src 'self'; img-src 'self' data: https://www.googletagmanager.com; script-src 'self' https://s.pageclip.co https://www.googletagmanager.com https://challenges.cloudflare.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://s.pageclip.co; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://send.pageclip.co https://api.iconify.design https://www.googletagmanager.com https://www.google-analytics.com https://challenges.cloudflare.com https://data.sillylittle.tech; frame-src 'self' https://challenges.cloudflare.com; object-src 'none'; base-uri 'self'; form-action 'self' https://send.pageclip.co; frame-ancestors 'none'; manifest-src 'self';",
+            "default-src 'self'; img-src 'self' data: https://www.googletagmanager.com; script-src 'self' https://s.pageclip.co https://www.googletagmanager.com https://challenges.cloudflare.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://s.pageclip.co; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://send.pageclip.co https://api.iconify.design https://www.googletagmanager.com https://www.google-analytics.com https://challenges.cloudflare.com https://data.kiya.cat; frame-src 'self' https://challenges.cloudflare.com; object-src 'none'; base-uri 'self'; form-action 'self' https://send.pageclip.co; frame-ancestors 'none'; manifest-src 'self';",
         };
 
         // Apply headers to response
