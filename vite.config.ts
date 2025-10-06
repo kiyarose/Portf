@@ -125,7 +125,7 @@ export default defineConfig({
   server: {
     proxy: {
       "/__remote-data": {
-        target: "https://data.sillylittle.tech",
+        target: "https://data.kiya.cat",
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/__remote-data/, ""),
       },

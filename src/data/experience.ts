@@ -16,7 +16,7 @@ export const experiencePlaceholder: ExperienceEntry[] = [
     role: "Please try again later.",
     dates: "—",
     description:
-      "We weren't able to load experience details from data.sillylittle.tech.",
+      "We weren't able to load experience details from data.kiya.cat.",
     tech: ["Connection issue"],
   },
 ];
