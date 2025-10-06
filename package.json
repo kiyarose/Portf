@@ -37,7 +37,7 @@
     "@lhci/cli": "^0.15.1",
     "@playwright/test": "^1.55.1",
     "@tailwindcss/postcss": "^4.1.13",
-    "@types/node": "^24.5.2",
+    "@types/node": "^24.7.0",
     "@types/react": "^19.1.15",
     "@types/react-dom": "^19.2.0",
     "@vitejs/plugin-react": "^5.0.4",
