@@ -40,7 +40,7 @@ jobs:
                 await github.rest.repos.compareCommitsWithBasehead({
                   owner,
                   repo,
-                  basehead: `${pr.head.ref}...${pr.base.ref}`
+                  basehead: `${pr.base.ref}...${pr.head.ref}`
                 });
 
               const isBehind = comparison.behind_by > 0;
