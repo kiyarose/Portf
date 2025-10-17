@@ -1,0 +1,87 @@
+---
+name: Dependabot Rebase Automation
+"on":
+  schedule:
+    - cron: "0 * * * *"   # hourly at minute 0
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  rebase-stale-dependabot-prs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Find and rebase stale Dependabot PRs
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { owner, repo } = context.repo;
+
+            // Fetch all open PRs created by Dependabot
+            const { data: pullRequests } = await github.rest.pulls.list({
+              owner,
+              repo,
+              state: 'open',
+              per_page: 100
+            });
+
+            const dependabotPRs = pullRequests.filter(pr =>
+              pr.user.login === 'dependabot[bot]'
+            );
+
+            const count = dependabotPRs.length;
+            console.log(`Found ${count} open Dependabot PR(s)`);
+
+            for (const pr of dependabotPRs) {
+              // Check if the PR is behind the base branch
+              const { data: comparison } =
+                await github.rest.repos.compareCommitsWithBasehead({
+                  owner,
+                  repo,
+                  basehead: `${pr.head.ref}...${pr.base.ref}`
+                });
+
+              const isBehind = comparison.behind_by > 0;
+
+              if (isBehind) {
+                const behind = comparison.behind_by;
+                console.log(
+                  `PR #${pr.number} is ${behind} commit(s) behind ` +
+                  `${pr.base.ref}`
+                );
+
+                // Check if we've already posted a rebase comment
+                const { data: comments } =
+                  await github.rest.issues.listComments({
+                    owner,
+                    repo,
+                    issue_number: pr.number,
+                    per_page: 10
+                  });
+
+                const recentRebaseComment = comments.find(comment =>
+                  comment.user.login === 'github-actions[bot]' &&
+                  comment.body.includes('@dependabot rebase') &&
+                  new Date() - new Date(comment.created_at) <
+                    6 * 60 * 60 * 1000 // 6 hours
+                );
+
+                if (!recentRebaseComment) {
+                  console.log(`Posting rebase comment on PR #${pr.number}`);
+                  await github.rest.issues.createComment({
+                    owner,
+                    repo,
+                    issue_number: pr.number,
+                    body: '@dependabot rebase'
+                  });
+                } else {
+                  const msg = `Skipping PR #${pr.number} - ` +
+                              'rebase comment posted recently';
+                  console.log(msg);
+                }
+              } else {
+                console.log(`PR #${pr.number} is up to date`);
+              }
+            }
