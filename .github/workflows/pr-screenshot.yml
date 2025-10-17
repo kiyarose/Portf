@@ -72,7 +72,7 @@ jobs:
       - name: Run Playwright tests (screenshots & accessibility)
         run: |
           npm run test:e2e
-          npx playwright test tests/a11y.spec.ts || true
+          npx playwright test tests/a11y.spec.ts
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
