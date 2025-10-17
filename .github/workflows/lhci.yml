@@ -160,11 +160,7 @@ jobs:
                 );
               })
               .map((review) => {
-                let submittedAt = review.submitted_at ?? review.created_at ?? review.updated_at;
-                if (!submittedAt) {
-                  core.warning(`Review ${review.id} is missing all timestamp fields; falling back to current time. This may cause inconsistent sorting.`);
-                  submittedAt = new Date().toISOString();
-                }
+                const submittedAt = review.submitted_at ?? review.created_at ?? review.updated_at ?? new Date().toISOString();
                 return {
                   id: review.id,
                   submitted_at: submittedAt,
