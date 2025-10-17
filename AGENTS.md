@@ -69,3 +69,78 @@
 
 - `.github/copilot-instructions.md` documents the expectations for GitHub Copilot and other AI helpers—keep it aligned with this file when design language, workflows, or toolchain requirements shift.
 - Whenever you update `AGENTS.md`, make sure `.github/copilot-instructions.md` reflects the same guidance.
+- **DO NOT create random `.md` files** in the repository root. All technical documentation should be consolidated into this file (`AGENTS.md`) or `.github/copilot-instructions.md`. The only `.md` files that should exist in the root are: `README.md`, `LICENSE` (if markdown), `CONTRIBUTING.md`, `SECURITY.md`, and `AGENTS.md`.
+
+## Security & ZAP Configuration
+
+### Security Headers
+
+All security headers are centrally defined in `security-headers.config.ts` and deployed via:
+- `public/_headers` (for Cloudflare Pages - primary deployment)
+- `firebase.json` (for Firebase Hosting - reference/backup)
+- `vite.config.ts` (for local preview server)
+
+Current security headers include:
+- `Strict-Transport-Security` (HSTS)
+- `X-Content-Type-Options: nosniff`
+- `X-Frame-Options: DENY` (anti-clickjacking)
+- `Referrer-Policy: strict-origin-when-cross-origin`
+- `Permissions-Policy` (restricts camera, microphone, geolocation)
+- `Cross-Origin-Opener-Policy: same-origin-allow-popups`
+- `Cross-Origin-Embedder-Policy: credentialless` (Spectre protection)
+- `Content-Security-Policy` (comprehensive XSS/injection protection)
+
+### ZAP Scan Configuration
+
+The `.zap-ignore` file contains known/accepted alerts that don't need fixing:
+- **10055** (CSP unsafe-inline): Required for Framer Motion inline styles
+- **90003** (SRI Missing on Google Fonts): Dynamic CSS prevents SRI usage
+- **10094** (Base64 Disclosure): Expected in build artifacts
+- **10027/10109/40035** (Informational): Not actual vulnerabilities
+- **90005** (Sec-Fetch headers): Browser-set request headers, not response headers
+- **10049/10015/10050** (Cache directives): Properly configured
+
+The ZAP workflow (`.github/workflows/zap.yml`) scans the production site at `https://kiya.cat` nightly to detect security issues.
+
+When ZAP reports issues:
+1. Check if headers are properly set in `public/_headers`
+2. Verify deployment to Cloudflare Pages includes the headers
+3. Add to `.zap-ignore` ONLY if it's a known limitation or false positive
+4. Format: `<alert_id>\tIGNORE\t(Reason)` (TAB-separated)
+
+### Error Handling & Security
+
+All error messages are sanitized via `src/utils/errorSanitizer.ts` to prevent information disclosure:
+- Use `safeConsoleWarn()` and `safeConsoleError()` instead of raw console methods
+- Never log API keys, file paths, or sensitive data
+- ErrorBoundary component catches React errors and shows user-friendly messages
+- Production mode provides generic messages; development mode shows debug info
+
+### PostCSS CLI
+
+The project includes PostCSS CLI for enhanced Tailwind CSS workflows:
+- `npm run css:build` - Build CSS using PostCSS
+- `npm run css:watch` - Watch and rebuild CSS
+- Fully compatible with existing Vite build process
+
+## GitHub Automation
+
+### Label & Project Board Sync
+
+- Issues automatically added to "Portfolio Devmt" project in "Backlog" status
+- Labels sync bidirectionally between linked issues and PRs
+- Issue status updates based on PR lifecycle:
+  - "In Progress" when PR is opened (including draft)
+  - "In Review" when PR is ready for review or merged
+  - "Done" when PR is closed/merged (via GitHub built-in automation)
+- Milestones sync between linked issues and PRs
+- ZAP Scan issues automatically get labels: `Meta`, `Stylistic`, `javascript`, `meta:seq`, `ZAP!`
+
+### Linking Issues to PRs
+
+Use these keywords in PR title/body:
+- Simple reference: `#105`
+- Closing keywords: `fixes #105`, `closes #105`, `resolves #105`
+- Full GitHub URLs to issues
+
+Multiple PRs can reference the same issue; status reflects the most recent PR action.
