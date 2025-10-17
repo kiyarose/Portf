@@ -37,3 +37,11 @@
 - Keep the macOS Swift companion `DashCam!` in `$DashCam!/`: it manages `npm run dev` and `npx playwright codegen` processes, so update `DashboardViewModel`/`ProcessController` plus the packaged `DashCam.app` or `dashcam_swift.tgz` whenever those workflows change.
 - Route-level additions should flow through `src/AppRouter.tsx` with helpers from `src/utils/navigation.ts`; render privacy/legal pages inside React rather than shipping standalone static HTML.
 - When you adjust repository guidance, update both `AGENTS.md` and this file so instructions stay in sync.
+- **DO NOT create random `.md` files** in the repository root. All technical documentation should be consolidated into `AGENTS.md` or this file (`.github/copilot-instructions.md`). The only `.md` files that should exist in the root are: `README.md`, `LICENSE` (if markdown), `CONTRIBUTING.md`, `SECURITY.md`, and `AGENTS.md`.
+
+## Security & ZAP Scanning
+
+- All security headers are centrally configured in `security-headers.config.ts` and deployed via `public/_headers` (Cloudflare Pages), `firebase.json` (Firebase Hosting), and `vite.config.ts` (local preview).
+- The ZAP workflow scans `https://kiya.cat` nightly; check `.zap-ignore` for known/accepted alerts.
+- When ZAP reports issues, verify headers are in `public/_headers` and deployed properly before adding to `.zap-ignore`.
+- Use `safeConsoleWarn()` and `safeConsoleError()` from `src/utils/errorSanitizer.ts` instead of raw console methods to prevent information disclosure.
