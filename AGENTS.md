@@ -5,7 +5,7 @@
 - `src/` contains the application code: `sections/` owns page sections, `components/` provides shared UI, `data/` holds portfolio content and helper metadata (for example the build label generator), and `providers/` exposes the theme context.
 - Tailwind styles live in `src/index.css`, utilities in `src/utils/`, and global config in `tailwind.config.js`, `postcss.config.js`, and `vite.config.ts`.
 - `npm run build` outputs to `dist/`, which Firebase Hosting serves via `firebase.json`.
-- `.github/workflows/` houses CI/CD pipelines—update them when scripts or deploy behavior changes.
+- `.github/workflows/` contains organized CI/CD pipelines in folders: `ci/` for quality checks, `security/` for security scans, `automation/` for project management, `maintenance/` for code quality tasks, and `disabled/` for inactive workflows—update them when scripts or deploy behavior changes.
 - Top-level layout pieces (`SiteHeader`, `PrimaryNav`, `SiteFooter`) live in `src/App.tsx`; keep large JSX trees broken into helpers to satisfy lint rules.
 - The root `LICENSE` is BSD 3-Clause (2025, Kiya Rose); mirror that notice when legal text appears elsewhere.
 - `src/data/build.ts` exposes helpers for the build label and build timestamp: the label stores a random prefix in `localStorage` keyed by the build signature so it only changes when the code does, and `getBuildUpdatedAt()` surfaces the deploy timestamp for privacy/legal copy—leave that flow intact.
@@ -103,7 +103,7 @@ The `.zap-ignore` file contains known/accepted alerts that don't need fixing:
 - **90005** (Sec-Fetch headers): Browser-set request headers, not response headers
 - **10049/10015/10050** (Cache directives): Properly configured
 
-The ZAP workflow (`.github/workflows/zap.yml`) scans the production site at `https://kiya.cat` nightly to detect security issues.
+The ZAP workflow (`.github/workflows/security/zap.yml`) scans the production site at `https://kiya.cat` nightly to detect security issues.
 
 When ZAP reports issues:
 

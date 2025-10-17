@@ -1,4 +1,4 @@
-# .github/workflows/dependabot-automerge.yml
+# .github/workflows/automation/dependabot-automerge.yml
 name: Dependabot auto-merge
 on: pull_request_target
 

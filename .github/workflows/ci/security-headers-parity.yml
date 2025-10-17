@@ -7,7 +7,7 @@ on:
       - 'public/_headers'
       - 'firebase.json'
       - 'vite.config.ts'
-      - '.github/workflows/security-headers-parity.yml'
+      - '.github/workflows/ci/security-headers-parity.yml'
   push:
     branches:
       - main

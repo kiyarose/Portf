@@ -63,7 +63,7 @@ To test the workflow:
 
 ### Related Files
 
-- **Workflow**: `.github/workflows/project-board-automation.yml`
+- **Workflow**: `.github/workflows/automation/project-board-automation.yml`
 - **Documentation**: `AUTOMATION.md`
 - **Project**: Create at `https://github.com/[username]?tab=projects`
 

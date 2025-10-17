@@ -36,6 +36,7 @@
 - Keep the build label helper in `src/data/build.ts` intact: it persists a random prefix per build signature in `localStorage`, so only adjust it if that behaviour breaks, and retain the accent tooltip that explains the two segments.
 - Keep the macOS Swift companion `DashCam!` in `$DashCam!/`: it manages `npm run dev` and `npx playwright codegen` processes, so update `DashboardViewModel`/`ProcessController` plus the packaged `DashCam.app` or `dashcam_swift.tgz` whenever those workflows change.
 - Route-level additions should flow through `src/AppRouter.tsx` with helpers from `src/utils/navigation.ts`; render privacy/legal pages inside React rather than shipping standalone static HTML.
+- GitHub workflows are organized in `.github/workflows/` subfolders: `ci/` for quality checks, `security/` for scans, `automation/` for project management, `maintenance/` for code quality, and `disabled/` for inactive workflows. Update workflow path references accordingly.
 - When you adjust repository guidance, update both `AGENTS.md` and this file so instructions stay in sync.
 - **DO NOT create random `.md` files** in the repository root. All technical documentation should be consolidated into `AGENTS.md` or this file (`.github/copilot-instructions.md`). The only `.md` files that should exist in the root are: `README.md`, `LICENSE` (if markdown), `CONTRIBUTING.md`, `SECURITY.md`, and `AGENTS.md`.
 

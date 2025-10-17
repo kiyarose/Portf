@@ -6,11 +6,11 @@ on:
       - main
     paths:
       - '$DashCam!/**'
-      - '.github/workflows/swift-dashboard-build.yml'
+      - '.github/workflows/maintenance/swift-dashboard-build.yml'
   pull_request:
     paths:
       - '$DashCam!/**'
-      - '.github/workflows/swift-dashboard-build.yml'
+      - '.github/workflows/maintenance/swift-dashboard-build.yml'
 
 jobs:
   build:
