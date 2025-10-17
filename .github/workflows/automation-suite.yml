@@ -616,4 +616,4 @@ jobs:
               console.log('ℹ️  Issue title does not match ZAP Scan Baseline Report pattern, skipping');
             }
 
-            console.log('🎉 Automation suite completed')
+            console.log('✅ ZAP issue labeling completed')
