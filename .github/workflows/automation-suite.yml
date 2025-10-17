@@ -2,7 +2,7 @@ name: Issue & PR Automation Suite
 
 on:
   issues:
-    types: [opened, closed, reopened, labeled, unlabeled, milestoned, demilestoned]
+    types: [opened, closed, reopened, labeled, unlabeled, milestoned, demilestoned, edited]
   pull_request:
     types: [opened, closed, reopened, ready_for_review, converted_to_draft, synchronize, edited]
   pull_request_target:
@@ -14,11 +14,316 @@ permissions:
   repository-projects: write
   contents: read
 
+env:
+  PROJECT_NAME: "Portfolio Devmt"
+
 jobs:
-  automation-suite:
+  project-board-automation:
+    name: Project Board Integration
+    runs-on: ubuntu-latest
+    if: (github.event_name == 'issues' && github.event.action == 'opened') || github.event_name == 'pull_request'
+    steps:
+      - name: Add new issue to project backlog
+        if: github.event_name == 'issues' && github.event.action == 'opened'
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const issue = context.payload.issue;
+            const issueId = issue.node_id;
+            const issueNumber = issue.number;
+            
+            // Query to find the project and add the issue
+            const findProjectQuery = `
+              query($owner: String!) {
+                user(login: $owner) {
+                  projectsV2(first: 20) {
+                    nodes {
+                      id
+                      title
+                      fields(first: 20) {
+                        nodes {
+                          ... on ProjectV2SingleSelectField {
+                            id
+                            name
+                            options {
+                              id
+                              name
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            `;
+            
+            try {
+              // Find the project
+              const projectResult = await github.graphql(findProjectQuery, {
+                owner: context.repo.owner
+              });
+              
+              const project = projectResult.user.projectsV2.nodes.find(p => 
+                p.title === process.env.PROJECT_NAME
+              );
+              
+              if (!project) {
+                console.log(`❌ Project "${process.env.PROJECT_NAME}" not found`);
+                console.log('Available projects:', projectResult.user.projectsV2.nodes.map(p => p.title));
+                return;
+              }
+              
+              console.log(`✅ Found project: ${project.title} (${project.id})`);
+              
+              // Add issue to project
+              const addItemMutation = `
+                mutation($projectId: ID!, $contentId: ID!) {
+                  addProjectV2ItemById(input: {
+                    projectId: $projectId
+                    contentId: $contentId
+                  }) {
+                    item {
+                      id
+                    }
+                  }
+                }
+              `;
+              
+              const addResult = await github.graphql(addItemMutation, {
+                projectId: project.id,
+                contentId: issueId
+              });
+              
+              const itemId = addResult.addProjectV2ItemById.item.id;
+              console.log(`✅ Added issue #${issueNumber} to project (item ID: ${itemId})`);
+              
+              // Find the Status field and Backlog option
+              const statusField = project.fields.nodes.find(f => 
+                f.name === 'Status' && f.options
+              );
+              
+              if (!statusField) {
+                console.log('⚠️  Status field not found, item added without specific status');
+                return;
+              }
+              
+              const backlogOption = statusField.options.find(o => 
+                o.name === 'Backlog'
+              );
+              
+              if (!backlogOption) {
+                console.log('⚠️  Backlog status not found');
+                console.log('Available statuses:', statusField.options.map(o => o.name));
+                return;
+              }
+              
+              // Set item status to Backlog
+              const updateStatusMutation = `
+                mutation($projectId: ID!, $itemId: ID!, $fieldId: ID!, $value: ProjectV2FieldValue!) {
+                  updateProjectV2ItemFieldValue(input: {
+                    projectId: $projectId
+                    itemId: $itemId
+                    fieldId: $fieldId
+                    value: $value
+                  }) {
+                    projectV2Item {
+                      id
+                    }
+                  }
+                }
+              `;
+              
+              await github.graphql(updateStatusMutation, {
+                projectId: project.id,
+                itemId: itemId,
+                fieldId: statusField.id,
+                value: { singleSelectOptionId: backlogOption.id }
+              });
+              
+              console.log(`✅ Set issue #${issueNumber} status to "Backlog"`);
+              
+            } catch (error) {
+              console.error('❌ Error managing project:', error.message);
+              if (error.errors) {
+                console.error('GraphQL errors:', JSON.stringify(error.errors, null, 2));
+              }
+            }
+
+      - name: Update linked issue status based on PR
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const pr = context.payload.pull_request;
+            const prNumber = pr.number;
+            const action = context.payload.action;
+            
+            // Extract issue numbers from PR body and title
+            const prText = `${pr.title} ${pr.body || ''}`;
+            const issuePattern = /#(\d+)|(?:close[ds]?|fix(?:e[ds]?)?|resolve[ds]?)\s+#(\d+)|(?:https?:\/\/)?(?:www\.)?github\.com\/[^\/]+\/[^\/]+\/issues\/(\d+)/gi;
+            const issueNumbers = new Set();
+            let match;
+            
+            while ((match = issuePattern.exec(prText)) !== null) {
+              const issueNum = match[1] || match[2] || match[3];
+              if (issueNum) {
+                issueNumbers.add(parseInt(issueNum));
+              }
+            }
+            
+            if (issueNumbers.size === 0) {
+              console.log('ℹ️  No linked issues found in PR');
+              return;
+            }
+            
+            console.log(`🔗 Found ${issueNumbers.size} linked issue(s):`, Array.from(issueNumbers));
+            
+            // Determine target status based on PR state and action
+            let targetStatus = null;
+            
+            if (action === 'opened' || action === 'converted_to_draft') {
+              targetStatus = 'In Progress';
+            } else if (action === 'ready_for_review') {
+              targetStatus = 'In Review';
+            } else if (action === 'closed' && pr.merged) {
+              targetStatus = 'In Review';  // Set to In Review when merged (not Done, per requirements)
+            } else if (action === 'closed' && !pr.merged) {
+              console.log('ℹ️  PR closed without merging - not updating issue status');
+              return;
+            }
+            
+            if (!targetStatus) {
+              console.log(`ℹ️  No status update needed for action: ${action}`);
+              return;
+            }
+            
+            console.log(`📊 Target status: "${targetStatus}"`);
+            
+            // Query to find the project and get issue details
+            const findProjectQuery = `
+              query($owner: String!) {
+                user(login: $owner) {
+                  projectsV2(first: 20) {
+                    nodes {
+                      id
+                      title
+                      fields(first: 20) {
+                        nodes {
+                          ... on ProjectV2SingleSelectField {
+                            id
+                            name
+                            options {
+                              id
+                              name
+                            }
+                          }
+                        }
+                      }
+                      items(first: 100) {
+                        nodes {
+                          id
+                          content {
+                            ... on Issue {
+                              number
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            `;
+            
+            try {
+              // Find the project
+              const projectResult = await github.graphql(findProjectQuery, {
+                owner: context.repo.owner
+              });
+              
+              const project = projectResult.user.projectsV2.nodes.find(p => 
+                p.title === process.env.PROJECT_NAME
+              );
+              
+              if (!project) {
+                console.log(`❌ Project "${process.env.PROJECT_NAME}" not found`);
+                return;
+              }
+              
+              console.log(`✅ Found project: ${project.title}`);
+              
+              // Find the Status field and target option
+              const statusField = project.fields.nodes.find(f => 
+                f.name === 'Status' && f.options
+              );
+              
+              if (!statusField) {
+                console.log('❌ Status field not found in project');
+                return;
+              }
+              
+              const targetOption = statusField.options.find(o => 
+                o.name === targetStatus
+              );
+              
+              if (!targetOption) {
+                console.log(`❌ Status "${targetStatus}" not found in project`);
+                console.log('Available statuses:', statusField.options.map(o => o.name));
+                return;
+              }
+              
+              // Update status for each linked issue
+              const updateStatusMutation = `
+                mutation($projectId: ID!, $itemId: ID!, $fieldId: ID!, $value: ProjectV2FieldValue!) {
+                  updateProjectV2ItemFieldValue(input: {
+                    projectId: $projectId
+                    itemId: $itemId
+                    fieldId: $fieldId
+                    value: $value
+                  }) {
+                    projectV2Item {
+                      id
+                    }
+                  }
+                }
+              `;
+              
+              for (const issueNumber of issueNumbers) {
+                // Find the project item for this issue
+                const projectItem = project.items.nodes.find(item => 
+                  item.content && item.content.number === issueNumber
+                );
+                
+                if (!projectItem) {
+                  console.log(`⚠️  Issue #${issueNumber} not found in project, skipping`);
+                  continue;
+                }
+                
+                await github.graphql(updateStatusMutation, {
+                  projectId: project.id,
+                  itemId: projectItem.id,
+                  fieldId: statusField.id,
+                  value: { singleSelectOptionId: targetOption.id }
+                });
+                
+                console.log(`✅ Updated issue #${issueNumber} status to "${targetStatus}"`);
+              }
+              
+            } catch (error) {
+              console.error('❌ Error updating issue status:', error.message);
+              if (error.errors) {
+                console.error('GraphQL errors:', JSON.stringify(error.errors, null, 2));
+              }
+            }
+
+  label-and-milestone-sync:
+    name: Label & Milestone Synchronization
     runs-on: ubuntu-latest
     steps:
-      - name: Issue & PR Automation
+      - name: Sync labels and milestones
         uses: actions/github-script@v7
         with:
           script: |
@@ -257,3 +562,58 @@ jobs:
             }
             
             console.log('🎉 Automation suite completed')
+
+  auto-label-zap-issues:
+    name: Auto-label ZAP Security Scan Issues
+    runs-on: ubuntu-latest
+    if: github.event_name == 'issues' && (github.event.action == 'opened' || github.event.action == 'edited')
+    steps:
+      - name: Auto-label ZAP Scan Baseline Report issues
+        uses: actions/github-script@v7
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const { owner, repo } = context.repo;
+            const issue = context.payload.issue;
+            const issueNumber = issue.number;
+            const issueTitle = issue.title || '';
+            
+            console.log(`Checking issue #${issueNumber}: "${issueTitle}"`);
+            
+            // Configurable pattern for ZAP Scan Baseline Report (case-insensitive)
+            const zapPattern = 'ZAP Scan Baseline Report';
+            if (issueTitle.toLowerCase().includes(zapPattern.toLowerCase())) {
+              console.log('✅ Issue title matches ZAP Scan Baseline Report pattern');
+              
+              // Define the labels to apply
+              const labelsToApply = ['Meta', 'Stylistic', 'javascript', 'meta:seq', 'ZAP!'];
+              
+              // Get current labels on the issue
+              const currentLabels = issue.labels.map(label => 
+                typeof label === 'object' ? label.name : label
+              ).filter(Boolean);
+              
+              console.log('Current labels:', currentLabels);
+              
+              // Combine current labels with new labels (avoiding duplicates)
+              const allLabels = [...new Set([...currentLabels, ...labelsToApply])];
+              
+              console.log('Applying labels:', allLabels);
+              
+              try {
+                await github.rest.issues.setLabels({
+                  owner,
+                  repo,
+                  issue_number: issueNumber,
+                  labels: allLabels,
+                });
+                
+                console.log(`✅ Successfully applied labels to issue #${issueNumber}`);
+              } catch (error) {
+                console.error(`❌ Failed to apply labels to issue #${issueNumber}:`, error.message);
+              }
+            } else {
+              console.log('ℹ️  Issue title does not match ZAP Scan Baseline Report pattern, skipping');
+            }
+
+            console.log('✅ ZAP issue labeling completed')

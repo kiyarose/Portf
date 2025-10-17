@@ -1,23 +1,124 @@
-# Project Board Automation Workflow
+# GitHub Actions Workflows
 
-This workflow automates issue and pull request management in the "Portfolio Devmt" GitHub project.
+This directory contains automated workflows for the portfolio project. Workflows have been consolidated for better efficiency and ease of maintenance.
 
-## Quick Reference
+## Active Workflows (10)
 
-### Triggers
+### Core Automation
+- **`automation-suite.yml`** - Comprehensive issue & PR automation
+  - Adds new issues to project board with "Backlog" status
+  - Updates issue status based on linked PR state (In Progress → In Review)
+  - Syncs labels between linked issues and PRs
+  - Syncs milestones between linked issues and PRs
+  - Auto-labels ZAP security scan issues
 
-| Event | Action | Result |
-|-------|--------|--------|
-| New Issue Created | `issues: opened` | ✅ Added to "Backlog" |
-| PR Opened (links issue) | `pull_request: opened` | ✅ Linked issues → "In Progress" |
-| PR Converted to Draft | `pull_request: converted_to_draft` | ✅ Linked issues → "In Progress" |
-| PR Ready for Review | `pull_request: ready_for_review` | ✅ Linked issues → "In Review" |
-| PR Merged | `pull_request: closed` (merged=true) | ✅ Linked issues → "In Review" |
-| PR Closed (not merged) | `pull_request: closed` (merged=false) | ⏭️ No status change |
+### Quality & Testing
+- **`pr-screenshot.yml`** - E2E Testing Suite
+  - Generates screenshots (web & mobile, light & dark themes)
+  - Runs accessibility tests using axe-core
+  - Publishes results to GitHub Pages
+  - Comments on PRs with visual results
+
+- **`lhci.yml`** - Lighthouse CI & Comment Cleanup
+  - Runs Lighthouse performance/accessibility audits
+  - Creates review comments with audit results
+  - Cleans up outdated SonarQube comments
+  - Removes stale Lighthouse review comments
+
+- **`lychee.yml`** - Link Checker
+  - Validates all links in repository
+  - Checks links in built site (dist/)
+
+### Security
+- **`codeql.yml`** - CodeQL Security Scanning
+  - Scans JavaScript/TypeScript code
+  - Scans Swift code (macOS dashboard)
+  - Only runs when relevant files change
+
+- **`zap.yml`** - ZAP Security Baseline Scan
+  - Runs nightly at 06:00 UTC
+  - Scans production site (https://kiya.cat)
+  - Creates issues for security findings
+
+- **`security-headers-parity.yml`** - Security Headers Verification
+  - Verifies security headers are synchronized across:
+    - `security-headers.config.ts`
+    - `vite.config.ts`
+    - `public/_headers`
+    - `firebase.json`
+
+### Build & Deployment
+- **`swift-dashboard-build.yml`** - macOS Dashboard Build
+  - Builds the Swift DashCam! companion app
+  - Only runs when Swift files change
+
+### Maintenance
+- **`dependabot-automerge.yml`** - Dependabot Auto-merge
+  - Automatically merges Dependabot PRs
+  - Uses squash merge strategy
+
+- **`restyled.yml`** - Code Style Reformatting
+  - Manual trigger only (workflow_dispatch)
+  - Applies consistent code formatting
+
+## Consolidation Summary
+
+**Original:** 23 workflows  
+**Current:** 10 workflows  
+**Reduction:** 57% fewer workflows
+
+### Merged Workflows
+
+The following workflows were consolidated into existing workflows:
+
+| Removed Workflow | Merged Into | Reason |
+|-----------------|-------------|--------|
+| `sync-issue-labels.yml` | `automation-suite.yml` | Duplicate label syncing logic |
+| `project-automation.yml` | `automation-suite.yml` | Duplicate project board logic |
+| `github-projects-integration.yml` | `automation-suite.yml` | Incomplete implementation |
+| `project-board-automation.yml` | `automation-suite.yml` | Contains actual GraphQL implementation |
+| `label-zap-issues.yml` | `automation-suite.yml` | Issue automation fits suite pattern |
+| `cleanup-sonar-comments.yml` | `lhci.yml` | Both clean up PR comments |
+| `a11y-axe.yml` | `pr-screenshot.yml` | Both use Playwright, can run together |
+
+### Removed Workflows
+
+The following workflows were removed as they were disabled or incomplete:
+
+- `firebase-hosting-merge.yml` - Disabled (Cloudflare Pages handles deploys)
+- `firebase-hosting-pull-request.yml` - Disabled (Cloudflare Pages handles previews)
+- `cloudflare-pages-preview.yml` - Disabled (temporarily paused)
+- `cloudflare-pages-merge.yml` - Disabled (temporarily paused)
+- `ImportEnvVar.yml` - Incomplete (no name or triggers)
+
+## Benefits of Consolidation
+
+1. **Reduced Runner Time**: Fewer workflow runs mean less compute time and faster CI/CD
+2. **Better Context**: Related automation is grouped together
+3. **Easier Maintenance**: Changes to related logic can be made in one place
+4. **Improved Debugging**: Related actions are in the same workflow logs
+5. **Simplified Permissions**: Consolidated permissions are easier to audit
+
+## Workflow Triggers Summary
+
+| Workflow | Trigger | Frequency |
+|----------|---------|-----------|
+| `automation-suite.yml` | Issues & PRs | On event |
+| `pr-screenshot.yml` | PRs & main push | On event |
+| `lhci.yml` | PRs | On event |
+| `lychee.yml` | PRs | On event |
+| `codeql.yml` | PRs & main push | On event (with path filters) |
+| `zap.yml` | Schedule | Nightly at 06:00 UTC |
+| `security-headers-parity.yml` | PRs & main push | On event (with path filters) |
+| `swift-dashboard-build.yml` | PRs & main push | On event (with path filters) |
+| `dependabot-automerge.yml` | Dependabot PRs | On event |
+| `restyled.yml` | Manual | On demand |
+
+## Project Board Automation Details
 
 ### Issue Linking Formats
 
-The workflow detects issue references in PR titles and bodies:
+The automation suite detects issue references in PR titles and bodies:
 
 - Simple reference: `#123`
 - Closing keywords: `fixes #123`, `closes #123`, `resolves #123`
@@ -35,73 +136,11 @@ New Issue → Backlog
     PR Merged → In Review (GitHub automation → Done)
 ```
 
-### Implementation Details
+## Notes
 
-**Technology**: GitHub Actions + GraphQL API (Projects V2)
+- All workflows use `actions/github-script@v7` for consistency
+- Workflows use proper concurrency groups to prevent conflicts
+- Most workflows cache dependencies (npm, Playwright browsers) for speed
+- Path filters prevent unnecessary runs when unrelated files change
+- No external services or secrets required beyond GITHUB_TOKEN
 
-**Key Features**:
-- ✅ Handles multiple PRs linked to a single issue
-- ✅ Extracts issue numbers using regex pattern matching
-- ✅ Uses GitHub Projects V2 GraphQL API
-- ✅ Comprehensive error handling and logging
-- ✅ No external dependencies or PAT required
-
-**Permissions Required**:
-- `issues: write`
-- `pull-requests: write`
-- `contents: read`
-
-### Testing
-
-To test the workflow:
-
-1. Create a test issue (should appear in Backlog)
-2. Create a PR with "Fixes #[issue-number]" in description
-3. Check issue moved to "In Progress"
-4. Mark PR as ready for review
-5. Check issue moved to "In Review"
-
-### Related Files
-
-- **Workflow**: `.github/workflows/project-board-automation.yml`
-- **Documentation**: `AUTOMATION.md`
-- **Project**: Create at `https://github.com/[username]?tab=projects`
-
-## Architecture
-
-### Job 1: `add-issue-to-backlog`
-
-1. Triggers on `issues: opened`
-2. Queries user projects to find "Portfolio Devmt"
-3. Adds issue using `addProjectV2ItemById` mutation
-4. Sets status to "Backlog" using `updateProjectV2ItemFieldValue`
-
-### Job 2: `manage-pr-status`
-
-1. Triggers on PR events (opened, closed, ready_for_review, converted_to_draft)
-2. Extracts linked issue numbers from PR text
-3. Determines target status based on PR state
-4. Queries project to find issue items
-5. Updates status for each linked issue
-
-## Customization
-
-To modify the workflow for your needs:
-
-1. **Change project name**: Update `PROJECT_NAME` environment variable
-2. **Change status names**: Update the status name strings in the workflow
-3. **Add organization support**: Replace `user(login: $owner)` with `organization(login: $owner)` in GraphQL queries
-4. **Modify status transitions**: Edit the logic in the `manage-pr-status` job
-
-## Maintenance
-
-The workflow is self-contained and requires minimal maintenance:
-
-- ✅ No external services or APIs
-- ✅ No secrets or PAT required (uses GITHUB_TOKEN)
-- ✅ Comprehensive logging for debugging
-- ✅ Graceful error handling
-
----
-
-For detailed setup instructions, see [AUTOMATION.md](../../AUTOMATION.md)
