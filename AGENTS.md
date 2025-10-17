@@ -76,11 +76,13 @@
 ### Security Headers
 
 All security headers are centrally defined in `security-headers.config.ts` and deployed via:
+
 - `public/_headers` (for Cloudflare Pages - primary deployment)
 - `firebase.json` (for Firebase Hosting - reference/backup)
 - `vite.config.ts` (for local preview server)
 
 Current security headers include:
+
 - `Strict-Transport-Security` (HSTS)
 - `X-Content-Type-Options: nosniff`
 - `X-Frame-Options: DENY` (anti-clickjacking)
@@ -93,6 +95,7 @@ Current security headers include:
 ### ZAP Scan Configuration
 
 The `.zap-ignore` file contains known/accepted alerts that don't need fixing:
+
 - **10055** (CSP unsafe-inline): Required for Framer Motion inline styles
 - **90003** (SRI Missing on Google Fonts): Dynamic CSS prevents SRI usage
 - **10094** (Base64 Disclosure): Expected in build artifacts
@@ -103,6 +106,7 @@ The `.zap-ignore` file contains known/accepted alerts that don't need fixing:
 The ZAP workflow (`.github/workflows/zap.yml`) scans the production site at `https://kiya.cat` nightly to detect security issues.
 
 When ZAP reports issues:
+
 1. Check if headers are properly set in `public/_headers`
 2. Verify deployment to Cloudflare Pages includes the headers
 3. Add to `.zap-ignore` ONLY if it's a known limitation or false positive
@@ -111,6 +115,7 @@ When ZAP reports issues:
 ### Error Handling & Security
 
 All error messages are sanitized via `src/utils/errorSanitizer.ts` to prevent information disclosure:
+
 - Use `safeConsoleWarn()` and `safeConsoleError()` instead of raw console methods
 - Never log API keys, file paths, or sensitive data
 - ErrorBoundary component catches React errors and shows user-friendly messages
@@ -119,6 +124,7 @@ All error messages are sanitized via `src/utils/errorSanitizer.ts` to prevent in
 ### PostCSS CLI
 
 The project includes PostCSS CLI for enhanced Tailwind CSS workflows:
+
 - `npm run css:build` - Build CSS using PostCSS
 - `npm run css:watch` - Watch and rebuild CSS
 - Fully compatible with existing Vite build process
@@ -139,6 +145,7 @@ The project includes PostCSS CLI for enhanced Tailwind CSS workflows:
 ### Linking Issues to PRs
 
 Use these keywords in PR title/body:
+
 - Simple reference: `#105`
 - Closing keywords: `fixes #105`, `closes #105`, `resolves #105`
 - Full GitHub URLs to issues
