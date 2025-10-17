@@ -158,10 +158,17 @@ jobs:
                   body.startsWith('### Lighthouse CI Report')
                 );
               })
-              .map((review) => ({
-                id: review.id,
-                submitted_at: review.submitted_at ?? review.created_at ?? review.updated_at ?? new Date().toISOString(),
-              }));
+              .map((review) => {
+                let submittedAt = review.submitted_at ?? review.created_at ?? review.updated_at;
+                if (!submittedAt) {
+                  core.warning(`Review ${review.id} is missing all timestamp fields; falling back to current time. This may cause inconsistent sorting.`);
+                  submittedAt = new Date().toISOString();
+                }
+                return {
+                  id: review.id,
+                  submitted_at: submittedAt,
+                };
+              });
 
             if (lighthouseReviews.length <= 1) {
               core.info('Zero or one Lighthouse CI review found. Nothing to clean up.');
