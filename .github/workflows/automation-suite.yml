@@ -189,7 +189,7 @@ jobs:
             } else if (action === 'ready_for_review') {
               targetStatus = 'In Review';
             } else if (action === 'closed' && pr.merged) {
-              targetStatus = 'In Review';  // Set to In Review when merged
+              targetStatus = 'In Review';  // Set to In Review when merged (not Done, per requirements)
             } else if (action === 'closed' && !pr.merged) {
               console.log('ℹ️  PR closed without merging - not updating issue status');
               return;
