@@ -2,7 +2,7 @@ name: Issue & PR Automation Suite
 
 on:
   issues:
-    types: [opened, closed, reopened, labeled, unlabeled, milestoned, demilestoned]
+    types: [opened, closed, reopened, labeled, unlabeled, milestoned, demilestoned, edited]
   pull_request:
     types: [opened, closed, reopened, ready_for_review, converted_to_draft, synchronize, edited]
   pull_request_target:
@@ -561,4 +561,59 @@ jobs:
               }
             }
             
+            console.log('🎉 Automation suite completed')
+
+  auto-label-zap-issues:
+    name: Auto-label ZAP Security Scan Issues
+    runs-on: ubuntu-latest
+    if: github.event_name == 'issues' && (github.event.action == 'opened' || github.event.action == 'edited')
+    steps:
+      - name: Auto-label ZAP Scan Baseline Report issues
+        uses: actions/github-script@v7
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const { owner, repo } = context.repo;
+            const issue = context.payload.issue;
+            const issueNumber = issue.number;
+            const issueTitle = issue.title || '';
+            
+            console.log(`Checking issue #${issueNumber}: "${issueTitle}"`);
+            
+            // Configurable pattern for ZAP Scan Baseline Report (case-insensitive)
+            const zapPattern = 'ZAP Scan Baseline Report';
+            if (issueTitle.toLowerCase().includes(zapPattern.toLowerCase())) {
+              console.log('✅ Issue title matches ZAP Scan Baseline Report pattern');
+              
+              // Define the labels to apply
+              const labelsToApply = ['Meta', 'Stylistic', 'javascript', 'meta:seq', 'ZAP!'];
+              
+              // Get current labels on the issue
+              const currentLabels = issue.labels.map(label => 
+                typeof label === 'object' ? label.name : label
+              ).filter(Boolean);
+              
+              console.log('Current labels:', currentLabels);
+              
+              // Combine current labels with new labels (avoiding duplicates)
+              const allLabels = [...new Set([...currentLabels, ...labelsToApply])];
+              
+              console.log('Applying labels:', allLabels);
+              
+              try {
+                await github.rest.issues.setLabels({
+                  owner,
+                  repo,
+                  issue_number: issueNumber,
+                  labels: allLabels,
+                });
+                
+                console.log(`✅ Successfully applied labels to issue #${issueNumber}`);
+              } catch (error) {
+                console.error(`❌ Failed to apply labels to issue #${issueNumber}:`, error.message);
+              }
+            } else {
+              console.log('ℹ️  Issue title does not match ZAP Scan Baseline Report pattern, skipping');
+            }
+
             console.log('🎉 Automation suite completed')
