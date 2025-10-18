@@ -1,6 +1,9 @@
 # Cloudflare Pages serves 404.html and 500.html automatically—no explicit
 # redirects needed. These rules only handle SPA routing.
 
+# Proxy remote data requests to data.kiya.cat to avoid CORS issues
+/data/* https://data.kiya.cat/data/:splat 200
+
 /privacy-policy /index.html 200
 
 /tools/convert 200
