@@ -1,0 +1,28 @@
+{
+  "__meta": {
+    "version": 1,
+    "template": "export type Certification = {\n  name: string;\n  issuer: string;\n  date: string;\n  link?: string;\n};\n\nexport const certifications: Certification[] = __DATA_PLACEHOLDER__certifications_148_396__;",
+    "source": "certifications.ts",
+    "entries": [
+      {
+        "name": "certifications",
+        "placeholder": "__DATA_PLACEHOLDER__certifications_148_396__",
+        "baseIndent": ""
+      }
+    ],
+    "generatedAt": "2025-10-02T05:38:59.638Z"
+  },
+  "certifications": [
+    {
+      "name": "PSI GitHub Foundations",
+      "issuer": "PSI",
+      "date": "2024",
+      "link": "https://www.credly.com/go/FZfrOlFD9pvCvNOiGFvTrA"
+    },
+    {
+      "name": "AZ-900 Microsoft Azure Fundamentals",
+      "issuer": "Microsoft",
+      "date": "2024"
+    }
+  ]
+}
