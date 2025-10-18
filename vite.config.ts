@@ -111,6 +111,40 @@ function serveSecurityHeaders(): Plugin {
   };
 }
 
+function proxyDataRequests(): Plugin {
+  return {
+    name: "proxy-data-requests",
+    configurePreviewServer(server) {
+      server.middlewares.use((req, res, next) => {
+        // Proxy /data/* requests to data.kiya.cat
+        if (req.url?.startsWith("/data/")) {
+          const targetPath = req.url.replace(/^\/data/, "/data");
+          const targetUrl = `https://data.kiya.cat${targetPath}`;
+
+          fetch(targetUrl)
+            .then((response) => {
+              res.statusCode = response.status;
+              res.setHeader("Content-Type", response.headers.get("Content-Type") || "application/json");
+              // Set CORS headers to allow access
+              res.setHeader("Access-Control-Allow-Origin", "*");
+              return response.text();
+            })
+            .then((body) => {
+              res.end(body);
+            })
+            .catch((error) => {
+              console.error("Proxy error:", error);
+              res.statusCode = 502;
+              res.end("Bad Gateway");
+            });
+        } else {
+          next();
+        }
+      });
+    },
+  };
+}
+
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [
@@ -118,6 +152,7 @@ export default defineConfig({
     copyAdminAssets(),
     copyToolAssets(),
     serveSecurityHeaders(),
+    proxyDataRequests(),
   ],
   define: {
     __BUILD_TIME__: JSON.stringify(new Date().toISOString()),
