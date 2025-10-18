@@ -124,7 +124,10 @@ function proxyDataRequests(): Plugin {
           fetch(targetUrl)
             .then((response) => {
               res.statusCode = response.status;
-              res.setHeader("Content-Type", response.headers.get("Content-Type") || "application/json");
+              res.setHeader(
+                "Content-Type",
+                response.headers.get("Content-Type") || "application/json",
+              );
               // Set CORS headers to allow access
               res.setHeader("Access-Control-Allow-Origin", "*");
               return response.text();
