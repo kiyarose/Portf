@@ -118,7 +118,7 @@ function proxyDataRequests(): Plugin {
       server.middlewares.use((req, res, next) => {
         // Proxy /data/* requests to data.kiya.cat
         if (req.url?.startsWith("/data/")) {
-          const targetPath = req.url.replace(/^\/data/, "/data");
+          const targetPath = req.url;
           const targetUrl = `https://data.kiya.cat${targetPath}`;
 
           fetch(targetUrl)
