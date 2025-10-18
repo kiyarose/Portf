@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 
 const DATA_BASE_URL = import.meta.env.DEV
   ? "/__remote-data/data"
-  : "https://data.kiya.cat/data";
+  : "/data";
 
 const CACHE_NAMESPACE = "kiya-portfolio::remote-data" as const;
 const CACHE_TTL_MS = import.meta.env.DEV ? 1000 * 60 * 5 : 1000 * 60 * 60 * 6;
