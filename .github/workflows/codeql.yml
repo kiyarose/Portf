@@ -27,12 +27,6 @@ jobs:
         uses: dorny/paths-filter@v3
         with:
           filters: |
-            swift:
-              - '**/*.swift'
-              - '**/*.xcodeproj/**'
-              - '**/*.xcworkspace/**'
-              - '**/*.xcconfig'
-              - '**/*.plist'
             javascript:
               - '**/*.js'
               - '**/*.jsx'
@@ -69,27 +63,6 @@ jobs:
         uses: github/codeql-action/init@v3
         with:
           languages: javascript-typescript
-      - name: Autobuild
-        uses: github/codeql-action/autobuild@v3
-      - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@v3
-
-  codeql-swift:
-    name: CodeQL (Swift)
-    needs: detect-changes
-    if: (github.event_name == 'push' && github.ref == 'refs/heads/main') || needs.detect-changes.outputs.swift == 'true'
-    runs-on: macos-13
-    permissions:
-      security-events: write
-      actions: read
-      contents: read
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-      - name: Initialize CodeQL
-        uses: github/codeql-action/init@v3
-        with:
-          languages: swift
       - name: Autobuild
         uses: github/codeql-action/autobuild@v3
       - name: Perform CodeQL Analysis
