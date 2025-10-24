@@ -1,0 +1,3 @@
+[submodule "DashCam"]
+	path = DashCam
+	url = https://github.com/SillyLittleTech/DashCam.git
