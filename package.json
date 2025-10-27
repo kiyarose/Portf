@@ -38,7 +38,7 @@
     "@playwright/test": "^1.56.1",
     "@tailwindcss/postcss": "^4.1.13",
     "@types/node": "^24.7.0",
-    "@types/react": "^19.1.15",
+    "@types/react": "^19.2.2",
     "@types/react-dom": "^19.2.2",
     "@vitejs/plugin-react": "^5.0.4",
     "autoprefixer": "^10.4.21",
