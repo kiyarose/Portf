@@ -13,5 +13,6 @@
 10050	IGNORE	(Retrieved from Cache - Informational: Cached content working as expected)
 90005	IGNORE	(Sec-Fetch-* Headers Missing - Informational: These are request headers set by browser not response headers)
 40035	IGNORE	(Hidden File Finder - Informational: Detection of common hidden files that don't exist in our build)
+10038	IGNORE	(Content Security Policy Header Not Set - These alerts are for non-existent routes /admin/ and /api/)
 
 
