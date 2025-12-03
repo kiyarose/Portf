@@ -422,7 +422,7 @@ function PolicyIntro() {
       <AdminHint>Kiya Rose</AdminHint>, collect, use, and safeguard personal
       information when you visit{" "}
       <a href="https://kiya.cat" rel="noreferrer">
-        sillylittle.tech
+        kiya.cat
       </a>
       , interact with the contact form, or engage with the analytics services
       that power the site.
