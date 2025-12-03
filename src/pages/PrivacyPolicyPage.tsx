@@ -421,7 +421,7 @@ function PolicyIntro() {
       Your privacy matters. This Privacy Policy explains how I,{" "}
       <AdminHint>Kiya Rose</AdminHint>, collect, use, and safeguard personal
       information when you visit{" "}
-      <a href="https://sillylittle.tech" rel="noreferrer">
+      <a href="https://kiya.cat" rel="noreferrer">
         sillylittle.tech
       </a>
       , interact with the contact form, or engage with the analytics services
