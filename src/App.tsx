@@ -122,7 +122,7 @@ function PrimaryNav({ theme }: { theme: Theme }) {
         <a
           key={section.id}
           href={`#${section.id}`}
-          className={`flex items-center gap-2 rounded-full px-3 py-2 text-sm font-medium transition-all duration-200 hover:scale-105 hover:bg-accent/10 hover:text-accent ${linkColor}`}
+          className={`flex items-center gap-2 rounded-full px-3 py-2 text-sm font-medium transition-all duration-200 hover:scale-105 hover:bg-accent/10 hover:text-accent hover:shadow-lg hover:shadow-accent/20 ${linkColor}`}
         >
           <Icon icon={section.icon} className="text-lg" aria-hidden="true" />
           {section.label}

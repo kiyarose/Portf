@@ -19,6 +19,7 @@ export function ThemeToggle({ className }: { className?: string }) {
         themedClass(theme, "!bg-white/70", "!bg-slate-800/80"),
         "shadow-card backdrop-blur",
         "cursor-pointer",
+        "hover:animate-shake",
         className,
       )}
       aria-label="Toggle light or dark theme"
