@@ -31,8 +31,7 @@ export function useBodyScrollLock(isLocked: boolean) {
     if (scrollbarWidth > 0) {
       // Get computed padding in pixels
       const computedStyle = globalThis.window.getComputedStyle(document.body);
-      const currentPadding =
-        Number.parseFloat(computedStyle.paddingRight) || 0;
+      const currentPadding = Number.parseFloat(computedStyle.paddingRight) || 0;
       document.body.style.paddingRight = `${currentPadding + scrollbarWidth}px`;
     }
 
