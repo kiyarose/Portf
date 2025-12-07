@@ -3,6 +3,7 @@ import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { useState, useCallback } from "react";
 import type { MouseEvent } from "react";
 import { useTheme } from "../hooks/useTheme";
+import { useBodyScrollLock } from "../hooks/useBodyScrollLock";
 import { themedClass } from "../utils/themeClass";
 import { cn } from "../utils/cn";
 
@@ -28,6 +29,9 @@ export function MobileNav({ sections }: MobileNavProps) {
     "border-slate-700/60 bg-slate-900/90",
   );
   const linkColor = themedClass(theme, "text-slate-600", "text-slate-300");
+
+  // Lock body scroll when menu is open
+  useBodyScrollLock(isOpen);
 
   const toggleMenu = useCallback(() => setIsOpen(!isOpen), [isOpen]);
   const closeMenu = useCallback(() => setIsOpen(false), []);
