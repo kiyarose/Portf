@@ -51,11 +51,11 @@ export function MobileNav({ sections }: MobileNavProps) {
             animate={prefersReducedMotion ? undefined : { opacity: 1 }}
             exit={prefersReducedMotion ? undefined : { opacity: 0 }}
             onClick={closeMenu}
-            style={{ 
+            style={{
               pointerEvents: "auto",
               WebkitBackdropFilter: "blur(24px)",
               backdropFilter: "blur(24px)",
-              willChange: "backdrop-filter"
+              willChange: "backdrop-filter",
             }}
           >
             {/* Mobile Menu Panel */}
