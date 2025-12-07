@@ -11,10 +11,10 @@ export function useBodyScrollLock(isLocked: boolean) {
       typeof globalThis.window === "undefined" ||
       typeof document === "undefined"
     ) {
-      return undefined;
+      return;
     }
 
-    if (!isLocked) return undefined;
+    if (!isLocked) return;
 
     // Store original body overflow and padding
     const originalOverflow = document.body.style.overflow;
