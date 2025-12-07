@@ -3,6 +3,7 @@ import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { useState, useCallback } from "react";
 import type { MouseEvent } from "react";
 import { useTheme } from "../hooks/useTheme";
+import { useBodyScrollLock } from "../hooks/useBodyScrollLock";
 import { themedClass } from "../utils/themeClass";
 import { cn } from "../utils/cn";
 
@@ -29,6 +30,9 @@ export function MobileNav({ sections }: MobileNavProps) {
   );
   const linkColor = themedClass(theme, "text-slate-600", "text-slate-300");
 
+  // Lock body scroll when menu is open
+  useBodyScrollLock(isOpen);
+
   const toggleMenu = useCallback(() => setIsOpen(!isOpen), [isOpen]);
   const closeMenu = useCallback(() => setIsOpen(false), []);
   const handleStopPropagation = useCallback(
@@ -38,36 +42,20 @@ export function MobileNav({ sections }: MobileNavProps) {
 
   return (
     <div className="md:hidden">
-      {/* Hamburger Menu Button */}
-      <motion.button
-        onClick={toggleMenu}
-        className={cn(
-          "flex items-center justify-center rounded-full p-2 shadow-md backdrop-blur",
-          buttonSurface,
-        )}
-        whileTap={prefersReducedMotion ? undefined : { scale: 0.95 }}
-        aria-label="Toggle navigation menu"
-        aria-expanded={isOpen}
-      >
-        <Icon
-          icon={
-            isOpen
-              ? "material-symbols:close-rounded"
-              : "material-symbols:menu-rounded"
-          }
-          className={cn("text-xl", iconColor)}
-        />
-      </motion.button>
-
       {/* Mobile Menu Overlay */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            className="fixed inset-0 z-50 bg-black/20 backdrop-blur-sm"
+            className="fixed inset-0 z-[55] bg-black/30"
             initial={prefersReducedMotion ? undefined : { opacity: 0 }}
             animate={prefersReducedMotion ? undefined : { opacity: 1 }}
             exit={prefersReducedMotion ? undefined : { opacity: 0 }}
             onClick={closeMenu}
+            style={{
+              pointerEvents: "auto",
+              WebkitBackdropFilter: "blur(12px)",
+              backdropFilter: "blur(12px)",
+            }}
           >
             {/* Mobile Menu Panel */}
             <motion.nav
@@ -118,6 +106,27 @@ export function MobileNav({ sections }: MobileNavProps) {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Hamburger Menu Button - positioned above overlay with higher z-index */}
+      <motion.button
+        onClick={toggleMenu}
+        className={cn(
+          "relative z-[60] flex items-center justify-center rounded-full p-2 shadow-md backdrop-blur",
+          buttonSurface,
+        )}
+        whileTap={prefersReducedMotion ? undefined : { scale: 0.95 }}
+        aria-label="Toggle navigation menu"
+        aria-expanded={isOpen}
+      >
+        <Icon
+          icon={
+            isOpen
+              ? "material-symbols:close-rounded"
+              : "material-symbols:menu-rounded"
+          }
+          className={cn("text-xl", iconColor)}
+        />
+      </motion.button>
     </div>
   );
 }
