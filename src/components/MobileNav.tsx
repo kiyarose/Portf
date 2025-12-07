@@ -46,7 +46,7 @@ export function MobileNav({ sections }: MobileNavProps) {
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xl"
+            className="fixed inset-0 z-50 bg-black/60"
             initial={prefersReducedMotion ? undefined : { opacity: 0 }}
             animate={prefersReducedMotion ? undefined : { opacity: 1 }}
             exit={prefersReducedMotion ? undefined : { opacity: 0 }}
