@@ -7,10 +7,7 @@ import { useEffect } from "react";
 export function useBodyScrollLock(isLocked: boolean) {
   useEffect(() => {
     // Early return if not in browser environment
-    if (
-      globalThis.window === undefined ||
-      typeof document === "undefined"
-    ) {
+    if (globalThis.window === undefined || typeof document === "undefined") {
       return undefined;
     }
 
