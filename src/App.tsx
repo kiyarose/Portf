@@ -117,7 +117,7 @@ function PrimaryNav({ theme }: { theme: Theme }) {
   const linkColor = themedClass(theme, "text-slate-600", "text-slate-300");
   const prefersReducedMotion = useReducedMotion();
   const hoverScale = prefersReducedMotion ? "" : "hover:scale-105";
-  
+
   return (
     <nav
       className={`hidden items-center gap-2 rounded-full ${navSurface} px-2 py-1.5 shadow-md backdrop-blur md:flex`}
