@@ -1352,7 +1352,7 @@ ${data.feedbackDescription}`;
 
   const handleConfirmNo = useCallback(() => {
     // Immediately hide confirmation dialog and show thank you notification
-    setFeedbackStep("initial");
+    setFeedbackStep("submitted");
     setShowThankYou(true);
 
     // Submit sentiment silently in the background (non-blocking)
@@ -1363,6 +1363,7 @@ ${data.feedbackDescription}`;
       setShowThankYou(false);
       setIsVisible(false);
       setSelectedThumb(null);
+      setFeedbackStep("initial");
     }, 2000);
   }, [submitSentimentOnly]);
 
