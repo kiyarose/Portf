@@ -6,6 +6,11 @@ import { useEffect } from "react";
  */
 export function useBodyScrollLock(isLocked: boolean) {
   useEffect(() => {
+    // Early return if not in browser environment
+    if (typeof window === "undefined" || typeof document === "undefined") {
+      return;
+    }
+
     if (!isLocked) return;
 
     // Store original body overflow and padding
@@ -14,9 +19,7 @@ export function useBodyScrollLock(isLocked: boolean) {
 
     // Get scrollbar width to prevent layout shift
     const scrollbarWidth =
-      typeof window !== "undefined"
-        ? window.innerWidth - document.documentElement.clientWidth
-        : 0;
+      window.innerWidth - document.documentElement.clientWidth;
 
     // Lock scroll
     document.body.style.overflow = "hidden";
@@ -24,13 +27,8 @@ export function useBodyScrollLock(isLocked: boolean) {
     // Add padding to compensate for scrollbar disappearance
     if (scrollbarWidth > 0) {
       // Get computed padding in pixels
-      const computedStyle =
-        typeof window !== "undefined"
-          ? window.getComputedStyle(document.body)
-          : null;
-      const currentPadding = computedStyle
-        ? parseFloat(computedStyle.paddingRight) || 0
-        : 0;
+      const computedStyle = window.getComputedStyle(document.body);
+      const currentPadding = parseFloat(computedStyle.paddingRight) || 0;
       document.body.style.paddingRight = `${currentPadding + scrollbarWidth}px`;
     }
 
