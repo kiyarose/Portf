@@ -8,13 +8,13 @@ export function useBodyScrollLock(isLocked: boolean) {
   useEffect(() => {
     // Early return if not in browser environment
     if (
-      typeof globalThis.window === "undefined" ||
+      globalThis.window === undefined ||
       typeof document === "undefined"
     ) {
-      return;
+      return undefined;
     }
 
-    if (!isLocked) return;
+    if (!isLocked) return undefined;
 
     // Store original body overflow and padding
     const originalOverflow = document.body.style.overflow;
