@@ -23,14 +23,32 @@ export function useBodyScrollLock(isLocked: boolean) {
 
     // Add padding to compensate for scrollbar disappearance
     if (scrollbarWidth > 0) {
-      const currentPadding = parseInt(originalPaddingRight || "0", 10);
+      // Get computed padding in pixels
+      const computedStyle =
+        typeof window !== "undefined"
+          ? window.getComputedStyle(document.body)
+          : null;
+      const currentPadding = computedStyle
+        ? parseFloat(computedStyle.paddingRight) || 0
+        : 0;
       document.body.style.paddingRight = `${currentPadding + scrollbarWidth}px`;
     }
 
     // Cleanup function to restore original state
     return () => {
-      document.body.style.overflow = originalOverflow;
-      document.body.style.paddingRight = originalPaddingRight;
+      // Restore or remove overflow property
+      if (originalOverflow) {
+        document.body.style.overflow = originalOverflow;
+      } else {
+        document.body.style.removeProperty("overflow");
+      }
+
+      // Restore or remove padding-right property
+      if (originalPaddingRight) {
+        document.body.style.paddingRight = originalPaddingRight;
+      } else {
+        document.body.style.removeProperty("padding-right");
+      }
     };
   }, [isLocked]);
 }
