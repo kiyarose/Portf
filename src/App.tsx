@@ -1,4 +1,5 @@
 import { Icon } from "@iconify/react";
+import { useReducedMotion } from "framer-motion";
 import { ScrollSpy } from "./components/ScrollSpy";
 import { ThemeToggle } from "./components/ThemeToggle";
 import { MobileNav } from "./components/MobileNav";
@@ -114,6 +115,9 @@ function LogoLink({ theme }: { theme: Theme }) {
 function PrimaryNav({ theme }: { theme: Theme }) {
   const navSurface = themedClass(theme, "bg-white/70", "bg-slate-900/70");
   const linkColor = themedClass(theme, "text-slate-600", "text-slate-300");
+  const prefersReducedMotion = useReducedMotion();
+  const hoverScale = prefersReducedMotion ? "" : "hover:scale-105";
+  
   return (
     <nav
       className={`hidden items-center gap-2 rounded-full ${navSurface} px-2 py-1.5 shadow-md backdrop-blur md:flex`}
@@ -122,7 +126,7 @@ function PrimaryNav({ theme }: { theme: Theme }) {
         <a
           key={section.id}
           href={`#${section.id}`}
-          className={`flex items-center gap-2 rounded-full px-3 py-2 text-sm font-medium transition-all duration-200 hover:scale-105 hover:bg-accent/10 hover:text-accent hover:shadow-lg hover:shadow-accent/20 ${linkColor}`}
+          className={`flex items-center gap-2 rounded-full px-3 py-2 text-sm font-medium transition-all duration-200 ${hoverScale} hover:bg-accent/10 hover:text-accent hover:shadow-lg hover:shadow-accent/20 ${linkColor}`}
         >
           <Icon icon={section.icon} className="text-lg" aria-hidden="true" />
           {section.label}
