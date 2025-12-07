@@ -42,32 +42,11 @@ export function MobileNav({ sections }: MobileNavProps) {
 
   return (
     <div className="md:hidden">
-      {/* Hamburger Menu Button */}
-      <motion.button
-        onClick={toggleMenu}
-        className={cn(
-          "flex items-center justify-center rounded-full p-2 shadow-md backdrop-blur",
-          buttonSurface,
-        )}
-        whileTap={prefersReducedMotion ? undefined : { scale: 0.95 }}
-        aria-label="Toggle navigation menu"
-        aria-expanded={isOpen}
-      >
-        <Icon
-          icon={
-            isOpen
-              ? "material-symbols:close-rounded"
-              : "material-symbols:menu-rounded"
-          }
-          className={cn("text-xl", iconColor)}
-        />
-      </motion.button>
-
       {/* Mobile Menu Overlay */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            className="fixed inset-0 z-50 bg-black/20 backdrop-blur-sm"
+            className="fixed inset-0 z-50 bg-black/40 backdrop-blur-md"
             initial={prefersReducedMotion ? undefined : { opacity: 0 }}
             animate={prefersReducedMotion ? undefined : { opacity: 1 }}
             exit={prefersReducedMotion ? undefined : { opacity: 0 }}
@@ -122,6 +101,27 @@ export function MobileNav({ sections }: MobileNavProps) {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Hamburger Menu Button - positioned above overlay with higher z-index */}
+      <motion.button
+        onClick={toggleMenu}
+        className={cn(
+          "relative z-[60] flex items-center justify-center rounded-full p-2 shadow-md backdrop-blur",
+          buttonSurface,
+        )}
+        whileTap={prefersReducedMotion ? undefined : { scale: 0.95 }}
+        aria-label="Toggle navigation menu"
+        aria-expanded={isOpen}
+      >
+        <Icon
+          icon={
+            isOpen
+              ? "material-symbols:close-rounded"
+              : "material-symbols:menu-rounded"
+          }
+          className={cn("text-xl", iconColor)}
+        />
+      </motion.button>
     </div>
   );
 }
