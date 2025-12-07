@@ -46,11 +46,12 @@ export function MobileNav({ sections }: MobileNavProps) {
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            className="fixed inset-0 z-50 bg-black/40 backdrop-blur-md"
+            className="fixed inset-0 z-50 bg-black/50 backdrop-blur-lg"
             initial={prefersReducedMotion ? undefined : { opacity: 0 }}
             animate={prefersReducedMotion ? undefined : { opacity: 1 }}
             exit={prefersReducedMotion ? undefined : { opacity: 0 }}
             onClick={closeMenu}
+            style={{ pointerEvents: "auto" }}
           >
             {/* Mobile Menu Panel */}
             <motion.nav
