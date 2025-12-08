@@ -36,9 +36,19 @@ export async function celebrateOld(
   const OriginalConfettiParticle = ({
     initialX,
     initialY,
+    hue,
+    moveX,
+    moveY,
+    rotate,
+    duration,
   }: {
     initialX: number;
     initialY: number;
+    hue: number;
+    moveX: number;
+    moveY: number;
+    rotate: number;
+    duration: number;
   }) => {
     const prefersReducedMotion = useReducedMotion();
     if (prefersReducedMotion) return null;
@@ -46,7 +56,7 @@ export async function celebrateOld(
     return React.createElement(motion.div, {
       className: "absolute h-2 w-2 rounded-full",
       style: {
-        background: `hsl(${Math.random() * 360}, 70%, 60%)`, // NOSONAR - visual effect only
+        background: `hsl(${hue}, 70%, 60%)`, // NOSONAR - visual effect only
         left: `${initialX}px`,
         top: `${initialY}px`,
       },
@@ -54,11 +64,11 @@ export async function celebrateOld(
       animate: {
         opacity: 0,
         scale: [0, 1, 0],
-        x: (Math.random() - 0.5) * 200, // NOSONAR - visual effect only
-        y: (Math.random() - 0.5) * 200, // NOSONAR - visual effect only
-        rotate: Math.random() * 360, // NOSONAR - visual effect only
+        x: moveX, // NOSONAR - visual effect only
+        y: moveY, // NOSONAR - visual effect only
+        rotate, // NOSONAR - visual effect only
       },
-      transition: { duration: 1.5 + Math.random() * 0.5, ease: "easeOut" }, // NOSONAR - visual effect only
+      transition: { duration, ease: "easeOut" }, // NOSONAR - visual effect only
     });
   };
 
@@ -68,6 +78,11 @@ export async function celebrateOld(
       id: `old-confetti-${Date.now()}-${i}`,
       initialX: x,
       initialY: y,
+      hue: Math.random() * 360, // NOSONAR - visual effect only
+      moveX: (Math.random() - 0.5) * 200, // NOSONAR - visual effect only
+      moveY: (Math.random() - 0.5) * 200, // NOSONAR - visual effect only
+      rotate: Math.random() * 360, // NOSONAR - visual effect only
+      duration: 1.5 + Math.random() * 0.5, // NOSONAR - visual effect only
     }));
 
     return React.createElement(
@@ -80,6 +95,11 @@ export async function celebrateOld(
           key: particle.id,
           initialX: particle.initialX,
           initialY: particle.initialY,
+          hue: particle.hue,
+          moveX: particle.moveX,
+          moveY: particle.moveY,
+          rotate: particle.rotate,
+          duration: particle.duration,
         }),
       ),
     );
@@ -150,6 +170,9 @@ export async function celebrateNew(
     size,
     shape,
     color,
+    distance,
+    rotateDeg,
+    duration,
   }: {
     initialX: number;
     initialY: number;
@@ -157,11 +180,13 @@ export async function celebrateNew(
     size: number;
     shape: "circle" | "square" | "triangle";
     color: string;
+    distance: number;
+    rotateDeg: number;
+    duration: number;
   }) => {
     const prefersReducedMotion = useReducedMotion();
     if (prefersReducedMotion) return null;
 
-    const distance = 300 + Math.random() * 400; // NOSONAR - visual effect only
     const moveX = Math.cos(angle) * distance;
     const moveY = Math.sin(angle) * distance;
 
@@ -194,9 +219,9 @@ export async function celebrateNew(
         scale: [0, 1.2, 0.8, 0],
         x: moveX,
         y: moveY,
-        rotate: Math.random() * 720, // NOSONAR - visual effect only
+        rotate: rotateDeg, // NOSONAR - visual effect only
       },
-      transition: { duration: 2 + Math.random(), ease: "easeOut" }, // NOSONAR - visual effect only
+      transition: { duration, ease: "easeOut" }, // NOSONAR - visual effect only
     });
   };
 
@@ -214,6 +239,9 @@ export async function celebrateNew(
         BOLD_CONFETTI_COLORS[
           Math.floor(Math.random() * BOLD_CONFETTI_COLORS.length) // NOSONAR - visual effect only
         ],
+      distance: 300 + Math.random() * 400, // NOSONAR - visual effect only
+      rotateDeg: Math.random() * 720, // NOSONAR - visual effect only
+      duration: 2 + Math.random(), // NOSONAR - visual effect only
     }));
 
     return React.createElement(
@@ -230,6 +258,9 @@ export async function celebrateNew(
           size: particle.size,
           shape: particle.shape,
           color: particle.color,
+          distance: particle.distance,
+          rotateDeg: particle.rotateDeg,
+          duration: particle.duration,
         }),
       ),
     );
