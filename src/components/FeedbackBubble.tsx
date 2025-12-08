@@ -276,33 +276,34 @@ function FeedbackForm({
 
   const turnstileSiteKey = TURNSTILE_SITE_KEY;
 
-  const ensureTurnstileScript = useCallback(async () => {
-    if (!turnstileSiteKey) {
-      setTurnstileError(
-        "Verification is unavailable right now. Please use the contact form.",
-      );
-      return;
-    }
-
-    if (turnstileLoaded) {
-      setTurnstileReady(true);
-      return;
-    }
-
-    try {
-      await loadTurnstile();
-      setTurnstileReady(true);
-    } catch (error) {
-      setTurnstileError(
-        "Unable to load the verification step. Please use the contact form.",
-      );
-      safeConsoleWarn("Failed to load Turnstile script", error);
-    }
-  }, [turnstileSiteKey]);
-
+  // Load Turnstile script when component mounts
   useEffect(() => {
-    ensureTurnstileScript();
-  }, [ensureTurnstileScript]);
+    const loadScript = async () => {
+      if (!turnstileSiteKey) {
+        setTurnstileError(
+          "Verification is unavailable right now. Please use the contact form.",
+        );
+        return;
+      }
+
+      if (turnstileLoaded) {
+        setTurnstileReady(true);
+        return;
+      }
+
+      try {
+        await loadTurnstile();
+        setTurnstileReady(true);
+      } catch (error) {
+        setTurnstileError(
+          "Unable to load the verification step. Please use the contact form.",
+        );
+        safeConsoleWarn("Failed to load Turnstile script", error);
+      }
+    };
+
+    loadScript();
+  }, [turnstileSiteKey]);
 
   useEffect(() => {
     if (!turnstileReady || !turnstileSiteKey) {
@@ -351,6 +352,7 @@ function FeedbackForm({
       turnstileWidgetIdRef.current = widgetId;
     } catch (error) {
       safeConsoleError("Failed to render Turnstile widget", error);
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- Error handling in effect is intentional
       setTurnstileError(
         "Unable to show the verification challenge. Please use the contact form.",
       );
