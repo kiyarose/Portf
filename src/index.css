@@ -32,11 +32,17 @@ html {
     background-color: #f7f8fc;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    cursor:
+      url("/pointermagic/raster/light.png") 0 0,
+      auto;
   }
 
   .dark body {
     color: #f1f5f9;
     background-color: #111827;
+    cursor:
+      url("/pointermagic/raster/dark.png") 0 0,
+      auto;
   }
 
   body::selection {
@@ -47,6 +53,15 @@ html {
   a {
     color: #f97316;
     transition: color 0.2s ease-in-out;
+    cursor:
+      url("/pointermagic/raster/light_link.png") 8 8,
+      pointer;
+  }
+
+  .dark a {
+    cursor:
+      url("/pointermagic/raster/dark_link.png") 8 8,
+      pointer;
   }
 
   a:hover {
@@ -68,6 +83,15 @@ html {
 
   button {
     outline: none;
+    cursor:
+      url("/pointermagic/raster/light_link.png") 8 8,
+      pointer;
+  }
+
+  .dark button {
+    cursor:
+      url("/pointermagic/raster/dark_link.png") 8 8,
+      pointer;
   }
 
   button:focus-visible {
@@ -84,6 +108,68 @@ html {
 
   * {
     box-sizing: border-box;
+  }
+
+  /* Text cursor for editable elements and text selection areas */
+  input[type="text"],
+  input[type="email"],
+  input[type="search"],
+  input[type="tel"],
+  input[type="url"],
+  textarea,
+  [contenteditable="true"] {
+    cursor:
+      url("/pointermagic/raster/light_text.png") 8 8,
+      text;
+  }
+
+  .dark input[type="text"],
+  .dark input[type="email"],
+  .dark input[type="search"],
+  .dark input[type="tel"],
+  .dark input[type="url"],
+  .dark textarea,
+  .dark [contenteditable="true"] {
+    cursor:
+      url("/pointermagic/raster/dark_text.png") 8 8,
+      text;
+  }
+
+  /* Text cursor for selectable text elements */
+  p,
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  li,
+  td,
+  th,
+  label,
+  code,
+  pre {
+    cursor:
+      url("/pointermagic/raster/light_text.png") 8 8,
+      text;
+  }
+
+  .dark p,
+  .dark h1,
+  .dark h2,
+  .dark h3,
+  .dark h4,
+  .dark h5,
+  .dark h6,
+  .dark li,
+  .dark td,
+  .dark th,
+  .dark label,
+  .dark code,
+  .dark pre {
+    cursor:
+      url("/pointermagic/raster/dark_text.png") 8 8,
+      text;
   }
 }
 
@@ -107,6 +193,52 @@ html {
     .card-surface {
       padding: 2rem;
     }
+  }
+
+  /* Custom cursor utility classes with glow effect */
+  .cursor-pointer-custom {
+    cursor:
+      url("/pointermagic/raster/light.png") 0 0,
+      auto;
+  }
+
+  .dark .cursor-pointer-custom {
+    cursor:
+      url("/pointermagic/raster/dark.png") 0 0,
+      auto;
+  }
+
+  .cursor-link-custom {
+    cursor:
+      url("/pointermagic/raster/light_link.png") 8 8,
+      pointer;
+  }
+
+  .dark .cursor-link-custom {
+    cursor:
+      url("/pointermagic/raster/dark_link.png") 8 8,
+      pointer;
+  }
+
+  .cursor-text-custom {
+    cursor:
+      url("/pointermagic/raster/light_text.png") 8 8,
+      text;
+  }
+
+  .dark .cursor-text-custom {
+    cursor:
+      url("/pointermagic/raster/dark_text.png") 8 8,
+      text;
+  }
+
+  /* Glow effect for cursors - applied to elements that should have glowing cursors */
+  .cursor-glow {
+    filter: drop-shadow(0 0 4px rgba(249, 115, 22, 0.6));
+  }
+
+  .dark .cursor-glow {
+    filter: drop-shadow(0 0 6px rgba(249, 115, 22, 0.8));
   }
   .chip {
     display: inline-flex;
