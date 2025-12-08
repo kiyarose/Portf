@@ -36,6 +36,8 @@ export function EducationSection() {
     [],
   );
 
+  // Clamp activeIndex when educationEntries change
+  /* eslint-disable react-hooks/set-state-in-effect */
   useEffect(() => {
     setActiveIndex((current) => {
       if (educationEntries.length === 0) {
@@ -44,6 +46,7 @@ export function EducationSection() {
       return Math.min(current, educationEntries.length - 1);
     });
   }, [educationEntries]);
+  /* eslint-enable react-hooks/set-state-in-effect */
 
   const handleSelectChange = useCallback(
     (event: ChangeEvent<HTMLSelectElement>) => {

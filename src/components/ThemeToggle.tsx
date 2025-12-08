@@ -18,7 +18,6 @@ export function ThemeToggle({ className }: { className?: string }) {
         "chip !px-3 !py-1.5",
         themedClass(theme, "!bg-white/70", "!bg-slate-800/80"),
         "shadow-card backdrop-blur",
-        "cursor-pointer",
         prefersReducedMotion ? "" : "hover:animate-shake",
         className,
       )}

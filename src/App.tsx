@@ -1,5 +1,6 @@
 import { Icon } from "@iconify/react";
 import { useReducedMotion } from "framer-motion";
+import { useCallback } from "react";
 import { ScrollSpy } from "./components/ScrollSpy";
 import { ThemeToggle } from "./components/ThemeToggle";
 import { MobileNav } from "./components/MobileNav";
@@ -18,6 +19,7 @@ import { DecorativeBackground } from "./components/DecorativeBackground";
 import { SiteFooter } from "./components/SiteFooter";
 import { FeedbackBubble } from "./components/FeedbackBubble";
 import AdminHint from "./components/AdminHint";
+import { useAnimatedScroll } from "./hooks/useAnimatedScroll";
 
 const sections = [
   { id: "hero", label: "Home", icon: "material-symbols:home-rounded" },
@@ -97,9 +99,20 @@ function SiteHeader({ theme }: { theme: Theme }) {
 
 function LogoLink({ theme }: { theme: Theme }) {
   const labelColor = themedClass(theme, "text-slate-600", "text-slate-300");
+  const { scrollToElement } = useAnimatedScroll({ offset: -80 });
+
+  const handleClick = useCallback(
+    (e: React.MouseEvent<HTMLAnchorElement>) => {
+      e.preventDefault();
+      scrollToElement("hero");
+    },
+    [scrollToElement],
+  );
+
   return (
     <a
       href="#hero"
+      onClick={handleClick}
       className={`flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.2em] ${labelColor} sm:gap-3`}
     >
       <Icon
@@ -117,21 +130,41 @@ function PrimaryNav({ theme }: { theme: Theme }) {
   const linkColor = themedClass(theme, "text-slate-600", "text-slate-300");
   const prefersReducedMotion = useReducedMotion();
   const hoverScale = prefersReducedMotion ? "" : "hover:scale-105";
+  const { scrollToElement } = useAnimatedScroll({ offset: -80 });
+
+  const handleNavClick = useCallback(
+    (e: React.MouseEvent<HTMLAnchorElement>, sectionId: string) => {
+      e.preventDefault();
+      scrollToElement(sectionId);
+    },
+    [scrollToElement],
+  );
+
+  const createNavClickHandler = useCallback(
+    (sectionId: string) => (e: React.MouseEvent<HTMLAnchorElement>) => {
+      handleNavClick(e, sectionId);
+    },
+    [handleNavClick],
+  );
 
   return (
     <nav
       className={`hidden items-center gap-2 rounded-full ${navSurface} px-2 py-1.5 shadow-md backdrop-blur md:flex`}
     >
-      {sections.map((section) => (
-        <a
-          key={section.id}
-          href={`#${section.id}`}
-          className={`flex items-center gap-2 rounded-full px-3 py-2 text-sm font-medium transition-all duration-200 ${hoverScale} hover:bg-accent/10 hover:text-accent hover:shadow-lg hover:shadow-accent/20 ${linkColor}`}
-        >
-          <Icon icon={section.icon} className="text-lg" aria-hidden="true" />
-          {section.label}
-        </a>
-      ))}
+      {sections.map((section) => {
+        const navClickHandler = createNavClickHandler(section.id);
+        return (
+          <a
+            key={section.id}
+            href={`#${section.id}`}
+            onClick={navClickHandler}
+            className={`flex items-center gap-2 rounded-full px-3 py-2 text-sm font-medium transition-all duration-200 ${hoverScale} hover:bg-accent/10 hover:text-accent hover:shadow-lg hover:shadow-accent/20 ${linkColor}`}
+          >
+            <Icon icon={section.icon} className="text-lg" aria-hidden="true" />
+            {section.label}
+          </a>
+        );
+      })}
     </nav>
   );
 }

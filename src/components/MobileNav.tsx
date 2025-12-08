@@ -6,6 +6,7 @@ import { useTheme } from "../hooks/useTheme";
 import { useBodyScrollLock } from "../hooks/useBodyScrollLock";
 import { themedClass } from "../utils/themeClass";
 import { cn } from "../utils/cn";
+import { useAnimatedScroll } from "../hooks/useAnimatedScroll";
 
 type Section = {
   id: string;
@@ -29,6 +30,7 @@ export function MobileNav({ sections }: MobileNavProps) {
     "border-slate-700/60 bg-slate-900/90",
   );
   const linkColor = themedClass(theme, "text-slate-600", "text-slate-300");
+  const { scrollToElement } = useAnimatedScroll({ offset: -80 });
 
   // Lock body scroll when menu is open
   useBodyScrollLock(isOpen);
@@ -38,6 +40,23 @@ export function MobileNav({ sections }: MobileNavProps) {
   const handleStopPropagation = useCallback(
     (e: MouseEvent) => e.stopPropagation(),
     [],
+  );
+
+  const handleNavClick = useCallback(
+    (e: React.MouseEvent<HTMLAnchorElement>, sectionId: string) => {
+      e.preventDefault();
+      closeMenu();
+      // Small delay to allow menu close animation
+      setTimeout(() => scrollToElement(sectionId), 150);
+    },
+    [closeMenu, scrollToElement],
+  );
+
+  const createNavClickHandler = useCallback(
+    (sectionId: string) => (e: React.MouseEvent<HTMLAnchorElement>) => {
+      handleNavClick(e, sectionId);
+    },
+    [handleNavClick],
   );
 
   return (
@@ -82,25 +101,28 @@ export function MobileNav({ sections }: MobileNavProps) {
               onClick={handleStopPropagation}
             >
               <ul className="flex flex-col space-y-2">
-                {sections.map((section) => (
-                  <li key={section.id}>
-                    <a
-                      href={`#${section.id}`}
-                      onClick={closeMenu}
-                      className={cn(
-                        "flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-medium transition hover:bg-accent/10 hover:text-accent",
-                        linkColor,
-                      )}
-                    >
-                      <Icon
-                        icon={section.icon}
-                        className="text-lg"
-                        aria-hidden="true"
-                      />
-                      {section.label}
-                    </a>
-                  </li>
-                ))}
+                {sections.map((section) => {
+                  const navClickHandler = createNavClickHandler(section.id);
+                  return (
+                    <li key={section.id}>
+                      <a
+                        href={`#${section.id}`}
+                        onClick={navClickHandler}
+                        className={cn(
+                          "flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-medium transition hover:bg-accent/10 hover:text-accent",
+                          linkColor,
+                        )}
+                      >
+                        <Icon
+                          icon={section.icon}
+                          className="text-lg"
+                          aria-hidden="true"
+                        />
+                        {section.label}
+                      </a>
+                    </li>
+                  );
+                })}
               </ul>
             </motion.nav>
           </motion.div>
