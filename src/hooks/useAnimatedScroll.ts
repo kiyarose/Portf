@@ -55,9 +55,8 @@ export function useAnimatedScroll(options: AnimatedScrollOptions = {}) {
           behavior: "auto",
         });
 
-        // Trigger reflow
-        const height = main.offsetHeight;
-        if (height < 0) return;
+        // Trigger reflow to ensure style changes are applied
+        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
 
         // Phase 3: Fade in the target content with scale effect
         requestAnimationFrame(() => {
@@ -102,7 +101,8 @@ export function useAnimatedScroll(options: AnimatedScrollOptions = {}) {
     setTimeout(() => {
       window.scrollTo({ top: 0, behavior: "auto" });
 
-      void main.offsetHeight;
+      // Trigger reflow to ensure style changes are applied
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
 
       requestAnimationFrame(() => {
         main.style.transform = "scale(1.02)";
