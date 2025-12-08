@@ -57,7 +57,6 @@ export function useAnimatedScroll(options: AnimatedScrollOptions = {}) {
 
         // Trigger reflow to ensure style changes are applied
         // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-        
 
         // Phase 3: Fade in the target content with scale effect
         requestAnimationFrame(() => {
@@ -104,7 +103,6 @@ export function useAnimatedScroll(options: AnimatedScrollOptions = {}) {
 
       // Trigger reflow to ensure style changes are applied
       // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-      
 
       requestAnimationFrame(() => {
         main.style.transform = "scale(1.02)";
