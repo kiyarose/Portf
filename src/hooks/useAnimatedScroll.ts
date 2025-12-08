@@ -3,15 +3,10 @@ import { useReducedMotion } from "framer-motion";
 
 interface AnimatedScrollOptions {
   /**
-   * Duration of the scroll animation in milliseconds
-   * @default 800
+   * Duration of the fade animation in milliseconds
+   * @default 400
    */
   duration?: number;
-  /**
-   * Easing function for the scroll animation
-   * @default 'easeInOutCubic'
-   */
-  easing?: (t: number) => number;
   /**
    * Offset to apply to the final scroll position (useful for sticky headers)
    * @default 0
@@ -19,25 +14,12 @@ interface AnimatedScrollOptions {
   offset?: number;
 }
 
-// Easing functions for smooth animations
-const easings = {
-  easeInOutCubic: (t: number) =>
-    t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2,
-  easeOutQuart: (t: number) => 1 - Math.pow(1 - t, 4),
-  easeInOutQuart: (t: number) =>
-    t < 0.5 ? 8 * t * t * t * t : 1 - Math.pow(-2 * t + 2, 4) / 2,
-};
-
 /**
- * Custom hook that provides animated scrolling with scale/opacity effects
- * to make it feel like content is "coming to you" instead of zipping to it
+ * Custom hook that provides animated scrolling with fade effects
+ * to make content appear to "come to you" without showing the scroll journey
  */
 export function useAnimatedScroll(options: AnimatedScrollOptions = {}) {
-  const {
-    duration = 800,
-    easing = easings.easeInOutCubic,
-    offset = 0,
-  } = options;
+  const { duration = 400, offset = 0 } = options;
   const prefersReducedMotion = useReducedMotion();
 
   const scrollToElement = useCallback(
@@ -51,63 +33,52 @@ export function useAnimatedScroll(options: AnimatedScrollOptions = {}) {
         return;
       }
 
-      const startPosition = window.scrollY;
+      const main = document.querySelector("main");
+      if (!main) {
+        element.scrollIntoView({ behavior: "auto", block: "start" });
+        return;
+      }
+
       const targetPosition =
         element.getBoundingClientRect().top + window.scrollY + offset;
-      const distance = targetPosition - startPosition;
-      let startTime: number | null = null;
-      let hasAnimatedElement = false;
 
-      // Animate the target element appearance
-      const animateElement = () => {
-        if (hasAnimatedElement) return;
-        hasAnimatedElement = true;
+      // Phase 1: Fade out current view
+      main.style.transition = `opacity ${duration}ms ease-out, transform ${duration}ms ease-out`;
+      main.style.opacity = "0";
+      main.style.transform = "scale(0.95)";
 
-        element.style.transition =
-          "transform 0.6s ease-out, opacity 0.6s ease-out";
-        element.style.transform = "scale(0.95)";
-        element.style.opacity = "0.3";
+      // Phase 2: After fade out, scroll instantly and fade in
+      setTimeout(() => {
+        // Instant scroll while content is hidden
+        window.scrollTo({
+          top: targetPosition,
+          behavior: "auto",
+        });
 
-        // Trigger reflow by reading offsetHeight
-        const height = element.offsetHeight;
-        // Use height in a way that doesn't affect logic but prevents optimization
+        // Trigger reflow
+        const height = main.offsetHeight;
         if (height < 0) return;
 
+        // Phase 3: Fade in the target content with scale effect
         requestAnimationFrame(() => {
-          element.style.transform = "scale(1)";
-          element.style.opacity = "1";
+          main.style.transform = "scale(1.02)";
+          main.style.opacity = "1";
 
-          // Clean up styles after animation
+          // Settle to final state
           setTimeout(() => {
-            element.style.transition = "";
-            element.style.transform = "";
-            element.style.opacity = "";
-          }, 600);
+            main.style.transform = "scale(1)";
+
+            // Clean up after animation completes
+            setTimeout(() => {
+              main.style.transition = "";
+              main.style.transform = "";
+              main.style.opacity = "";
+            }, duration);
+          }, 50);
         });
-      };
-
-      // Animate the scroll
-      const animateScroll = (currentTime: number) => {
-        startTime ??= currentTime;
-        const timeElapsed = currentTime - startTime;
-        const progress = Math.min(timeElapsed / duration, 1);
-        const easedProgress = easing(progress);
-
-        window.scrollTo(0, startPosition + distance * easedProgress);
-
-        // Trigger element animation when we're about halfway through the scroll
-        if (progress >= 0.4 && progress < 0.5) {
-          animateElement();
-        }
-
-        if (progress < 1) {
-          requestAnimationFrame(animateScroll);
-        }
-      };
-
-      requestAnimationFrame(animateScroll);
+      }, duration);
     },
-    [duration, easing, offset, prefersReducedMotion],
+    [duration, offset, prefersReducedMotion],
   );
 
   const scrollToTop = useCallback(() => {
@@ -116,25 +87,40 @@ export function useAnimatedScroll(options: AnimatedScrollOptions = {}) {
       return;
     }
 
-    const startPosition = window.scrollY;
-    const distance = -startPosition;
-    let startTime: number | null = null;
+    const main = document.querySelector("main");
+    if (!main) {
+      window.scrollTo({ top: 0, behavior: "auto" });
+      return;
+    }
 
-    const animateScroll = (currentTime: number) => {
-      startTime ??= currentTime;
-      const timeElapsed = currentTime - startTime;
-      const progress = Math.min(timeElapsed / duration, 1);
-      const easedProgress = easing(progress);
+    // Phase 1: Fade out
+    main.style.transition = `opacity ${duration}ms ease-out, transform ${duration}ms ease-out`;
+    main.style.opacity = "0";
+    main.style.transform = "scale(0.95)";
 
-      window.scrollTo(0, startPosition + distance * easedProgress);
+    // Phase 2: Scroll and fade in
+    setTimeout(() => {
+      window.scrollTo({ top: 0, behavior: "auto" });
 
-      if (progress < 1) {
-        requestAnimationFrame(animateScroll);
-      }
-    };
+      const height = main.offsetHeight;
+      if (height < 0) return;
 
-    requestAnimationFrame(animateScroll);
-  }, [duration, easing, prefersReducedMotion]);
+      requestAnimationFrame(() => {
+        main.style.transform = "scale(1.02)";
+        main.style.opacity = "1";
+
+        setTimeout(() => {
+          main.style.transform = "scale(1)";
+
+          setTimeout(() => {
+            main.style.transition = "";
+            main.style.transform = "";
+            main.style.opacity = "";
+          }, duration);
+        }, 50);
+      });
+    }, duration);
+  }, [duration, prefersReducedMotion]);
 
   return { scrollToElement, scrollToTop };
 }
