@@ -61,6 +61,13 @@ export function ScrollSpy({ sections }: ScrollSpyProps) {
     [scrollToElement],
   );
 
+  const createNavClickHandler = useCallback(
+    (sectionId: string) => (e: React.MouseEvent<HTMLAnchorElement>) => {
+      handleNavClick(e, sectionId);
+    },
+    [handleNavClick],
+  );
+
   const buttonAnimate =
     isAtBottom && !prefersReducedMotion
       ? { opacity: 1, y: 0, rotate: [0, -6, 6, -6, 0], scale: [1, 1.08, 1] }
@@ -79,11 +86,12 @@ export function ScrollSpy({ sections }: ScrollSpyProps) {
       >
         {sections.map((section) => {
           const isActive = section.id === activeId;
+          const navClickHandler = createNavClickHandler(section.id);
           return (
             <a
               key={section.id}
               href={`#${section.id}`}
-              onClick={(e) => handleNavClick(e, section.id)}
+              onClick={navClickHandler}
               className={cn(
                 "relative inline-flex h-6 w-6 items-center justify-center rounded-full focus-visible:ring-2 focus-visible:ring-accent transition",
               )}

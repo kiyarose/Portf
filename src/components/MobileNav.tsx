@@ -52,6 +52,13 @@ export function MobileNav({ sections }: MobileNavProps) {
     [closeMenu, scrollToElement],
   );
 
+  const createNavClickHandler = useCallback(
+    (sectionId: string) => (e: React.MouseEvent<HTMLAnchorElement>) => {
+      handleNavClick(e, sectionId);
+    },
+    [handleNavClick],
+  );
+
   return (
     <div className="md:hidden">
       {/* Mobile Menu Overlay */}
@@ -94,25 +101,28 @@ export function MobileNav({ sections }: MobileNavProps) {
               onClick={handleStopPropagation}
             >
               <ul className="flex flex-col space-y-2">
-                {sections.map((section) => (
-                  <li key={section.id}>
-                    <a
-                      href={`#${section.id}`}
-                      onClick={(e) => handleNavClick(e, section.id)}
-                      className={cn(
-                        "flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-medium transition hover:bg-accent/10 hover:text-accent",
-                        linkColor,
-                      )}
-                    >
-                      <Icon
-                        icon={section.icon}
-                        className="text-lg"
-                        aria-hidden="true"
-                      />
-                      {section.label}
-                    </a>
-                  </li>
-                ))}
+                {sections.map((section) => {
+                  const navClickHandler = createNavClickHandler(section.id);
+                  return (
+                    <li key={section.id}>
+                      <a
+                        href={`#${section.id}`}
+                        onClick={navClickHandler}
+                        className={cn(
+                          "flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-medium transition hover:bg-accent/10 hover:text-accent",
+                          linkColor,
+                        )}
+                      >
+                        <Icon
+                          icon={section.icon}
+                          className="text-lg"
+                          aria-hidden="true"
+                        />
+                        {section.label}
+                      </a>
+                    </li>
+                  );
+                })}
               </ul>
             </motion.nav>
           </motion.div>

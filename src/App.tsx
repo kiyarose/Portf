@@ -1,5 +1,6 @@
 import { Icon } from "@iconify/react";
 import { useReducedMotion } from "framer-motion";
+import { useCallback } from "react";
 import { ScrollSpy } from "./components/ScrollSpy";
 import { ThemeToggle } from "./components/ThemeToggle";
 import { MobileNav } from "./components/MobileNav";
@@ -128,29 +129,39 @@ function PrimaryNav({ theme }: { theme: Theme }) {
   const hoverScale = prefersReducedMotion ? "" : "hover:scale-105";
   const { scrollToElement } = useAnimatedScroll({ offset: -80 });
 
-  const handleNavClick = (
-    e: React.MouseEvent<HTMLAnchorElement>,
-    sectionId: string,
-  ) => {
-    e.preventDefault();
-    scrollToElement(sectionId);
-  };
+  const handleNavClick = useCallback(
+    (e: React.MouseEvent<HTMLAnchorElement>, sectionId: string) => {
+      e.preventDefault();
+      scrollToElement(sectionId);
+    },
+    [scrollToElement],
+  );
+
+  const createNavClickHandler = useCallback(
+    (sectionId: string) => (e: React.MouseEvent<HTMLAnchorElement>) => {
+      handleNavClick(e, sectionId);
+    },
+    [handleNavClick],
+  );
 
   return (
     <nav
       className={`hidden items-center gap-2 rounded-full ${navSurface} px-2 py-1.5 shadow-md backdrop-blur md:flex`}
     >
-      {sections.map((section) => (
-        <a
-          key={section.id}
-          href={`#${section.id}`}
-          onClick={(e) => handleNavClick(e, section.id)}
-          className={`flex items-center gap-2 rounded-full px-3 py-2 text-sm font-medium transition-all duration-200 ${hoverScale} hover:bg-accent/10 hover:text-accent hover:shadow-lg hover:shadow-accent/20 ${linkColor}`}
-        >
-          <Icon icon={section.icon} className="text-lg" aria-hidden="true" />
-          {section.label}
-        </a>
-      ))}
+      {sections.map((section) => {
+        const navClickHandler = createNavClickHandler(section.id);
+        return (
+          <a
+            key={section.id}
+            href={`#${section.id}`}
+            onClick={navClickHandler}
+            className={`flex items-center gap-2 rounded-full px-3 py-2 text-sm font-medium transition-all duration-200 ${hoverScale} hover:bg-accent/10 hover:text-accent hover:shadow-lg hover:shadow-accent/20 ${linkColor}`}
+          >
+            <Icon icon={section.icon} className="text-lg" aria-hidden="true" />
+            {section.label}
+          </a>
+        );
+      })}
     </nav>
   );
 }

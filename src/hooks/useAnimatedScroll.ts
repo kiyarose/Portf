@@ -56,16 +56,22 @@ export function useAnimatedScroll(options: AnimatedScrollOptions = {}) {
         element.getBoundingClientRect().top + window.scrollY + offset;
       const distance = targetPosition - startPosition;
       let startTime: number | null = null;
+      let hasAnimatedElement = false;
 
       // Animate the target element appearance
       const animateElement = () => {
+        if (hasAnimatedElement) return;
+        hasAnimatedElement = true;
+
         element.style.transition =
           "transform 0.6s ease-out, opacity 0.6s ease-out";
         element.style.transform = "scale(0.95)";
         element.style.opacity = "0.3";
 
-        // Trigger reflow to ensure transition works
-        void element.offsetHeight;
+        // Trigger reflow by reading offsetHeight
+        const height = element.offsetHeight;
+        // Use height in a way that doesn't affect logic but prevents optimization
+        if (height < 0) return;
 
         requestAnimationFrame(() => {
           element.style.transform = "scale(1)";
@@ -82,7 +88,7 @@ export function useAnimatedScroll(options: AnimatedScrollOptions = {}) {
 
       // Animate the scroll
       const animateScroll = (currentTime: number) => {
-        if (startTime === null) startTime = currentTime;
+        startTime ??= currentTime;
         const timeElapsed = currentTime - startTime;
         const progress = Math.min(timeElapsed / duration, 1);
         const easedProgress = easing(progress);
@@ -115,7 +121,7 @@ export function useAnimatedScroll(options: AnimatedScrollOptions = {}) {
     let startTime: number | null = null;
 
     const animateScroll = (currentTime: number) => {
-      if (startTime === null) startTime = currentTime;
+      startTime ??= currentTime;
       const timeElapsed = currentTime - startTime;
       const progress = Math.min(timeElapsed / duration, 1);
       const easedProgress = easing(progress);
