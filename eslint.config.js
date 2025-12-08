@@ -4,7 +4,7 @@ import reactHooks from 'eslint-plugin-react-hooks'
 import reactRefresh from 'eslint-plugin-react-refresh'
 import tseslint from 'typescript-eslint'
 
-const reactHooksConfig = reactHooks.configs['recommended-latest']
+const reactHooksConfig = reactHooks.configs.flat['recommended-latest']
 const reactRefreshConfig = reactRefresh.configs.vite
 
 const reactTsConfig = {
