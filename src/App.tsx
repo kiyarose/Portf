@@ -128,7 +128,10 @@ function PrimaryNav({ theme }: { theme: Theme }) {
   const hoverScale = prefersReducedMotion ? "" : "hover:scale-105";
   const { scrollToElement } = useAnimatedScroll({ offset: -80 });
 
-  const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, sectionId: string) => {
+  const handleNavClick = (
+    e: React.MouseEvent<HTMLAnchorElement>,
+    sectionId: string,
+  ) => {
     e.preventDefault();
     scrollToElement(sectionId);
   };

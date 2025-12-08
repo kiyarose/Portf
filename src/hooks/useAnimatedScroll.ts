@@ -59,7 +59,8 @@ export function useAnimatedScroll(options: AnimatedScrollOptions = {}) {
 
       // Animate the target element appearance
       const animateElement = () => {
-        element.style.transition = "transform 0.6s ease-out, opacity 0.6s ease-out";
+        element.style.transition =
+          "transform 0.6s ease-out, opacity 0.6s ease-out";
         element.style.transform = "scale(0.95)";
         element.style.opacity = "0.3";
 
