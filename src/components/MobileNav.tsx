@@ -6,6 +6,7 @@ import { useTheme } from "../hooks/useTheme";
 import { useBodyScrollLock } from "../hooks/useBodyScrollLock";
 import { themedClass } from "../utils/themeClass";
 import { cn } from "../utils/cn";
+import { useAnimatedScroll } from "../hooks/useAnimatedScroll";
 
 type Section = {
   id: string;
@@ -29,6 +30,7 @@ export function MobileNav({ sections }: MobileNavProps) {
     "border-slate-700/60 bg-slate-900/90",
   );
   const linkColor = themedClass(theme, "text-slate-600", "text-slate-300");
+  const { scrollToElement } = useAnimatedScroll({ offset: -80 });
 
   // Lock body scroll when menu is open
   useBodyScrollLock(isOpen);
@@ -38,6 +40,16 @@ export function MobileNav({ sections }: MobileNavProps) {
   const handleStopPropagation = useCallback(
     (e: MouseEvent) => e.stopPropagation(),
     [],
+  );
+
+  const handleNavClick = useCallback(
+    (e: React.MouseEvent<HTMLAnchorElement>, sectionId: string) => {
+      e.preventDefault();
+      closeMenu();
+      // Small delay to allow menu close animation
+      setTimeout(() => scrollToElement(sectionId), 150);
+    },
+    [closeMenu, scrollToElement],
   );
 
   return (
@@ -86,7 +98,7 @@ export function MobileNav({ sections }: MobileNavProps) {
                   <li key={section.id}>
                     <a
                       href={`#${section.id}`}
-                      onClick={closeMenu}
+                      onClick={(e) => handleNavClick(e, section.id)}
                       className={cn(
                         "flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-medium transition hover:bg-accent/10 hover:text-accent",
                         linkColor,

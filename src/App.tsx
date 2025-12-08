@@ -18,6 +18,7 @@ import { DecorativeBackground } from "./components/DecorativeBackground";
 import { SiteFooter } from "./components/SiteFooter";
 import { FeedbackBubble } from "./components/FeedbackBubble";
 import AdminHint from "./components/AdminHint";
+import { useAnimatedScroll } from "./hooks/useAnimatedScroll";
 
 const sections = [
   { id: "hero", label: "Home", icon: "material-symbols:home-rounded" },
@@ -97,9 +98,17 @@ function SiteHeader({ theme }: { theme: Theme }) {
 
 function LogoLink({ theme }: { theme: Theme }) {
   const labelColor = themedClass(theme, "text-slate-600", "text-slate-300");
+  const { scrollToElement } = useAnimatedScroll({ offset: -80 });
+
+  const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    scrollToElement("hero");
+  };
+
   return (
     <a
       href="#hero"
+      onClick={handleClick}
       className={`flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.2em] ${labelColor} sm:gap-3`}
     >
       <Icon
@@ -117,6 +126,12 @@ function PrimaryNav({ theme }: { theme: Theme }) {
   const linkColor = themedClass(theme, "text-slate-600", "text-slate-300");
   const prefersReducedMotion = useReducedMotion();
   const hoverScale = prefersReducedMotion ? "" : "hover:scale-105";
+  const { scrollToElement } = useAnimatedScroll({ offset: -80 });
+
+  const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, sectionId: string) => {
+    e.preventDefault();
+    scrollToElement(sectionId);
+  };
 
   return (
     <nav
@@ -126,6 +141,7 @@ function PrimaryNav({ theme }: { theme: Theme }) {
         <a
           key={section.id}
           href={`#${section.id}`}
+          onClick={(e) => handleNavClick(e, section.id)}
           className={`flex items-center gap-2 rounded-full px-3 py-2 text-sm font-medium transition-all duration-200 ${hoverScale} hover:bg-accent/10 hover:text-accent hover:shadow-lg hover:shadow-accent/20 ${linkColor}`}
         >
           <Icon icon={section.icon} className="text-lg" aria-hidden="true" />

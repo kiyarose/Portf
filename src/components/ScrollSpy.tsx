@@ -5,6 +5,7 @@ import { useScrollSpy } from "../hooks/useScrollSpy";
 import { useTheme } from "../hooks/useTheme";
 import { cn } from "../utils/cn";
 import { themedClass } from "../utils/themeClass";
+import { useAnimatedScroll } from "../hooks/useAnimatedScroll";
 
 const SHOW_BACK_TO_TOP_OFFSET = 480;
 const BOTTOM_PROXIMITY_OFFSET = 120;
@@ -25,6 +26,7 @@ export function ScrollSpy({ sections }: ScrollSpyProps) {
   const [showBackToTop, setShowBackToTop] = useState(false);
   const [isAtBottom, setIsAtBottom] = useState(false);
   const { theme } = useTheme();
+  const { scrollToElement, scrollToTop } = useAnimatedScroll({ offset: -80 });
 
   useEffect(() => {
     if (typeof window === "undefined") return undefined;
@@ -48,13 +50,16 @@ export function ScrollSpy({ sections }: ScrollSpyProps) {
   }, []);
 
   const handleBackToTop = useCallback((): void => {
-    if (typeof window === "undefined") return;
+    scrollToTop();
+  }, [scrollToTop]);
 
-    window.scrollTo({
-      top: 0,
-      behavior: prefersReducedMotion ? "auto" : "smooth",
-    });
-  }, [prefersReducedMotion]);
+  const handleNavClick = useCallback(
+    (e: React.MouseEvent<HTMLAnchorElement>, sectionId: string) => {
+      e.preventDefault();
+      scrollToElement(sectionId);
+    },
+    [scrollToElement],
+  );
 
   const buttonAnimate =
     isAtBottom && !prefersReducedMotion
@@ -78,6 +83,7 @@ export function ScrollSpy({ sections }: ScrollSpyProps) {
             <a
               key={section.id}
               href={`#${section.id}`}
+              onClick={(e) => handleNavClick(e, section.id)}
               className={cn(
                 "relative inline-flex h-6 w-6 items-center justify-center rounded-full focus-visible:ring-2 focus-visible:ring-accent transition",
               )}
