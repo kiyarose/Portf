@@ -101,10 +101,13 @@ function LogoLink({ theme }: { theme: Theme }) {
   const labelColor = themedClass(theme, "text-slate-600", "text-slate-300");
   const { scrollToElement } = useAnimatedScroll({ offset: -80 });
 
-  const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    e.preventDefault();
-    scrollToElement("hero");
-  };
+  const handleClick = useCallback(
+    (e: React.MouseEvent<HTMLAnchorElement>) => {
+      e.preventDefault();
+      scrollToElement("hero");
+    },
+    [scrollToElement],
+  );
 
   return (
     <a
