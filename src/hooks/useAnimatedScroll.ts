@@ -102,8 +102,7 @@ export function useAnimatedScroll(options: AnimatedScrollOptions = {}) {
     setTimeout(() => {
       window.scrollTo({ top: 0, behavior: "auto" });
 
-      const height = main.offsetHeight;
-      if (height < 0) return;
+      void main.offsetHeight;
 
       requestAnimationFrame(() => {
         main.style.transform = "scale(1.02)";
