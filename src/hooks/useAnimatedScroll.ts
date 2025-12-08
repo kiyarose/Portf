@@ -55,9 +55,8 @@ export function useAnimatedScroll(options: AnimatedScrollOptions = {}) {
           behavior: "auto",
         });
 
-        // Trigger reflow
-        const height = main.offsetHeight;
-        if (height < 0) return;
+        // Trigger reflow to ensure style changes are applied
+        void main.offsetHeight;
 
         // Phase 3: Fade in the target content with scale effect
         requestAnimationFrame(() => {
