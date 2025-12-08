@@ -3,6 +3,9 @@ module.exports = {
   ci: {
     collect: {
       // Build first, then run preview (avoids timeout during build)
+      // IMPORTANT: The build MUST be run before this command (e.g., `npm run build`)
+      // The GitHub workflow handles this automatically, but for local testing run:
+      //   npm run build && npx lhci autorun
       // Note: LHCI may show "WARNING: Timed out waiting for the server to start listening"
       // This is cosmetic - the server starts successfully and Lighthouse runs complete.
       // The warning occurs because Vite's output pattern doesn't match LHCI's default /listen|ready/i regex.
