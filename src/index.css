@@ -152,7 +152,7 @@ html {
   pre {
     cursor:
       url("/pointermagic/raster/light_text.png") 8 8,
-      auto;
+      text;
   }
 
   .dark p,
@@ -171,7 +171,7 @@ html {
   .dark pre {
     cursor:
       url("/pointermagic/raster/dark_text.png") 8 8,
-      auto;
+      text;
   }
 }
 
