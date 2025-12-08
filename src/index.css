@@ -32,13 +32,17 @@ html {
     background-color: #f7f8fc;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    cursor: url("/pointermagic/raster/light.png") 0 0, auto;
+    cursor:
+      url("/pointermagic/raster/light.png") 0 0,
+      auto;
   }
 
   .dark body {
     color: #f1f5f9;
     background-color: #111827;
-    cursor: url("/pointermagic/raster/dark.png") 0 0, auto;
+    cursor:
+      url("/pointermagic/raster/dark.png") 0 0,
+      auto;
   }
 
   body::selection {
@@ -49,11 +53,15 @@ html {
   a {
     color: #f97316;
     transition: color 0.2s ease-in-out;
-    cursor: url("/pointermagic/raster/light_link.png") 8 8, pointer;
+    cursor:
+      url("/pointermagic/raster/light_link.png") 8 8,
+      pointer;
   }
 
   .dark a {
-    cursor: url("/pointermagic/raster/dark_link.png") 8 8, pointer;
+    cursor:
+      url("/pointermagic/raster/dark_link.png") 8 8,
+      pointer;
   }
 
   a:hover {
@@ -75,11 +83,15 @@ html {
 
   button {
     outline: none;
-    cursor: url("/pointermagic/raster/light_link.png") 8 8, pointer;
+    cursor:
+      url("/pointermagic/raster/light_link.png") 8 8,
+      pointer;
   }
 
   .dark button {
-    cursor: url("/pointermagic/raster/dark_link.png") 8 8, pointer;
+    cursor:
+      url("/pointermagic/raster/dark_link.png") 8 8,
+      pointer;
   }
 
   button:focus-visible {
@@ -106,7 +118,9 @@ html {
   input[type="url"],
   textarea,
   [contenteditable="true"] {
-    cursor: url("/pointermagic/raster/light_text.png") 8 8, text;
+    cursor:
+      url("/pointermagic/raster/light_text.png") 8 8,
+      text;
   }
 
   .dark input[type="text"],
@@ -116,7 +130,9 @@ html {
   .dark input[type="url"],
   .dark textarea,
   .dark [contenteditable="true"] {
-    cursor: url("/pointermagic/raster/dark_text.png") 8 8, text;
+    cursor:
+      url("/pointermagic/raster/dark_text.png") 8 8,
+      text;
   }
 
   /* Text cursor for selectable text elements */
@@ -134,7 +150,9 @@ html {
   label,
   code,
   pre {
-    cursor: url("/pointermagic/raster/light_text.png") 8 8, auto;
+    cursor:
+      url("/pointermagic/raster/light_text.png") 8 8,
+      auto;
   }
 
   .dark p,
@@ -151,7 +169,9 @@ html {
   .dark label,
   .dark code,
   .dark pre {
-    cursor: url("/pointermagic/raster/dark_text.png") 8 8, auto;
+    cursor:
+      url("/pointermagic/raster/dark_text.png") 8 8,
+      auto;
   }
 }
 
@@ -179,27 +199,39 @@ html {
 
   /* Custom cursor utility classes with glow effect */
   .cursor-pointer-custom {
-    cursor: url("/pointermagic/raster/light.png") 0 0, auto;
+    cursor:
+      url("/pointermagic/raster/light.png") 0 0,
+      auto;
   }
 
   .dark .cursor-pointer-custom {
-    cursor: url("/pointermagic/raster/dark.png") 0 0, auto;
+    cursor:
+      url("/pointermagic/raster/dark.png") 0 0,
+      auto;
   }
 
   .cursor-link-custom {
-    cursor: url("/pointermagic/raster/light_link.png") 8 8, pointer;
+    cursor:
+      url("/pointermagic/raster/light_link.png") 8 8,
+      pointer;
   }
 
   .dark .cursor-link-custom {
-    cursor: url("/pointermagic/raster/dark_link.png") 8 8, pointer;
+    cursor:
+      url("/pointermagic/raster/dark_link.png") 8 8,
+      pointer;
   }
 
   .cursor-text-custom {
-    cursor: url("/pointermagic/raster/light_text.png") 8 8, text;
+    cursor:
+      url("/pointermagic/raster/light_text.png") 8 8,
+      text;
   }
 
   .dark .cursor-text-custom {
-    cursor: url("/pointermagic/raster/dark_text.png") 8 8, text;
+    cursor:
+      url("/pointermagic/raster/dark_text.png") 8 8,
+      text;
   }
 
   /* Glow effect for cursors - applied to elements that should have glowing cursors */
