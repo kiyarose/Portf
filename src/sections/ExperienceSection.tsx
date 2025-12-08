@@ -53,12 +53,13 @@ export function ExperienceSection() {
   // Clamp activeIndex when experienceEntries change
   /* eslint-disable react-hooks/set-state-in-effect */
   useEffect(() => {
-    if (experienceEntries.length === 0) {
-      setActiveIndex(0);
-    } else if (activeIndex >= experienceEntries.length) {
-      setActiveIndex(experienceEntries.length - 1);
-    }
-  }, [experienceEntries, activeIndex]);
+    setActiveIndex((current) => {
+      if (experienceEntries.length === 0) {
+        return 0;
+      }
+      return Math.min(current, experienceEntries.length - 1);
+    });
+  }, [experienceEntries]);
   /* eslint-enable react-hooks/set-state-in-effect */
 
   const handleIndexChange = useCallback((next: number) => {

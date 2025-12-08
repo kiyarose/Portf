@@ -166,29 +166,26 @@ export async function celebrateNew(
   const NewConfettiParticle = ({
     initialX,
     initialY,
-    angle,
     size,
     shape,
     color,
-    distance,
+    moveX,
+    moveY,
     rotateDeg,
     duration,
   }: {
     initialX: number;
     initialY: number;
-    angle: number;
     size: number;
     shape: "circle" | "square" | "triangle";
     color: string;
-    distance: number;
+    moveX: number;
+    moveY: number;
     rotateDeg: number;
     duration: number;
   }) => {
     const prefersReducedMotion = useReducedMotion();
     if (prefersReducedMotion) return null;
-
-    const moveX = Math.cos(angle) * distance;
-    const moveY = Math.sin(angle) * distance;
 
     const getShapeClass = () => {
       switch (shape) {
@@ -227,22 +224,26 @@ export async function celebrateNew(
 
   // Container component
   const ConfettiContainer = () => {
-    const particles = Array.from({ length: 25 }, (_, i) => ({
-      id: `new-confetti-${Date.now()}-${i}`,
-      initialX: x,
-      initialY: y,
-      angle: (Math.PI * 2 * i) / 25 + (Math.random() - 0.5) * 0.8, // NOSONAR - visual effect only
-      size: 8 + Math.random() * 12, // NOSONAR - visual effect only
-      shape:
-        CONFETTI_SHAPES[Math.floor(Math.random() * CONFETTI_SHAPES.length)], // NOSONAR - visual effect only
-      color:
-        BOLD_CONFETTI_COLORS[
-          Math.floor(Math.random() * BOLD_CONFETTI_COLORS.length) // NOSONAR - visual effect only
-        ],
-      distance: 300 + Math.random() * 400, // NOSONAR - visual effect only
-      rotateDeg: Math.random() * 720, // NOSONAR - visual effect only
-      duration: 2 + Math.random(), // NOSONAR - visual effect only
-    }));
+    const particles = Array.from({ length: 25 }, (_, i) => {
+      const angle = (Math.PI * 2 * i) / 25 + (Math.random() - 0.5) * 0.8; // NOSONAR - visual effect only
+      const distance = 300 + Math.random() * 400; // NOSONAR - visual effect only
+      return {
+        id: `new-confetti-${Date.now()}-${i}`,
+        initialX: x,
+        initialY: y,
+        size: 8 + Math.random() * 12, // NOSONAR - visual effect only
+        shape:
+          CONFETTI_SHAPES[Math.floor(Math.random() * CONFETTI_SHAPES.length)], // NOSONAR - visual effect only
+        color:
+          BOLD_CONFETTI_COLORS[
+            Math.floor(Math.random() * BOLD_CONFETTI_COLORS.length) // NOSONAR - visual effect only
+          ],
+        moveX: Math.cos(angle) * distance,
+        moveY: Math.sin(angle) * distance,
+        rotateDeg: Math.random() * 720, // NOSONAR - visual effect only
+        duration: 2 + Math.random(), // NOSONAR - visual effect only
+      };
+    });
 
     return React.createElement(
       "div",
@@ -254,11 +255,11 @@ export async function celebrateNew(
           key: particle.id,
           initialX: particle.initialX,
           initialY: particle.initialY,
-          angle: particle.angle,
           size: particle.size,
           shape: particle.shape,
           color: particle.color,
-          distance: particle.distance,
+          moveX: particle.moveX,
+          moveY: particle.moveY,
           rotateDeg: particle.rotateDeg,
           duration: particle.duration,
         }),

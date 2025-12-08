@@ -39,12 +39,13 @@ export function EducationSection() {
   // Clamp activeIndex when educationEntries change
   /* eslint-disable react-hooks/set-state-in-effect */
   useEffect(() => {
-    if (educationEntries.length === 0) {
-      setActiveIndex(0);
-    } else if (activeIndex >= educationEntries.length) {
-      setActiveIndex(educationEntries.length - 1);
-    }
-  }, [educationEntries, activeIndex]);
+    setActiveIndex((current) => {
+      if (educationEntries.length === 0) {
+        return 0;
+      }
+      return Math.min(current, educationEntries.length - 1);
+    });
+  }, [educationEntries]);
   /* eslint-enable react-hooks/set-state-in-effect */
 
   const handleSelectChange = useCallback(
