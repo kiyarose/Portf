@@ -12,3 +12,4 @@ jobs:
   automation:
     name: Issue & PR Automation Suite
     uses: SillyLittleTech/AutomationSuite@0.1
+    secrets: inherit
