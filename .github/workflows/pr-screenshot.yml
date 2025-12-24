@@ -10,3 +10,4 @@ jobs:
   e2e:
     name: E2E Testing Suite
     uses: SillyLittleTech/E2E@0.1
+
