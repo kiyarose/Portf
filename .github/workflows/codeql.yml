@@ -7,13 +7,12 @@ on:
   pull_request:
   workflow_dispatch:
 
-permissions:
-  contents: read
-
 jobs:
   detect-changes:
     name: Detect language changes
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     outputs:
       swift: ${{ steps.filter.outputs.swift }}
       javascript: ${{ steps.filter.outputs.javascript }}
