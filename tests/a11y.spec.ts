@@ -14,6 +14,7 @@ test("collect axe violations (JSON only)", async ({ page }) => {
     await page
       .waitForLoadState("networkidle", { timeout: 5_000 })
       .catch(() => undefined);
+    await page.waitForSelector("main", { timeout: 10_000 });
     // Use AxeBuilder directly instead of injectAxe
     const results = await new AxeBuilder({ page })
       .include("main")

@@ -67,6 +67,7 @@ build/Release
 playwright-report/
 playwright-logs/
 test-results/
+axe-report.json
 
 # Lighthouse CI Reports
 .lighthouseci/
