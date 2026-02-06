@@ -1,11 +1,11 @@
 {
   "nav": {
     "home": "Inici",
-    "about": "Sobre mi",
-    "experience": "Experiència",
+    "about": "Jo",
+    "experience": "Feina",
     "education": "Educació",
-    "certifications": "Certificacions",
-    "projects": "Projectes Personals",
+    "certifications": "Llicència",
+    "projects": "Afició",
     "skills": "Habilitats",
     "contact": "Contacte"
   },
@@ -13,7 +13,7 @@
     "greeting": "Hola, sóc",
     "name": "Kiya Rose",
     "wave": "👋",
-    "headline": "Professional de TI de Salut i Suport en Formació",
+    "headline": "Treballadors de TI aprenent suport sanitari",
     "description": "Dedico el meu temps lliure a construir projectes de codi mentre em preparo per ajudar equips a temps complet en TI de salut i suport tècnic."
   },
   "about": {
