@@ -9,6 +9,7 @@ import { SectionContainer } from "../components/SectionContainer";
 import AdminHint from "../components/AdminHint";
 import { SocialChip } from "../components/SocialChip";
 import { useTheme } from "../hooks/useTheme";
+import { useTranslation } from "../hooks/useTranslation";
 import { useRemoteData } from "../hooks/useRemoteData";
 import type { Theme } from "../providers/theme-context";
 import { themedClass } from "../utils/themeClass";
@@ -18,9 +19,15 @@ type HeroCardProps = {
   prefersReducedMotion: boolean;
   theme: Theme;
   socialLinks: SocialLink[];
+  t: ReturnType<typeof useTranslation>["t"];
 };
 
-function HeroCard({ prefersReducedMotion, theme, socialLinks }: HeroCardProps) {
+function HeroCard({
+  prefersReducedMotion,
+  theme,
+  socialLinks,
+  t,
+}: HeroCardProps) {
   const surfaceGradient = themedClass(
     theme,
     "from-white/90 via-[#ffe9f2]/80 to-accent/15",
@@ -49,7 +56,7 @@ function HeroCard({ prefersReducedMotion, theme, socialLinks }: HeroCardProps) {
             greetingChip,
           )}
         >
-          Hello, I’m <AdminHint>Kiya Rose</AdminHint>! 👋
+          {t.hero.greeting} <AdminHint>{t.hero.name}</AdminHint>! {t.hero.wave}
         </span>
         <div className="space-y-4">
           <h1
@@ -58,11 +65,10 @@ function HeroCard({ prefersReducedMotion, theme, socialLinks }: HeroCardProps) {
               headlineColor,
             )}
           >
-            Health IT & Support Pro in Training
+            {t.hero.headline}
           </h1>
           <p className={cn("max-w-2xl text-lg", blurbColor)}>
-            I spend my free time building code projects while preparing to help
-            teams full time across health IT and tech support.
+            {t.hero.description}
           </p>
         </div>
         <div className="flex flex-wrap gap-3">
@@ -90,6 +96,7 @@ function HeroCard({ prefersReducedMotion, theme, socialLinks }: HeroCardProps) {
 export function HeroSection() {
   const prefersReducedMotion = useReducedMotion() ?? false;
   const { theme } = useTheme();
+  const { t } = useTranslation();
   const { data: socialLinks, debugAttributes: socialDebugAttributes } =
     useRemoteData<SocialLink[]>({
       resource: SOCIALS_RESOURCE,
@@ -107,6 +114,7 @@ export function HeroSection() {
         prefersReducedMotion={prefersReducedMotion}
         theme={theme}
         socialLinks={socialLinks}
+        t={t}
       />
     </SectionContainer>
   );

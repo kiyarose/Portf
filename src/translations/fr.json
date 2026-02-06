@@ -1,0 +1,55 @@
+{
+  "nav": {
+    "home": "Accueil",
+    "about": "Moi",
+    "experience": "Expérience",
+    "education": "Éducation",
+    "certifications": "Certifications",
+    "projects": "Passe-temps",
+    "skills": "Capacités",
+    "contact": "Courrier"
+  },
+  "hero": {
+    "greeting": "Bonjour, je suis",
+    "name": "Kiya Rose",
+    "wave": "👋",
+    "headline": "Professionnelle en Formation en TI Santé et Support",
+    "description": "Je passe mon temps libre à créer des projets de code tout en me préparant à aider des équipes à temps plein dans les domaines de la TI santé et du support technique."
+  },
+  "about": {
+    "title": "À propos",
+    "eyebrow": "Profil",
+    "description": "Je suis une professionnelle en TI cherchant à acquérir de l'expérience en administration de bureau tout en poursuivant mon Certificat de Facturation et Codage. J'adore les jeux solo avec une histoire et réfléchir trop. J'aime aussi écrire de temps en temps :3"
+  },
+  "experience": {
+    "title": "Expérience",
+    "eyebrow": "Parcours Professionnel"
+  },
+  "education": {
+    "title": "Éducation",
+    "eyebrow": "Formation Académique"
+  },
+  "certifications": {
+    "title": "Certifications",
+    "eyebrow": "Accréditations Professionnelles"
+  },
+  "projects": {
+    "title": "Projets Personnels",
+    "eyebrow": "Projets Personnels"
+  },
+  "skills": {
+    "title": "Compétences",
+    "eyebrow": "Capacités Techniques"
+  },
+  "contact": {
+    "title": "Contact",
+    "eyebrow": "Entrer en Contact"
+  },
+  "theme": {
+    "darkMode": "Mode sombre",
+    "lightMode": "Mode clair"
+  },
+  "language": {
+    "select": "Langue"
+  }
+}
