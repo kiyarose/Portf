@@ -1,0 +1,55 @@
+{
+  "nav": {
+    "home": "Home",
+    "about": "Over",
+    "experience": "Ervaring",
+    "education": "Opleiding",
+    "certifications": "Certificeringen",
+    "projects": "Hobbyprojecten",
+    "skills": "Vaardigheden",
+    "contact": "Contact"
+  },
+  "hero": {
+    "greeting": "Hallo, ik ben",
+    "name": "Kiya Rose",
+    "wave": "👋",
+    "headline": "Gezondheids-IT & Ondersteuningsprofessional in Opleiding",
+    "description": "Ik besteed mijn vrije tijd aan het bouwen van codeprojecten terwijl ik me voorbereid om fulltime teams te helpen met gezondheids-IT en technische ondersteuning."
+  },
+  "about": {
+    "title": "Over",
+    "eyebrow": "Profiel",
+    "description": "Ik ben een IT-professional die kantooradministratie-ervaring wil opdoen terwijl ik mijn Facturatie- en Coderingscertificaat behaal. Ik hou van singleplayer verhaalspellen en overdenken. Ik schrijf ook graag soms :3"
+  },
+  "experience": {
+    "title": "Ervaring",
+    "eyebrow": "Professionele Reis"
+  },
+  "education": {
+    "title": "Opleiding",
+    "eyebrow": "Academische Achtergrond"
+  },
+  "certifications": {
+    "title": "Certificeringen",
+    "eyebrow": "Professionele Kwalificaties"
+  },
+  "projects": {
+    "title": "Hobbyprojecten",
+    "eyebrow": "Persoonlijke Projecten"
+  },
+  "skills": {
+    "title": "Vaardigheden",
+    "eyebrow": "Technische Capaciteiten"
+  },
+  "contact": {
+    "title": "Contact",
+    "eyebrow": "Neem Contact Op"
+  },
+  "theme": {
+    "darkMode": "Donkere modus",
+    "lightMode": "Lichte modus"
+  },
+  "language": {
+    "select": "Taal"
+  }
+}

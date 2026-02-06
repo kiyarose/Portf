@@ -1,11 +1,13 @@
 import { Icon } from "@iconify/react";
 import { motion, useReducedMotion } from "framer-motion";
 import { useTheme } from "../hooks/useTheme";
+import { useTranslation } from "../hooks/useTranslation";
 import { cn } from "../utils/cn";
 import { themedClass } from "../utils/themeClass";
 
 export function ThemeToggle({ className }: { className?: string }) {
   const { theme, toggleTheme } = useTheme();
+  const { t } = useTranslation();
   const prefersReducedMotion = useReducedMotion();
 
   const isLight = theme === "light";
@@ -52,7 +54,7 @@ export function ThemeToggle({ className }: { className?: string }) {
             themedClass(theme, "text-slate-600", "text-slate-300"),
           )}
         >
-          {isLight ? "Dark" : "Light"} mode
+          {isLight ? t.theme.darkMode : t.theme.lightMode}
         </span>
       </motion.span>
     </button>

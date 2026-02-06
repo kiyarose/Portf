@@ -9,6 +9,7 @@ import {
   type Certification,
 } from "../data/certifications";
 import { useTheme } from "../hooks/useTheme";
+import { useTranslation } from "../hooks/useTranslation";
 import { useRemoteData } from "../hooks/useRemoteData";
 import { themedClass } from "../utils/themeClass";
 import { cn } from "../utils/cn";
@@ -16,6 +17,7 @@ import { cn } from "../utils/cn";
 export function CertificationsSection() {
   const prefersReducedMotion = useReducedMotion();
   const { theme } = useTheme();
+  const { t } = useTranslation();
   const {
     data: certificationEntries,
     debugAttributes: certificationDebugAttributes,
@@ -35,8 +37,8 @@ export function CertificationsSection() {
         <SectionHeader
           id="certifications"
           icon="material-symbols:workspace-premium-rounded"
-          label="Certifications"
-          eyebrow="Validated Skills"
+          label={t.certifications.title}
+          eyebrow={t.certifications.eyebrow}
         />
         <div className="grid gap-4 sm:gap-6 md:grid-cols-2">
           {certificationEntries.map((cert, index) => (

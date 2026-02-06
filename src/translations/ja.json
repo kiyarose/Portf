@@ -1,0 +1,55 @@
+{
+  "nav": {
+    "home": "ホーム",
+    "about": "プロフィール",
+    "experience": "経験",
+    "education": "学歴",
+    "certifications": "資格",
+    "projects": "趣味のプロジェクト",
+    "skills": "スキル",
+    "contact": "お問い合わせ"
+  },
+  "hero": {
+    "greeting": "こんにちは、私は",
+    "name": "Kiya Rose",
+    "wave": "👋",
+    "headline": "ヘルスケアIT＆サポート専門家トレーニング中",
+    "description": "ヘルスケアITとテクニカルサポートでフルタイムでチームを支援する準備をしながら、自由時間にコードプロジェクトを構築しています。"
+  },
+  "about": {
+    "title": "プロフィール",
+    "eyebrow": "プロフィール",
+    "description": "私は請求とコーディングの資格取得を目指しながら、オフィス管理の経験を積もうとしているIT専門家です。シングルプレイヤーのストーリーゲームと考えすぎることが大好きです。時々書くことも好きです :3"
+  },
+  "experience": {
+    "title": "経験",
+    "eyebrow": "職業の歩み"
+  },
+  "education": {
+    "title": "学歴",
+    "eyebrow": "学術的背景"
+  },
+  "certifications": {
+    "title": "資格",
+    "eyebrow": "専門資格"
+  },
+  "projects": {
+    "title": "趣味のプロジェクト",
+    "eyebrow": "個人プロジェクト"
+  },
+  "skills": {
+    "title": "スキル",
+    "eyebrow": "技術的能力"
+  },
+  "contact": {
+    "title": "お問い合わせ",
+    "eyebrow": "連絡する"
+  },
+  "theme": {
+    "darkMode": "ダークモード",
+    "lightMode": "ライトモード"
+  },
+  "language": {
+    "select": "言語"
+  }
+}

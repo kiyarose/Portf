@@ -7,6 +7,8 @@ import { useBodyScrollLock } from "../hooks/useBodyScrollLock";
 import { themedClass } from "../utils/themeClass";
 import { cn } from "../utils/cn";
 import { useAnimatedScroll } from "../hooks/useAnimatedScroll";
+import { LanguageToggle } from "./LanguageToggle";
+import { ThemeToggle } from "./ThemeToggle";
 
 type Section = {
   id: string;
@@ -124,6 +126,11 @@ export function MobileNav({ sections }: MobileNavProps) {
                   );
                 })}
               </ul>
+              {/* Settings section with Language and Theme toggles */}
+              <div className="mt-4 flex flex-col gap-2 border-t border-white/10 pt-4">
+                <LanguageToggle className="w-full" />
+                <ThemeToggle className="w-full" />
+              </div>
             </motion.nav>
           </motion.div>
         )}

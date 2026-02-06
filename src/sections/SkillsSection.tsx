@@ -28,6 +28,7 @@ import {
 import { useLocalStorage } from "../hooks/useLocalStorage";
 import { useRemoteData } from "../hooks/useRemoteData";
 import { useTheme } from "../hooks/useTheme";
+import { useTranslation } from "../hooks/useTranslation";
 import { cn } from "../utils/cn";
 import { themedClass } from "../utils/themeClass";
 import { skillIcons } from "../utils/icons";
@@ -148,6 +149,7 @@ function SkillsBoard({
 }
 
 export function SkillsSection() {
+  const { t } = useTranslation();
   const { data: remoteSkills, debugAttributes: skillsDebugAttributes } =
     useRemoteData<string[]>({
       resource: SKILLS_RESOURCE,
@@ -218,8 +220,8 @@ export function SkillsSection() {
         <SectionHeader
           id="skills"
           icon="material-symbols:auto-awesome-rounded"
-          label="Skills"
-          eyebrow="Strengths"
+          label={t.skills.title}
+          eyebrow={t.skills.eyebrow}
         />
         <SkillsBoard
           skills={skills}

@@ -1,0 +1,55 @@
+{
+  "nav": {
+    "home": "Inici",
+    "about": "Sobre mi",
+    "experience": "Experiència",
+    "education": "Educació",
+    "certifications": "Certificacions",
+    "projects": "Projectes Personals",
+    "skills": "Habilitats",
+    "contact": "Contacte"
+  },
+  "hero": {
+    "greeting": "Hola, sóc",
+    "name": "Kiya Rose",
+    "wave": "👋",
+    "headline": "Professional de TI de Salut i Suport en Formació",
+    "description": "Dedico el meu temps lliure a construir projectes de codi mentre em preparo per ajudar equips a temps complet en TI de salut i suport tècnic."
+  },
+  "about": {
+    "title": "Sobre mi",
+    "eyebrow": "Perfil",
+    "description": "Sóc un professional de TI que busca adquirir experiència en administració d'oficines mentre persegueixo el meu Certificat de Facturació i Codificació. M'encanten els jocs d'un sol jugador amb història i pensar massa. També m'agrada escriure de tant en tant :3"
+  },
+  "experience": {
+    "title": "Experiència",
+    "eyebrow": "Trajectòria Professional"
+  },
+  "education": {
+    "title": "Educació",
+    "eyebrow": "Formació Acadèmica"
+  },
+  "certifications": {
+    "title": "Certificacions",
+    "eyebrow": "Credencials Professionals"
+  },
+  "projects": {
+    "title": "Projectes Personals",
+    "eyebrow": "Projectes Personals"
+  },
+  "skills": {
+    "title": "Habilitats",
+    "eyebrow": "Capacitats Tècniques"
+  },
+  "contact": {
+    "title": "Contacte",
+    "eyebrow": "Posa't en Contacte"
+  },
+  "theme": {
+    "darkMode": "Mode fosc",
+    "lightMode": "Mode clar"
+  },
+  "language": {
+    "select": "Idioma"
+  }
+}
