@@ -1,7 +1,7 @@
 import { Icon } from "@iconify/react";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { useState, useCallback } from "react";
-import type { MouseEvent } from "react";
+import type { MouseEvent, KeyboardEvent } from "react";
 import { useLanguage } from "../hooks/useLanguage";
 import { useTheme } from "../hooks/useTheme";
 import { cn } from "../utils/cn";
@@ -45,6 +45,25 @@ export function LanguageToggle({ className }: { className?: string }) {
       closeMenu();
     },
     [setLanguage, closeMenu],
+  );
+
+  // Handler factory to avoid inline arrow functions
+  const createLanguageSelectHandler = useCallback(
+    (langCode: Language) => () => {
+      handleLanguageSelect(langCode);
+    },
+    [handleLanguageSelect],
+  );
+
+  // Keyboard handler for overlay
+  const handleOverlayKeyDown = useCallback(
+    (e: KeyboardEvent<HTMLDivElement>) => {
+      if (e.key === "Escape" || e.key === "Enter") {
+        e.preventDefault();
+        closeMenu();
+      }
+    },
+    [closeMenu],
   );
 
   const buttonSurface = themedClass(theme, "!bg-white/70", "!bg-slate-800/80");
@@ -110,6 +129,10 @@ export function LanguageToggle({ className }: { className?: string }) {
             <div
               className="fixed inset-0 z-[45]"
               onClick={closeMenu}
+              onKeyDown={handleOverlayKeyDown}
+              role="button"
+              tabIndex={0}
+              aria-label="Close language menu"
               style={{ pointerEvents: "auto" }}
             />
             {/* Dropdown Menu */}
@@ -137,34 +160,37 @@ export function LanguageToggle({ className }: { className?: string }) {
               onClick={handleStopPropagation}
             >
               <ul className="flex flex-col space-y-1">
-                {languages.map((lang) => (
-                  <li key={lang.code}>
-                    <button
-                      type="button"
-                      onClick={() => handleLanguageSelect(lang.code)}
-                      className={cn(
-                        "flex w-full items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium transition",
-                        itemHover,
-                        textColor,
-                        lang.code === language && "bg-accent/10 text-accent",
-                      )}
-                    >
-                      {lang.customFlag ? (
-                        <img
-                          src={lang.customFlag}
-                          alt={`${lang.name} flag`}
-                          className="h-5 w-5 rounded-sm object-cover"
-                          aria-hidden="true"
-                        />
-                      ) : (
-                        <span className="text-lg" aria-hidden="true">
-                          {lang.flag}
-                        </span>
-                      )}
-                      <span>{lang.name}</span>
-                    </button>
-                  </li>
-                ))}
+                {languages.map((lang) => {
+                  const handleClick = createLanguageSelectHandler(lang.code);
+                  return (
+                    <li key={lang.code}>
+                      <button
+                        type="button"
+                        onClick={handleClick}
+                        className={cn(
+                          "flex w-full items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium transition",
+                          itemHover,
+                          textColor,
+                          lang.code === language && "bg-accent/10 text-accent",
+                        )}
+                      >
+                        {lang.customFlag ? (
+                          <img
+                            src={lang.customFlag}
+                            alt={`${lang.name} flag`}
+                            className="h-5 w-5 rounded-sm object-cover"
+                            aria-hidden="true"
+                          />
+                        ) : (
+                          <span className="text-lg" aria-hidden="true">
+                            {lang.flag}
+                          </span>
+                        )}
+                        <span>{lang.name}</span>
+                      </button>
+                    </li>
+                  );
+                })}
               </ul>
             </motion.div>
           </>
