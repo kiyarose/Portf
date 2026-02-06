@@ -1,13 +1,13 @@
 {
   "nav": {
     "home": "ホーム",
-    "about": "プロフィール",
+    "about": "プロフ",
     "experience": "経験",
-    "education": "学歴",
+    "education": "学",
     "certifications": "資格",
-    "projects": "趣味のプロジェクト",
+    "projects": "趣味のプロジ",
     "skills": "スキル",
-    "contact": "お問い合わせ"
+    "contact": "お問"
   },
   "hero": {
     "greeting": "こんにちは、私は",
@@ -46,8 +46,8 @@
     "eyebrow": "連絡する"
   },
   "theme": {
-    "darkMode": "ダークモード",
-    "lightMode": "ライトモード"
+    "darkMode": "ダーク",
+    "lightMode": "ライト"
   },
   "language": {
     "select": "言語"
