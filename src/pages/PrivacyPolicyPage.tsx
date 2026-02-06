@@ -62,12 +62,13 @@ const policySections: PolicySection[] = [
             security incidents. These events are tied to my Cloudflare account
             and are not shared externally.
           </li>
-          <li>
+          {/* <li>
             <strong>Legacy analytics (retired October 30, 2025):</strong>
             Firebase Hosting metrics and Google Analytics events were previously
             collected for aggregated insights. They were shut off effective
             October 30, 2025 and no longer receive data from any visitors.
           </li>
+          */}
         </ul>
       </>
     ),
@@ -117,7 +118,7 @@ const policySections: PolicySection[] = [
               Cloudflare Pages Data Usage
             </a>
           </li>
-          <li>
+          {/*   <li>
             <a
               href="https://firebase.google.com/support/privacy"
               target="_blank"
@@ -135,14 +136,16 @@ const policySections: PolicySection[] = [
               Google Analytics Privacy Overview
             </a>
           </li>
+          */}
         </ul>
-        <p className={paragraphClass}>
+        {/*   <p className={paragraphClass}>
           Firebase Hosting metrics and Google Analytics are kept listed here for
           historical context only—they ceased collecting new data after October
           30, 2025. I do not sell your personal information or share it with
           advertisers. Access is limited to what is required to run this
           website.
         </p>
+        */}
       </>
     ),
   },
