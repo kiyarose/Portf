@@ -8,8 +8,10 @@ import {
   type Project,
 } from "../data/projects";
 import { useRemoteData } from "../hooks/useRemoteData";
+import { useTranslation } from "../hooks/useTranslation";
 
 export function ProjectsSection() {
+  const { t } = useTranslation();
   const { data: projectEntries, debugAttributes: projectDebugAttributes } =
     useRemoteData<Project[]>({
       resource: PROJECTS_RESOURCE,
@@ -27,8 +29,8 @@ export function ProjectsSection() {
         <SectionHeader
           id="projects"
           icon="material-symbols:rocket-launch-rounded"
-          label="Hobby Projects"
-          eyebrow="Cool things I did!"
+          label={t.projects.title}
+          eyebrow={t.projects.eyebrow}
         />
         <div className="grid gap-4 sm:gap-6 md:grid-cols-2">
           {projectEntries.map((project) => (

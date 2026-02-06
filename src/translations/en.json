@@ -1,0 +1,55 @@
+{
+  "nav": {
+    "home": "Home",
+    "about": "About",
+    "experience": "Experience",
+    "education": "Education",
+    "certifications": "Certifications",
+    "projects": "Hobby Builds",
+    "skills": "Skills",
+    "contact": "Contact"
+  },
+  "hero": {
+    "greeting": "Hello, I'm",
+    "name": "Kiya Rose",
+    "wave": "👋",
+    "headline": "Health IT & Support Pro in Training",
+    "description": "I spend my free time building code projects while preparing to help teams full time across health IT and tech support."
+  },
+  "about": {
+    "title": "About",
+    "eyebrow": "Profile",
+    "description": "I am an IT professional looking to gain office administration experience as I pursue my Billing and Coding Certificate. I love single player story games and overthinking. I also like to write sometimes :3"
+  },
+  "experience": {
+    "title": "Experience",
+    "eyebrow": "Professional Journey"
+  },
+  "education": {
+    "title": "Education",
+    "eyebrow": "Academic Background"
+  },
+  "certifications": {
+    "title": "Certifications",
+    "eyebrow": "Professional Credentials"
+  },
+  "projects": {
+    "title": "Hobby Builds",
+    "eyebrow": "Personal Projects"
+  },
+  "skills": {
+    "title": "Skills",
+    "eyebrow": "Technical Abilities"
+  },
+  "contact": {
+    "title": "Contact",
+    "eyebrow": "Get in Touch"
+  },
+  "theme": {
+    "darkMode": "Dark mode",
+    "lightMode": "Light mode"
+  },
+  "language": {
+    "select": "Language"
+  }
+}

@@ -18,6 +18,7 @@ import {
   skillsPlaceholder,
 } from "../data/skills";
 import { useTheme } from "../hooks/useTheme";
+import { useTranslation } from "../hooks/useTranslation";
 import { useRemoteData } from "../hooks/useRemoteData";
 import type { Theme } from "../providers/theme-context";
 import { themedClass } from "../utils/themeClass";
@@ -27,6 +28,7 @@ export function ExperienceSection() {
   const [activeIndex, setActiveIndex] = useState(0);
   const prefersReducedMotion = useReducedMotion() ?? false;
   const { theme } = useTheme();
+  const { t } = useTranslation();
   const {
     data: experienceEntries,
     debugAttributes: experienceDebugAttributes,
@@ -83,6 +85,7 @@ export function ExperienceSection() {
         knownSkills={knownSkills}
         knownSkillsAttributes={knownSkillsDebugAttributes}
         theme={theme}
+        t={t}
       />
     </SectionContainer>
   );
@@ -100,6 +103,7 @@ type ExperienceCardProps = {
   knownSkills: string[];
   theme: Theme;
   knownSkillsAttributes?: Record<string, string>;
+  t: ReturnType<typeof useTranslation>["t"];
 };
 function ExperienceCard({
   options,
@@ -110,6 +114,7 @@ function ExperienceCard({
   knownSkills,
   theme,
   knownSkillsAttributes,
+  t,
 }: Readonly<ExperienceCardProps>) {
   const safeEntry =
     options.length > 0
@@ -127,8 +132,8 @@ function ExperienceCard({
       <SectionHeader
         id="experience"
         icon="material-symbols:work"
-        label="Experience"
-        eyebrow="Timeline"
+        label={t.experience.title}
+        eyebrow={t.experience.eyebrow}
       />
 
       <div className="flex flex-col gap-6 md:flex-row md:gap-10">

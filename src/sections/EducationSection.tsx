@@ -12,6 +12,7 @@ import {
 } from "../data/education";
 import { getSkillIcon } from "../data/skills";
 import { useTheme } from "../hooks/useTheme";
+import { useTranslation } from "../hooks/useTranslation";
 import { useRemoteData } from "../hooks/useRemoteData";
 import type { Theme } from "../providers/theme-context";
 import { themedClass } from "../utils/themeClass";
@@ -21,6 +22,7 @@ export function EducationSection() {
   const [activeIndex, setActiveIndex] = useState(0);
   const prefersReducedMotion = useReducedMotion() ?? false;
   const { theme } = useTheme();
+  const { t } = useTranslation();
   const { data: educationEntries, debugAttributes: educationDebugAttributes } =
     useRemoteData<EducationEntry[]>({
       resource: EDUCATION_RESOURCE,
@@ -71,6 +73,7 @@ export function EducationSection() {
         prefersReducedMotion={prefersReducedMotion}
         variants={variants}
         theme={theme}
+        t={t}
       />
     </SectionContainer>
   );
@@ -86,6 +89,7 @@ type EducationCardProps = {
     center: { opacity: number; y: number };
   };
   theme: Theme;
+  t: ReturnType<typeof useTranslation>["t"];
 };
 
 function EducationCard({
@@ -95,6 +99,7 @@ function EducationCard({
   prefersReducedMotion,
   variants,
   theme,
+  t,
 }: EducationCardProps) {
   const safeEntry =
     options.length > 0
@@ -112,8 +117,8 @@ function EducationCard({
       <SectionHeader
         id="education"
         icon="material-symbols:school-rounded"
-        label="Education"
-        eyebrow="Timeline"
+        label={t.education.title}
+        eyebrow={t.education.eyebrow}
       />
 
       <div className="flex flex-col gap-6 md:flex-row md:gap-10">

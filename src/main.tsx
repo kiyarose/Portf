@@ -3,6 +3,7 @@ import { createRoot } from "react-dom/client";
 import "./index.css";
 import { AppRouter } from "./AppRouter";
 import { ThemeProvider } from "./providers/ThemeProvider";
+import { LanguageProvider } from "./providers/LanguageProvider";
 import { ErrorBoundary } from "./components/ErrorBoundary";
 import { GENERIC_ERROR_MESSAGES } from "./utils/errorSanitizer";
 // Icons are registered on demand in individual components
@@ -69,7 +70,9 @@ createRoot(container).render(
   <StrictMode>
     <ErrorBoundary>
       <ThemeProvider>
-        <AppRouter />
+        <LanguageProvider>
+          <AppRouter />
+        </LanguageProvider>
       </ThemeProvider>
     </ErrorBoundary>
   </StrictMode>,
