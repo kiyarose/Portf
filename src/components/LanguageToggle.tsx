@@ -9,7 +9,12 @@ import { themedClass } from "../utils/themeClass";
 import type { Language } from "../providers/language-context";
 import SenyeraFlag from "../assets/Senyera.png";
 
-const languages: { code: Language; name: string; flag: string; customFlag?: string }[] = [
+const languages: {
+  code: Language;
+  name: string;
+  flag: string;
+  customFlag?: string;
+}[] = [
   { code: "en", name: "English", flag: "🇬🇧" },
   { code: "ca", name: "Català", flag: "🇪🇸", customFlag: SenyeraFlag },
   { code: "fr", name: "Français", flag: "🇫🇷" },
