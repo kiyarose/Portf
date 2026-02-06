@@ -29,7 +29,11 @@ export default function App() {
 
   const sections = [
     { id: "hero", label: t.nav.home, icon: "material-symbols:home-rounded" },
-    { id: "about", label: t.nav.about, icon: "material-symbols:person-rounded" },
+    {
+      id: "about",
+      label: t.nav.about,
+      icon: "material-symbols:person-rounded",
+    },
     {
       id: "experience",
       label: t.nav.experience,
