@@ -15,7 +15,7 @@ const languages: {
   flag: string;
   customFlag?: string;
 }[] = [
-  { code: "en", name: "English", flag: "🇬🇧" },
+  { code: "en", name: "English", flag: "🇨🇦" },
   { code: "ca", name: "Català", flag: "🇪🇸", customFlag: SenyeraFlag },
   { code: "fr", name: "Français", flag: "🇫🇷" },
   { code: "nl", name: "Nederlands", flag: "🇳🇱" },
