@@ -1,13 +1,13 @@
 {
   "nav": {
     "home": "Accueil",
-    "about": "À propos",
+    "about": "Moi",
     "experience": "Expérience",
     "education": "Éducation",
     "certifications": "Certifications",
-    "projects": "Projets Personnels",
-    "skills": "Compétences",
-    "contact": "Contact"
+    "projects": "Passe-temps",
+    "skills": "Capacités",
+    "contact": "Courrier"
   },
   "hero": {
     "greeting": "Bonjour, je suis",
