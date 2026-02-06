@@ -7,10 +7,11 @@ import { useTheme } from "../hooks/useTheme";
 import { cn } from "../utils/cn";
 import { themedClass } from "../utils/themeClass";
 import type { Language } from "../providers/language-context";
+import SenyeraFlag from "../assets/Senyera.png";
 
-const languages: { code: Language; name: string; flag: string }[] = [
+const languages: { code: Language; name: string; flag: string; customFlag?: string }[] = [
   { code: "en", name: "English", flag: "🇬🇧" },
-  { code: "ca", name: "Català", flag: "🇪🇸" },
+  { code: "ca", name: "Català", flag: "🇪🇸", customFlag: SenyeraFlag },
   { code: "fr", name: "Français", flag: "🇫🇷" },
   { code: "nl", name: "Nederlands", flag: "🇳🇱" },
   { code: "ja", name: "日本語", flag: "🇯🇵" },
@@ -65,9 +66,18 @@ export function LanguageToggle({ className }: { className?: string }) {
         aria-expanded={isOpen}
       >
         <span className="flex items-center gap-2">
-          <span className="text-xl" aria-hidden="true">
-            {currentLanguage.flag}
-          </span>
+          {currentLanguage.customFlag ? (
+            <img
+              src={currentLanguage.customFlag}
+              alt={`${currentLanguage.name} flag`}
+              className="h-5 w-5 rounded-sm object-cover"
+              aria-hidden="true"
+            />
+          ) : (
+            <span className="text-xl" aria-hidden="true">
+              {currentLanguage.flag}
+            </span>
+          )}
           <span
             className={cn(
               "text-sm font-medium uppercase tracking-wide",
@@ -134,9 +144,18 @@ export function LanguageToggle({ className }: { className?: string }) {
                         lang.code === language && "bg-accent/10 text-accent",
                       )}
                     >
-                      <span className="text-lg" aria-hidden="true">
-                        {lang.flag}
-                      </span>
+                      {lang.customFlag ? (
+                        <img
+                          src={lang.customFlag}
+                          alt={`${lang.name} flag`}
+                          className="h-5 w-5 rounded-sm object-cover"
+                          aria-hidden="true"
+                        />
+                      ) : (
+                        <span className="text-lg" aria-hidden="true">
+                          {lang.flag}
+                        </span>
+                      )}
                       <span>{lang.name}</span>
                     </button>
                   </li>
