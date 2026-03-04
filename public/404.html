@@ -84,6 +84,33 @@
         transform: translateY(-2px);
         box-shadow: 0 22px 36px rgba(249, 115, 22, 0.4);
       }
+      #referrer-msg {
+        margin: 0.75rem 0 0;
+        font-size: 0.95rem;
+        line-height: 1.6;
+        color: #475569;
+        min-height: 0;
+      }
+      #referrer-msg:empty {
+        display: none;
+      }
+      #referrer-msg .inline-link {
+        display: inline;
+        margin-top: 0;
+        padding: 0;
+        border-radius: 0;
+        font-weight: 600;
+        text-decoration: underline;
+        color: #f97316;
+        background: none;
+        box-shadow: none;
+        transition: color 0.15s ease;
+      }
+      #referrer-msg .inline-link:hover {
+        transform: none;
+        box-shadow: none;
+        color: #ec4899;
+      }
       small {
         display: block;
         margin-top: 1.5rem;
@@ -105,14 +132,48 @@
     <main role="alert" aria-live="polite">
       <h1>We can’t find that page</h1>
       <p>The link might be broken, or the page could have moved.</p>
-      <p>Please head back to the home page to keep exploring the portfolio.</p>
-      <a href="/">Go back Home</a>
+      <p id="referrer-msg"></p>
+      <a href="/">Go Home</a>
       <small>
         Need help? Contact
         <span class="font-kiya" data-pressable-name>Kiya Rose</span> at
         <span>kiya [dot] rose [at] sillylittle [dot] tech</span>
       </small>
     </main>
+    <script>
+      (function () {
+        var ref = document.referrer;
+        var params = new URLSearchParams(window.location.search);
+        var msgEl = document.getElementById("referrer-msg");
+        if (msgEl) {
+          var msg = "";
+          try {
+            var refHost = ref ? new URL(ref).hostname : "";
+            if (
+              params.get("ref") === "kiya.party" ||
+              refHost.endsWith("kiya.party")
+            ) {
+              msg =
+                "This shortcode has either expired or is invalid, please ensure you typed it correctly.";
+            } else if (
+              refHost.endsWith("kiya.cat") ||
+              refHost === "localhost" ||
+              refHost === "127.0.0.1"
+            ) {
+              msg =
+                'This link may be outdated and need to be fixed. <a href="https://github.com/kiyarose/Portf" class="inline-link" target="_blank" rel="noopener noreferrer">Report it on GitHub.</a>';
+            } else if (ref) {
+              msg = "An external website linked you to this missing page.";
+            }
+          } catch (_) {
+            // Unparseable referrer — show no extra message
+          }
+          if (msg) {
+            msgEl.innerHTML = msg;
+          }
+        }
+      })();
+    </script>
     <script>
       (function () {
         const targetUrl = "https://kiyaverse.cloudflareaccess.com";
