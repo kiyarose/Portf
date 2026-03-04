@@ -16,6 +16,7 @@ import emailObfu from "../assets/emailobfu.png";
 const EMAIL_USER = "kiya.rose";
 const EMAIL_DOMAIN = "sillylittle";
 const EMAIL_TLD = "tech";
+// eslint-disable-next-line no-useless-concat -- intentional obfuscation to deter basic email scrapers
 const EMAIL = EMAIL_USER + "@" + EMAIL_DOMAIN + "." + EMAIL_TLD;
 
 const STRICT_CORS_PATTERNS = ["cors", "cross-origin", "opaque response"];
