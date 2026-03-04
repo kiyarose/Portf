@@ -11,8 +11,12 @@ import { themedClass } from "../utils/themeClass";
 import { cn } from "../utils/cn";
 import { navigateTo } from "../utils/navigation";
 import { getCspNonce } from "../utils/getCspNonce";
+import emailObfu from "../assets/emailobfu.png";
 
-const EMAIL = "kiya.rose@sillylittle.tech";
+const EMAIL_USER = "kiya.rose";
+const EMAIL_DOMAIN = "sillylittle";
+const EMAIL_TLD = "tech";
+const EMAIL = EMAIL_USER + "@" + EMAIL_DOMAIN + "." + EMAIL_TLD;
 
 const STRICT_CORS_PATTERNS = ["cors", "cross-origin", "opaque response"];
 const GENERIC_CORS_PATTERNS = ["load failed", "failed to fetch"];
@@ -206,7 +210,6 @@ type ContactIntroProps = {
 function ContactIntro({ copied, onCopy }: ContactIntroProps) {
   const { theme } = useTheme();
   const introCopyColor = themedClass(theme, "text-slate-600", "text-slate-300");
-  const emailColor = themedClass(theme, "text-slate-700", "text-slate-200");
   const copyButtonSurface = themedClass(
     theme,
     "!bg-white !text-accent border border-accent hover:bg-accent/10",
@@ -249,7 +252,12 @@ function ContactIntro({ copied, onCopy }: ContactIntroProps) {
         />
         {copied ? "Copied!" : "Copy my email"}
       </button>
-      <p className={cn("text-base font-semibold", emailColor)}>{EMAIL}</p>
+      <img
+        src={emailObfu}
+        alt="Email address"
+        className="h-[1.15em] w-auto select-none"
+        draggable={false}
+      />
       <a
         href="/privacy-policy"
         onClick={handlePrivacyPolicyClick}
