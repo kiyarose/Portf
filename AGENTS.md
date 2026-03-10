@@ -151,3 +151,12 @@ Use these keywords in PR title/body:
 - Full GitHub URLs to issues
 
 Multiple PRs can reference the same issue; status reflects the most recent PR action.
+
+## Cursor Cloud specific instructions
+
+- **Dev server**: `npm run dev` starts Vite at `http://localhost:5173`. The server proxies `/__remote-data` to `data.kiya.cat`; if that external endpoint is unreachable the app still renders using bundled fallback data for most sections, though some sections (Skills, Projects, Experience, Education, Certifications) will show "unable to load" placeholders.
+- **Lint**: `npm run lint` — the codebase has pre-existing lint errors (e.g. `/* eslint-env */` deprecation warnings, `preserve-caught-error` rule violations). These are not regressions; do not attempt to fix them unless explicitly asked.
+- **Build**: `npm run build` runs `tsc -b && vite build`, outputting to `dist/`. Large-chunk warnings from `visualizeme.html` assets are expected.
+- **E2E tests**: `npm run test:e2e` uses Playwright; run `npx playwright install --with-deps chromium` first if browsers are not installed. Tests require a built app (`npm run build` before running).
+- **Environment variables**: `VITE_PAGECLIP_API_KEY` and `VITE_TURNSTYLE_SITE` (intentional spelling) are optional for local dev — the contact form renders without them but submission/captcha won't work.
+- **No unit test suite**: There is no `npm test` wired up yet; only Playwright E2E tests exist under `tests/`.
