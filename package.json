@@ -24,12 +24,12 @@
     "@iconify/react": "^6.0.2",
     "clsx": "^2.1.1",
     "framer-motion": "^12.34.3",
-    "pg": "^8.19.0",
+    "pg": "^8.20.0",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
     "tailwind-merge": "^3.5.0",
     "tmp": "^0.2.5",
-    "wrangler": "^4.73.0"
+    "wrangler": "^4.76.0"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.11.0",
