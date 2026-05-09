@@ -65,7 +65,7 @@ try {
 } catch (error) {
   if (error.code === 'ENOENT') {
     console.error('  ❌ security-headers.config.ts not found')
-    throw new Error('security-headers.config.ts not found')
+    throw new Error('security-headers.config.ts not found', { cause: error })
   }
   throw error
 }

@@ -1,0 +1,70 @@
+{
+  "__meta": {
+    "version": 1,
+    "template": "export type Project = {\n  title: string;\n  description: string;\n  tech: string[];\n  link?: string;\n};\n\nexport const PROJECTS_RESOURCE = \"Projects\";\n\nexport const projectsFallback: Project[] = __DATA_PLACEHOLDER__projectsFallback_192_908__;\n\nexport const projectsPlaceholder: Project[] = __DATA_PLACEHOLDER__projectsPlaceholder_957_1127__;\n",
+    "source": "src/data/projects.ts",
+    "entries": [
+      {
+        "name": "projectsFallback",
+        "placeholder": "__DATA_PLACEHOLDER__projectsFallback_192_908__",
+        "baseIndent": ""
+      },
+      {
+        "name": "projectsPlaceholder",
+        "placeholder": "__DATA_PLACEHOLDER__projectsPlaceholder_957_1127__",
+        "baseIndent": ""
+      }
+    ],
+    "generatedAt": "2026-05-09T13:50:15.708Z"
+  },
+  "projectsFallback": [
+    {
+      "title": "SillyLittleFiles",
+      "description": "A VPN program & documentation focused on secure remote access for small teams.",
+      "tech": [
+        "ProtonVPN",
+        "OpenVPN",
+        "JavaScript"
+      ]
+    },
+    {
+      "title": "Enterprise Virtualization Project",
+      "description": "A class project involving enterprise hardware and virtualization.",
+      "tech": [
+        "HPE",
+        "Windows Server",
+        "VMWare",
+        "ILO"
+      ]
+    },
+    {
+      "title": "PinStick",
+      "description": "A simple multi-platform pinnable notepad app.",
+      "tech": [
+        "MacOS",
+        "Linux",
+        "Windows",
+        "Tauri"
+      ]
+    },
+    {
+      "title": "Plummer",
+      "description": "A KV Worker based short link transformer tool.",
+      "tech": [
+        "KV Workers",
+        "Elixir",
+        "Network Transformations",
+        "Wrangler"
+      ]
+    }
+  ],
+  "projectsPlaceholder": [
+    {
+      "title": "Projects failed to load",
+      "description": "We couldn't reach data.kiya.cat to fetch the latest projects.",
+      "tech": [
+        "Connection issue"
+      ]
+    }
+  ]
+}

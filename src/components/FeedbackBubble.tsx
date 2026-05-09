@@ -1182,6 +1182,7 @@ export function FeedbackBubble({ className }: FeedbackBubbleProps) {
       // Check if feedback was already submitted in this session
       const hasSubmitted = sessionStorage.getItem("feedback-submitted");
       if (!hasSubmitted) {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setIsVisible(true);
         triggerConfetti();
       }

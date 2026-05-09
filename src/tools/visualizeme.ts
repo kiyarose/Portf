@@ -1,4 +1,3 @@
-/* eslint-env browser */
 /* eslint-disable-next-line @typescript-eslint/ban-ts-comment */
 // @ts-nocheck
 
@@ -180,6 +179,7 @@ function summariseValue(value) {
 }
 
 const PLACEHOLDER_PREFIX = "__DATA_PLACEHOLDER__";
+const CONVERSION_META_VERSION = 1;
 
 function unwrapLiteral(node) {
   if (!node) {
@@ -508,7 +508,7 @@ function convertTsSourceToJson(sourceText, sourceName = "module.ts") {
 
   const template = buildTemplate(sourceText, entries);
   const meta = {
-    version: 1,
+    version: CONVERSION_META_VERSION,
     template,
     source: sourceName,
     entries: entries.map(({ name, placeholder, baseIndent }) => ({
@@ -522,22 +522,42 @@ function convertTsSourceToJson(sourceText, sourceName = "module.ts") {
   return { meta, data: values };
 }
 
+function validateConversionMeta(meta) {
+  if (!meta || typeof meta !== "object") {
+    throw new Error("Missing conversion metadata.");
+  }
+  if (meta.version !== CONVERSION_META_VERSION) {
+    throw new Error(
+      `Unsupported metadata version ${meta.version ?? "(missing)"}. Expected ${CONVERSION_META_VERSION}.`,
+    );
+  }
+  if (typeof meta.template !== "string" || !Array.isArray(meta.entries)) {
+    throw new Error("Conversion metadata is missing its template or entries.");
+  }
+  for (const entry of meta.entries) {
+    if (
+      !entry ||
+      typeof entry.name !== "string" ||
+      typeof entry.placeholder !== "string"
+    ) {
+      throw new Error("Conversion metadata contains a malformed entry.");
+    }
+    if (!meta.template.includes(entry.placeholder)) {
+      throw new Error(
+        `Conversion metadata placeholder for \`${entry.name}\` is missing from the template.`,
+      );
+    }
+  }
+  return meta;
+}
+
 function convertJsonToTs(meta, data) {
   if (!hasTypeScript || !ts) {
     throw new Error(
       "TypeScript export is unavailable because the compiler failed to load.",
     );
   }
-  if (
-    !meta ||
-    typeof meta !== "object" ||
-    !meta.template ||
-    !Array.isArray(meta.entries)
-  ) {
-    throw new Error(
-      "Missing conversion metadata. Load a TypeScript module first.",
-    );
-  }
+  validateConversionMeta(meta);
 
   let output = meta.template;
 
@@ -565,6 +585,109 @@ function convertJsonToTs(meta, data) {
   }
 
   return output;
+}
+
+function extractJsonFromRtf(rawText) {
+  if (!rawText.trimStart().startsWith("{\\rtf")) {
+    return null;
+  }
+
+  const marker = "\\f0\\fs24 \\cf0 ";
+  const markerIndex = rawText.indexOf(marker);
+  const body = markerIndex >= 0 ? rawText.slice(markerIndex + marker.length) : rawText;
+
+  const cp1252Map = {
+    0x80: "€",
+    0x82: "‚",
+    0x83: "ƒ",
+    0x84: "„",
+    0x85: "…",
+    0x86: "†",
+    0x87: "‡",
+    0x88: "ˆ",
+    0x89: "‰",
+    0x8a: "Š",
+    0x8b: "‹",
+    0x8c: "Œ",
+    0x8e: "Ž",
+    0x91: "‘",
+    0x92: "’",
+    0x93: "“",
+    0x94: "”",
+    0x95: "•",
+    0x96: "–",
+    0x97: "—",
+    0x98: "˜",
+    0x99: "™",
+    0x9a: "š",
+    0x9b: "›",
+    0x9c: "œ",
+    0x9e: "ž",
+    0x9f: "Ÿ",
+  };
+
+  let output = "";
+  for (let index = 0; index < body.length; index += 1) {
+    const char = body[index];
+
+    if (char === "\\") {
+      const next = body[index + 1];
+
+      if (next === "{" || next === "}" || next === "\\") {
+        output += next;
+        index += 1;
+        continue;
+      }
+
+      if (next === "'") {
+        const hex = body.slice(index + 2, index + 4);
+        if (/^[0-9a-fA-F]{2}$/.test(hex)) {
+          const code = Number.parseInt(hex, 16);
+          output += cp1252Map[code] ?? String.fromCharCode(code);
+          index += 3;
+          continue;
+        }
+      }
+
+      if (/^[a-zA-Z]$/.test(next ?? "")) {
+        let cursor = index + 1;
+        while (cursor < body.length && /[a-zA-Z0-9-]/.test(body[cursor] ?? "")) {
+          cursor += 1;
+        }
+        if (body[cursor] === " ") {
+          cursor += 1;
+        }
+        index = cursor - 1;
+        continue;
+      }
+    }
+
+    if (char === "{" || char === "}") {
+      continue;
+    }
+
+    output += char;
+  }
+
+  const start = output.indexOf("{");
+  const end = output.lastIndexOf("}");
+  if (start === -1 || end === -1 || end <= start) {
+    return null;
+  }
+
+  return output.slice(start, end + 1);
+}
+
+function parseJsonInput(rawText) {
+  try {
+    return JSON.parse(rawText);
+  } catch (error) {
+    const extracted = extractJsonFromRtf(rawText);
+    if (!extracted) {
+      throw error;
+    }
+    return JSON.parse(extracted);
+  }
 }
 
 function cloneData(value) {
@@ -1716,6 +1839,7 @@ function parseEditorValue(rawValue, currentValue) {
     ) {
       throw new Error(
         "Provide valid JSON for objects or arrays (use double quotes).",
+        { cause: error },
       );
     }
     return rawValue;
@@ -1861,7 +1985,7 @@ function renderFromInput() {
 
   let parsed;
   try {
-    parsed = JSON.parse(rawText);
+    parsed = parseJsonInput(rawText);
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
     console.warn("Failed to parse JSON input:", message);
@@ -1877,9 +2001,19 @@ function renderFromInput() {
     parsed.__meta.template
   ) {
     const { __meta: metaInfo, ...rest } = parsed;
-    conversionMeta = metaInfo;
-    tsSourcePath = conversionMeta.source || tsSourcePath;
-    dataModel = Object.keys(rest).length > 0 ? rest : {};
+    try {
+      conversionMeta = validateConversionMeta(metaInfo);
+      tsSourcePath = conversionMeta.source || tsSourcePath;
+      dataModel = Object.keys(rest).length > 0 ? rest : {};
+    } catch (error) {
+      renderTree(null);
+      updateDownloadButtons(false);
+      showStatus(
+        error instanceof Error ? error.message : String(error),
+        "error",
+      );
+      return false;
+    }
   } else {
     conversionMeta = null;
     tsSourcePath = null;

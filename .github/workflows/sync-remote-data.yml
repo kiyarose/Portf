@@ -1,0 +1,38 @@
+name: Sync Remote Data Backups
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 8 * * 1"
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Sync backups from endpoint
+        run: node scripts/sync-remote-data.mjs
+
+      - name: Commit changes
+        run: |
+          if git diff --quiet; then
+            echo "No backup changes to commit."
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add public/data/*.json.bak
+          git commit -m "chore(data): sync remote backup snapshots"
+          git push

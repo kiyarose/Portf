@@ -30,10 +30,18 @@ The repository needs a `FIREBASE_SERVICE_ACCOUNT_KIYAVERSE` secret with deploy a
 
 ## Data conversion helper
 
-- `npm run data:to-json -- src/data/projects.ts` exports convertible `export const` values to `src/data/projects.json` alongside round-trip metadata.
-- `npm run data:to-ts -- src/data/projects.json` restores the original TypeScript module (use `--overwrite` to replace an existing file).
+- Source of truth: `src/data/*.ts`.
+- Production remote payloads are published to `https://data.kiya.cat/data/*.json`.
+- `npm run data:publish` converts `src/data/*.ts` to JSON and uploads all datasets to R2 using Wrangler OAuth.
+- `npm run data:to-json -- src/data/projects.ts --out /tmp/Projects.json` exports a specific TypeScript module to JSON with round-trip metadata.
+- `npm run data:to-ts -- /tmp/Projects.json` restores the original TypeScript module (use `--overwrite` to replace an existing file).
 - Pass `--pick projectsFallback,educationFallback` to work with specific exports when a file contains multiple arrays or objects.
 - Open `src/tools/convert.html` in a browser for an all-in-one local UI that handles file drops, selective exports, and downloads without leaving the machine.
+
+## Remote backup sync
+
+- `npm run data:sync:remote` pulls `https://data.kiya.cat/data/*.json` and writes backup snapshots to `public/data/*.json.bak`.
+- `.github/workflows/sync-remote-data.yml` runs this sync weekly (and on manual dispatch) and commits backup changes when the endpoint changes.
 
 ## JSON visualization helper
 

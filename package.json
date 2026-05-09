@@ -14,7 +14,9 @@
     "test:e2e": "playwright test",
     "verify:security-headers": "node scripts/verify-security-headers.mjs",
     "data:to-json": "node src/tools/data-converter.mjs to-json",
-    "data:to-ts": "node src/tools/data-converter.mjs to-ts"
+    "data:to-ts": "node src/tools/data-converter.mjs to-ts",
+    "data:publish": "node scripts/publish-r2-data.mjs",
+    "data:sync:remote": "node scripts/sync-remote-data.mjs"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",

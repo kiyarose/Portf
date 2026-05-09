@@ -63,6 +63,11 @@ build/Release
 # Vite
 *.local
 
+# Generated remote-data artifacts
+src/data/*.json
+public/data/*.json
+.wrangler/
+
 # PlayWright Test Reports
 playwright-report/
 playwright-logs/

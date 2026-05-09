@@ -1,0 +1,29 @@
+{
+  "__meta": {
+    "version": 1,
+    "template": "export type SocialLink = {\n  id: string;\n  label: string;\n  href: string;\n  icon: string;\n};\n\nexport const SOCIALS_RESOURCE = \"Socials\";\n\nexport const socialsFallback: SocialLink[] = __DATA_PLACEHOLDER__socialsFallback_183_185__;\n\nexport const socialsPlaceholder: SocialLink[] = __DATA_PLACEHOLDER__socialsPlaceholder_236_397__;\n",
+    "source": "src/data/socials.ts",
+    "entries": [
+      {
+        "name": "socialsFallback",
+        "placeholder": "__DATA_PLACEHOLDER__socialsFallback_183_185__",
+        "baseIndent": ""
+      },
+      {
+        "name": "socialsPlaceholder",
+        "placeholder": "__DATA_PLACEHOLDER__socialsPlaceholder_236_397__",
+        "baseIndent": ""
+      }
+    ],
+    "generatedAt": "2026-05-09T13:50:15.716Z"
+  },
+  "socialsFallback": [],
+  "socialsPlaceholder": [
+    {
+      "id": "socials-unavailable",
+      "label": "Socials unavailable",
+      "href": "https://status.sillylittle.tech/",
+      "icon": "mdi:alert-circle-outline"
+    }
+  ]
+}

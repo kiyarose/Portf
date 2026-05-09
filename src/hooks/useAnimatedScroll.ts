@@ -55,9 +55,6 @@ export function useAnimatedScroll(options: AnimatedScrollOptions = {}) {
           behavior: "auto",
         });
 
-        // Trigger reflow to ensure style changes are applied
-        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-
         // Phase 3: Fade in the target content with scale effect
         requestAnimationFrame(() => {
           main.style.transform = "scale(1.02)";
@@ -100,9 +97,6 @@ export function useAnimatedScroll(options: AnimatedScrollOptions = {}) {
     // Phase 2: Scroll and fade in
     setTimeout(() => {
       window.scrollTo({ top: 0, behavior: "auto" });
-
-      // Trigger reflow to ensure style changes are applied
-      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
 
       requestAnimationFrame(() => {
         main.style.transform = "scale(1.02)";

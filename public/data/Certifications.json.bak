@@ -1,0 +1,46 @@
+{
+  "__meta": {
+    "version": 1,
+    "template": "export type Certification = {\n  name: string;\n  issuer: string;\n  date: string;\n  link?: string;\n};\n\nexport const CERTIFICATIONS_RESOURCE = \"Certifications\";\n\nexport const certificationsFallback: Certification[] = __DATA_PLACEHOLDER__certificationsFallback_214_746__;\n\nexport const certificationsPlaceholder: Certification[] = __DATA_PLACEHOLDER__certificationsPlaceholder_807_916__;\n",
+    "source": "src/data/certifications.ts",
+    "entries": [
+      {
+        "name": "certificationsFallback",
+        "placeholder": "__DATA_PLACEHOLDER__certificationsFallback_214_746__",
+        "baseIndent": ""
+      },
+      {
+        "name": "certificationsPlaceholder",
+        "placeholder": "__DATA_PLACEHOLDER__certificationsPlaceholder_807_916__",
+        "baseIndent": ""
+      }
+    ],
+    "generatedAt": "2026-05-09T13:50:15.699Z"
+  },
+  "certificationsFallback": [
+    {
+      "name": "Leveraging AI in a non-profit role by Microsoft & NetHope",
+      "issuer": "Linkedin Learning",
+      "date": "2025",
+      "link": "https://www.linkedin.com/learning/certificates/0c6f88118d31982688f22fffa3e0ba2b6ceac5da822a3befa8cef0b8bb97cbc2?trk=share_certificate"
+    },
+    {
+      "name": "PSI GitHub Foundations",
+      "issuer": "PSI",
+      "date": "2024",
+      "link": "https://www.credly.com/go/FZfrOlFD9pvCvNOiGFvTrA"
+    },
+    {
+      "name": "AZ-900 Microsoft Azure Fundamentals",
+      "issuer": "Microsoft",
+      "date": "2024"
+    }
+  ],
+  "certificationsPlaceholder": [
+    {
+      "name": "Unable to load certifications",
+      "issuer": "Please try again later.",
+      "date": "—"
+    }
+  ]
+}

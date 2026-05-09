@@ -1,6 +1,11 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 
-const DATA_BASE_URL = import.meta.env.DEV ? "/__remote-data/data" : "/data";
+import { safeConsoleError, safeConsoleWarn } from "../utils/errorSanitizer";
+
+const PROD_REMOTE_DATA_BASE_URL = "https://data.kiya.cat/data";
+const DATA_BASE_URL = import.meta.env.DEV
+  ? "/__remote-data/data"
+  : PROD_REMOTE_DATA_BASE_URL;
 
 const CACHE_NAMESPACE = "kiya-portfolio::remote-data" as const;
 const CACHE_TTL_MS = import.meta.env.DEV ? 1000 * 60 * 5 : 1000 * 60 * 60 * 6;
@@ -64,6 +69,7 @@ export function useRemoteData<TData>(
       ? isCacheFresh(cachedEntry.cachedAt)
       : false;
 
+    /* eslint-disable react-hooks/set-state-in-effect */
     if (cachedEntry) {
       setData(cachedEntry.data);
       setStatus("loaded");
@@ -73,6 +79,7 @@ export function useRemoteData<TData>(
       setStatus("fallback");
       setCacheState("miss");
     }
+    /* eslint-enable react-hooks/set-state-in-effect */
 
     if (cacheIsFresh) {
       return () => {
@@ -96,7 +103,7 @@ export function useRemoteData<TData>(
         }
 
         const payloadText = await response.text();
-        const remoteData = parseRemotePayload<TData>(payloadText);
+        const remoteData = parseRemotePayload<TData>(payloadText, resource);
 
         if (!isMounted) {
           return;
@@ -111,7 +118,7 @@ export function useRemoteData<TData>(
           return;
         }
 
-        console.error(`Failed to load ${resource} data`, error);
+        safeConsoleError(`Failed to load ${resource} data`, error);
         const fallbackCache = readCachedData<TData>(resource);
         if (fallbackCache) {
           setData(fallbackCache.data);
@@ -147,10 +154,10 @@ export function useRemoteData<TData>(
   return { data, status, debugAttributes };
 }
 
-function parseRemotePayload<TData>(raw: string): TData {
+function parseRemotePayload<TData>(raw: string, resource: string): TData {
   try {
     const parsed = JSON.parse(raw) as unknown;
-    const value = unwrapRemotePayload<TData>(parsed);
+    const value = unwrapRemotePayload<TData>(parsed, resource);
     if (value === undefined || value === null) {
       throw new Error("Parsed remote payload was empty");
     }
@@ -162,22 +169,46 @@ function parseRemotePayload<TData>(raw: string): TData {
     }
 
     const parsed = JSON.parse(extracted) as unknown;
-    const value = unwrapRemotePayload<TData>(parsed);
+    const value = unwrapRemotePayload<TData>(parsed, resource);
     if (value === undefined || value === null) {
-      throw new Error("Extracted remote payload was empty");
+      throw new Error("Extracted remote payload was empty", {
+        cause: parseError,
+      });
     }
     return value;
   }
 }
 
-function unwrapRemotePayload<TData>(payload: unknown): TData {
+function unwrapRemotePayload<TData>(payload: unknown, resource: string): TData {
   if (payload && typeof payload === "object" && !Array.isArray(payload)) {
     const entries = Object.entries(payload as Record<string, unknown>).filter(
       ([key]) => key !== "__meta",
     );
+    const normalizedResource = resource.trim().toLowerCase();
 
     if (entries.length === 1) {
       return entries[0][1] as TData;
+    }
+
+    const resourceMatch = entries.find(
+      ([key]) => key.trim().toLowerCase() === normalizedResource,
+    );
+    if (resourceMatch) {
+      return resourceMatch[1] as TData;
+    }
+
+    const fallbackMatch = entries.find(([key]) =>
+      key.trim().toLowerCase().includes("fallback"),
+    );
+    if (fallbackMatch) {
+      return fallbackMatch[1] as TData;
+    }
+
+    const nonPlaceholderEntries = entries.filter(
+      ([key]) => !key.trim().toLowerCase().includes("placeholder"),
+    );
+    if (nonPlaceholderEntries.length === 1) {
+      return nonPlaceholderEntries[0][1] as TData;
     }
   }
 
@@ -388,6 +419,6 @@ function writeCachedData<T>(resource: string, value: T): void {
 
 function logCacheDebug(context: string, error: unknown): void {
   if (import.meta.env.DEV) {
-    console.warn(`[useRemoteData][cache] ${context}`, error);
+    safeConsoleWarn(`[useRemoteData][cache] ${context}`, error);
   }
 }

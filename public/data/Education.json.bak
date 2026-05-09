@@ -1,0 +1,31 @@
+{
+  "__meta": {
+    "version": 1,
+    "template": "export type EducationEntry = {\n  school: string;\n  program: string;\n  dates: string;\n  tech?: string[];\n};\n\nexport const EDUCATION_RESOURCE = \"Education\";\n\nexport const educationFallback: EducationEntry[] = __DATA_PLACEHOLDER__educationFallback_207_209__;\n\nexport const educationPlaceholder: EducationEntry[] = __DATA_PLACEHOLDER__educationPlaceholder_266_447__;\n",
+    "source": "src/data/education.ts",
+    "entries": [
+      {
+        "name": "educationFallback",
+        "placeholder": "__DATA_PLACEHOLDER__educationFallback_207_209__",
+        "baseIndent": ""
+      },
+      {
+        "name": "educationPlaceholder",
+        "placeholder": "__DATA_PLACEHOLDER__educationPlaceholder_266_447__",
+        "baseIndent": ""
+      }
+    ],
+    "generatedAt": "2026-05-09T13:50:15.702Z"
+  },
+  "educationFallback": [],
+  "educationPlaceholder": [
+    {
+      "school": "Unable to load education timeline",
+      "program": "We couldn't fetch the most recent education data.",
+      "dates": "—",
+      "tech": [
+        "Please try again later"
+      ]
+    }
+  ]
+}

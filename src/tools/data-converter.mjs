@@ -1,4 +1,3 @@
-/* eslint-env node */
 import fs from 'node:fs'
 import path from 'node:path'
 import process from 'node:process'
@@ -136,6 +135,12 @@ function ensureSerializable (value, seen = new Set()) {
 
 function unwrapLiteral (node) {
   if (ts.isAsExpression(node) || ts.isTypeAssertionExpression(node)) {
+    return unwrapLiteral(node.expression)
+  }
+  if (
+    (ts.isSatisfiesExpression?.(node) || ts.isNonNullExpression?.(node)) &&
+    node.expression
+  ) {
     return unwrapLiteral(node.expression)
   }
   if (ts.isParenthesizedExpression(node)) {
@@ -482,11 +487,10 @@ function convertJsonToTs (filePath, { out, overwrite, picks, quiet }) {
       throw new Error('Malformed metadata entry encountered')
     }
 
-    if (pickSet && !pickSet.has(entry.name)) {
-      continue
-    }
-
     if (!(entry.name in parsed)) {
+      if (pickSet && !pickSet.has(entry.name)) {
+        continue
+      }
       throw new Error(`JSON data missing export \`${entry.name}\``)
     }
 
