@@ -24,7 +24,7 @@ const SHOW_AFTER_SCROLL_PROGRESS = 0.5; // 50%
 // Turnstile configuration
 const TURNSTILE_SCRIPT_SRC =
   "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
-const DEFAULT_TURNSTYLE_SITE_KEY = "0x4AAAAAAB4acfsOidxt5FKe";
+const DEFAULT_TURNSTYLE_SITE_KEY = "0x4AAAAAADMD2Is_rwC3lRHH";
 const rawTurnstileSiteKey =
   (import.meta.env.VITE_TURNSTILE_SITE_KEY ??
     import.meta.env.VITE_TURNSTYLE_SITE ??
@@ -591,7 +591,7 @@ function FeedbackForm({
           ref={turnstileContainerRef}
           className={cn(
             "flex justify-center items-center overflow-hidden",
-            !turnstileToken && !turnstileError && "min-h-[65px]",
+            !turnstileToken && !turnstileError && "min-h-16.25",
           )}
           aria-label="Verification challenge"
         />

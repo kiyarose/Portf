@@ -144,6 +144,12 @@ export const skillIcons: Record<string, string> = {
   Dreams: "mdi:moon-waning-crescent",
   Passion: "mdi:fire",
   Love: "mdi:heart",
+  "Data Labeling": "material-symbols:dataset-rounded",
+  EVS: "material-symbols:cleaning-services-rounded",
+  "Non-Profit": "material-symbols:volunteer-activism-rounded",
+  "Project Leadership": "material-symbols:assignment-ind-rounded",
+  Accounting: "material-symbols:account-balance-rounded",
+  Bookkeeping: "material-symbols:receipt-long-rounded",
 };
 
 export const companyIcons: Record<string, string> = {

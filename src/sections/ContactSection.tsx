@@ -56,7 +56,7 @@ const getPageclipStyleElement = (): HTMLStyleElement | null => {
 
 const TURNSTILE_SCRIPT_SRC =
   "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
-const DEFAULT_TURNSTYLE_SITE_KEY = "0x4AAAAAAB33nR-Wv_kJwwAA";
+const DEFAULT_TURNSTYLE_SITE_KEY = "0x4AAAAAADMD2Is_rwC3lRHH";
 const rawTurnstileSiteKey =
   (import.meta.env.VITE_TURNSTILE_SITE_KEY ??
     import.meta.env.VITE_TURNSTYLE_SITE ??

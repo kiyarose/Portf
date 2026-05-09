@@ -1,6 +1,23 @@
 export const SKILLS_RESOURCE = "Skills";
 
-export const skillsFallback: string[] = [];
+export const skillsFallback: string[] = [
+  "Information Technology Skills",
+  "Customer Service",
+  "Gaining Med Admin skills",
+  "Technical Leadership",
+  "Team Leadership",
+  "Administration",
+  "Research",
+  "Advocacy",
+  "Sales",
+  "Logistics",
+  "Data Labeling",
+  "EVS",
+  "Non-Profit",
+  "Project Leadership",
+  "Accounting",
+  "Bookkeeping",
+];
 
 const skillIconEntries = [
   ["information technology skills", "material-symbols:memory-alt-rounded"],
@@ -44,6 +61,12 @@ const skillIconEntries = [
   ["medical coding", "material-symbols:prescriptions-rounded"],
   ["health informatics", "material-symbols:monitor-heart-rounded"],
   ["excel", "simple-icons:microsoftexcel"],
+  ["data labeling", "material-symbols:dataset-rounded"],
+  ["evs", "material-symbols:cleaning-services-rounded"],
+  ["non-profit", "material-symbols:volunteer-activism-rounded"],
+  ["project leadership", "material-symbols:assignment-ind-rounded"],
+  ["accounting", "material-symbols:account-balance-rounded"],
+  ["bookkeeping", "material-symbols:receipt-long-rounded"],
 ] as const;
 
 const skillIconMap = skillIconEntries.reduce<Record<string, string>>(
