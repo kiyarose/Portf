@@ -1,23 +1,48 @@
 {
   "__meta": {
     "version": 1,
-    "template": "export type SocialLink = {\n  id: string;\n  label: string;\n  href: string;\n  icon: string;\n};\n\nexport const SOCIALS_RESOURCE = \"Socials\";\n\nexport const socialsFallback: SocialLink[] = __DATA_PLACEHOLDER__socialsFallback_183_185__;\n\nexport const socialsPlaceholder: SocialLink[] = __DATA_PLACEHOLDER__socialsPlaceholder_236_397__;\n",
+    "template": "export type SocialLink = {\n  id: string;\n  label: string;\n  href: string;\n  icon: string;\n};\n\nexport const SOCIALS_RESOURCE = \"Socials\";\n\n// Common profile links — kept as fallback so the UI has usable targets when\n// remote payloads are missing or the sync job provides an empty array.\nexport const socialsFallback: SocialLink[] = __DATA_PLACEHOLDER__socialsFallback_332_790__;\n\nexport const socialsPlaceholder: SocialLink[] = __DATA_PLACEHOLDER__socialsPlaceholder_841_1002__;\n",
     "source": "src/data/socials.ts",
     "entries": [
       {
         "name": "socialsFallback",
-        "placeholder": "__DATA_PLACEHOLDER__socialsFallback_183_185__",
+        "placeholder": "__DATA_PLACEHOLDER__socialsFallback_332_790__",
         "baseIndent": ""
       },
       {
         "name": "socialsPlaceholder",
-        "placeholder": "__DATA_PLACEHOLDER__socialsPlaceholder_236_397__",
+        "placeholder": "__DATA_PLACEHOLDER__socialsPlaceholder_841_1002__",
         "baseIndent": ""
       }
     ],
-    "generatedAt": "2026-05-09T13:50:15.716Z"
+    "generatedAt": "2026-05-10T06:51:53.396Z"
   },
-  "socialsFallback": [],
+  "socialsFallback": [
+    {
+      "id": "github",
+      "label": "GitHub",
+      "href": "https://kiya.party/GH",
+      "icon": "mdi:github"
+    },
+    {
+      "id": "instagram",
+      "label": "Instagram",
+      "href": "https://kiya.party/IG",
+      "icon": "mdi:instagram"
+    },
+    {
+      "id": "linkedin",
+      "label": "LinkedIn",
+      "href": "https://kiya.party/LI",
+      "icon": "mdi:linkedin"
+    },
+    {
+      "id": "bluesky",
+      "label": "Bluesky",
+      "href": "https://kiya.party/BS",
+      "icon": "simple-icons:bluesky"
+    }
+  ],
   "socialsPlaceholder": [
     {
       "id": "socials-unavailable",
