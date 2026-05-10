@@ -1,23 +1,45 @@
 {
   "__meta": {
     "version": 1,
-    "template": "export type EducationEntry = {\n  school: string;\n  program: string;\n  dates: string;\n  tech?: string[];\n};\n\nexport const EDUCATION_RESOURCE = \"Education\";\n\nexport const educationFallback: EducationEntry[] = __DATA_PLACEHOLDER__educationFallback_207_209__;\n\nexport const educationPlaceholder: EducationEntry[] = __DATA_PLACEHOLDER__educationPlaceholder_266_447__;\n",
+    "template": "export type EducationEntry = {\n  school: string;\n  program: string;\n  dates: string;\n  tech?: string[];\n};\n\nexport const EDUCATION_RESOURCE = \"Education\";\n\nexport const educationFallback: EducationEntry[] = __DATA_PLACEHOLDER__educationFallback_207_578__;\n\nexport const educationPlaceholder: EducationEntry[] = __DATA_PLACEHOLDER__educationPlaceholder_635_816__;\n",
     "source": "src/data/education.ts",
     "entries": [
       {
         "name": "educationFallback",
-        "placeholder": "__DATA_PLACEHOLDER__educationFallback_207_209__",
+        "placeholder": "__DATA_PLACEHOLDER__educationFallback_207_578__",
         "baseIndent": ""
       },
       {
         "name": "educationPlaceholder",
-        "placeholder": "__DATA_PLACEHOLDER__educationPlaceholder_266_447__",
+        "placeholder": "__DATA_PLACEHOLDER__educationPlaceholder_635_816__",
         "baseIndent": ""
       }
     ],
-    "generatedAt": "2026-05-09T13:50:15.702Z"
+    "generatedAt": "2026-05-10T06:37:22.718Z"
   },
-  "educationFallback": [],
+  "educationFallback": [
+    {
+      "school": "Colorado Mountain College",
+      "program": "Medical Billing and Coding",
+      "dates": "Aug 2025 – Jun 2028",
+      "tech": [
+        "Medical Coding",
+        "Health Informatics",
+        "Excel"
+      ]
+    },
+    {
+      "school": "Greater Altoona CTC",
+      "program": "Computer and Networking Technology",
+      "dates": "2019 — Jun 2025",
+      "tech": [
+        "Networking",
+        "Windows",
+        "Cisco",
+        "Linux"
+      ]
+    }
+  ],
   "educationPlaceholder": [
     {
       "school": "Unable to load education timeline",

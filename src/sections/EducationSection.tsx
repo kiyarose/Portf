@@ -101,9 +101,11 @@ function EducationCard({
   theme,
   t,
 }: EducationCardProps) {
+  const timelineEntries =
+    options.length > 0 ? options : educationFallback;
   const safeEntry =
-    options.length > 0
-      ? options[Math.min(activeIndex, options.length - 1)]
+    timelineEntries.length > 0
+      ? timelineEntries[Math.min(activeIndex, timelineEntries.length - 1)]
       : educationPlaceholder[0];
 
   if (!safeEntry) {
@@ -123,7 +125,7 @@ function EducationCard({
 
       <div className="flex flex-col gap-6 md:flex-row md:gap-10">
         <TimelineColumn
-          options={options}
+          options={timelineEntries}
           activeIndex={activeIndex}
           onChange={onChange}
           theme={theme}
