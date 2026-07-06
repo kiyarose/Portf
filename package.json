@@ -25,7 +25,7 @@
     "@iconify/json": "^2.2.493",
     "@iconify/react": "^6.0.2",
     "clsx": "^2.1.1",
-    "framer-motion": "^12.40.0",
+    "framer-motion": "^12.42.2",
     "pg": "^8.22.0",
     "react": "^19.2.4",
     "react-dom": "^19.2.6",
