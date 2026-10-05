@@ -31,7 +31,7 @@
     "react-dom": "^19.3.0",
     "tailwind-merge": "^3.6.0",
     "tmp": "^0.2.7",
-    "wrangler": "^4.143.1"
+    "wrangler": "^4.146.0"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.13.0",
