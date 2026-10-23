@@ -13,7 +13,7 @@ const languages: {
   code: Language;
   name: string;
   flag: string;
-  customFlag?: string;
+  customFlag?: any;
 }[] = [
   { code: "en", name: "English", flag: "🇨🇦" },
   { code: "ca", name: "Català", flag: "🇪🇸", customFlag: SenyeraFlag },

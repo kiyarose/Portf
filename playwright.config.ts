@@ -30,6 +30,7 @@ const port = isCI
   : await findAvailablePort(4173); // Dynamic port detection for local development
 
 export default defineConfig({
+  testDir: "./tests",
   use: {
     baseURL: `http://localhost:${port}`,
   },
