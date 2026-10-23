@@ -423,9 +423,10 @@ function PolicyIntro() {
     <p className={cn(paragraphClass, "mt-4")}>
       Your privacy matters. This Privacy Policy explains how the site owner
       (replace the name below) collects, uses, and safeguards personal
-      information when you visit the deployed site. <AdminHint>Your Name</AdminHint>{" "}
-      may collect additional information when you interact with the contact form
-      or engage with the analytics services that power the site.
+      information when you visit the deployed site.{" "}
+      <AdminHint>Your Name</AdminHint> may collect additional information when
+      you interact with the contact form or engage with the analytics services
+      that power the site.
     </p>
   );
 }
