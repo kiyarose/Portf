@@ -3,7 +3,7 @@ import { resolveRemoteDataBaseUrl } from "./useRemoteData";
 
 describe("resolveRemoteDataBaseUrl", () => {
   it("returns null when URL is missing", () => {
-    expect(resolveRemoteDataBaseUrl(undefined)).toBeNull();
+    expect(resolveRemoteDataBaseUrl()).toBeNull();
     expect(resolveRemoteDataBaseUrl("")).toBeNull();
     expect(resolveRemoteDataBaseUrl("   ")).toBeNull();
   });

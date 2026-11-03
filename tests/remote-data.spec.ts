@@ -17,7 +17,7 @@ test("remote data loads when remote URL is configured", async ({ page }) => {
   await expect(heroSection).toBeVisible();
 
   await expect
-    .poll(async () => heroSection.getAttribute("data-remote-status"), {
+    .poll(() => heroSection.getAttribute("data-remote-status"), {
       timeout: 15_000,
       intervals: [250, 500, 1_000],
     })

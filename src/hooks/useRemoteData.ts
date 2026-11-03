@@ -2,9 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 
 // NOTE: Remote data is opt-in. Set VITE_REMOTE_DATA_URL to enable remote fetches.
 // When no URL is configured, components use their local fallback data directly.
-export function resolveRemoteDataBaseUrl(
-  rawUrl: string | undefined,
-): string | null {
+export function resolveRemoteDataBaseUrl(rawUrl?: string): string | null {
   const normalized = (rawUrl ?? "").trim().replace(/\/$/, "");
   return normalized.length > 0 ? normalized : null;
 }

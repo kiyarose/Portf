@@ -1,6 +1,7 @@
 import { defineConfig } from 'astro/config'
 import react from '@astrojs/react'
 import tailwindcss from '@tailwindcss/vite'
+import { copyAdminAssets, copyToolAssets } from './vite-build-plugins.mjs'
 
 function normalizeBasePath (value) {
   if (!value || value === '/') {
@@ -19,7 +20,7 @@ export default defineConfig({
   base: normalizeBasePath(process.env.BASE_PATH),
   integrations: [react()],
   vite: {
-    plugins: [tailwindcss()],
+    plugins: [tailwindcss(), copyAdminAssets(), copyToolAssets()],
     envPrefix: ['PUBLIC_', 'VITE_'],
     define: {
       __BUILD_TIME__: JSON.stringify(new Date().toISOString())
