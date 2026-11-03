@@ -24,6 +24,15 @@ export default defineConfig({
     envPrefix: ['PUBLIC_', 'VITE_'],
     define: {
       __BUILD_TIME__: JSON.stringify(new Date().toISOString())
+    },
+    server: {
+      proxy: {
+        '/__remote-data': {
+          target: process.env.VITE_REMOTE_DATA_URL || 'https://data.kiya.cat',
+          changeOrigin: true,
+          rewrite: (path) => path.replace(/^\/__remote-data/, '')
+        }
+      }
     }
   }
 })

@@ -1,14 +1,4 @@
-# Cloudflare Pages serves 404.html and 500.html automatically—no explicit
-# redirects needed. These rules only handle SPA routing.
+# Astro emits static files for each page route.
 
-/privacy-policy /index.html 200
-
-/tools/convert 200
-/tools/visualizeme 200
-# Preserve the legacy slug while the new route propagates.
-
+# Legacy tool slug
 /tools/visualiseme /tools/visualizeme.html 301
-/tools/* /tools/:splat 200
-
-# Fallback all other extension-less routes to the SPA entry point.
-/* /index.html 200!
