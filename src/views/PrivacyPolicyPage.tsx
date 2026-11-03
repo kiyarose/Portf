@@ -11,8 +11,7 @@ import { goBackOrNavigateHome } from "../utils/navigation";
 import { getBuildUpdatedAt } from "../data/build";
 
 const GDPR_CONTACT_EMAIL =
-  (import.meta.env.VITE_GDPR_CONTACT as string) ||
-  "gdpr@sillylittle.tech";
+  (import.meta.env.VITE_GDPR_CONTACT as string) || "gdpr@sillylittle.tech";
 const PRIVACY_CONTACT_EMAIL =
   (import.meta.env.VITE_PRIVACY_CONTACT as string) ||
   "privacy@sillylittle.tech";

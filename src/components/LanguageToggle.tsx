@@ -20,8 +20,7 @@ const languages: {
     code: "ca",
     name: "Català",
     flag: "🇪🇸",
-    customFlag:
-      typeof SenyeraFlag === "string" ? SenyeraFlag : SenyeraFlag.src,
+    customFlag: typeof SenyeraFlag === "string" ? SenyeraFlag : SenyeraFlag.src,
   },
   { code: "fr", name: "Français", flag: "🇫🇷" },
   { code: "nl", name: "Nederlands", flag: "🇳🇱" },
