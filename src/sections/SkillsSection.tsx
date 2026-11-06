@@ -15,7 +15,7 @@ import {
   useSortable,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { Icon } from "@iconify/react";
+import { Icon } from "../components/Icon";
 import { motion, useReducedMotion } from "framer-motion";
 import React, { useCallback } from "react";
 import { SectionContainer } from "../components/SectionContainer";

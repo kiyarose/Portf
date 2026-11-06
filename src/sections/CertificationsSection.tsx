@@ -1,5 +1,5 @@
 import { motion, useReducedMotion } from "framer-motion";
-import { Icon } from "@iconify/react";
+import { Icon } from "../components/Icon";
 import { SectionContainer } from "../components/SectionContainer";
 import { SectionHeader } from "../components/SectionHeader";
 import {

@@ -1,4 +1,4 @@
-import { Icon } from "@iconify/react";
+import { Icon } from "./components/Icon";
 import { useReducedMotion } from "framer-motion";
 import { useCallback } from "react";
 import { ScrollSpy } from "./components/ScrollSpy";

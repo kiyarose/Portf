@@ -1,15 +1,14 @@
-import { useEffect } from "react";
 import { PrivacyPolicyPage } from "../views/PrivacyPolicyPage";
 import { ErrorBoundary } from "./ErrorBoundary";
 import { ThemeProvider } from "../providers/ThemeProvider";
 import { LanguageProvider } from "../providers/LanguageProvider";
 import { initializeIcons } from "../utils/icons";
 
-export function PrivacyPolicyApp() {
-  useEffect(() => {
-    initializeIcons();
-  }, []);
+if (typeof window !== "undefined") {
+  initializeIcons();
+}
 
+export function PrivacyPolicyApp() {
   return (
     <ErrorBoundary>
       <ThemeProvider>

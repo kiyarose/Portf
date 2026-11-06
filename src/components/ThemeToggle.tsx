@@ -1,4 +1,4 @@
-import { Icon } from "@iconify/react";
+import { Icon } from "./Icon";
 import { motion, useReducedMotion } from "framer-motion";
 import { useHydrated } from "../hooks/useHydrated";
 import { useTheme } from "../hooks/useTheme";

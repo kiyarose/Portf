@@ -1,6 +1,6 @@
 import { useEffect, useMemo } from "react";
 import type { ReactNode } from "react";
-import { Icon } from "@iconify/react";
+import { Icon } from "../components/Icon";
 import { DecorativeBackground } from "../components/DecorativeBackground";
 import { SiteFooter } from "../components/SiteFooter";
 import AdminHint from "../components/AdminHint";

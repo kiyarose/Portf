@@ -2,12 +2,7 @@ import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import type { PropsWithChildren } from "react";
 import { ThemeContext, type Theme } from "./theme-context";
 import { safeConsoleWarn } from "../utils/errorSanitizer";
-import {
-  THEME_STORAGE_KEY,
-  USER_PREFERENCE_KEY,
-  getPreferredTheme,
-  hasUserSetTheme,
-} from "../theme/storage";
+import { THEME_STORAGE_KEY, USER_PREFERENCE_KEY } from "../theme/storage";
 
 function applyTheme(theme: Theme, userHasSetTheme: boolean) {
   if (typeof document === "undefined") return;
@@ -47,8 +42,23 @@ function applyTheme(theme: Theme, userHasSetTheme: boolean) {
   }
 }
 
+function readThemeFromDocument(): Theme {
+  if (typeof document === "undefined") {
+    return "light";
+  }
+  return document.documentElement.classList.contains("dark") ? "dark" : "light";
+}
+
+function readUserSetFromDocument(): boolean {
+  if (typeof document === "undefined") {
+    return false;
+  }
+  return document.documentElement.dataset.userTheme === "light" ||
+    document.documentElement.dataset.userTheme === "dark";
+}
+
 export function ThemeProvider({ children }: PropsWithChildren) {
-  // Fixed SSR defaults must match Astro server render to avoid hydration failure.
+  // Match BaseLayout inline bootstrap on the client; SSR defaults to light.
   const [theme, setTheme] = useState<Theme>("light");
   const [userHasSetTheme, setUserHasSetTheme] = useState(false);
 
@@ -57,8 +67,8 @@ export function ThemeProvider({ children }: PropsWithChildren) {
   useLayoutEffect(() => {
     if (!hasSyncedPreferences.current) {
       hasSyncedPreferences.current = true;
-      const preferred = getPreferredTheme();
-      const userSet = hasUserSetTheme();
+      const preferred = readThemeFromDocument();
+      const userSet = readUserSetFromDocument();
       setTheme(preferred);
       setUserHasSetTheme(userSet);
       applyTheme(preferred, userSet);

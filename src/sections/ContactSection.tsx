@@ -1,4 +1,4 @@
-import { Icon } from "@iconify/react";
+import { Icon } from "../components/Icon";
 import { motion, useReducedMotion } from "framer-motion";
 import { useCallback, useState, useRef, useEffect } from "react";
 import type { MouseEvent } from "react";
