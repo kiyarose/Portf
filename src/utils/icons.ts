@@ -1,5 +1,8 @@
+import type { IconifyIcon } from "@iconify/types";
 import { addIcon } from "@iconify/react/offline";
-import { iconBundle } from "../data/icon-bundle.generated";
+import iconBundleJson from "../assets/icon-bundle.generated.json";
+
+const iconBundle = iconBundleJson as Record<string, IconifyIcon>;
 
 let iconsRegistered = false;
 

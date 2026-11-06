@@ -84,7 +84,7 @@ const browserToolsTsConfig = {
 
 export default [
   {
-    ignores: ['dist', '.astro']
+    ignores: ['dist', '.astro', 'src/assets/icon-bundle.generated.json']
   },
   browserScriptsConfig,
   browserToolsTsConfig,
