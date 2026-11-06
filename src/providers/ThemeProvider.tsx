@@ -53,8 +53,10 @@ function readUserSetFromDocument(): boolean {
   if (typeof document === "undefined") {
     return false;
   }
-  return document.documentElement.dataset.userTheme === "light" ||
-    document.documentElement.dataset.userTheme === "dark";
+  return (
+    document.documentElement.dataset.userTheme === "light" ||
+    document.documentElement.dataset.userTheme === "dark"
+  );
 }
 
 export function ThemeProvider({ children }: PropsWithChildren) {
