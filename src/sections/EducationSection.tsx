@@ -101,8 +101,7 @@ function EducationCard({
   theme,
   t,
 }: EducationCardProps) {
-  const timelineEntries =
-    options.length > 0 ? options : educationFallback;
+  const timelineEntries = options.length > 0 ? options : educationFallback;
   const safeEntry =
     timelineEntries.length > 0
       ? timelineEntries[Math.min(activeIndex, timelineEntries.length - 1)]

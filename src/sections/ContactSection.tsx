@@ -13,21 +13,25 @@ import { navigateTo } from "../utils/navigation";
 import { getCspNonce } from "../utils/getCspNonce";
 import emailObfu from "../assets/emailobfu.png";
 
-const obfu1 = String.fromCharCode( 46 );
-const obfu2 = String.fromCharCode( 64 );
-const section1 = String.fromCharCode(
-  107, 105, 121, 97,
-);
-const section2 = String.fromCharCode(
-  114, 111, 115, 101,
-);
+const obfu1 = String.fromCharCode(46);
+const obfu2 = String.fromCharCode(64);
+const section1 = String.fromCharCode(107, 105, 121, 97);
+const section2 = String.fromCharCode(114, 111, 115, 101);
 const section3 = String.fromCharCode(
-  115, 105, 108, 108, 121, 108, 105, 116, 116, 108, 101,
+  115,
+  105,
+  108,
+  108,
+  121,
+  108,
+  105,
+  116,
+  116,
+  108,
+  101,
 );
-const section4 = String.fromCharCode(
-  116, 101, 99, 104,
-);
-const EMAIL = `${section1}${obfu1}${section2}${obfu2}${section3}${obfu1}${section4}`
+const section4 = String.fromCharCode(116, 101, 99, 104);
+const EMAIL = `${section1}${obfu1}${section2}${obfu2}${section3}${obfu1}${section4}`;
 const STRICT_CORS_PATTERNS = ["cors", "cross-origin", "opaque response"];
 const GENERIC_CORS_PATTERNS = ["load failed", "failed to fetch"];
 
