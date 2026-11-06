@@ -30,9 +30,7 @@ export function ThemeToggle({ className }: { className?: string }) {
     >
       <motion.span
         key={theme}
-        initial={
-          animateLabel ? { opacity: 0, y: -6, scale: 0.95 } : false
-        }
+        initial={animateLabel ? { opacity: 0, y: -6, scale: 0.95 } : false}
         animate={animateLabel ? { opacity: 1, y: 0, scale: 1 } : undefined}
         transition={{
           duration: animateLabel ? 0.25 : 0,
