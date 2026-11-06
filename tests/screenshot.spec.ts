@@ -86,8 +86,8 @@ async function ensureTheme(page: Page, theme: "light" | "dark") {
     const current = await getCurrentTheme();
     if (current === theme) {
       await page.evaluate((nextTheme) => {
-        window.localStorage.setItem("kiya-theme", nextTheme);
-        window.localStorage.setItem("kiya-theme-user-set", "true");
+        window.localStorage.setItem("template-theme", nextTheme);
+        window.localStorage.setItem("template-theme-user-set", "true");
       }, theme);
       return;
     }
@@ -109,8 +109,8 @@ async function ensureTheme(page: Page, theme: "light" | "dark") {
 
     if ((await getCurrentTheme()) === theme) {
       await page.evaluate((nextTheme) => {
-        window.localStorage.setItem("kiya-theme", nextTheme);
-        window.localStorage.setItem("kiya-theme-user-set", "true");
+        window.localStorage.setItem("template-theme", nextTheme);
+        window.localStorage.setItem("template-theme-user-set", "true");
       }, theme);
       return;
     }

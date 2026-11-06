@@ -40,7 +40,7 @@
 - Privacy and legal copy should pull their “Last updated” value from `getBuildUpdatedAt()` so the date reflects the latest build automatically—never hardcode the date.
 - Developing skills use a dotted accent pill—follow the existing `isDeveloping` pattern in `SkillsSection` when adding new skills.
 - The contact form generates a `mailto:` draft; keep it client-only (no POST handlers) and preserve the copy-to-clipboard CTA.
-- The fallback page in `public/index.html` should mirror the warm accent palette; update gradients/buttons there when the brand colors change.
+- The fallback page in `public/fallback/index.html` should mirror the warm accent palette; update gradients/buttons there when the brand colors change.
 
 ## Testing Guidelines
 

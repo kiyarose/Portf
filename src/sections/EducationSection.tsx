@@ -13,7 +13,9 @@ import {
 import { getSkillIcon } from "../data/skills";
 import { useTheme } from "../hooks/useTheme";
 import { useTranslation } from "../hooks/useTranslation";
+import { useHydrated } from "../hooks/useHydrated";
 import { useRemoteData } from "../hooks/useRemoteData";
+import { motionEntrance } from "../utils/motionSsr";
 import type { Theme } from "../providers/theme-context";
 import { themedClass } from "../utils/themeClass";
 import { cn } from "../utils/cn";
@@ -101,8 +103,7 @@ function EducationCard({
   theme,
   t,
 }: EducationCardProps) {
-  const timelineEntries =
-    options.length > 0 ? options : educationFallback;
+  const timelineEntries = options.length > 0 ? options : educationFallback;
   const safeEntry =
     timelineEntries.length > 0
       ? timelineEntries[Math.min(activeIndex, timelineEntries.length - 1)]
@@ -211,6 +212,7 @@ function DetailsCard({
   variants,
   theme,
 }: DetailsCardProps) {
+  const hydrated = useHydrated();
   const containerSurface = themedClass(
     theme,
     "bg-accent/10 text-slate-700",
@@ -232,9 +234,9 @@ function DetailsCard({
     <div className="flex-1">
       <motion.div
         key={entry.school}
-        initial={prefersReducedMotion ? false : "enter"}
-        animate="center"
-        variants={prefersReducedMotion ? undefined : variants}
+        initial={motionEntrance(hydrated, prefersReducedMotion, "enter")}
+        animate={hydrated && !prefersReducedMotion ? "center" : undefined}
+        variants={hydrated && !prefersReducedMotion ? variants : undefined}
         transition={{ duration: 0.5, ease: "easeOut" }}
         className={cn("rounded-2xl p-6", containerSurface)}
       >
