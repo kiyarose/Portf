@@ -6,7 +6,7 @@ on:
       - 'security-headers.config.ts'
       - 'public/_headers'
       - 'firebase.json'
-      - 'vite.config.ts'
+      - 'astro.config.mjs'
       - '.github/workflows/security-headers-parity.yml'
   push:
     branches:
@@ -15,7 +15,7 @@ on:
       - 'security-headers.config.ts'
       - 'public/_headers'
       - 'firebase.json'
-      - 'vite.config.ts'
+      - 'astro.config.mjs'
 
 permissions:
   contents: read
@@ -49,7 +49,7 @@ jobs:
                     'The security headers are not synchronized across configuration files.\n\n' +
                     'Please ensure that:\n' +
                     '1. `security-headers.config.ts` contains the master configuration\n' +
-                    '2. `vite.config.ts` imports from the master config\n' +
+                    '2. Deploy configs import or mirror the master config\n' +
                     '3. `public/_headers` and `firebase.json` are updated to match\n\n' +
                     'See the workflow logs for details.'
             })

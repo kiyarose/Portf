@@ -1,5 +1,6 @@
 import { Icon } from "@iconify/react";
 import { motion, useReducedMotion } from "framer-motion";
+import { useHydrated } from "../hooks/useHydrated";
 import { useTheme } from "../hooks/useTheme";
 import { useTranslation } from "../hooks/useTranslation";
 import { cn } from "../utils/cn";
@@ -9,8 +10,10 @@ export function ThemeToggle({ className }: { className?: string }) {
   const { theme, toggleTheme } = useTheme();
   const { t } = useTranslation();
   const prefersReducedMotion = useReducedMotion();
+  const hydrated = useHydrated();
 
   const isLight = theme === "light";
+  const animateLabel = hydrated && !prefersReducedMotion;
 
   return (
     <button
@@ -27,14 +30,10 @@ export function ThemeToggle({ className }: { className?: string }) {
     >
       <motion.span
         key={theme}
-        initial={
-          prefersReducedMotion
-            ? { opacity: 1, y: 0 }
-            : { opacity: 0, y: -6, scale: 0.95 }
-        }
-        animate={{ opacity: 1, y: 0, scale: 1 }}
+        initial={animateLabel ? { opacity: 0, y: -6, scale: 0.95 } : false}
+        animate={animateLabel ? { opacity: 1, y: 0, scale: 1 } : undefined}
         transition={{
-          duration: prefersReducedMotion ? 0 : 0.25,
+          duration: animateLabel ? 0.25 : 0,
           ease: "easeOut",
         }}
         className="flex items-center gap-2"
