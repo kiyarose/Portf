@@ -1,6 +1,5 @@
 import { motion, useReducedMotion } from "framer-motion";
 import type { PropsWithChildren } from "react";
-import { useHydrated } from "../hooks/useHydrated";
 import { cn } from "../utils/cn";
 
 const variants = {
@@ -27,18 +26,16 @@ export function SectionContainer({
   debugAttributes,
 }: SectionContainerProps) {
   const prefersReducedMotion = useReducedMotion();
-  const hydrated = useHydrated();
-  const animateOnView = hydrated && !prefersReducedMotion;
 
   return (
     <motion.section
       id={id}
       aria-labelledby={`${id}-title`}
-      initial={animateOnView ? "hidden" : false}
-      whileInView={animateOnView ? "visible" : undefined}
+      initial={prefersReducedMotion ? false : "hidden"}
+      whileInView={prefersReducedMotion ? undefined : "visible"}
       viewport={{ once: true, amount: 0.4 }}
       transition={{ duration: 0.6, ease: "easeOut" }}
-      variants={animateOnView ? variants : undefined}
+      variants={prefersReducedMotion ? undefined : variants}
       className={cn("scroll-mt-28", className)}
       {...(debugAttributes ?? {})}
     >

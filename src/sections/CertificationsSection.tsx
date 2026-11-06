@@ -10,15 +10,12 @@ import {
 } from "../data/certifications";
 import { useTheme } from "../hooks/useTheme";
 import { useTranslation } from "../hooks/useTranslation";
-import { useHydrated } from "../hooks/useHydrated";
 import { useRemoteData } from "../hooks/useRemoteData";
-import { motionEntrance } from "../utils/motionSsr";
 import { themedClass } from "../utils/themeClass";
 import { cn } from "../utils/cn";
 
 export function CertificationsSection() {
   const prefersReducedMotion = useReducedMotion();
-  const hydrated = useHydrated();
   const { theme } = useTheme();
   const { t } = useTranslation();
   const {
@@ -55,14 +52,9 @@ export function CertificationsSection() {
                   "border-slate-700/60 bg-slate-900/60",
                 ),
               )}
-              initial={motionEntrance(hydrated, prefersReducedMotion, {
-                opacity: 0,
-                y: 12,
-              })}
+              initial={prefersReducedMotion ? undefined : { opacity: 0, y: 12 }}
               whileInView={
-                hydrated && !prefersReducedMotion
-                  ? { opacity: 1, y: 0 }
-                  : undefined
+                prefersReducedMotion ? undefined : { opacity: 1, y: 0 }
               }
               viewport={{ once: true, amount: 0.5 }}
               transition={{

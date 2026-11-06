@@ -33,11 +33,17 @@ export default {
         },
         spinSlow: {
           to: { transform: 'rotate(360deg)' }
+        },
+        shake: {
+          '0%, 100%': { transform: 'translateX(0)' },
+          '25%': { transform: 'translateX(-2px)' },
+          '75%': { transform: 'translateX(2px)' }
         }
       },
       animation: {
         float: 'float 6s ease-in-out infinite',
-        'spin-slow': 'spinSlow 12s linear infinite'
+        'spin-slow': 'spinSlow 12s linear infinite',
+        shake: 'shake 0.5s ease-in-out'
       }
     }
   },

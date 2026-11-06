@@ -4,7 +4,7 @@ import reactHooks from 'eslint-plugin-react-hooks'
 import reactRefresh from 'eslint-plugin-react-refresh'
 import tseslint from 'typescript-eslint'
 
-const reactHooksConfig = reactHooks.configs.flat.recommended
+const reactHooksConfig = reactHooks.configs.flat['recommended-latest']
 const reactRefreshConfig = reactRefresh.configs.vite
 
 const reactTsConfig = {
@@ -30,9 +30,7 @@ const reactTsConfig = {
   },
   rules: {
     ...(reactHooksConfig.rules ?? {}),
-    ...(reactRefreshConfig.rules ?? {}),
-    // Compiler-era rules are noisy for this codebase; keep classic hooks lint only.
-    'react-hooks/set-state-in-effect': 'off'
+    ...(reactRefreshConfig.rules ?? {})
   },
   settings: {
     ...(reactHooksConfig.settings ?? {}),
@@ -48,8 +46,7 @@ const nodeConfig = {
   files: [
     '.lighthouserc.{js,cjs}',
     'src/tools/**/*.{js,cjs,mjs}',
-    'scripts/**/*.{js,cjs,mjs}',
-    'astro.config.mjs'
+    'scripts/**/*.{js,cjs,mjs}'
   ], // Support both .js and .cjs
   languageOptions: {
     ecmaVersion: 2020,
@@ -59,44 +56,12 @@ const nodeConfig = {
   }
 }
 
-const browserScriptsConfig = {
-  files: ['public/scripts/**/*.js'],
-  languageOptions: {
-    ecmaVersion: 2020,
-    globals: {
-      ...globals.browser
-    }
-  },
-  rules: {
-    'no-redeclare': 'off'
-  }
-}
-
-const browserToolsTsConfig = {
-  files: ['src/tools/visualizeme.ts'],
-  languageOptions: {
-    ecmaVersion: 2020,
-    globals: {
-      ...globals.browser
-    }
-  }
-}
-
 export default [
   {
-    ignores: ['dist', '.astro']
+    ignores: ['dist']
   },
-  browserScriptsConfig,
-  browserToolsTsConfig,
   nodeConfig,
   js.configs.recommended,
   ...tsRecommended,
-  reactTsConfig,
-  {
-    files: ['**/*.{js,mjs,cjs,ts,tsx}'],
-    rules: {
-      // ESLint 10 recommended enables this; existing rethrows omit `cause`.
-      'preserve-caught-error': 'off'
-    }
-  }
+  reactTsConfig
 ]

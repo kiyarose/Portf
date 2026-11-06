@@ -31,7 +31,7 @@
 - Favor small, composable helper components over deeply nested JSX trees (see `SiteHeader`/`SiteFooter` in `App.tsx`).
 - When making UI changes, consider drag-and-drop persistence, localStorage access, the `mailto:` contact workflow, and other side effects already established in the repo.
 - Use the existing `isDeveloping` styling in the Skills section when introducing new abilities (dashed border for in-progress skills).
-- Keep the fallback page (`public/fallback/index.html`) visually aligned with the main palette when adjusting colors.
+- Keep the fallback page (`public/index.html`) visually aligned with the main palette when adjusting colors.
 - Run `npm run lint` and (when relevant) `npm run build`; clean up generated `dist/` outputs if you run the build locally.
 - Keep the build label helper in `src/data/build.ts` intact: it persists a random prefix per build signature in `localStorage`, so only adjust it if that behaviour breaks, and retain the accent tooltip that explains the two segments.
 - Keep the macOS Swift companion `DashCam!` in `$DashCam!/`: it manages `npm run dev` and `npx playwright codegen` processes, so update `DashboardViewModel`/`ProcessController` plus the packaged `DashCam.app` or `dashcam_swift.tgz` whenever those workflows change.

@@ -1,9 +1,9 @@
-import { useEffect, useLayoutEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { PropsWithChildren } from "react";
 import { LanguageContext, type Language } from "./language-context";
 import { safeConsoleWarn } from "../utils/errorSanitizer";
 
-const LANGUAGE_STORAGE_KEY = "template-portfolio-language";
+const LANGUAGE_STORAGE_KEY = "kiya-language";
 
 function getPreferredLanguage(): Language {
   if (typeof window === "undefined") return "en";
@@ -40,11 +40,9 @@ function getPreferredLanguage(): Language {
 }
 
 export function LanguageProvider({ children }: PropsWithChildren) {
-  const [language, setLanguage] = useState<Language>("en");
-
-  useLayoutEffect(() => {
-    setLanguage(getPreferredLanguage());
-  }, []);
+  const [language, setLanguage] = useState<Language>(() =>
+    getPreferredLanguage(),
+  );
 
   useEffect(() => {
     try {

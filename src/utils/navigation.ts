@@ -1,27 +1,8 @@
-// ---------------------------------------------------------------------------
-// BASE PATH HANDLING
-// ---------------------------------------------------------------------------
-// When the app is served from a sub-path (e.g. /Portf/ on GitHub Pages) every
-// URL reported by the browser includes that prefix, so window.location.pathname
-// looks like "/Portf/privacy-policy" instead of just "/privacy-policy".
-//
-// The build tool embeds the configured base path (set via BASE_PATH in this
-// template) into import.meta.env.BASE_URL, so we read it here to strip the prefix before
-// matching routes and re-apply it before calling window.location.assign.
-//
-// Template users: you do NOT need to change anything in this file.
-//   • Deploying to a root domain?  Leave BASE_PATH unset.  BASE_PATH will
-//     be "" and both stripBasePath / addBasePath are transparent no-ops.
-//   • Deploying to a sub-path?  Set BASE_PATH in your build command or CI
-//     environment (see astro.config.mjs and package.json for details).  This file
-//     picks it up automatically through import.meta.env.BASE_URL.
-// ---------------------------------------------------------------------------
-const BASE_PATH = (() => {
-  const base = import.meta.env.BASE_URL ?? "/";
-  // Normalize to a prefix without trailing slash so it can be stripped cleanly.
-  // e.g. "/Portf/" → "/Portf",  "/" → ""
-  return base === "/" ? "" : base.replace(/\/$/, "");
-})();
+const NAVIGATION_EVENT = "kiya:navigate";
+
+type NavigationListener = (path: string) => void;
+
+type NavigationEvent = CustomEvent<string>;
 
 function isWindowAvailable() {
   return typeof window !== "undefined";
@@ -42,28 +23,9 @@ function normalizePath(path: string): string {
   return stripTrailingSlashes(prefixed) || "/";
 }
 
-/** Strip the deployment base path and return an app-relative pathname. */
-function stripBasePath(pathname: string): string {
-  if (!BASE_PATH) return pathname;
-  if (pathname === BASE_PATH || pathname === `${BASE_PATH}/`) return "/";
-  if (pathname.startsWith(`${BASE_PATH}/`)) {
-    return pathname.slice(BASE_PATH.length);
-  }
-  return pathname;
-}
-
-/** Prepend the deployment base path to an app-relative path before assigning
- *  browser location.
- */
-function addBasePath(path: string): string {
-  if (!BASE_PATH) return path;
-  const stripped = path.startsWith("/") ? path : `/${path}`;
-  return `${BASE_PATH}${stripped}`;
-}
-
 export function getCurrentPath(): string {
   if (!isWindowAvailable()) return "/";
-  return normalizePath(stripBasePath(window.location.pathname));
+  return normalizePath(window.location.pathname);
 }
 
 export function navigateTo(path: string) {
@@ -71,8 +33,38 @@ export function navigateTo(path: string) {
   const normalized = normalizePath(path);
   const current = getCurrentPath();
   if (normalized === current) return;
-  const target = addBasePath(normalized);
-  window.location.assign(target);
+  window.history.pushState({}, "", normalized);
+  dispatchNavigation(normalized);
+}
+
+function dispatchNavigation(path: string) {
+  if (!isWindowAvailable()) return;
+  const event: NavigationEvent = new CustomEvent(NAVIGATION_EVENT, {
+    detail: path,
+  });
+  window.dispatchEvent(event);
+}
+
+export function subscribeToNavigation(listener: NavigationListener) {
+  if (!isWindowAvailable()) return () => undefined;
+  const handler = (event: Event) => {
+    const customEvent = event as NavigationEvent;
+    const nextPath =
+      typeof customEvent.detail === "string"
+        ? customEvent.detail
+        : getCurrentPath();
+    listener(normalizePath(nextPath));
+  };
+
+  window.addEventListener(NAVIGATION_EVENT, handler as EventListener);
+  return () => {
+    window.removeEventListener(NAVIGATION_EVENT, handler as EventListener);
+  };
+}
+
+export function canUseClientNavigation() {
+  if (!isWindowAvailable()) return false;
+  return window.history.length > 1;
 }
 
 export function goBackOrNavigateHome() {
