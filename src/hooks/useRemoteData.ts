@@ -361,11 +361,12 @@ function extractJsonFromRtf(raw: string): string | null {
             const parsed = Number.parseInt(unicodeMatch[1] ?? "", 10);
             if (Number.isInteger(parsed)) {
               const codePoint = parsed < 0 ? 65536 + parsed : parsed;
-              const isValidCodePoint =
-                codePoint >= 0 && codePoint <= 0x10_ffff;
+              const isValidCodePoint = codePoint >= 0 && codePoint <= 0x10_ffff;
               try {
                 if (!isValidCodePoint) {
-                  throw new RangeError(`Invalid Unicode code point ${codePoint}`);
+                  throw new RangeError(
+                    `Invalid Unicode code point ${codePoint}`,
+                  );
                 }
                 result += String.fromCodePoint(codePoint);
                 handledControlWord = true;

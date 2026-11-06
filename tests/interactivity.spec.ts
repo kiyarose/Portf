@@ -28,9 +28,11 @@ test.describe("Homepage interactivity", () => {
       page.getByText(/Served as the Administrative Project Lead/i),
     ).toBeVisible();
 
-    const themeToggleIcon = page.getByRole("button", {
-      name: /toggle light or dark theme/i,
-    }).locator("svg");
+    const themeToggleIcon = page
+      .getByRole("button", {
+        name: /toggle light or dark theme/i,
+      })
+      .locator("svg");
     await expect(themeToggleIcon).toBeVisible();
     await expect(themeToggleIcon.locator("path, use")).not.toHaveCount(0);
 
