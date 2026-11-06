@@ -263,7 +263,7 @@ function ContactIntro({ copied, onCopy }: ContactIntroProps) {
         {copied ? "Copied!" : "Copy my email"}
       </button>
       <img
-        src={emailObfu}
+        src={emailObfu as unknown as string}
         alt="Email address"
         className="h-[1.15em] w-auto select-none"
         draggable={false}
@@ -405,7 +405,7 @@ function ContactForm({
   }, [ensurePageclipStyles, ensureTurnstileScript]);
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
+
     ensureTurnstileScript();
   }, [ensureTurnstileScript]);
 
@@ -455,7 +455,7 @@ function ContactForm({
       turnstileWidgetIdRef.current = widgetId;
     } catch (error) {
       safeConsoleError("Failed to render Turnstile widget", error);
-      // eslint-disable-next-line react-hooks/set-state-in-effect
+
       setTurnstileError(
         "Unable to show the verification challenge. Please reload and try again.",
       );

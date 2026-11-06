@@ -352,7 +352,7 @@ function FeedbackForm({
       turnstileWidgetIdRef.current = widgetId;
     } catch (error) {
       safeConsoleError("Failed to render Turnstile widget", error);
-      // eslint-disable-next-line react-hooks/set-state-in-effect -- Error handling in effect is intentional
+
       setTurnstileError(
         "Unable to show the verification challenge. Please use the contact form.",
       );
@@ -1182,7 +1182,7 @@ export function FeedbackBubble({ className }: FeedbackBubbleProps) {
       // Check if feedback was already submitted in this session
       const hasSubmitted = sessionStorage.getItem("feedback-submitted");
       if (!hasSubmitted) {
-        // eslint-disable-next-line react-hooks/set-state-in-effect
+
         setIsVisible(true);
         triggerConfetti();
       }
