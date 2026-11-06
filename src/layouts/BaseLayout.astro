@@ -42,7 +42,14 @@ const faviconHref = `${import.meta.env.BASE_URL}favicon.svg`;
           }
           root.style.colorScheme = theme === "dark" ? "dark light" : "light dark";
         } catch {
-          // Ignore storage errors in restricted browsing contexts.
+          const theme = window.matchMedia("(prefers-color-scheme: dark)").matches
+            ? "dark"
+            : "light";
+          const root = document.documentElement;
+          root.classList.remove("light", "dark");
+          root.classList.add(theme);
+          root.dataset.theme = theme;
+          root.style.colorScheme = theme === "dark" ? "dark light" : "light dark";
         }
       })();
     </script>

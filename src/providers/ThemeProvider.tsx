@@ -2,7 +2,11 @@ import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import type { PropsWithChildren } from "react";
 import { ThemeContext, type Theme } from "./theme-context";
 import { safeConsoleWarn } from "../utils/errorSanitizer";
-import { THEME_STORAGE_KEY, USER_PREFERENCE_KEY } from "../theme/storage";
+import {
+  getPreferredTheme,
+  THEME_STORAGE_KEY,
+  USER_PREFERENCE_KEY,
+} from "../theme/storage";
 
 function applyTheme(theme: Theme, userHasSetTheme: boolean) {
   if (typeof document === "undefined") return;
@@ -46,7 +50,13 @@ function readThemeFromDocument(): Theme {
   if (typeof document === "undefined") {
     return "light";
   }
-  return document.documentElement.classList.contains("dark") ? "dark" : "light";
+  if (document.documentElement.classList.contains("dark")) {
+    return "dark";
+  }
+  if (document.documentElement.classList.contains("light")) {
+    return "light";
+  }
+  return getPreferredTheme();
 }
 
 function readUserSetFromDocument(): boolean {
