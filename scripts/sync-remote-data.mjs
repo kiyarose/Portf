@@ -33,22 +33,24 @@ async function main () {
     `[sync-remote-data] Syncing resources from ${remoteBaseUrl} to ${OUTPUT_DIR}`
   )
 
-  for (const resource of RESOURCES) {
-    const sourceUrl = `${remoteBaseUrl}/${resource}.json`
-    const response = await fetch(sourceUrl, {
-      headers: { Accept: 'application/json' }
+  await Promise.all(
+    RESOURCES.map(async (resource) => {
+      const sourceUrl = `${remoteBaseUrl}/${resource}.json`
+      const response = await fetch(sourceUrl, {
+        headers: { Accept: 'application/json' }
+      })
+
+      if (!response.ok) {
+        throw new Error(
+          `[sync-remote-data] Failed to fetch ${resource}.json from ${sourceUrl} (status ${response.status})`
+        )
+      }
+
+      const payload = await response.text()
+      await writeFile(resolve(OUTPUT_DIR, `${resource}.json`), payload, 'utf8')
+      console.log(`[sync-remote-data] Synced ${resource}.json`)
     })
-
-    if (!response.ok) {
-      throw new Error(
-        `[sync-remote-data] Failed to fetch ${resource}.json from ${sourceUrl} (status ${response.status})`
-      )
-    }
-
-    const payload = await response.text()
-    await writeFile(resolve(OUTPUT_DIR, `${resource}.json`), payload, 'utf8')
-    console.log(`[sync-remote-data] Synced ${resource}.json`)
-  }
+  )
 }
 
 main().catch((error) => {
