@@ -10,7 +10,6 @@ import AdminHint from "../components/AdminHint";
 import { SocialChip } from "../components/SocialChip";
 import { useTheme } from "../hooks/useTheme";
 import { useTranslation } from "../hooks/useTranslation";
-import { useHydrated } from "../hooks/useHydrated";
 import { useRemoteData } from "../hooks/useRemoteData";
 import type { Theme } from "../providers/theme-context";
 import { themedClass } from "../utils/themeClass";
@@ -29,8 +28,6 @@ function HeroCard({
   socialLinks,
   t,
 }: HeroCardProps) {
-  const hydrated = useHydrated();
-  const animateHero = hydrated && !prefersReducedMotion;
   const surfaceGradient = themedClass(
     theme,
     "from-white/90 via-[#ffe9f2]/80 to-accent/15",
@@ -48,8 +45,8 @@ function HeroCard({
       )}
     >
       <motion.div
-        initial={animateHero ? { opacity: 0, y: 24 } : false}
-        animate={animateHero ? { opacity: 1, y: 0 } : undefined}
+        initial={prefersReducedMotion ? undefined : { opacity: 0, y: 24 }}
+        animate={prefersReducedMotion ? undefined : { opacity: 1, y: 0 }}
         transition={{ duration: 0.6, ease: "easeOut" }}
         className="flex flex-col gap-6"
       >

@@ -9,13 +9,9 @@ import { themedClass } from "../utils/themeClass";
 import { cn } from "../utils/cn";
 import { goBackOrNavigateHome } from "../utils/navigation";
 import { getBuildUpdatedAt } from "../data/build";
-import { SITE_NAME } from "../data/site";
 
-const GDPR_CONTACT_EMAIL =
-  (import.meta.env.VITE_GDPR_CONTACT as string) || "gdpr@sillylittle.tech";
-const PRIVACY_CONTACT_EMAIL =
-  (import.meta.env.VITE_PRIVACY_CONTACT as string) ||
-  "privacy@sillylittle.tech";
+const GDPR_CONTACT_EMAIL = "gdpr@sillylittle.tech";
+const PRIVACY_CONTACT_EMAIL = "privacy@sillylittle.tech";
 
 type PolicySection = {
   title: string;
@@ -66,12 +62,13 @@ const policySections: PolicySection[] = [
             security incidents. These events are tied to my Cloudflare account
             and are not shared externally.
           </li>
-          <li>
-            <strong>Legacy analytics (retired October 30, 2025):</strong>{" "}
+          {/* <li>
+            <strong>Legacy analytics (retired October 30, 2025):</strong>
             Firebase Hosting metrics and Google Analytics events were previously
             collected for aggregated insights. They were shut off effective
             October 30, 2025 and no longer receive data from any visitors.
           </li>
+          */}
         </ul>
       </>
     ),
@@ -121,7 +118,7 @@ const policySections: PolicySection[] = [
               Cloudflare Pages Data Usage
             </a>
           </li>
-          <li>
+          {/*   <li>
             <a
               href="https://firebase.google.com/support/privacy"
               target="_blank"
@@ -139,14 +136,16 @@ const policySections: PolicySection[] = [
               Google Analytics Privacy Overview
             </a>
           </li>
+          */}
         </ul>
-        <p className={paragraphClass}>
+        {/*   <p className={paragraphClass}>
           Firebase Hosting metrics and Google Analytics are kept listed here for
           historical context only—they ceased collecting new data after October
           30, 2025. I do not sell your personal information or share it with
           advertisers. Access is limited to what is required to run this
           website.
         </p>
+        */}
       </>
     ),
   },
@@ -266,7 +265,7 @@ export function PrivacyPolicyPage() {
   const { theme } = useTheme();
 
   useEffect(() => {
-    document.title = `Privacy Policy • ${SITE_NAME}`;
+    document.title = "Privacy Policy • Kiya Rose";
     if (typeof window !== "undefined") {
       window.scrollTo({ top: 0, left: 0 });
     }
@@ -422,11 +421,13 @@ function PolicyHeading() {
 function PolicyIntro() {
   return (
     <p className={cn(paragraphClass, "mt-4")}>
-      Your privacy matters. This Privacy Policy explains how the site owner
-      (replace the name below) collects, uses, and safeguards personal
-      information when you visit the deployed site.{" "}
-      <AdminHint>Your Name</AdminHint> may collect additional information when
-      you interact with the contact form or engage with the analytics services
+      Your privacy matters. This Privacy Policy explains how I,{" "}
+      <AdminHint>Kiya Rose</AdminHint>, collect, use, and safeguard personal
+      information when you visit{" "}
+      <a href="https://kiya.cat" rel="noreferrer">
+        kiya.cat
+      </a>
+      , interact with the contact form, or engage with the analytics services
       that power the site.
     </p>
   );

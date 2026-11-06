@@ -1,4 +1,3 @@
-// eslint-disable-next-line no-redeclare
 /* global window, document */
 (function (w, d, s, l, i) {
   w[l] = w[l] || []

@@ -16,12 +16,7 @@ const languages: {
   customFlag?: string;
 }[] = [
   { code: "en", name: "English", flag: "🇨🇦" },
-  {
-    code: "ca",
-    name: "Català",
-    flag: "🇪🇸",
-    customFlag: typeof SenyeraFlag === "string" ? SenyeraFlag : SenyeraFlag.src,
-  },
+  { code: "ca", name: "Català", flag: "🇪🇸", customFlag: SenyeraFlag },
   { code: "fr", name: "Français", flag: "🇫🇷" },
   { code: "nl", name: "Nederlands", flag: "🇳🇱" },
   { code: "ja", name: "日本語", flag: "🇯🇵" },

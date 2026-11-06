@@ -5,7 +5,7 @@
  * These headers are used across:
  * - public/_headers (Cloudflare Pages)
  * - firebase.json (Firebase Hosting)
- * - scripts/verify-security-headers.mjs (parity checks)
+ * - vite.config.ts (Local preview server)
  *
  * DO NOT modify headers in individual files - update this master config instead.
  */
