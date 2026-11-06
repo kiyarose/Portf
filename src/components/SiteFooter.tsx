@@ -1,4 +1,4 @@
-import { useId, useMemo } from "react";
+import { useId } from "react";
 import { generateBuildLabel } from "../data/build";
 import { useTheme } from "../hooks/useTheme";
 import AdminHint from "./AdminHint";
@@ -8,7 +8,7 @@ import { themedClass } from "../utils/themeClass";
 export function SiteFooter() {
   const { theme } = useTheme();
   const currentYear = new Date().getFullYear();
-  const buildLabel = useMemo(() => generateBuildLabel(), []);
+  const buildLabel = generateBuildLabel({ stableRenderSuffix: true });
   const buildTooltipId = useId();
   const footerSurface = themedClass(
     theme,

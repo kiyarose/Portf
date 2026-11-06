@@ -1,10 +1,12 @@
-import { useEffect, useLayoutEffect, useMemo, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import type { PropsWithChildren } from "react";
 import { ThemeContext, type Theme } from "./theme-context";
 import { safeConsoleWarn } from "../utils/errorSanitizer";
-
-const THEME_STORAGE_KEY = "kiya-theme";
-const USER_PREFERENCE_KEY = "kiya-theme-user-set";
+import {
+  getPreferredTheme,
+  THEME_STORAGE_KEY,
+  USER_PREFERENCE_KEY,
+} from "../theme/storage";
 
 function applyTheme(theme: Theme, userHasSetTheme: boolean) {
   if (typeof document === "undefined") return;
@@ -44,40 +46,46 @@ function applyTheme(theme: Theme, userHasSetTheme: boolean) {
   }
 }
 
-function getPreferredTheme(): Theme {
-  if (typeof window === "undefined") return "light";
-
-  try {
-    const stored = window.localStorage.getItem(
-      THEME_STORAGE_KEY,
-    ) as Theme | null;
-    if (stored === "light" || stored === "dark") return stored;
-  } catch (error) {
-    safeConsoleWarn("Failed to read theme from localStorage", error);
+function readThemeFromDocument(): Theme {
+  if (typeof document === "undefined") {
+    return "light";
   }
-
-  const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-  return prefersDark ? "dark" : "light";
+  if (document.documentElement.classList.contains("dark")) {
+    return "dark";
+  }
+  if (document.documentElement.classList.contains("light")) {
+    return "light";
+  }
+  return getPreferredTheme();
 }
 
-function hasUserSetTheme(): boolean {
-  if (typeof window === "undefined") return false;
-
-  try {
-    return window.localStorage.getItem(USER_PREFERENCE_KEY) === "true";
-  } catch (error) {
-    safeConsoleWarn("Failed to read user preference from localStorage", error);
+function readUserSetFromDocument(): boolean {
+  if (typeof document === "undefined") {
     return false;
   }
+  return (
+    document.documentElement.dataset.userTheme === "light" ||
+    document.documentElement.dataset.userTheme === "dark"
+  );
 }
 
 export function ThemeProvider({ children }: PropsWithChildren) {
-  const [theme, setTheme] = useState<Theme>(() => getPreferredTheme());
-  const [userHasSetTheme, setUserHasSetTheme] = useState<boolean>(() =>
-    hasUserSetTheme(),
-  );
+  // Match BaseLayout inline bootstrap on the client; SSR defaults to light.
+  const [theme, setTheme] = useState<Theme>("light");
+  const [userHasSetTheme, setUserHasSetTheme] = useState(false);
+
+  const hasSyncedPreferences = useRef(false);
 
   useLayoutEffect(() => {
+    if (!hasSyncedPreferences.current) {
+      hasSyncedPreferences.current = true;
+      const preferred = readThemeFromDocument();
+      const userSet = readUserSetFromDocument();
+      setTheme(preferred);
+      setUserHasSetTheme(userSet);
+      applyTheme(preferred, userSet);
+      return;
+    }
     applyTheme(theme, userHasSetTheme);
   }, [theme, userHasSetTheme]);
 
@@ -116,7 +124,17 @@ export function ThemeProvider({ children }: PropsWithChildren) {
       theme,
       toggleTheme: () => {
         setUserHasSetTheme(true);
-        setTheme((prev) => (prev === "light" ? "dark" : "light"));
+        setTheme((prev) => {
+          const nextTheme: Theme = prev === "light" ? "dark" : "light";
+          try {
+            // Persist immediately so rapid reloads keep the user's choice.
+            window.localStorage.setItem(THEME_STORAGE_KEY, nextTheme);
+            window.localStorage.setItem(USER_PREFERENCE_KEY, "true");
+          } catch (error) {
+            safeConsoleWarn("Failed to save theme to localStorage", error);
+          }
+          return nextTheme;
+        });
       },
     }),
     [theme],

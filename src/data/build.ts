@@ -38,6 +38,11 @@ function deriveSeedSegment(seed: string) {
 }
 
 function getCodeSignature() {
+  // Use the build timestamp so SSR and client bundles share the same signature.
+  if (BUILD_TIME_ISO) {
+    return BUILD_TIME_ISO;
+  }
+
   try {
     const url = new URL(import.meta.url);
     return `${url.pathname}${url.search}`;
@@ -51,6 +56,12 @@ let memoizedPrefix: string | null = null;
 
 function loadOrCreatePrefix(signature: string) {
   if (memoizedPrefix) {
+    return memoizedPrefix;
+  }
+
+  // Deterministic across SSR and client when tied to the build timestamp.
+  if (BUILD_TIME_ISO && signature === BUILD_TIME_ISO) {
+    memoizedPrefix = deriveSeedSegment(signature);
     return memoizedPrefix;
   }
 
@@ -74,7 +85,6 @@ function loadOrCreatePrefix(signature: string) {
       }
     }
   } catch (error) {
-    // Ignore storage errors (incognito / storage-disabled environments).
     logDebug("Failed to read build prefix from storage", error);
   }
 
@@ -86,7 +96,6 @@ function loadOrCreatePrefix(signature: string) {
       JSON.stringify({ signature, prefix: nextPrefix }),
     );
   } catch (error) {
-    // Swallow storage write errors and fall back to ephemeral prefix.
     logDebug("Failed to persist build prefix", error);
   }
 
@@ -97,10 +106,12 @@ function loadOrCreatePrefix(signature: string) {
 // Generates a readable build label: the prefix persists for a given build
 // (changing only when the code updates), while the suffix randomizes every
 // render so viewers can spot fresh reloads.
-export function generateBuildLabel() {
+export function generateBuildLabel(options?: { stableRenderSuffix?: boolean }) {
   const signature = getCodeSignature();
   const stablePrefix = loadOrCreatePrefix(signature);
-  const renderSuffix = createRandomSegment(PREFIX_LENGTH);
+  const renderSuffix = options?.stableRenderSuffix
+    ? deriveSeedSegment(`${signature}:render`)
+    : createRandomSegment(PREFIX_LENGTH);
 
   return `Build ${stablePrefix}-${renderSuffix}`;
 }

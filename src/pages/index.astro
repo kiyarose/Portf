@@ -1,0 +1,9 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { HomeApp } from "../components/HomeApp";
+import { SITE_DESCRIPTION, SITE_TITLE } from "../data/site";
+---
+
+<BaseLayout title={SITE_TITLE} description={SITE_DESCRIPTION}>
+  <HomeApp client:load />
+</BaseLayout>

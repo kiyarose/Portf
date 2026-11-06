@@ -1,4 +1,4 @@
-import { Icon } from "@iconify/react";
+import { Icon } from "./Icon";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { useState, useCallback } from "react";
 import type { MouseEvent, KeyboardEvent } from "react";
@@ -16,7 +16,12 @@ const languages: {
   customFlag?: string;
 }[] = [
   { code: "en", name: "English", flag: "🇨🇦" },
-  { code: "ca", name: "Català", flag: "🇪🇸", customFlag: SenyeraFlag },
+  {
+    code: "ca",
+    name: "Català",
+    flag: "🇪🇸",
+    customFlag: typeof SenyeraFlag === "string" ? SenyeraFlag : SenyeraFlag.src,
+  },
   { code: "fr", name: "Français", flag: "🇫🇷" },
   { code: "nl", name: "Nederlands", flag: "🇳🇱" },
   { code: "ja", name: "日本語", flag: "🇯🇵" },

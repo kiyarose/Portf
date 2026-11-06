@@ -1,4 +1,4 @@
-import { Icon } from "@iconify/react";
+import { Icon } from "./Icon";
 import type { ReactNode } from "react";
 import { useTheme } from "../hooks/useTheme";
 import { themedClass } from "../utils/themeClass";

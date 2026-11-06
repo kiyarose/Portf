@@ -4,7 +4,7 @@
  * This script verifies that security headers are synchronized across:
  * - public/_headers (Cloudflare Pages)
  * - firebase.json (Firebase Hosting)
- * - vite.config.ts (imports from security-headers.config.ts)
+ * - security-headers.config.ts (master source)
  *
  * Run with: node scripts/verify-security-headers.mjs
  */
@@ -21,39 +21,13 @@ console.log('🔐 Security Headers Parity Verification')
 console.log('═'.repeat(80))
 console.log()
 
-// Check if vite.config.ts imports from master config
-console.log('🔍 Checking vite.config.ts...')
-const viteConfigPath = resolve(rootDir, 'vite.config.ts')
-const viteConfigContent = readFileSync(viteConfigPath, 'utf-8')
-
-const importsSecurityHeaders =
-  viteConfigContent.includes('import { SECURITY_HEADERS }') &&
-  viteConfigContent.includes('from "./security-headers.config"')
-const usesSecurityHeaders = viteConfigContent.includes(
-  'Object.entries(SECURITY_HEADERS)'
-)
-
-if (importsSecurityHeaders && usesSecurityHeaders) {
-  console.log('  ✅ Imports and uses SECURITY_HEADERS from master config')
-} else {
-  console.error(
-    '  ❌ Does not properly import/use SECURITY_HEADERS from master config'
-  )
-  console.log(
-    '     Expected: import { SECURITY_HEADERS } from "./security-headers.config"'
-  )
-  console.log('     Expected: Object.entries(SECURITY_HEADERS)')
-  throw new Error(
-    'vite.config.ts does not properly import/use SECURITY_HEADERS'
-  )
-}
-console.log()
-
 // Check that security-headers.config.ts exists
 console.log('🔍 Checking security-headers.config.ts...')
 const configPath = resolve(rootDir, 'security-headers.config.ts')
+// eslint-disable-next-line no-useless-assignment
+let configContent = ''
 try {
-  const configContent = readFileSync(configPath, 'utf-8')
+  configContent = readFileSync(configPath, 'utf-8')
   if (configContent.includes('export const SECURITY_HEADERS')) {
     console.log('  ✅ Master security headers config exists')
   } else {
@@ -65,7 +39,7 @@ try {
 } catch (error) {
   if (error.code === 'ENOENT') {
     console.error('  ❌ security-headers.config.ts not found')
-    throw new Error('security-headers.config.ts not found', { cause: error })
+    throw new Error('security-headers.config.ts not found')
   }
   throw error
 }
@@ -112,17 +86,25 @@ if (firebaseValid) {
 }
 console.log()
 
+console.log('🔍 Checking master config coverage...')
+let configValid = true
+for (const header of requiredHeaders) {
+  if (!configContent.includes(`"${header}"`)) {
+    console.error(`  ❌ Master config missing header key: ${header}`)
+    configValid = false
+  }
+}
+if (configValid) {
+  console.log('  ✅ Master config includes all required security headers')
+}
+console.log()
+
 // Final result
 console.log('═'.repeat(80))
-if (
-  importsSecurityHeaders &&
-  usesSecurityHeaders &&
-  headersValid &&
-  firebaseValid
-) {
+if (configValid && headersValid && firebaseValid) {
   console.log('✅ SUCCESS: Security headers configuration is valid!')
   console.log()
-  console.log('📝 Note: vite.config.ts imports from the master config file.')
+  console.log('📝 Note: security-headers.config.ts is the master source.')
   console.log('   To update headers, modify security-headers.config.ts')
   console.log('   and ensure public/_headers and firebase.json stay in sync.')
   console.log('═'.repeat(80))
@@ -135,7 +117,9 @@ if (
   console.log(
     '  1. security-headers.config.ts exists and exports SECURITY_HEADERS'
   )
-  console.log('  2. vite.config.ts imports and uses SECURITY_HEADERS')
+  console.log(
+    '  2. security-headers.config.ts includes all required security headers'
+  )
   console.log('  3. public/_headers contains all required headers')
   console.log('  4. firebase.json contains all required headers')
   throw new Error('Security headers configuration validation failed')

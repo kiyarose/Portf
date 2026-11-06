@@ -1,5 +1,11 @@
 version = 1
 
+exclude_patterns = [
+  "src/assets/icon-bundle.generated.json",
+  "**/.astro/**",
+  "dist/**"
+]
+
 [[analyzers]]
 name = "secrets"
 

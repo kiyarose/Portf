@@ -1,5 +1,5 @@
 import { motion, useReducedMotion } from "framer-motion";
-import { Icon } from "@iconify/react";
+import { Icon } from "./Icon";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useScrollSpy } from "../hooks/useScrollSpy";
 import { useTheme } from "../hooks/useTheme";

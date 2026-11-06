@@ -1,0 +1,97 @@
+/**
+ * Extracts Iconify SVG data for every icon referenced in src/ so the app can
+ * render offline (SSR + client) without API fetches or placeholder shapes.
+ */
+import { readFileSync, writeFileSync, readdirSync, statSync } from 'node:fs'
+import { dirname, join, relative } from 'node:path'
+import { fileURLToPath } from 'node:url'
+import { createRequire } from 'node:module'
+
+const require = createRequire(import.meta.url)
+const __dirname = dirname(fileURLToPath(import.meta.url))
+const root = join(__dirname, '..')
+const srcDir = join(root, 'src')
+const outFile = join(root, 'src/assets/icon-bundle.generated.json')
+
+const collections = {
+  'material-symbols': require('@iconify/json/json/material-symbols.json'),
+  mdi: require('@iconify/json/json/mdi.json'),
+  'simple-icons': require('@iconify/json/json/simple-icons.json')
+}
+
+const iconPattern =
+  /(?:material-symbols|mdi|simple-icons):[a-z0-9-]+(?:-[a-z0-9-]+)*/g
+
+function walk (dir, files = []) {
+  for (const entry of readdirSync(dir)) {
+    const full = join(dir, entry)
+    if (statSync(full).isDirectory()) {
+      walk(full, files)
+      continue
+    }
+    if (/\.(tsx?|jsx?|mjs)$/.test(entry)) {
+      files.push(full)
+    }
+  }
+  return files
+}
+
+function collectIconNames () {
+  const names = new Set()
+  for (const file of walk(srcDir)) {
+    if (file.endsWith('icon-bundle.generated.json')) continue
+    const text = readFileSync(file, 'utf8')
+    for (const match of text.matchAll(iconPattern)) {
+      names.add(match[0])
+    }
+  }
+  return [...names].sort((a, b) => a.localeCompare(b))
+}
+
+function resolveIcon (fullName) {
+  const colon = fullName.indexOf(':')
+  if (colon === -1) return null
+  const prefix = fullName.slice(0, colon)
+  const iconName = fullName.slice(colon + 1)
+  const set = collections[prefix]
+  if (!set?.icons) return null
+
+  let data = set.icons[iconName]
+  const alias = set.aliases?.[iconName]
+  if (!data && alias?.parent) {
+    data = set.icons[alias.parent]
+  }
+  if (!data?.body) return null
+
+  return {
+    body: data.body,
+    width: data.width ?? set.width ?? 24,
+    height: data.height ?? set.height ?? 24
+  }
+}
+
+const names = collectIconNames()
+const bundle = {}
+const missing = []
+
+for (const name of names) {
+  const data = resolveIcon(name)
+  if (data) {
+    bundle[name] = data
+  } else {
+    missing.push(name)
+  }
+}
+
+if (missing.length) {
+  console.warn(
+    `[generate-icon-bundle] Missing ${missing.length} icon(s):`,
+    missing.join(', ')
+  )
+}
+
+writeFileSync(outFile, `${JSON.stringify(bundle, null, 2)}\n`, 'utf8')
+
+console.log(
+  `[generate-icon-bundle] Wrote ${Object.keys(bundle).length} icons to ${relative(root, outFile)}`
+)
