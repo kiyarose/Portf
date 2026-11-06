@@ -1,24 +1,12 @@
 import {
-  Icon as IconifyIcon,
-  type IconProps as IconifyIconProps,
-} from "@iconify/react";
-import { useHydrated } from "../hooks/useHydrated";
+  Icon as OfflineIcon,
+  type IconProps as OfflineIconProps,
+} from "@iconify/react/offline";
+import "../utils/icons";
 
-export type IconProps = IconifyIconProps;
+export type IconProps = OfflineIconProps;
 
-/** Iconify wrapper that avoids SSR/client SVG text mismatches during hydration. */
-export function Icon({ className, ...props }: IconProps) {
-  const hydrated = useHydrated();
-
-  if (!hydrated) {
-    return (
-      <span
-        className={className}
-        aria-hidden={props["aria-hidden"] ?? true}
-        style={{ display: "inline-block", width: "1em", height: "1em" }}
-      />
-    );
-  }
-
-  return <IconifyIcon className={className} {...props} />;
+/** Offline Iconify icon (bundled SVG data, SSR-safe hydration). */
+export function Icon(props: IconProps) {
+  return <OfflineIcon {...props} />;
 }

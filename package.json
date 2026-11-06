@@ -5,8 +5,8 @@
   "type": "module",
   "scripts": {
     "sync:remote-data": "node scripts/sync-remote-data.mjs",
-    "predev": "npm run sync:remote-data",
-    "prebuild": "npm run sync:remote-data",
+    "predev": "npm run sync:remote-data && node scripts/generate-icon-bundle.mjs",
+    "prebuild": "npm run sync:remote-data && node scripts/generate-icon-bundle.mjs",
     "prebuild:pages": "npm run sync:remote-data",
     "dev": "astro dev",
     "build": "astro build && npm run build:tools",

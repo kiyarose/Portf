@@ -28,6 +28,15 @@ test.describe("Homepage interactivity", () => {
       page.getByText(/Served as the Administrative Project Lead/i),
     ).toBeVisible();
 
+    const themeToggleIcon = page.getByRole("button", {
+      name: /toggle light or dark theme/i,
+    }).locator("svg");
+    await expect(themeToggleIcon).toBeVisible();
+    await expect(themeToggleIcon.locator("path, use")).not.toHaveCount(0);
+
+    const navIconCount = await page.locator("nav svg.iconify").count();
+    expect(navIconCount).toBeGreaterThanOrEqual(5);
+
     const themeToggle = page.getByRole("button", {
       name: /toggle light or dark theme/i,
     });
