@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useMemo, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import type { PropsWithChildren } from "react";
 import { ThemeContext, type Theme } from "./theme-context";
 import { safeConsoleWarn } from "../utils/errorSanitizer";
@@ -48,12 +48,22 @@ function applyTheme(theme: Theme, userHasSetTheme: boolean) {
 }
 
 export function ThemeProvider({ children }: PropsWithChildren) {
-  const [theme, setTheme] = useState<Theme>(() => getPreferredTheme());
-  const [userHasSetTheme, setUserHasSetTheme] = useState<boolean>(() =>
-    hasUserSetTheme(),
-  );
+  // Fixed SSR defaults must match Astro server render to avoid hydration failure.
+  const [theme, setTheme] = useState<Theme>("light");
+  const [userHasSetTheme, setUserHasSetTheme] = useState(false);
+
+  const hasSyncedPreferences = useRef(false);
 
   useLayoutEffect(() => {
+    if (!hasSyncedPreferences.current) {
+      hasSyncedPreferences.current = true;
+      const preferred = getPreferredTheme();
+      const userSet = hasUserSetTheme();
+      setTheme(preferred);
+      setUserHasSetTheme(userSet);
+      applyTheme(preferred, userSet);
+      return;
+    }
     applyTheme(theme, userHasSetTheme);
   }, [theme, userHasSetTheme]);
 

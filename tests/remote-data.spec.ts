@@ -2,6 +2,7 @@ import { expect, test } from "@playwright/test";
 
 const REMOTE_DATA_URL = process.env.E2E_REMOTE_DATA_URL;
 
+// Intentionally skipped in default CI: requires E2E_REMOTE_DATA_URL secret (see .env.example).
 test.skip(
   !REMOTE_DATA_URL,
   "Set E2E_REMOTE_DATA_URL to run remote data integration checks.",

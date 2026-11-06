@@ -67,7 +67,7 @@ const policySections: PolicySection[] = [
             and are not shared externally.
           </li>
           <li>
-            <strong>Legacy analytics (retired October 30, 2025):</strong>
+            <strong>Legacy analytics (retired October 30, 2025):</strong>{" "}
             Firebase Hosting metrics and Google Analytics events were previously
             collected for aggregated insights. They were shut off effective
             October 30, 2025 and no longer receive data from any visitors.

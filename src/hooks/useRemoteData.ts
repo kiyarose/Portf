@@ -247,7 +247,7 @@ function unwrapRemotePayload<TData>(payload: unknown, resource: string): TData {
 
     for (const preferred of preferredKeys) {
       const match = entries.find(([key]) => key.toLowerCase() === preferred);
-      if (match && match[1] !== undefined && match[1] !== null) {
+      if (match?.[1] != null) {
         return match[1] as TData;
       }
     }
@@ -255,7 +255,7 @@ function unwrapRemotePayload<TData>(payload: unknown, resource: string): TData {
     const firstFallback = entries.find(([key]) =>
       key.toLowerCase().endsWith("fallback"),
     );
-    if (firstFallback && firstFallback[1] !== undefined) {
+    if (firstFallback?.[1] !== undefined) {
       return firstFallback[1] as TData;
     }
   }
