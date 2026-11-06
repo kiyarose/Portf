@@ -267,7 +267,11 @@ function ContactIntro({ copied, onCopy }: ContactIntroProps) {
         {copied ? "Copied!" : "Copy my email"}
       </button>
       <img
-        src={emailObfu as unknown as string}
+        src={
+          typeof emailObfu === "string"
+            ? emailObfu
+            : emailObfu.src
+        }
         alt="Email address"
         className="h-[1.15em] w-auto select-none"
         draggable={false}
