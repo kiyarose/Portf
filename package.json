@@ -29,7 +29,7 @@
     "@tailwindcss/vite": "^4.3.5",
     "astro": "^7.4.7",
     "clsx": "^2.1.1",
-    "framer-motion": "^14.10.1",
+    "framer-motion": "^14.14.0",
     "pg": "^8.23.1",
     "react": "^19.3.0",
     "react-dom": "^19.3.1",
