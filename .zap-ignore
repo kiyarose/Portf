@@ -1,5 +1,6 @@
 10096	IGNORE	(Example: Missing Strict-Transport-Security on non-prod)
 10055	IGNORE	(CSP: style-src unsafe-inline - Required for Framer Motion animations which use inline styles)
+10055	IGNORE	(CSP: script-src unsafe-inline - Required for Astro island hydration boot scripts and the theme flash-prevention inline script in BaseLayout)
 90003	IGNORE	(Sub Resource Integrity Attribute Missing - Google Fonts uses dynamic CSS per user-agent, SRI not compatible)
 10098	IGNORE	(Cross-Domain Misconfiguration - Fixed in firebase.json and public/_headers by removing wildcard CORS)
 90004	IGNORE	(Insufficient Site Isolation Against Spectre - Fixed with Cross-Origin-Embedder-Policy: credentialless in public/_headers)
