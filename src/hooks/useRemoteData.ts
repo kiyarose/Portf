@@ -7,11 +7,23 @@ export function resolveRemoteDataBaseUrl(rawUrl: string | undefined): string | n
   return normalized.length > 0 ? normalized : null;
 }
 
+/** Prefer the configured CDN/R2 base so production picks up data changes without redeploying the site. */
+export function resolveRemoteResourceUrl(
+  resource: string,
+  dataBaseUrl: string | null,
+  proxyBasePath: string,
+): string {
+  if (dataBaseUrl) {
+    return `${dataBaseUrl}/${resource}.json`;
+  }
+  return `${proxyBasePath}/${resource}.json`;
+}
+
 const DATA_BASE_URL = resolveRemoteDataBaseUrl(
   import.meta.env.VITE_REMOTE_DATA_URL as string | undefined,
 );
 const REMOTE_DATA_ENABLED = DATA_BASE_URL !== null;
-const REMOTE_DATA_PATH = `${import.meta.env.BASE_URL}__remote-data`;
+const REMOTE_DATA_PROXY_PATH = `${import.meta.env.BASE_URL}__remote-data`;
 
 // LocalStorage namespace for cached remote data. Rename if you fork the template
 // to avoid collisions with other apps in the browser.
@@ -132,7 +144,12 @@ export function useRemoteData<TData>(
 
     async function loadRemoteData() {
       try {
-        const response = await fetch(`${REMOTE_DATA_PATH}/${resource}.json`, {
+        const resourceUrl = resolveRemoteResourceUrl(
+          resource,
+          DATA_BASE_URL,
+          REMOTE_DATA_PROXY_PATH,
+        );
+        const response = await fetch(resourceUrl, {
           method: "GET",
           headers: { Accept: "application/json" },
           signal: controller.signal,

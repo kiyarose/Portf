@@ -38,7 +38,8 @@ Remote sync/build behavior is handled by:
 - `scripts/sync-remote-data.mjs`
 - `src/hooks/useRemoteData.ts`
 
-- If **`VITE_REMOTE_DATA_URL` is set**, build scripts sync `*.json` resources into `public/__remote-data/` and the app reads those same-origin files at runtime.
+- If **`VITE_REMOTE_DATA_URL` is set** at build time (for example `https://data.your.website/data`), the app fetches `${VITE_REMOTE_DATA_URL}/{Resource}.json` from that CDN at runtime. Build scripts also sync snapshots into `public/__remote-data/` as an offline fallback.
+- Set **`VITE_REMOTE_DATA_URL` in your Cloudflare Pages production environment** so live JSON comes from your CDN rather than same-origin `__remote-data` paths (which may 404 on static hosting).
 - If **`VITE_REMOTE_DATA_URL` is not set**, the sync output is removed and the app uses local fallback data from `src/data/*`.
 - If remote mode is enabled but a resource cannot be loaded, sections show placeholder data (they do not silently swap to local fallback data).
 

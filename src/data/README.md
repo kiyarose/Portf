@@ -17,9 +17,9 @@ These files provide local fallback content for the portfolio sections.
 Data resolution is handled by `scripts/sync-remote-data.mjs` and
 `src/hooks/useRemoteData.ts`:
 
-- `VITE_REMOTE_DATA_URL` **set** -> sync `${VITE_REMOTE_DATA_URL}/{Resource}.json`
-  into `public/__remote-data/{Resource}.json`, then load those same-origin files
-  in the browser
+- `VITE_REMOTE_DATA_URL` **set** -> browser fetches `${VITE_REMOTE_DATA_URL}/{Resource}.json`
+  from the CDN (CORS + `connect-src`); build also syncs copies into `public/__remote-data/`
+  as an offline snapshot
 - `VITE_REMOTE_DATA_URL` **not set** -> use local `*Fallback` exports
 - Remote fetch errors -> use `*Placeholder` exports for clear failure messaging
 

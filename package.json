@@ -55,10 +55,13 @@
     "postcss": "^8.5.33",
     "postcss-cli": "^12.0.0",
     "tailwindcss": "^4.3.5",
-    "typescript": "~7.0.2",
+    "typescript": "~5.9.3",
     "typescript-eslint": "^8.73.0",
     "vite": "^8.3.8",
     "vitest": "^5.1.0",
     "wait-on": "^9.5.1"
+  },
+  "overrides": {
+    "cookie": "2.0.2"
   }
 }
