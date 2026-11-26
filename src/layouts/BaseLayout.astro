@@ -4,11 +4,13 @@ import "../index.css";
 type Props = {
   title?: string;
   description?: string;
+  robots?: string;
 };
 
 const {
   title = "Portfolio Starter",
   description = "A modular portfolio starter built with Astro and React.",
+  robots,
 } = Astro.props as Props;
 const faviconHref = `${import.meta.env.BASE_URL}favicon.svg`;
 ---
@@ -19,6 +21,7 @@ const faviconHref = `${import.meta.env.BASE_URL}favicon.svg`;
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content={description} />
+    {robots ? <meta name="robots" content={robots} /> : null}
     <link rel="icon" type="image/svg+xml" href={faviconHref} />
     <script is:inline>
       (() => {

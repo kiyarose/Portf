@@ -16,3 +16,4 @@ interface ImportMeta {
 }
 
 declare const __BUILD_TIME__: string | undefined;
+declare const __PF_ALLOW_NOEDIT__: boolean;

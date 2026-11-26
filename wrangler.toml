@@ -11,3 +11,10 @@ build_command = "npm run build"
 # VITE_PAGECLIP_API_KEY = ""
 # VITE_TURNSTILE_SITE_KEY = ""
 # VITE_TURNSTYLE_SITE = ""
+#
+# Remote data admin editor (opt-in — also set PF_ALLOW_NOEDIT=1 at build time)
+# PF_ALLOW_NOEDIT = "1"
+# PF_DATA_BASE_URL = "https://data.example.com/data"
+#
+# Bind PF_EDADMIN_TOKEN as an encrypted secret in the Cloudflare dashboard
+# (never expose it to VITE_* or client code).

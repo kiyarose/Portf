@@ -45,6 +45,19 @@ Remote sync/build behavior is handled by:
 
 This keeps behavior predictable and easier to debug for template users.
 
+### Optional: `/admin/edit` data editor
+
+The visual JSON editor is **disabled by default**. To enable it:
+
+1. Set build/runtime env `PF_ALLOW_NOEDIT=1`.
+2. Configure Cloudflare Pages secrets: `PF_EDADMIN_TOKEN` (Bearer token for your data host) and `PF_DATA_BASE_URL` (e.g. `https://data.example.com/data`).
+3. Set `VITE_REMOTE_DATA_URL` so reads and `scripts/sync-remote-data.mjs` stay aligned.
+4. Put **`/admin/*` behind Cloudflare Zero Trust** before enabling the flag in production.
+
+Saves use `PUT /api/edadmin/{Resource}.json` on your Pages site; the Pages Function in `functions/` proxies to your data host with `Authorization: Bearer`.
+
+Local dev: with the flag on, `npm run dev` mirrors the same API via Vite middleware (`scripts/edadmin-dev-middleware.mjs`).
+
 ## Common edits
 
 ### Content

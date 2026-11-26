@@ -1,14 +1,8 @@
 import { mkdir, rm, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
+import { PORTFOLIO_DATA_RESOURCES } from "../src/data/resources.mjs";
 
-const RESOURCES = [
-  "Socials",
-  "Experience",
-  "Education",
-  "Certifications",
-  "Projects",
-  "Skills",
-];
+const RESOURCES = PORTFOLIO_DATA_RESOURCES;
 
 const OUTPUT_DIR = resolve(process.cwd(), "public", "__remote-data");
 

@@ -150,10 +150,10 @@ Multiple PRs can reference the same issue; status reflects the most recent PR ac
 
 ## Cursor Cloud specific instructions
 
-- This is a static React/Vite/TypeScript portfolio site with no backend or database dependencies. All external services (Pageclip, Turnstile, GTM) degrade gracefully without API keys.
-- **Dev server**: `npm run dev` starts Vite on port 5173 with hot reload. No additional services need to be started.
+- This is a static Astro + React portfolio site. Optional Cloudflare Pages Functions under `functions/` proxy admin writes; all other external services (Pageclip, Turnstile, GTM) degrade gracefully without API keys.
+- **Dev server**: `npm run dev` starts Astro on port 4321 with hot reload. When `PF_ALLOW_NOEDIT=1`, dev middleware mirrors `PUT /api/edadmin/*` (set `PF_EDADMIN_TOKEN` and `PF_DATA_BASE_URL` or `VITE_REMOTE_DATA_URL` locally).
 - **Lint**: `npm run lint` — as of the current commit, ESLint 10.3.0 has a pre-existing `ConfigError` related to plugin format in `eslint.config.js`. This is not caused by the cloud environment.
-- **Build**: `npm run build` runs `tsc -b && vite build` and outputs to `dist/`. A large-chunk warning for `visualizeme.html` is expected and non-blocking.
+- **Build**: `npm run build` runs `astro build` and outputs to `dist/`. Do not enable `PF_ALLOW_NOEDIT` in production without Cloudflare Access on `/admin/*`.
+- **Unit tests**: `npm run test` (Vitest).
 - **E2E tests**: `npm run test:e2e` uses Playwright. Run `npx playwright install --with-deps chromium` first to download browser binaries. The Playwright config auto-starts a preview server on port 4173.
-- **No `npm test` script** exists — unit tests are not yet wired up. Only Playwright e2e tests are available.
-- **Environment variables** are all optional with safe defaults; see the "Environment Variables" section above. The app renders fully without any `.env.local` file.
+- **Environment variables** are optional with safe defaults; see `.env.example`. The optional admin editor requires `PF_ALLOW_NOEDIT=1`, `PF_EDADMIN_TOKEN`, and `PF_DATA_BASE_URL` on Cloudflare Pages.

@@ -21,6 +21,7 @@
 - If no remote URL is set, use local fallback data only.
 - On remote fetch failure, show placeholder data (do not silently swap to local fallback).
 - Keep this behavior centered in `src/hooks/useRemoteData.ts`.
+- Optional `/admin/edit` editor is gated by build flag `PF_ALLOW_NOEDIT=1`; saves go through `functions/api/edadmin/` with server secret `PF_EDADMIN_TOKEN`. Protect `/admin/*` with Cloudflare Access before enabling.
 
 ## Build and test commands
 
