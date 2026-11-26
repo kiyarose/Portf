@@ -21,7 +21,7 @@ export const SECURITY_HEADERS = {
   "Content-Security-Policy":
     "default-src 'self'; " +
     "img-src 'self' data: https://www.googletagmanager.com; " +
-    "script-src 'self' https://s.pageclip.co https://www.googletagmanager.com https://challenges.cloudflare.com https://cdn.jsdelivr.net; " +
+    "script-src 'self' 'unsafe-inline' https://s.pageclip.co https://www.googletagmanager.com https://challenges.cloudflare.com https://cdn.jsdelivr.net https://static.cloudflareinsights.com; " +
     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://s.pageclip.co; " +
     "font-src 'self' https://fonts.gstatic.com; " +
     "connect-src 'self' https://send.pageclip.co https://api.iconify.design https://api.simplesvg.com https://api.unisvg.com https://www.googletagmanager.com https://www.google-analytics.com https://challenges.cloudflare.com https://data.kiya.cat; " +

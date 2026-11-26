@@ -96,7 +96,7 @@ Current security headers include:
 
 The `.zap-ignore` file contains known/accepted alerts that don't need fixing:
 
-- **10055** (CSP unsafe-inline): Required for Framer Motion inline styles
+- **10055** (CSP unsafe-inline): Required for Framer Motion inline styles and Astro island hydration boot scripts
 - **90003** (SRI Missing on Google Fonts): Dynamic CSS prevents SRI usage
 - **10094** (Base64 Disclosure): Expected in build artifacts
 - **10027/10109/40035** (Informational): Not actual vulnerabilities
