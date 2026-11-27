@@ -8,12 +8,14 @@
   "lastMergedUpstreamSha": "21d0d5c10eef933b9d73479a975fd1fa72de02bf",
   "lastMergedAt": "2026-11-27T02:48:00.000Z",
   "keepOurs": [
+    "package.json",
     "src/data/**",
     "src/translations/**",
     "public/data/**",
     "README.md",
     "CONTRIBUTING.md",
     "SECURITY.md",
+    "AGENTS.md",
     ".github/workflows/**",
     ".github/UPSTREAM.md",
     ".github/upstream-sync.json",
@@ -26,10 +28,62 @@
     "public/404.html",
     "scripts/publish-r2-data.mjs",
     "scripts/generate-icon-bundle.mjs",
+    "scripts/upstream-*.mjs",
+    "scripts/resolve-upstream-conflicts.mjs",
+    "scripts/upstream-sync-lib.mjs",
     "vite.tools.config.mjs",
     "vite-build-plugins.mjs",
     "admin-assets/**",
-    "localTools/**"
+    "localTools/**",
+    ".gitmodules",
+    "DashCam/**",
+    "$DashCam!/**"
+  ],
+  "hideFromDiff": [
+    ".gitmodules",
+    "DashCam/**",
+    "$DashCam!/**",
+    "package-lock.json"
+  ],
+  "takeFromUpstream": [
+    "src/hooks/**",
+    "src/components/**",
+    "src/sections/**",
+    "src/pages/**",
+    "src/layouts/**",
+    "src/utils/**",
+    "src/admin/**",
+    "src/tools/**",
+    "src/index.css",
+    "tests/**",
+    "functions/**",
+    "eslint.config.js",
+    "tsconfig.json",
+    "tsconfig.*.json",
+    "astro.config.mjs",
+    "playwright.config.ts",
+    "vitest.config.ts",
+    "public/scripts/**",
+    "public/fallback/**"
+  ],
+  "preferTheirsOnConflict": [
+    "package-lock.json",
+    "src/hooks/**",
+    "src/components/**",
+    "src/sections/**",
+    "src/pages/**",
+    "src/layouts/**",
+    "src/utils/**",
+    "src/admin/**",
+    "src/tools/**",
+    "tests/**",
+    "functions/**",
+    "eslint.config.js",
+    "tsconfig.json",
+    "tsconfig.*.json",
+    "astro.config.mjs",
+    "playwright.config.ts",
+    "vitest.config.ts"
   ],
   "verifyAfterMerge": {
     "mustContain": {
@@ -38,6 +92,7 @@
   },
   "npmScripts": {
     "status": "upstream:status",
-    "resolveConflicts": "upstream:resolve-conflicts"
+    "resolveConflicts": "upstream:resolve-conflicts",
+    "importCode": "upstream:import-code"
   }
 }

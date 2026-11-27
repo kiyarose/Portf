@@ -135,7 +135,9 @@ This repo is a customized deployment of [SillyLittleTech/Portf](https://github.c
 
 - Bespoke paths and verification rules: [`.github/upstream-sync.json`](.github/upstream-sync.json); merge conflicts on those paths use `merge=ours` in [`.gitattributes`](.gitattributes) after `git config merge.ours.driver true`.
 - `npm run upstream:setup` — add/fetch the `upstream` remote from `upstream-sync.json` (per clone); `npm run upstream:status` also auto-adds the remote when missing.
-- `npm run upstream:status` — compare `main` to `upstream/main`; `npm run upstream:resolve-conflicts` — apply `keepOurs` after a merge.
+- During a merge, run `node scripts/resolve-upstream-conflicts.mjs` if `package.json` conflict markers break `npm run`.
+- `npm run upstream:status -- --code-only --stat` — preview allowlisted code paths only; `npm run upstream:import-code` / `-- --apply` copies those paths without a full merge.
+- `npm run upstream:status` — compare `main` to `upstream/main`; `npm run upstream:resolve-conflicts` — apply `keepOurs` + `preferTheirsOnConflict` after a merge.
 - Never drop `data.kiya.cat` from CSP/`connect-src` when merging generic template security-header changes.
 - After each upstream sync PR, update `lastMergedUpstreamSha` in `upstream-sync.json`.
 

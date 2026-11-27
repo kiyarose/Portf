@@ -29,6 +29,7 @@
     "data:sync:remote": "node scripts/sync-remote-data.mjs",
     "upstream:setup": "node scripts/upstream-setup.mjs",
     "upstream:status": "node scripts/upstream-status.mjs",
+    "upstream:import-code": "node scripts/upstream-import-code.mjs",
     "upstream:resolve-conflicts": "node scripts/resolve-upstream-conflicts.mjs"
   },
   "dependencies": {

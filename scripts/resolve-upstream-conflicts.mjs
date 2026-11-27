@@ -50,7 +50,12 @@ function verifyMustContain (verifyAfterMerge) {
  */
 function main () {
   const manifest = loadUpstreamSyncManifest()
-  const keepOurs = manifest.keepOurs ?? []
+  const keepOurs = [
+    'package.json',
+    '.gitmodules',
+    ...(manifest.keepOurs ?? [])
+  ]
+  const preferTheirs = manifest.preferTheirsOnConflict ?? []
   const conflicted = unmergedPaths()
 
   if (conflicted.length === 0) {
@@ -65,6 +70,11 @@ function main () {
       git('checkout', '--ours', '--', filePath)
       git('add', '--', filePath)
       console.log(`keep ours: ${filePath}`)
+      resolved += 1
+    } else if (matchesKeepOurs(filePath, preferTheirs)) {
+      git('checkout', '--theirs', '--', filePath)
+      git('add', '--', filePath)
+      console.log(`take upstream: ${filePath}`)
       resolved += 1
     } else {
       console.log(`manual: ${filePath}`)

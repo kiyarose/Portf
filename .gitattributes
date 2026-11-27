@@ -2,6 +2,8 @@
 * text=auto
 
 # kiyarose bespoke: prefer our copy on merge conflicts (requires: git config merge.ours.driver true)
+package.json merge=ours
+.gitmodules merge=ours
 src/data/** merge=ours
 src/translations/** merge=ours
 public/data/** merge=ours

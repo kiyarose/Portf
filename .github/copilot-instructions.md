@@ -29,7 +29,7 @@
 ## Upstream template sync
 
 - Follow [`.github/UPSTREAM.md`](UPSTREAM.md) when merging [SillyLittleTech/Portf](https://github.com/SillyLittleTech/Portf).
-- Prefer **kiyarose** copies for paths in [`.github/upstream-sync.json`](upstream-sync.json) (`keepOurs`); use `npm run upstream:resolve-conflicts` after `git merge upstream/main`.
+- Prefer **kiyarose** copies per [`.github/upstream-sync.json`](upstream-sync.json) (`keepOurs`); after `git merge upstream/main`, run `node scripts/resolve-upstream-conflicts.mjs` if `package.json` conflicts break `npm run`. Use `upstream:import-code` or `upstream:status -- --code-only` for allowlisted code-only sync.
 - Preserve `data.kiya.cat` in security headers and kiyarose-specific deploy config (`wrangler.toml`, `.github/workflows/**`).
 
 ## Collaboration Notes

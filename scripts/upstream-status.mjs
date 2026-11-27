@@ -5,12 +5,15 @@ import { execFileSync } from 'node:child_process'
 import {
   GIT_EXECUTABLE,
   ensureUpstreamRemote,
+  isHiddenFromUpstreamDiff,
   loadUpstreamSyncManifest,
-  repoRoot
+  repoRoot,
+  shouldTakeFromUpstream
 } from './upstream-sync-lib.mjs'
 
 const jsonMode = process.argv.includes('--json')
 const statMode = process.argv.includes('--stat')
+const codeOnly = process.argv.includes('--code-only')
 const skipRemoteSetup = process.argv.includes('--skip-remote-setup')
 const branchArg = process.argv.find((a) => a.startsWith('--branch='))?.slice(9)
 
@@ -118,9 +121,33 @@ function main () {
     if (forkOnly) {
       console.log(forkOnly)
     }
-    if (statMode && upstreamAhead > 0) {
-      console.log('\n--- diff stat (fork...upstream) ---\n')
-      console.log(git('diff', '--stat', `${branch}...${upstreamRef}`))
+    if ((statMode || codeOnly) && upstreamAhead > 0) {
+      const allFiles = git('diff', '--name-only', `${branch}...${upstreamRef}`)
+        .split('\n')
+        .filter(Boolean)
+      const visible = codeOnly
+        ? allFiles.filter((p) => shouldTakeFromUpstream(p, manifest))
+        : allFiles.filter((p) => !isHiddenFromUpstreamDiff(p, manifest))
+      const hiddenCount = allFiles.length - visible.length
+
+      if (codeOnly) {
+        console.log(
+          `\n--- code-only paths (${visible.length} of ${allFiles.length} files; bespoke/URL/submodule paths hidden) ---\n`
+        )
+      } else {
+        console.log(
+          `\n--- diff file list (${visible.length} of ${allFiles.length}; ${hiddenCount} hidden by keepOurs/hideFromDiff) ---\n`
+        )
+      }
+      if (visible.length > 0) {
+        console.log(visible.join('\n'))
+      }
+      if (statMode && visible.length > 0) {
+        console.log('\n--- diff stat (filtered) ---\n')
+        console.log(
+          git('diff', '--stat', `${branch}...${upstreamRef}`, '--', ...visible)
+        )
+      }
     }
   }
 
