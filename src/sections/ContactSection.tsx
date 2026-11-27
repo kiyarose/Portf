@@ -627,19 +627,15 @@ function ContactForm({
     ],
   );
 
-  useEffect(() => {
-    if (!import.meta.env.DEV) {
-      return;
-    }
-    if (!pageclipApiKey) {
-      safeConsoleError("Contact form configuration error: API key not found");
-    }
-    if (!turnstileSiteKey) {
-      safeConsoleError(
-        "Contact form configuration error: Turnstile site key not found. Set VITE_TURNSTILE_SITE_KEY or VITE_TURNSTYLE_SITE.",
-      );
-    }
-  }, [pageclipApiKey, turnstileSiteKey]);
+  if (!pageclipApiKey) {
+    safeConsoleError("Contact form configuration error: API key not found");
+  }
+
+  if (!turnstileSiteKey) {
+    safeConsoleError(
+      "Contact form configuration error: Turnstile site key not found. Set VITE_TURNSTILE_SITE_KEY or VITE_TURNSTYLE_SITE.",
+    );
+  }
 
   return (
     <form

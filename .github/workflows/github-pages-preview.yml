@@ -1,0 +1,40 @@
+name: Deploy PR Preview to GitHub Pages
+
+# Builds PRs with the GitHub Pages base path to catch deploy regressions.
+# Production Pages deploys use the main-branch workflow (Cloudflare is primary for kiya.cat).
+# Preview deploy to the github-pages environment is omitted here because environment
+# protection rules typically block refs/pull/*/merge unless an org admin allows them.
+
+on:
+  pull_request:
+    branches: ["main"]
+    types: [opened, synchronize, reopened, ready_for_review]
+  workflow_dispatch:
+
+concurrency:
+  group: pages-preview-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+    permissions:
+      contents: read
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm clean-install --progress=false
+
+      - name: Build
+        env:
+          BASE_PATH: /${{ github.event.repository.name }}/
+        run: npm run build:pages

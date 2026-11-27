@@ -2,7 +2,6 @@ import { defineConfig } from 'astro/config'
 import react from '@astrojs/react'
 import tailwindcss from '@tailwindcss/vite'
 import { edadminDevMiddleware } from './scripts/edadmin-dev-middleware.mjs'
-import { copyAdminAssets, copyToolAssets } from './vite-build-plugins.mjs'
 
 function normalizeBasePath (value) {
   if (!value || value === '/') {
@@ -23,8 +22,6 @@ export default defineConfig({
   vite: {
     plugins: [
       tailwindcss(),
-      copyAdminAssets(),
-      copyToolAssets(),
       {
         name: 'edadmin-dev-proxy',
         configureServer (server) {
@@ -36,15 +33,6 @@ export default defineConfig({
     define: {
       __BUILD_TIME__: JSON.stringify(new Date().toISOString()),
       __PF_ALLOW_NOEDIT__: JSON.stringify(process.env.PF_ALLOW_NOEDIT === '1')
-    },
-    server: {
-      proxy: {
-        '/__remote-data': {
-          target: process.env.VITE_REMOTE_DATA_URL || 'https://data.kiya.cat',
-          changeOrigin: true,
-          rewrite: (path) => path.replace(/^\/__remote-data/, '')
-        }
-      }
     }
   }
 })

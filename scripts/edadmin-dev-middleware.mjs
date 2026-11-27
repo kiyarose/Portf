@@ -58,9 +58,7 @@ export function edadminDevMiddleware (req, res, next) {
     const request = new Request(`http://localhost${req.url}`, {
       method: 'PUT',
       headers: {
-        'content-type': req.headers['content-type'] ?? 'application/json',
-        'Cf-Access-Jwt-Assertion':
-          req.headers['cf-access-jwt-assertion'] ?? 'dev-access-jwt'
+        'content-type': req.headers['content-type'] ?? 'application/json'
       },
       body
     })

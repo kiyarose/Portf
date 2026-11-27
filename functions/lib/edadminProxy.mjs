@@ -1,6 +1,7 @@
 import { isPortfolioDataResource } from '../../src/data/resources.mjs'
 
 export const EDADMIN_API_PREFIX = '/api/edadmin/'
+export const EDADMIN_STAGE_HEADER = 'X-Edadmin-Stage'
 
 export const MAX_EDADMIN_BODY_BYTES = 2 * 1024 * 1024
 
@@ -8,6 +9,7 @@ export const MAX_EDADMIN_BODY_BYTES = 2 * 1024 * 1024
  *   PF_ALLOW_NOEDIT?: string;
  *   PF_EDADMIN_TOKEN?: string;
  *   PF_DATA_BASE_URL?: string;
+ *   PF_EDADMIN_AUTH_SCHEME?: string;
  * }} EdadminEnv */
 
 /**
@@ -21,23 +23,11 @@ export function normalizeDataBaseUrl (rawUrl) {
 /**
  * @param {string | undefined} resource
  */
-function safeDecodeURIComponent (value) {
-  try {
-    return decodeURIComponent(value)
-  } catch {
-    return null
-  }
-}
-
 export function parseEdadminResource (resource) {
   if (!resource || typeof resource !== 'string') {
     return null
   }
-  const decodedRaw = safeDecodeURIComponent(resource)
-  if (decodedRaw === null) {
-    return null
-  }
-  const decoded = decodedRaw.replace(/\.json$/i, '')
+  const decoded = decodeURIComponent(resource).replace(/\.json$/i, '')
   if (!/^[A-Za-z][A-Za-z0-9]*$/.test(decoded)) {
     return null
   }
@@ -48,6 +38,25 @@ export function parseEdadminResource (resource) {
 }
 
 /**
+ * @param {string | undefined} raw
+ */
+export function resolveUpstreamToken (raw) {
+  let token = (raw ?? '').trim()
+  if (/^bearer\s+/i.test(token)) {
+    token = token.replace(/^bearer\s+/i, '').trim()
+  }
+  return token
+}
+
+/**
+ * @param {string | undefined} scheme
+ */
+export function resolveAuthScheme (scheme) {
+  const normalized = (scheme ?? 'Bearer').trim()
+  return normalized.length > 0 ? normalized : 'Bearer'
+}
+
+/**
  * @param {EdadminEnv} env
  */
 export function isEdadminEnabled (env) {
@@ -55,95 +64,233 @@ export function isEdadminEnabled (env) {
 }
 
 /**
- * @param {Request} request
- * @param {string} resourceName
- * @param {EdadminEnv} env
+ * @param {string} url
  */
-export async function handleEdadminRequest (request, resourceName, env) {
-  if (!isEdadminEnabled(env)) {
-    return new Response('Not Found', { status: 404 })
+function upstreamHostFromUrl (url) {
+  try {
+    return new URL(url).host
+  } catch {
+    return null
   }
+}
 
-  if (request.method !== 'PUT') {
-    return new Response('Method Not Allowed', {
-      status: 405,
-      headers: { Allow: 'PUT' }
-    })
-  }
+/**
+ * @param {{
+ *   error: string;
+ *   status: number;
+ *   stage: string;
+ *   hint: string;
+ *   resource?: string;
+ *   upstreamHost?: string | null;
+ *   upstreamStatus?: number;
+ * }} payload
+ */
+export function jsonErrorResponse (payload) {
+  const headers = new Headers({
+    'content-type': 'application/json; charset=utf-8',
+    [EDADMIN_STAGE_HEADER]: payload.stage
+  })
+  return new Response(JSON.stringify(payload), {
+    status: payload.status,
+    headers
+  })
+}
 
-  const accessJwt = request.headers.get('Cf-Access-Jwt-Assertion')?.trim()
-  if (!accessJwt) {
-    return new Response('Unauthorized', { status: 401 })
-  }
-
-  const resource = parseEdadminResource(resourceName)
-  if (!resource) {
-    return new Response('Bad Request', { status: 400 })
-  }
-
-  const token = (env.PF_EDADMIN_TOKEN ?? '').trim()
+/**
+ * @param {EdadminEnv} env
+ * @param {string} resource
+ */
+function resolveEdadminWriteConfig (env, resource) {
+  const token = resolveUpstreamToken(env.PF_EDADMIN_TOKEN)
   if (!token) {
-    return new Response('Service Unavailable', { status: 503 })
+    return jsonErrorResponse({
+      error: 'proxy_misconfigured',
+      status: 503,
+      stage: 'proxy',
+      hint: 'PF_EDADMIN_TOKEN is missing on Functions (Production). Use the raw token value.',
+      resource
+    })
   }
 
   const baseUrl = normalizeDataBaseUrl(env.PF_DATA_BASE_URL)
   if (!baseUrl) {
-    return new Response('Service Unavailable', { status: 503 })
+    return jsonErrorResponse({
+      error: 'proxy_misconfigured',
+      status: 503,
+      stage: 'proxy',
+      hint: 'PF_DATA_BASE_URL is missing on Functions (e.g. https://data.example.com/data).',
+      resource
+    })
   }
 
+  return { token, baseUrl }
+}
+
+/**
+ * @param {Request} request
+ * @param {string} resource
+ */
+async function readValidatedJsonBody (request, resource) {
   const contentLength = request.headers.get('content-length')
   if (contentLength) {
     const length = Number.parseInt(contentLength, 10)
     if (Number.isFinite(length) && length > MAX_EDADMIN_BODY_BYTES) {
-      return new Response('Payload Too Large', { status: 413 })
+      return jsonErrorResponse({
+        error: 'payload_too_large',
+        status: 413,
+        stage: 'proxy',
+        hint: 'JSON body exceeds the size limit.',
+        resource
+      })
     }
   }
 
   const bodyText = await request.text()
   if (bodyText.length > MAX_EDADMIN_BODY_BYTES) {
-    return new Response('Payload Too Large', { status: 413 })
+    return jsonErrorResponse({
+      error: 'payload_too_large',
+      status: 413,
+      stage: 'proxy',
+      hint: 'JSON body exceeds the size limit.',
+      resource
+    })
   }
 
   try {
     JSON.parse(bodyText)
   } catch {
-    return new Response('Invalid JSON', { status: 400 })
+    return jsonErrorResponse({
+      error: 'invalid_json',
+      status: 400,
+      stage: 'proxy',
+      hint: 'Request body must be valid JSON.',
+      resource
+    })
   }
 
+  return bodyText
+}
+
+/**
+ * @param {import('./edadminProxy.mjs').EdadminEnv} env
+ * @param {string} resource
+ * @param {string} bodyText
+ * @param {typeof fetch} fetchImpl
+ */
+async function forwardEdadminPut (env, resource, bodyText, fetchImpl) {
+  const token = resolveUpstreamToken(env.PF_EDADMIN_TOKEN)
+  const baseUrl = normalizeDataBaseUrl(env.PF_DATA_BASE_URL)
   const upstreamUrl = `${baseUrl}/${resource}.json`
+  const upstreamHost = upstreamHostFromUrl(upstreamUrl)
+  const authScheme = resolveAuthScheme(env.PF_EDADMIN_AUTH_SCHEME)
+
   let upstreamResponse
   try {
-    upstreamResponse = await fetch(upstreamUrl, {
+    upstreamResponse = await fetchImpl(upstreamUrl, {
       method: 'PUT',
       headers: {
-        Authorization: `Bearer ${token}`,
+        Authorization: `${authScheme} ${token}`,
         'Content-Type': 'application/json',
         Accept: 'application/json'
       },
       body: bodyText
     })
   } catch {
-    return new Response('Upstream Error', { status: 502 })
-  }
-
-  const responseBody = await upstreamResponse.text()
-  const headers = new Headers()
-  const contentType = upstreamResponse.headers.get('content-type')
-  if (contentType) {
-    headers.set('content-type', contentType)
-  } else {
-    headers.set('content-type', 'application/json')
+    return jsonErrorResponse({
+      error: 'upstream_unreachable',
+      status: 502,
+      stage: 'upstream',
+      hint: 'Could not reach the data host. Check PF_DATA_BASE_URL and worker availability.',
+      resource,
+      upstreamHost
+    })
   }
 
   if (upstreamResponse.ok) {
+    const responseBody = await upstreamResponse.text()
+    const headers = new Headers({
+      [EDADMIN_STAGE_HEADER]: 'upstream'
+    })
+    const contentType = upstreamResponse.headers.get('content-type')
+    if (contentType) {
+      headers.set('content-type', contentType)
+    } else {
+      headers.set('content-type', 'application/json')
+    }
     return new Response(responseBody, {
       status: upstreamResponse.status,
       headers
     })
   }
 
-  return new Response(
-    upstreamResponse.status >= 500 ? 'Upstream Error' : 'Upstream Rejected',
-    { status: upstreamResponse.status, headers }
-  )
+  const upstreamStatus = upstreamResponse.status
+  const isServerError = upstreamStatus >= 500
+
+  return jsonErrorResponse({
+    error: isServerError ? 'upstream_error' : 'upstream_rejected',
+    status: upstreamStatus,
+    stage: 'upstream',
+    hint: isServerError
+      ? 'The data host returned a server error.'
+      : 'The data host rejected the write (check token, worker auth, and URL). If you use Cloudflare Access on /api/edadmin, verify it allows this route.',
+    resource,
+    upstreamHost,
+    upstreamStatus
+  })
+}
+
+/**
+ * @param {Request} request
+ * @param {string} resourceName
+ * @param {EdadminEnv} env
+ * @param {{ fetchImpl?: typeof fetch }} [options]
+ */
+export async function handleEdadminRequest (
+  request,
+  resourceName,
+  env,
+  options = {}
+) {
+  const fetchImpl = options.fetchImpl ?? fetch
+
+  if (!isEdadminEnabled(env)) {
+    return jsonErrorResponse({
+      error: 'editor_disabled',
+      status: 404,
+      stage: 'proxy',
+      hint: 'Set PF_ALLOW_NOEDIT=1 on Functions and rebuild the site with the flag for the UI.'
+    })
+  }
+
+  if (request.method !== 'PUT') {
+    return jsonErrorResponse({
+      error: 'method_not_allowed',
+      status: 405,
+      stage: 'proxy',
+      hint: 'Use PUT with a JSON body.'
+    })
+  }
+
+  const resource = parseEdadminResource(resourceName)
+  if (!resource) {
+    return jsonErrorResponse({
+      error: 'invalid_resource',
+      status: 400,
+      stage: 'proxy',
+      hint: 'Resource name must match an allowlisted portfolio JSON file.',
+      resource: resourceName
+    })
+  }
+
+  const config = resolveEdadminWriteConfig(env, resource)
+  if (config instanceof Response) {
+    return config
+  }
+
+  const body = await readValidatedJsonBody(request, resource)
+  if (body instanceof Response) {
+    return body
+  }
+
+  return forwardEdadminPut(env, resource, body, fetchImpl)
 }
