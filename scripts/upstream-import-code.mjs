@@ -57,10 +57,14 @@ function main () {
   }
 
   const since =
-    sinceArg ?? manifest.lastMergedUpstreamSha ?? git('merge-base', branch, upstreamRef)
+    sinceArg ??
+    manifest.lastMergedUpstreamSha ??
+    git('merge-base', branch, upstreamRef)
 
   if (!since) {
-    console.error('Could not determine --since (pass --since=<sha> or set lastMergedUpstreamSha).')
+    console.error(
+      'Could not determine --since (pass --since=<sha> or set lastMergedUpstreamSha).'
+    )
     return 1
   }
 
@@ -109,7 +113,9 @@ function main () {
     git('checkout', upstreamRef, '--', filePath)
   }
   git('add', '--', ...codePaths)
-  console.log(`Staged ${codePaths.length} file(s) from ${upstreamRef}. Review and commit.`)
+  console.log(
+    `Staged ${codePaths.length} file(s) from ${upstreamRef}. Review and commit.`
+  )
   return 0
 }
 

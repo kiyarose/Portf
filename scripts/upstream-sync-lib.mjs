@@ -98,10 +98,7 @@ export function matchesKeepOurs (filePath, patterns) {
  * @param {object} manifest
  */
 export function isHiddenFromUpstreamDiff (filePath, manifest) {
-  const hide = [
-    ...(manifest.hideFromDiff ?? []),
-    ...(manifest.keepOurs ?? [])
-  ]
+  const hide = [...(manifest.hideFromDiff ?? []), ...(manifest.keepOurs ?? [])]
   return pathMatchesAnyGlob(filePath, hide)
 }
 
