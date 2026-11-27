@@ -17,14 +17,22 @@ export function loadUpstreamSyncManifest () {
  * @param {string} pattern
  * @param {string} filePath
  */
+function escapeRegexLiteral (segment) {
+  return segment.replace(/[|\\{}()[\]^$+?.]/g, '\\$&')
+}
+
 export function globMatch (pattern, filePath) {
-  const normalized = filePath.replace(/\\/g, '/')
-  const reSource = pattern
-    .replace(/\\/g, '/')
-    .replace(/\./g, '\\.')
-    .replace(/\*\*\//g, '(?:.*/)?')
-    .replace(/\*\*/g, '.*')
-    .replace(/\*/g, '[^/]*')
+  const normalized = filePath.replaceAll('\\', '/')
+  const normalizedPattern = pattern.replaceAll('\\', '/')
+  const reSource = normalizedPattern
+    .split('**/')
+    .map((part) =>
+      part
+        .split('**')
+        .map((chunk) => escapeRegexLiteral(chunk).replaceAll('\\*', '[^/]*'))
+        .join('.*'),
+    )
+    .join('(?:.*/)?')
   return new RegExp(`^${reSource}$`).test(normalized)
 }
 

@@ -4,6 +4,10 @@
   "version": "0.0.0",
   "description": "Kiya Rose portfolio (kiyarose/Portf) — Astro fork of SillyLittleTech/Portf",
   "type": "module",
+  "engines": {
+    "node": ">=22.23.4",
+    "npm": ">=9.6.5"
+  },
   "scripts": {
     "sync:remote-data": "node scripts/sync-remote-data.mjs",
     "predev": "npm run sync:remote-data && node scripts/generate-icon-bundle.mjs",
