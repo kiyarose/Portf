@@ -49,8 +49,37 @@ npm run upstream:status -- --stat    # include diff stat
 npm run upstream:status -- --json    # machine-readable output
 npm run upstream:status -- --skip-remote-setup  # fail if upstream remote is missing
 
-npm run upstream:resolve-conflicts   # after merge: git checkout --ours for keepOurs paths, then verify CSP markers
+npm run upstream:resolve-conflicts   # after merge: auto-resolve keepOurs + preferTheirs paths
+npm run upstream:import-code         # dry-run: list allowlisted code paths to copy from upstream
+npm run upstream:import-code -- --apply   # copy those paths without a full merge
 ```
+
+### Merge in progress but `npm` fails (broken `package.json`)
+
+While git is `MERGING`, conflict markers in `package.json` make **every** `npm run …` fail (`EJSONPARSE`). Run the resolver with Node directly:
+
+```bash
+node scripts/resolve-upstream-conflicts.mjs
+```
+
+Windows (cmd): `scripts\upstream-resolve.cmd`  
+Git Bash / macOS / Linux: `sh scripts/upstream-resolve.sh`
+
+Then fix any paths listed as `manual:`, run `npm install` if `package-lock.json` changed, and `git commit` to finish the merge.
+
+## Code-only sync (smaller diff, less scary)
+
+Full `git merge upstream/main` touches bespoke URLs, workflows, submodules (`DashCam`), and `package.json`. To **preview only template code** you care about:
+
+```bash
+npm run upstream:status -- --code-only --stat   # allowlisted src/tests/tooling only
+npm run upstream:import-code                    # dry-run since lastMergedUpstreamSha
+npm run upstream:import-code -- --apply         # git checkout upstream/main -- <paths>
+```
+
+Allowlists live in [`upstream-sync.json`](upstream-sync.json) (`takeFromUpstream`, `keepOurs`, `hideFromDiff`). After applying, run tests/build and bump `lastMergedUpstreamSha` when satisfied.
+
+Use a **full merge** when you need upstream dependency bumps (`package-lock.json`) or commits that span both code and config.
 
 ## Safe sync workflow
 
@@ -61,7 +90,7 @@ git pull origin main
 git checkout -b sync/upstream-YYYYMMDD
 npm run upstream:status -- --stat    # optional: see what you are about to merge
 git merge upstream/main
-npm run upstream:resolve-conflicts   # then fix any remaining conflicts by hand
+node scripts/resolve-upstream-conflicts.mjs   # npm may be broken until package.json is clean
 ```
 
 Resolve conflicts:

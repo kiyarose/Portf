@@ -84,8 +84,34 @@ export function globMatch (pattern, filePath) {
  * @param {string} filePath
  * @param {string[]} patterns
  */
-export function matchesKeepOurs (filePath, patterns) {
+export function pathMatchesAnyGlob (filePath, patterns) {
   return patterns.some((pattern) => globMatch(pattern, filePath))
+}
+
+export function matchesKeepOurs (filePath, patterns) {
+  return pathMatchesAnyGlob(filePath, patterns)
+}
+
+/**
+ * Paths we never want in a “code-only” upstream preview (keepOurs + extra noise).
+ * @param {string} filePath
+ * @param {object} manifest
+ */
+export function isHiddenFromUpstreamDiff (filePath, manifest) {
+  const hide = [...(manifest.hideFromDiff ?? []), ...(manifest.keepOurs ?? [])]
+  return pathMatchesAnyGlob(filePath, hide)
+}
+
+/**
+ * Safe to copy from upstream (allowlist); keepOurs always wins.
+ * @param {string} filePath
+ * @param {object} manifest
+ */
+export function shouldTakeFromUpstream (filePath, manifest) {
+  const take = manifest.takeFromUpstream ?? []
+  if (take.length === 0) return false
+  if (pathMatchesAnyGlob(filePath, manifest.keepOurs ?? [])) return false
+  return pathMatchesAnyGlob(filePath, take)
 }
 
 export { repoRoot }
