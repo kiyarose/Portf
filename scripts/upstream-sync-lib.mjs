@@ -30,7 +30,7 @@ export function globMatch (pattern, filePath) {
       part
         .split('**')
         .map((chunk) => escapeRegexLiteral(chunk).replaceAll('\\*', '[^/]*'))
-        .join('.*'),
+        .join('.*')
     )
     .join('(?:.*/)?')
   return new RegExp(`^${reSource}$`).test(normalized)
