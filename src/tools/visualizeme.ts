@@ -2058,30 +2058,32 @@ function clearAll() {
 }
 
 function loadSample() {
+  // Sample data used by the visualizer. Replace the contents with your own
+  // example portfolio data when customizing the template.
   const sample = {
-    name: "Kiya Rose",
+    name: "Your Name",
     location: {
-      city: "Altoona",
-      state: "PA",
-      timezone: "America/New_York",
+      city: "City",
+      state: "State",
+      timezone: "UTC",
     },
     projects: [
       {
-        title: "SillyLittleFiles",
-        stack: ["ProtonVPN", "OpenVPN", "JavaScript"],
+        title: "Example Project",
+        stack: ["React", "TypeScript"],
       },
       {
-        title: "Enterprise Virtualization Project",
-        stack: ["HPE", "Windows Server", "VMWare", "ILO"],
+        title: "Another Project",
+        stack: ["Node.js", "Postgres"],
       },
     ],
     skills: {
-      core: ["Information Technology", "Customer Service", "Research"],
-      developing: ["Medical Coding", "Health Informatics"],
+      core: ["JavaScript", "CSS", "Accessibility"],
+      developing: ["GraphQL", "Design Systems"],
     },
     socials: [
-      { label: "GitHub", url: "https://github.com/kiyarose" },
-      { label: "LinkedIn", url: "https://linkedin.com/in/kiyarose" },
+      { label: "GitHub", url: "https://github.com/example" },
+      { label: "LinkedIn", url: "https://linkedin.com/in/example" },
     ],
   };
   if (inputModeSelect) {

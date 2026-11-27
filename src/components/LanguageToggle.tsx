@@ -1,4 +1,4 @@
-import { Icon } from "./Icon";
+import { Icon } from "@iconify/react";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { useState, useCallback } from "react";
 import type { MouseEvent, KeyboardEvent } from "react";
@@ -7,7 +7,9 @@ import { useTheme } from "../hooks/useTheme";
 import { cn } from "../utils/cn";
 import { themedClass } from "../utils/themeClass";
 import type { Language } from "../providers/language-context";
-import SenyeraFlag from "../assets/Senyera.png";
+
+/** Served from `public/flags/senyera.png`; BASE_URL keeps sub-path deploys working. */
+const SENYERA_FLAG_SRC = `${import.meta.env.BASE_URL}flags/senyera.png`;
 
 const languages: {
   code: Language;
@@ -16,12 +18,7 @@ const languages: {
   customFlag?: string;
 }[] = [
   { code: "en", name: "English", flag: "🇨🇦" },
-  {
-    code: "ca",
-    name: "Català",
-    flag: "🇪🇸",
-    customFlag: typeof SenyeraFlag === "string" ? SenyeraFlag : SenyeraFlag.src,
-  },
+  { code: "ca", name: "Català", flag: "🇪🇸", customFlag: SENYERA_FLAG_SRC },
   { code: "fr", name: "Français", flag: "🇫🇷" },
   { code: "nl", name: "Nederlands", flag: "🇳🇱" },
   { code: "ja", name: "日本語", flag: "🇯🇵" },

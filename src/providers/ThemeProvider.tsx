@@ -1,11 +1,12 @@
-import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useState } from "react";
 import type { PropsWithChildren } from "react";
 import { ThemeContext, type Theme } from "./theme-context";
 import { safeConsoleWarn } from "../utils/errorSanitizer";
 import {
-  getPreferredTheme,
   THEME_STORAGE_KEY,
   USER_PREFERENCE_KEY,
+  getPreferredTheme,
+  hasUserSetTheme,
 } from "../theme/storage";
 
 function applyTheme(theme: Theme, userHasSetTheme: boolean) {
@@ -46,46 +47,13 @@ function applyTheme(theme: Theme, userHasSetTheme: boolean) {
   }
 }
 
-function readThemeFromDocument(): Theme {
-  if (typeof document === "undefined") {
-    return "light";
-  }
-  if (document.documentElement.classList.contains("dark")) {
-    return "dark";
-  }
-  if (document.documentElement.classList.contains("light")) {
-    return "light";
-  }
-  return getPreferredTheme();
-}
-
-function readUserSetFromDocument(): boolean {
-  if (typeof document === "undefined") {
-    return false;
-  }
-  return (
-    document.documentElement.dataset.userTheme === "light" ||
-    document.documentElement.dataset.userTheme === "dark"
-  );
-}
-
 export function ThemeProvider({ children }: PropsWithChildren) {
-  // Match BaseLayout inline bootstrap on the client; SSR defaults to light.
-  const [theme, setTheme] = useState<Theme>("light");
-  const [userHasSetTheme, setUserHasSetTheme] = useState(false);
-
-  const hasSyncedPreferences = useRef(false);
+  const [theme, setTheme] = useState<Theme>(() => getPreferredTheme());
+  const [userHasSetTheme, setUserHasSetTheme] = useState<boolean>(() =>
+    hasUserSetTheme(),
+  );
 
   useLayoutEffect(() => {
-    if (!hasSyncedPreferences.current) {
-      hasSyncedPreferences.current = true;
-      const preferred = readThemeFromDocument();
-      const userSet = readUserSetFromDocument();
-      setTheme(preferred);
-      setUserHasSetTheme(userSet);
-      applyTheme(preferred, userSet);
-      return;
-    }
     applyTheme(theme, userHasSetTheme);
   }, [theme, userHasSetTheme]);
 

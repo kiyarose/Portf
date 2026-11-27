@@ -42,7 +42,10 @@ function normalizePath(path: string): string {
   return stripTrailingSlashes(prefixed) || "/";
 }
 
-/** Strip the deployment base path and return an app-relative pathname. */
+/** Strip the deployment base path and return an app-relative pathname.
+ *  e.g. with BASE_PATH="/Portf":  "/Portf/privacy-policy" → "/privacy-policy"
+ *  If no base path is set this is a transparent no-op.
+ */
 function stripBasePath(pathname: string): string {
   if (!BASE_PATH) return pathname;
   if (pathname === BASE_PATH || pathname === `${BASE_PATH}/`) return "/";
@@ -53,7 +56,8 @@ function stripBasePath(pathname: string): string {
 }
 
 /** Prepend the deployment base path to an app-relative path before assigning
- *  browser location.
+ *  browser location.  e.g. with BASE_PATH="/Portf":  "/privacy-policy" →
+ *  "/Portf/privacy-policy".  Transparent no-op when no base path is set.
  */
 function addBasePath(path: string): string {
   if (!BASE_PATH) return path;

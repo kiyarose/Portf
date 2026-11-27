@@ -26,6 +26,8 @@ coverage
 node_modules/
 dist/
 dist-ssr/
+.astro/
+public/__remote-data/
 
 # Tooling caches
 .npm

@@ -1,6 +1,6 @@
 import { useEffect, useMemo } from "react";
 import type { ReactNode } from "react";
-import { Icon } from "../components/Icon";
+import { Icon } from "@iconify/react";
 import { DecorativeBackground } from "../components/DecorativeBackground";
 import { SiteFooter } from "../components/SiteFooter";
 import AdminHint from "../components/AdminHint";
@@ -9,13 +9,12 @@ import { themedClass } from "../utils/themeClass";
 import { cn } from "../utils/cn";
 import { goBackOrNavigateHome } from "../utils/navigation";
 import { getBuildUpdatedAt } from "../data/build";
-import { SITE_NAME } from "../data/site";
 
+// Replace these with your security and privacy contact addresses.
 const GDPR_CONTACT_EMAIL =
-  (import.meta.env.VITE_GDPR_CONTACT as string) || "gdpr@sillylittle.tech";
+  (import.meta.env.VITE_GDPR_CONTACT as string) || "security@example.com";
 const PRIVACY_CONTACT_EMAIL =
-  (import.meta.env.VITE_PRIVACY_CONTACT as string) ||
-  "privacy@sillylittle.tech";
+  (import.meta.env.VITE_PRIVACY_CONTACT as string) || "privacy@example.com";
 
 type PolicySection = {
   title: string;
@@ -67,7 +66,7 @@ const policySections: PolicySection[] = [
             and are not shared externally.
           </li>
           <li>
-            <strong>Legacy analytics (retired October 30, 2025):</strong>{" "}
+            <strong>Legacy analytics (retired October 30, 2025):</strong>
             Firebase Hosting metrics and Google Analytics events were previously
             collected for aggregated insights. They were shut off effective
             October 30, 2025 and no longer receive data from any visitors.
@@ -266,7 +265,7 @@ export function PrivacyPolicyPage() {
   const { theme } = useTheme();
 
   useEffect(() => {
-    document.title = `Privacy Policy • ${SITE_NAME}`;
+    document.title = "Privacy Policy • Your Name";
     if (typeof window !== "undefined") {
       window.scrollTo({ top: 0, left: 0 });
     }
@@ -424,10 +423,9 @@ function PolicyIntro() {
     <p className={cn(paragraphClass, "mt-4")}>
       Your privacy matters. This Privacy Policy explains how the site owner
       (replace the name below) collects, uses, and safeguards personal
-      information when you visit the deployed site.{" "}
-      <AdminHint>Your Name</AdminHint> may collect additional information when
-      you interact with the contact form or engage with the analytics services
-      that power the site.
+      information when you visit the deployed site. <AdminHint>Your Name</AdminHint>{" "}
+      may collect additional information when you interact with the contact form
+      or engage with the analytics services that power the site.
     </p>
   );
 }

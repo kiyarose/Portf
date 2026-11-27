@@ -66,9 +66,10 @@ function FooterBranding({
   const brandingColor = themedClass(theme, "text-slate-600", "text-slate-300");
   return (
     <span className={`inline-flex items-center gap-1 ${brandingColor}`}>
-      <span className="text-base text-accent">©</span>
-      <span>{currentYear}</span>
-      <AdminHint>Kiya Rose</AdminHint>
+  <span className="text-base text-accent">©</span>
+  <span>{currentYear}</span>
+  {/* Replace the name below with your display name. AdminHint supports a long-press link to an admin URL. */}
+  <AdminHint>Your Name</AdminHint>
     </span>
   );
 }

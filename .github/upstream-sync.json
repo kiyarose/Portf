@@ -5,8 +5,8 @@
     "url": "https://github.com/SillyLittleTech/Portf.git",
     "defaultBranch": "main"
   },
-  "lastMergedUpstreamSha": null,
-  "lastMergedAt": null,
+  "lastMergedUpstreamSha": "21d0d5c10eef933b9d73479a975fd1fa72de02bf",
+  "lastMergedAt": "2026-11-27T02:48:00.000Z",
   "keepOurs": [
     "src/data/**",
     "src/translations/**",

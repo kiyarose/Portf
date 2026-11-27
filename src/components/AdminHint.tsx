@@ -8,7 +8,9 @@ import type {
 } from "react";
 import clsx from "clsx";
 
-const TARGET_URL = "https://kiyaverse.cloudflareaccess.com";
+// Template-friendly admin hint. Replace TARGET_URL with your admin/dashboard
+// URL or remove the long-press behavior if you don't need it.
+const TARGET_URL = (import.meta.env.VITE_ADMIN_URL as string) || "https://example.com/admin";
 const LONG_PRESS_THRESHOLD_MS = 650;
 
 type PolymorphicProps<T extends ElementType> = {
@@ -20,7 +22,7 @@ type PolymorphicProps<T extends ElementType> = {
 function AdminHint<T extends ElementType = "span">({
   as,
   className,
-  children = "Kiya Rose",
+  children = "Your Name",
   ...restProps
 }: PolymorphicProps<T>) {
   type MouseHandler = ((event: MouseEvent<HTMLElement>) => void) | undefined;

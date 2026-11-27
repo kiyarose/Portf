@@ -1,0 +1,12 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { DataAdminApp } from "../../components/admin/DataAdminApp";
+---
+
+<BaseLayout
+  title="Data editor"
+  description="Private portfolio data editor"
+  robots="noindex, nofollow"
+>
+  <DataAdminApp client:load />
+</BaseLayout>

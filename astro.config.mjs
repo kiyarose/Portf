@@ -1,38 +1,50 @@
-import { defineConfig } from 'astro/config'
-import react from '@astrojs/react'
-import tailwindcss from '@tailwindcss/vite'
-import { copyAdminAssets, copyToolAssets } from './vite-build-plugins.mjs'
+import { defineConfig } from "astro/config";
+import react from "@astrojs/react";
+import tailwindcss from "@tailwindcss/vite";
+import { edadminDevMiddleware } from "./scripts/edadmin-dev-middleware.mjs";
+import { copyAdminAssets, copyToolAssets } from "./vite-build-plugins.mjs";
 
-function normalizeBasePath (value) {
-  if (!value || value === '/') {
-    return '/'
+function normalizeBasePath(value) {
+  if (!value || value === "/") {
+    return "/";
   }
 
-  const withLeadingSlash = value.startsWith('/') ? value : `/${value}`
-  return withLeadingSlash.endsWith('/')
+  const withLeadingSlash = value.startsWith("/") ? value : `/${value}`;
+  return withLeadingSlash.endsWith("/")
     ? withLeadingSlash
-    : `${withLeadingSlash}/`
+    : `${withLeadingSlash}/`;
 }
 
 export default defineConfig({
-  output: 'static',
-  site: process.env.SITE_URL || 'https://example.com',
+  output: "static",
+  site: process.env.SITE_URL || "https://example.com",
   base: normalizeBasePath(process.env.BASE_PATH),
   integrations: [react()],
   vite: {
-    plugins: [tailwindcss(), copyAdminAssets(), copyToolAssets()],
-    envPrefix: ['PUBLIC_', 'VITE_'],
+    plugins: [
+      tailwindcss(),
+      copyAdminAssets(),
+      copyToolAssets(),
+      {
+        name: "edadmin-dev-proxy",
+        configureServer(server) {
+          server.middlewares.use(edadminDevMiddleware);
+        },
+      },
+    ],
+    envPrefix: ["PUBLIC_", "VITE_"],
     define: {
-      __BUILD_TIME__: JSON.stringify(new Date().toISOString())
+      __BUILD_TIME__: JSON.stringify(new Date().toISOString()),
+      __PF_ALLOW_NOEDIT__: JSON.stringify(process.env.PF_ALLOW_NOEDIT === "1"),
     },
     server: {
       proxy: {
-        '/__remote-data': {
-          target: process.env.VITE_REMOTE_DATA_URL || 'https://data.kiya.cat',
+        "/__remote-data": {
+          target: process.env.VITE_REMOTE_DATA_URL || "https://data.kiya.cat",
           changeOrigin: true,
-          rewrite: (path) => path.replace(/^\/__remote-data/, '')
-        }
-      }
-    }
-  }
-})
+          rewrite: (path) => path.replace(/^\/__remote-data/, ""),
+        },
+      },
+    },
+  },
+});
