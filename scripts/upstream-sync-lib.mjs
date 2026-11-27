@@ -21,7 +21,7 @@ export function loadUpstreamSyncManifest () {
  * @param {string} filePath
  */
 function escapeRegexLiteral (segment) {
-  return segment.replaceAll('\\', '\\\\').replace(/[|{}()[\]^$+?.]/g, '\\$&')
+  return segment.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 }
 
 export const GIT_EXECUTABLE = '/usr/bin/git'
