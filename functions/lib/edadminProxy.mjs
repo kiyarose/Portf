@@ -21,17 +21,23 @@ export function normalizeDataBaseUrl (rawUrl) {
 /**
  * @param {string | undefined} resource
  */
+function safeDecodeURIComponent (value) {
+  try {
+    return decodeURIComponent(value)
+  } catch {
+    return null
+  }
+}
+
 export function parseEdadminResource (resource) {
   if (!resource || typeof resource !== 'string') {
     return null
   }
-  let decoded
-  try {
-    decoded = decodeURIComponent(resource)
-  } catch {
+  const decodedRaw = safeDecodeURIComponent(resource)
+  if (decodedRaw === null) {
     return null
   }
-  decoded = decoded.replace(/\.json$/i, '')
+  const decoded = decodedRaw.replace(/\.json$/i, '')
   if (!/^[A-Za-z][A-Za-z0-9]*$/.test(decoded)) {
     return null
   }
