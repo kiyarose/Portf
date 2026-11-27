@@ -35,7 +35,10 @@ const CP1252_MAP: Record<number, string> = {
   0x9f: "Ÿ",
 };
 
-function decodeHexByte(body: string, index: number): { text: string; nextIndex: number } | null {
+function decodeHexByte(
+  body: string,
+  index: number,
+): { text: string; nextIndex: number } | null {
   const hex = body.slice(index + 2, index + 4);
   if (!/^[0-9a-fA-F]{2}$/.test(hex)) {
     return null;

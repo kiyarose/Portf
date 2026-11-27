@@ -339,7 +339,9 @@ export default function JsonDiagramEditor({
   );
   const [selectedKey, setSelectedKey] = useState<string | null>(null);
   const [contextMenu, setContextMenu] = useState<ContextMenuState | null>(null);
-  const [propertyTarget, setPropertyTarget] = useState<DiagramNode | null>(null);
+  const [propertyTarget, setPropertyTarget] = useState<DiagramNode | null>(
+    null,
+  );
   const [deleteTarget, setDeleteTarget] = useState<DiagramNode | null>(null);
   const [actionError, setActionError] = useState<string | null>(null);
   const [pan, setPan] = useState({ x: 0, y: 0, scale: INITIAL_SCALE });
@@ -437,7 +439,9 @@ export default function JsonDiagramEditor({
           setDeleteTarget(node);
         }
       } catch (error) {
-        setActionError(error instanceof Error ? error.message : "Action failed.");
+        setActionError(
+          error instanceof Error ? error.message : "Action failed.",
+        );
       }
     },
     [contextMenu?.node, data, onChange],
