@@ -134,6 +134,7 @@ The project includes PostCSS CLI for enhanced Tailwind CSS workflows:
 This repo is a customized deployment of [SillyLittleTech/Portf](https://github.com/SillyLittleTech/Portf), not a GitHub fork. Full workflow: [`.github/UPSTREAM.md`](.github/UPSTREAM.md).
 
 - Bespoke paths and verification rules: [`.github/upstream-sync.json`](.github/upstream-sync.json); merge conflicts on those paths use `merge=ours` in [`.gitattributes`](.gitattributes) after `git config merge.ours.driver true`.
+- `npm run upstream:setup` — add/fetch the `upstream` remote from `upstream-sync.json` (per clone); `npm run upstream:status` also auto-adds the remote when missing.
 - `npm run upstream:status` — compare `main` to `upstream/main`; `npm run upstream:resolve-conflicts` — apply `keepOurs` after a merge.
 - Never drop `data.kiya.cat` from CSP/`connect-src` when merging generic template security-header changes.
 - After each upstream sync PR, update `lastMergedUpstreamSha` in `upstream-sync.json`.

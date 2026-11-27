@@ -40,10 +40,14 @@ After a successful sync PR, update `lastMergedUpstreamSha` and `lastMergedAt` in
 
 ## NPM helpers
 
+`upstream:status` adds the `upstream` remote automatically from [upstream-sync.json](upstream-sync.json) when it is missing (per-clone; remotes are not stored in git). You can still run the manual `git remote add` commands above, or use:
+
 ```bash
+npm run upstream:setup               # ensure remote + fetch upstream/main
 npm run upstream:status              # commits ahead/behind (exit 1 if upstream has new commits)
 npm run upstream:status -- --stat    # include diff stat
 npm run upstream:status -- --json    # machine-readable output
+npm run upstream:status -- --skip-remote-setup  # fail if upstream remote is missing
 
 npm run upstream:resolve-conflicts   # after merge: git checkout --ours for keepOurs paths, then verify CSP markers
 ```
