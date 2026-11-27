@@ -48,7 +48,11 @@ function NodeEditModal({
         className="w-full max-w-xl rounded-3xl border border-slate-200/70 bg-white p-6 shadow-card dark:border-slate-700/60 dark:bg-slate-900"
         onClick={(event) => event.stopPropagation()}
       >
-        <motionSafeHeader id="node-modal-title" label={node.label} node={node} />
+        <motionSafeHeader
+          id="node-modal-title"
+          label={node.label}
+          node={node}
+        />
         <textarea
           spellCheck={false}
           value={draft}
@@ -59,7 +63,9 @@ function NodeEditModal({
           className="mt-4 min-h-[220px] w-full rounded-2xl border border-slate-200 bg-slate-50 p-4 font-mono text-sm text-slate-900 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100"
         />
         {error ? (
-          <p className="mt-2 text-sm text-rose-600 dark:text-rose-400">{error}</p>
+          <p className="mt-2 text-sm text-rose-600 dark:text-rose-400">
+            {error}
+          </p>
         ) : null}
         <div className="mt-4 flex flex-wrap justify-end gap-2">
           <button
@@ -105,7 +111,10 @@ function motionSafeHeader({
 }) {
   return (
     <div>
-      <h2 id={id} className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+      <h2
+        id={id}
+        className="text-lg font-semibold text-slate-900 dark:text-slate-100"
+      >
         {label || "Root"}
       </h2>
       <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
@@ -160,7 +169,9 @@ export default function JsonDiagramEditor({
     };
   }, [nodes]);
 
-  const selectedNode = selectedKey ? findNodeByPathKey(root, selectedKey) : null;
+  const selectedNode = selectedKey
+    ? findNodeByPathKey(root, selectedKey)
+    : null;
 
   const toggleCollapsed = useCallback((pathKey: string) => {
     setCollapsed((current) => {
@@ -255,10 +266,12 @@ export default function JsonDiagramEditor({
         onPointerLeave={onPointerUp}
         onWheel={onWheel}
       >
-        <svg className="h-full w-full touch-none" role="img" aria-label="JSON diagram">
-          <g
-            transform={`translate(${pan.x} ${pan.y}) scale(${pan.scale})`}
-          >
+        <svg
+          className="h-full w-full touch-none"
+          role="img"
+          aria-label="JSON diagram"
+        >
+          <g transform={`translate(${pan.x} ${pan.y}) scale(${pan.scale})`}>
             <g transform={`translate(${-offsetX} ${-offsetY})`}>
               {edges.map(({ from, to }) => (
                 <line
@@ -300,7 +313,9 @@ export default function JsonDiagramEditor({
                             : "white"
                       }
                       stroke={
-                        isSelected ? "rgb(236, 72, 153)" : "rgba(148, 163, 184, 0.45)"
+                        isSelected
+                          ? "rgb(236, 72, 153)"
+                          : "rgba(148, 163, 184, 0.45)"
                       }
                       strokeWidth={isSelected ? 2 : 1}
                     />

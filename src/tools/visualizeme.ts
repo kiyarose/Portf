@@ -594,7 +594,8 @@ function extractJsonFromRtf(rawText) {
 
   const marker = "\\f0\\fs24 \\cf0 ";
   const markerIndex = rawText.indexOf(marker);
-  const body = markerIndex >= 0 ? rawText.slice(markerIndex + marker.length) : rawText;
+  const body =
+    markerIndex >= 0 ? rawText.slice(markerIndex + marker.length) : rawText;
 
   const cp1252Map = {
     0x80: "€",
@@ -651,7 +652,10 @@ function extractJsonFromRtf(rawText) {
 
       if (/^[a-zA-Z]$/.test(next ?? "")) {
         let cursor = index + 1;
-        while (cursor < body.length && /[a-zA-Z0-9-]/.test(body[cursor] ?? "")) {
+        while (
+          cursor < body.length &&
+          /[a-zA-Z0-9-]/.test(body[cursor] ?? "")
+        ) {
           cursor += 1;
         }
         if (body[cursor] === " ") {

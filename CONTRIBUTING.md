@@ -56,6 +56,7 @@ Suggested repo files to add if you change the model:
 ---
 
 If you want, I can also add example `PULL_REQUEST_TEMPLATE.md` and `CODE_OF_CONDUCT.md` files tailored for a template repository.
+
 # Contributing to this template
 
 This repository is a community-friendly template. If you find a bug or want to propose improvements:

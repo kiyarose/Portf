@@ -10,7 +10,8 @@ import clsx from "clsx";
 
 // Template-friendly admin hint. Replace TARGET_URL with your admin/dashboard
 // URL or remove the long-press behavior if you don't need it.
-const TARGET_URL = (import.meta.env.VITE_ADMIN_URL as string) || "https://example.com/admin";
+const TARGET_URL =
+  (import.meta.env.VITE_ADMIN_URL as string) || "https://example.com/admin";
 const LONG_PRESS_THRESHOLD_MS = 650;
 
 type PolymorphicProps<T extends ElementType> = {

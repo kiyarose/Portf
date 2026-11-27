@@ -2,7 +2,6 @@
 
 ## Supported Versions
 
-
 ## Reporting a Vulnerability
 
 This repository is provided as a starter template. The security guidance below helps template maintainers and downstream users set up a responsible disclosure and scanning workflow.
@@ -14,7 +13,6 @@ This repository is provided as a starter template. The security guidance below h
 - If you use third-party services (analytics, error trackers, auth providers), document what's collected and how to opt out in your privacy policy.
 
 ## For template maintainers & contributors
-
 
 - Licensing reminder: this template ships under BSD-3-Clause with an attribution to Kiya Rose (2025). When you redistribute or publish derived works, preserve that license and the attribution in source distributions as required by the BSD-3-Clause.
 

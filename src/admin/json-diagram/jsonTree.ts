@@ -84,7 +84,10 @@ export function formatEditorValue(value: unknown): string {
   return JSON.stringify(value, null, 2);
 }
 
-export function parseEditorValue(rawValue: string, currentValue: unknown): unknown {
+export function parseEditorValue(
+  rawValue: string,
+  currentValue: unknown,
+): unknown {
   const trimmed = rawValue.trim();
   if (trimmed === "") {
     return "";
@@ -244,7 +247,9 @@ export function setValueAtPath(
       throw new Error("Invalid array path segment.");
     }
     clone[head] =
-      rest.length === 0 ? newValue : setValueAtPath(clone[head], rest, newValue);
+      rest.length === 0
+        ? newValue
+        : setValueAtPath(clone[head], rest, newValue);
     return clone;
   }
 
