@@ -97,48 +97,10 @@ export function jsonErrorResponse (payload) {
 }
 
 /**
- * @param {Request} request
- * @param {string} resourceName
  * @param {EdadminEnv} env
- * @param {{ fetchImpl?: typeof fetch }} [options]
+ * @param {string} resource
  */
-export async function handleEdadminRequest (
-  request,
-  resourceName,
-  env,
-  options = {}
-) {
-  const fetchImpl = options.fetchImpl ?? fetch
-
-  if (!isEdadminEnabled(env)) {
-    return jsonErrorResponse({
-      error: 'editor_disabled',
-      status: 404,
-      stage: 'proxy',
-      hint: 'Set PF_ALLOW_NOEDIT=1 on Functions and rebuild the site with the flag for the UI.'
-    })
-  }
-
-  if (request.method !== 'PUT') {
-    return jsonErrorResponse({
-      error: 'method_not_allowed',
-      status: 405,
-      stage: 'proxy',
-      hint: 'Use PUT with a JSON body.'
-    })
-  }
-
-  const resource = parseEdadminResource(resourceName)
-  if (!resource) {
-    return jsonErrorResponse({
-      error: 'invalid_resource',
-      status: 400,
-      stage: 'proxy',
-      hint: 'Resource name must match an allowlisted portfolio JSON file.',
-      resource: resourceName
-    })
-  }
-
+function resolveEdadminWriteConfig (env, resource) {
   const token = resolveUpstreamToken(env.PF_EDADMIN_TOKEN)
   if (!token) {
     return jsonErrorResponse({
@@ -161,6 +123,14 @@ export async function handleEdadminRequest (
     })
   }
 
+  return { token, baseUrl }
+}
+
+/**
+ * @param {Request} request
+ * @param {string} resource
+ */
+async function readValidatedJsonBody (request, resource) {
   const contentLength = request.headers.get('content-length')
   if (contentLength) {
     const length = Number.parseInt(contentLength, 10)
@@ -198,6 +168,18 @@ export async function handleEdadminRequest (
     })
   }
 
+  return bodyText
+}
+
+/**
+ * @param {import('./edadminProxy.mjs').EdadminEnv} env
+ * @param {string} resource
+ * @param {string} bodyText
+ * @param {typeof fetch} fetchImpl
+ */
+async function forwardEdadminPut (env, resource, bodyText, fetchImpl) {
+  const token = resolveUpstreamToken(env.PF_EDADMIN_TOKEN)
+  const baseUrl = normalizeDataBaseUrl(env.PF_DATA_BASE_URL)
   const upstreamUrl = `${baseUrl}/${resource}.json`
   const upstreamHost = upstreamHostFromUrl(upstreamUrl)
   const authScheme = resolveAuthScheme(env.PF_EDADMIN_AUTH_SCHEME)
@@ -255,4 +237,60 @@ export async function handleEdadminRequest (
     upstreamHost,
     upstreamStatus
   })
+}
+
+/**
+ * @param {Request} request
+ * @param {string} resourceName
+ * @param {EdadminEnv} env
+ * @param {{ fetchImpl?: typeof fetch }} [options]
+ */
+export async function handleEdadminRequest (
+  request,
+  resourceName,
+  env,
+  options = {}
+) {
+  const fetchImpl = options.fetchImpl ?? fetch
+
+  if (!isEdadminEnabled(env)) {
+    return jsonErrorResponse({
+      error: 'editor_disabled',
+      status: 404,
+      stage: 'proxy',
+      hint: 'Set PF_ALLOW_NOEDIT=1 on Functions and rebuild the site with the flag for the UI.'
+    })
+  }
+
+  if (request.method !== 'PUT') {
+    return jsonErrorResponse({
+      error: 'method_not_allowed',
+      status: 405,
+      stage: 'proxy',
+      hint: 'Use PUT with a JSON body.'
+    })
+  }
+
+  const resource = parseEdadminResource(resourceName)
+  if (!resource) {
+    return jsonErrorResponse({
+      error: 'invalid_resource',
+      status: 400,
+      stage: 'proxy',
+      hint: 'Resource name must match an allowlisted portfolio JSON file.',
+      resource: resourceName
+    })
+  }
+
+  const config = resolveEdadminWriteConfig(env, resource)
+  if (config instanceof Response) {
+    return config
+  }
+
+  const body = await readValidatedJsonBody(request, resource)
+  if (body instanceof Response) {
+    return body
+  }
+
+  return forwardEdadminPut(env, resource, body, fetchImpl)
 }

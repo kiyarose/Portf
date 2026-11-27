@@ -184,9 +184,11 @@ function assignPositions(
   }
 
   if (node.visibleChildren.length > 0) {
-    const first = node.visibleChildren[0]!;
-    const last = node.visibleChildren[node.visibleChildren.length - 1]!;
-    node.x = (first.x + last.x) / 2;
+    const first = node.visibleChildren.at(0);
+    const last = node.visibleChildren.at(-1);
+    if (first !== undefined && last !== undefined) {
+      node.x = (first.x + last.x) / 2;
+    }
   } else {
     node.x = center;
   }
@@ -340,7 +342,10 @@ export function removeAtPath(root: unknown, path: JsonPathSegment[]): unknown {
     throw new Error("Cannot remove the root value.");
   }
   const parentPath = path.slice(0, -1);
-  const last = path[path.length - 1]!;
+  const last = path.at(-1);
+  if (last === undefined) {
+    throw new TypeError("Invalid path: missing final segment.");
+  }
   const parent =
     parentPath.length === 0 ? root : getValueAtPath(root, parentPath);
 

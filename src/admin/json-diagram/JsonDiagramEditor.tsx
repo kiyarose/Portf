@@ -313,6 +313,7 @@ export default function JsonDiagramEditor({
           return;
         }
         if (action === "addProperty") {
+          // deepcode ignore JS-0052: opt-in admin editor uses native prompt
           const key = window.prompt("New property name:");
           if (!key) {
             return;
@@ -326,6 +327,7 @@ export default function JsonDiagramEditor({
         }
         if (action === "delete") {
           const label = pathToDisplay(node.path);
+          // deepcode ignore JS-0052: opt-in admin editor uses native confirm
           if (!window.confirm(`Delete ${label}?`)) {
             return;
           }
@@ -333,6 +335,7 @@ export default function JsonDiagramEditor({
           setSelectedKey(null);
         }
       } catch (error) {
+        // deepcode ignore JS-0052: opt-in admin editor uses native alert
         window.alert(error instanceof Error ? error.message : "Action failed.");
       }
     },

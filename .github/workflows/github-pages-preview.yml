@@ -1,16 +1,15 @@
 name: Deploy PR Preview to GitHub Pages
 
+# Builds PRs with the GitHub Pages base path to catch deploy regressions.
+# Production Pages deploys use the main-branch workflow (Cloudflare is primary for kiya.cat).
+# Preview deploy to the github-pages environment is omitted here because environment
+# protection rules typically block refs/pull/*/merge unless an org admin allows them.
+
 on:
   pull_request:
     branches: ["main"]
     types: [opened, synchronize, reopened, ready_for_review]
   workflow_dispatch:
-
-permissions:
-  contents: read
-  pages: write
-  id-token: write
-  pull-requests: write
 
 concurrency:
   group: pages-preview-${{ github.event.pull_request.number || github.ref }}
@@ -19,6 +18,8 @@ concurrency:
 jobs:
   build:
     if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+    permissions:
+      contents: read
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -37,22 +38,3 @@ jobs:
         env:
           BASE_PATH: /${{ github.event.repository.name }}/
         run: npm run build:pages
-
-      - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: dist
-
-  deploy:
-    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-      - name: Deploy to GitHub Pages preview
-        id: deployment
-        uses: actions/deploy-pages@v4
-        with:
-          preview: true
