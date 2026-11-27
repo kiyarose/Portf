@@ -49,12 +49,14 @@ This keeps behavior predictable and easier to debug for template users.
 
 The visual JSON editor is **disabled by default**. To enable it:
 
-1. Set build/runtime env `PF_ALLOW_NOEDIT=1`.
-2. Configure Cloudflare Pages secrets: `PF_EDADMIN_TOKEN` (Bearer token for your data host) and `PF_DATA_BASE_URL` (e.g. `https://data.example.com/data`).
+1. Set **`PF_ALLOW_NOEDIT=1` as plain text on Build and Functions** (not as an encrypted secret — build must see it).
+2. Configure **Functions** (Production): `PF_EDADMIN_TOKEN` (secret; raw token value), `PF_DATA_BASE_URL` (worker base, e.g. `https://data.example.com/data`), and `PF_ALLOW_NOEDIT=1`.
 3. Set `VITE_REMOTE_DATA_URL` so reads and `scripts/sync-remote-data.mjs` stay aligned.
-4. Put **`/admin/*` behind Cloudflare Zero Trust** before enabling the flag in production.
+4. Put **`/admin/*` and `/api/edadmin/*`** behind Cloudflare Zero Trust (or allow the API path for saves).
 
 Saves use `PUT /api/edadmin/{Resource}.json` on your Pages site; the Pages Function in `functions/` proxies to your data host with `Authorization: Bearer`.
+
+**Save troubleshooting:** The proxy returns JSON errors (`upstream_rejected`, `proxy_misconfigured`, etc.) with an `X-Edadmin-Stage` header (`proxy` vs `upstream`). A **401** with `stage=upstream` means the data worker rejected the token or URL — verify `PF_DATA_BASE_URL` points at your worker route (not a bare R2 URL), store the token without a duplicated `Bearer ` prefix, and confirm the worker expects PUT + Bearer auth.
 
 Local dev: with the flag on, `npm run dev` mirrors the same API via Vite middleware (`scripts/edadmin-dev-middleware.mjs`).
 

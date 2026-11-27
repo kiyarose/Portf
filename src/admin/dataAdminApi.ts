@@ -1,4 +1,8 @@
 import { PORTFOLIO_DATA_RESOURCES } from "../data/resources";
+import {
+  formatEdadminSaveError,
+  parseEdadminErrorResponse,
+} from "./saveError";
 
 export { PORTFOLIO_DATA_RESOURCES };
 
@@ -45,9 +49,14 @@ export async function saveResourceJson(
     body,
   });
   if (!response.ok) {
-    const detail = (await response.text()).trim();
-    throw new Error(
-      detail || `Save failed for ${resource}.json (${response.status})`,
-    );
+    const payload = await parseEdadminErrorResponse(response);
+    if (!payload) {
+      const detail = (await response.text()).trim();
+      throw new Error(
+        formatEdadminSaveError(response.status, null, detail) ||
+          `Save failed for ${resource}.json (${response.status})`,
+      );
+    }
+    throw new Error(formatEdadminSaveError(response.status, payload, ""));
   }
 }
