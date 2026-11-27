@@ -105,7 +105,7 @@ const loadTurnstile = (): Promise<void> => {
     return Promise.resolve();
   }
 
-  if (turnstilePromise) {
+  if (turnstilePromise !== null) {
     return turnstilePromise;
   }
 

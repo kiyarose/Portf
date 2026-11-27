@@ -53,6 +53,42 @@ type ContextMenuState = {
   node: DiagramNode | null;
 };
 
+function AdminModalShell({
+  labelledBy,
+  onClose,
+  panelClassName,
+  children,
+}: {
+  labelledBy: string;
+  onClose: () => void;
+  panelClassName?: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center p-4"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby={labelledBy}
+    >
+      <button
+        type="button"
+        className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm"
+        aria-label="Close dialog"
+        onClick={onClose}
+      />
+      <div
+        className={clsx(
+          "relative z-10 w-full rounded-3xl border border-slate-200/70 bg-white p-6 shadow-card dark:border-slate-700/60 dark:bg-slate-900",
+          panelClassName,
+        )}
+      >
+        {children}
+      </div>
+    </div>
+  );
+}
+
 function NodeEditModal({
   node,
   onClose,
@@ -66,17 +102,11 @@ function NodeEditModal({
   const [error, setError] = useState<string | null>(null);
 
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4 backdrop-blur-sm"
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="node-modal-title"
-      onClick={onClose}
+    <AdminModalShell
+      labelledBy="node-modal-title"
+      onClose={onClose}
+      panelClassName="max-w-xl"
     >
-      <div
-        className="w-full max-w-xl rounded-3xl border border-slate-200/70 bg-white p-6 shadow-card dark:border-slate-700/60 dark:bg-slate-900"
-        onClick={(event) => event.stopPropagation()}
-      >
         <div>
           <h2
             id="node-modal-title"
@@ -133,8 +163,7 @@ function NodeEditModal({
             Apply
           </button>
         </div>
-      </div>
-    </div>
+    </AdminModalShell>
   );
 }
 
@@ -146,18 +175,18 @@ function NewPropertyModal({
   onApply: (key: string) => void;
 }) {
   const [keyName, setKeyName] = useState("");
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    inputRef.current?.focus();
+  }, []);
+
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4 backdrop-blur-sm"
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="new-property-title"
-      onClick={onClose}
+    <AdminModalShell
+      labelledBy="new-property-title"
+      onClose={onClose}
+      panelClassName="max-w-md"
     >
-      <div
-        className="w-full max-w-md rounded-3xl border border-slate-200/70 bg-white p-6 shadow-card dark:border-slate-700/60 dark:bg-slate-900"
-        onClick={(event) => event.stopPropagation()}
-      >
         <h3
           id="new-property-title"
           className="text-lg font-semibold text-slate-900 dark:text-slate-100"
@@ -165,11 +194,11 @@ function NewPropertyModal({
           New property name
         </h3>
         <input
+          ref={inputRef}
           type="text"
           value={keyName}
           onChange={(event) => setKeyName(event.target.value)}
           className="mt-4 w-full rounded-2xl border border-slate-200 bg-white px-4 py-2 text-sm text-slate-900 dark:border-slate-600 dark:bg-slate-950 dark:text-slate-100"
-          autoFocus
         />
         <div className="mt-4 flex justify-end gap-2">
           <button
@@ -192,8 +221,7 @@ function NewPropertyModal({
             Add
           </button>
         </div>
-      </div>
-    </div>
+    </AdminModalShell>
   );
 }
 
@@ -207,17 +235,11 @@ function DeleteConfirmModal({
   onConfirm: () => void;
 }) {
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4 backdrop-blur-sm"
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="delete-node-title"
-      onClick={onClose}
+    <AdminModalShell
+      labelledBy="delete-node-title"
+      onClose={onClose}
+      panelClassName="max-w-md"
     >
-      <div
-        className="w-full max-w-md rounded-3xl border border-slate-200/70 bg-white p-6 shadow-card dark:border-slate-700/60 dark:bg-slate-900"
-        onClick={(event) => event.stopPropagation()}
-      >
         <h3
           id="delete-node-title"
           className="text-lg font-semibold text-slate-900 dark:text-slate-100"
@@ -243,8 +265,7 @@ function DeleteConfirmModal({
             Delete
           </button>
         </div>
-      </div>
-    </div>
+    </AdminModalShell>
   );
 }
 
@@ -269,8 +290,10 @@ function ContextMenu({
 
   return (
     <>
-      <div
+      <button
+        type="button"
         className="fixed inset-0 z-40"
+        aria-label="Close menu"
         onClick={onClose}
         onContextMenu={onClose}
       />
