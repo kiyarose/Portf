@@ -19,6 +19,7 @@ describe("edadminProxy", () => {
     expect(parseEdadminResource("Projects.json")).toBe("Projects");
     expect(parseEdadminResource("../Skills")).toBeNull();
     expect(parseEdadminResource("Unknown")).toBeNull();
+    expect(parseEdadminResource("%E0%A4%A")).toBeNull();
   });
 
   it("normalizes data base URLs", () => {
@@ -28,18 +29,42 @@ describe("edadminProxy", () => {
     expect(normalizeDataBaseUrl("  ")).toBeNull();
   });
 
+  const accessRequest = (
+    init: RequestInit & { body?: string } = {},
+  ): Request =>
+    new Request("http://localhost/", {
+      ...init,
+      headers: {
+        "Cf-Access-Jwt-Assertion": "test-access-jwt",
+        ...(init.headers ?? {}),
+      },
+    });
+
   it("returns 404 when feature flag is off", async () => {
     const response = await handleEdadminRequest(
-      new Request("http://localhost/", { method: "PUT", body: "{}" }),
+      accessRequest({ method: "PUT", body: "{}" }),
       "Projects",
       {},
     );
     expect(response.status).toBe(404);
   });
 
+  it("returns 401 when Cloudflare Access JWT is missing", async () => {
+    const response = await handleEdadminRequest(
+      new Request("http://localhost/", { method: "PUT", body: "{}" }),
+      "Projects",
+      {
+        PF_ALLOW_NOEDIT: "1",
+        PF_EDADMIN_TOKEN: "secret",
+        PF_DATA_BASE_URL: "https://data.example.com/data",
+      },
+    );
+    expect(response.status).toBe(401);
+  });
+
   it("rejects invalid JSON", async () => {
     const response = await handleEdadminRequest(
-      new Request("http://localhost/", { method: "PUT", body: "not-json" }),
+      accessRequest({ method: "PUT", body: "not-json" }),
       "Projects",
       {
         PF_ALLOW_NOEDIT: "1",

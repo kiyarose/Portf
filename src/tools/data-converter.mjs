@@ -277,6 +277,7 @@ function evaluateModule (sourcePath, sourceText) {
     URL
   })
 
+  // NOSONAR javascript:S1523 — local dev CLI; transpiles repo-owned data modules only.
   script.runInContext(context)
   return moduleObject.exports
 }

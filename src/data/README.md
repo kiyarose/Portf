@@ -25,7 +25,7 @@ Data resolution is handled by `scripts/sync-remote-data.mjs` and
 
 ## Resource naming contract
 
-The canonical resource list lives in `portfolio-resources.json` (`PORTFOLIO_DATA_RESOURCES` in `resources.ts`) and is shared with `scripts/sync-remote-data.mjs` and the optional admin editor.
+The canonical resource list lives in `portfolio-resources.json` (`PORTFOLIO_DATA_RESOURCES` in `resources.ts` and `resources.mjs`) and is shared with `scripts/sync-remote-data.mjs` and the optional admin editor. Keep `resources.mjs` in sync with the JSON file (esbuild-based Cloudflare Pages Functions cannot use JSON import attributes).
 
 Each data file exports a `*_RESOURCE` constant (e.g. `PROJECTS_RESOURCE = "Projects"`).
 Remote files should match this naming pattern, including capitalization.
