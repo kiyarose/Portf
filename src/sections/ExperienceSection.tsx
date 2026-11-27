@@ -1,4 +1,4 @@
-import { Icon } from "../components/Icon";
+import { Icon } from "@iconify/react";
 import { motion, useReducedMotion } from "framer-motion";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import type { ChangeEvent, MouseEvent } from "react";
@@ -19,9 +19,7 @@ import {
 } from "../data/skills";
 import { useTheme } from "../hooks/useTheme";
 import { useTranslation } from "../hooks/useTranslation";
-import { useHydrated } from "../hooks/useHydrated";
 import { useRemoteData } from "../hooks/useRemoteData";
-import { motionEntrance } from "../utils/motionSsr";
 import type { Theme } from "../providers/theme-context";
 import { themedClass } from "../utils/themeClass";
 import { cn } from "../utils/cn";
@@ -55,7 +53,6 @@ export function ExperienceSection() {
   );
 
   // Clamp activeIndex when experienceEntries change
-  /* eslint-disable react-hooks/set-state-in-effect */
   useEffect(() => {
     setActiveIndex((current) => {
       if (experienceEntries.length === 0) {
@@ -64,7 +61,6 @@ export function ExperienceSection() {
       return Math.min(current, experienceEntries.length - 1);
     });
   }, [experienceEntries]);
-  /* eslint-enable react-hooks/set-state-in-effect */
 
   const handleIndexChange = useCallback((next: number) => {
     if (!Number.isNaN(next)) {
@@ -282,7 +278,6 @@ function DetailsCard({
   theme,
   knownSkillsAttributes,
 }: Readonly<DetailsCardProps>) {
-  const hydrated = useHydrated();
   const chipBaseClass =
     "chip flex items-center gap-2 !px-3 !py-1 text-xs font-medium";
   const linkedChipClass = cn(
@@ -302,9 +297,9 @@ function DetailsCard({
   return (
     <motion.div
       key={entry.company + entry.role}
-      initial={motionEntrance(hydrated, prefersReducedMotion, "enter")}
-      animate={hydrated && !prefersReducedMotion ? "center" : undefined}
-      variants={hydrated && !prefersReducedMotion ? variants : undefined}
+      initial={prefersReducedMotion ? false : "enter"}
+      animate="center"
+      variants={variants}
       transition={{ duration: 0.3, ease: "easeOut" }}
       className="flex-1 min-w-0"
     >

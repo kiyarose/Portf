@@ -1,4 +1,4 @@
-import { Icon } from "../components/Icon";
+import { Icon } from "@iconify/react";
 import { motion, useReducedMotion } from "framer-motion";
 import { useCallback, useState, useRef, useEffect } from "react";
 import type { MouseEvent } from "react";
@@ -11,27 +11,11 @@ import { themedClass } from "../utils/themeClass";
 import { cn } from "../utils/cn";
 import { navigateTo } from "../utils/navigation";
 import { getCspNonce } from "../utils/getCspNonce";
-import emailObfu from "../assets/emailobfu.png";
 
-const obfu1 = String.fromCodePoint(46);
-const obfu2 = String.fromCodePoint(64);
-const section1 = String.fromCodePoint(107, 105, 121, 97);
-const section2 = String.fromCodePoint(114, 111, 115, 101);
-const section3 = String.fromCodePoint(
-  115,
-  105,
-  108,
-  108,
-  121,
-  108,
-  105,
-  116,
-  116,
-  108,
-  101,
-);
-const section4 = String.fromCodePoint(116, 101, 99, 104);
-const EMAIL = `${section1}${obfu1}${section2}${obfu2}${section3}${obfu1}${section4}`;
+// Replace this with your public contact email or keep mailto-only behavior.
+const EMAIL =
+  (import.meta.env.VITE_PUBLIC_EMAIL as string) || "your.email@example.com";
+
 const STRICT_CORS_PATTERNS = ["cors", "cross-origin", "opaque response"];
 const GENERIC_CORS_PATTERNS = ["load failed", "failed to fetch"];
 
@@ -60,7 +44,9 @@ const getPageclipStyleElement = (): HTMLStyleElement | null => {
 
 const TURNSTILE_SCRIPT_SRC =
   "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
-const DEFAULT_TURNSTYLE_SITE_KEY = "0x4AAAAAADMD2Is_rwC3lRHH";
+// Default placeholders for template usage. Set VITE_TURNSTILE_SITE_KEY or
+// VITE_TURNSTYLE_SITE in your environment to enable captcha checks.
+const DEFAULT_TURNSTYLE_SITE_KEY = "";
 const rawTurnstileSiteKey =
   (import.meta.env.VITE_TURNSTILE_SITE_KEY ??
     import.meta.env.VITE_TURNSTYLE_SITE ??
@@ -72,7 +58,8 @@ const TURNSTILE_SITE_KEY = trimmedTurnstileSiteKey
   ? trimmedTurnstileSiteKey
   : undefined;
 
-const DEFAULT_PAGECLIP_API_KEY = "YLDHAohhRJSQJX3izF30KRLNxy5NYhiz";
+// Pageclip is optional — set VITE_PAGECLIP_API_KEY if you use a Pageclip form.
+const DEFAULT_PAGECLIP_API_KEY = "";
 const rawPageclipApiKey = (import.meta.env.VITE_PAGECLIP_API_KEY ??
   DEFAULT_PAGECLIP_API_KEY ??
   "") as string | undefined;
@@ -118,7 +105,7 @@ const loadTurnstile = (): Promise<void> => {
     return Promise.resolve();
   }
 
-  if (turnstilePromise) {
+  if (turnstilePromise !== null) {
     return turnstilePromise;
   }
 
@@ -224,6 +211,7 @@ type ContactIntroProps = {
 function ContactIntro({ copied, onCopy }: ContactIntroProps) {
   const { theme } = useTheme();
   const introCopyColor = themedClass(theme, "text-slate-600", "text-slate-300");
+  const emailColor = themedClass(theme, "text-slate-700", "text-slate-200");
   const copyButtonSurface = themedClass(
     theme,
     "!bg-white !text-accent border border-accent hover:bg-accent/10",
@@ -266,12 +254,7 @@ function ContactIntro({ copied, onCopy }: ContactIntroProps) {
         />
         {copied ? "Copied!" : "Copy my email"}
       </button>
-      <img
-        src={typeof emailObfu === "string" ? emailObfu : emailObfu.src}
-        alt="Email address"
-        className="h-[1.15em] w-auto select-none"
-        draggable={false}
-      />
+      <p className={cn("text-base font-semibold", emailColor)}>{EMAIL}</p>
       <a
         href="/privacy-policy"
         onClick={handlePrivacyPolicyClick}
@@ -409,7 +392,6 @@ function ContactForm({
   }, [ensurePageclipStyles, ensureTurnstileScript]);
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     ensureTurnstileScript();
   }, [ensureTurnstileScript]);
 
@@ -459,7 +441,6 @@ function ContactForm({
       turnstileWidgetIdRef.current = widgetId;
     } catch (error) {
       safeConsoleError("Failed to render Turnstile widget", error);
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setTurnstileError(
         "Unable to show the verification challenge. Please reload and try again.",
       );

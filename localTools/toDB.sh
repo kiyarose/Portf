@@ -1,4 +1,5 @@
-for f in /Users/kiyarose/localTools/tempdata/*.json; do
+## Place JSON fixtures into localTools/tempdata/ or update this path.
+for f in ./localTools/tempdata/*.json; do
   npx wrangler r2 object put "pourdata/data/$(basename "$f")" \
     --file "$f" \
     --content-type "application/json" \

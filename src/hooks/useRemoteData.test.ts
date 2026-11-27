@@ -6,7 +6,7 @@ import {
 
 describe("resolveRemoteDataBaseUrl", () => {
   it("returns null when URL is missing", () => {
-    expect(resolveRemoteDataBaseUrl()).toBeNull();
+    expect(resolveRemoteDataBaseUrl(undefined)).toBeNull();
     expect(resolveRemoteDataBaseUrl("")).toBeNull();
     expect(resolveRemoteDataBaseUrl("   ")).toBeNull();
   });
@@ -29,10 +29,10 @@ describe("resolveRemoteResourceUrl", () => {
     expect(
       resolveRemoteResourceUrl(
         "Experience",
-        "https://data.kiya.cat/data",
+        "https://data.your.website/data",
         "/__remote-data",
       ),
-    ).toBe("https://data.kiya.cat/data/Experience.json");
+    ).toBe("https://data.your.website/data/Experience.json");
   });
 
   it("falls back to the same-origin proxy path when no base is set", () => {

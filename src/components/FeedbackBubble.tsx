@@ -117,7 +117,7 @@ const loadTurnstile = (): Promise<void> => {
     return Promise.resolve();
   }
 
-  if (turnstilePromise) {
+  if (turnstilePromise !== null) {
     return turnstilePromise;
   }
 
@@ -635,8 +635,9 @@ function FeedbackForm({
           )}
         >
           <strong>Developer?</strong>{" "}
+          {/* Replace the repo link below with your project's repository URL */}
           <a
-            href="https://github.com/kiyarose/Portf"
+            href="https://github.com/example/portfolio"
             target="_blank"
             rel="noreferrer"
             className={cn(

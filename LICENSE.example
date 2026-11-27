@@ -1,0 +1,48 @@
+This repository includes a default `LICENSE` file (BSD 3-Clause) that must be preserved in source redistributions.
+
+Use this `LICENSE.example` as guidance before you change the active `LICENSE` file in your fork. Important: do not remove or replace the BSD-3-Clause notice or the original copyright
+attribution to Kiya Rose (2025) when redistributing or publishing derived works unless you have explicit permission from the copyright holder.
+
+1) Picking a license
+
+- Permissive licenses (BSD, MIT, Apache 2.0): allow others to reuse and redistribute your code with few restrictions. Apache 2.0 adds an explicit patent grant.
+- Copyleft licenses (GPL family): require downstream projects to publish derivative works under the same license.
+- Creative Commons licenses are sometimes used for non-code assets (images, documentation) but are not recommended for source code.
+
+Choose the license that aligns with how you want others to use and contribute to your project.
+
+2) Editing `LICENSE`
+
+- If you want to add your own copyright attribution in a fork, add your line below the original notice rather than replacing it.
+
+  Example (do not remove the original):
+
+  Copyright (c) 2025, Kiya Rose
+
+- Update the `package.json` `license` field to match the chosen license identifier (for example, `"BSD-3-Clause"`, `"MIT"`, `"Apache-2.0"`, or `"GPL-3.0-only"`).
+
+3) Preserving upstream attribution and notices
+
+- If you redistribute modified code that includes code from other projects, preserve their license headers and notices as required by the original license.
+- For BSD-3-Clause (the default here), keep the copyright notice, list of conditions, and disclaimer in source redistributions.
+
+4) If you change the license
+
+- Changing the license of a project you don't exclusively own may require permission from contributors or rights holders. If the template has many contributors, consider whether you need contributor consent.
+
+5) Security & contributor tooling notes
+
+- If you add security scanners, dependency checks, or other developer tooling that requires credentials, document the required environment variables in `.env.example` and do not commit secrets.
+- If your license choice or contributor policies require Contributor License Agreements (CLAs) or DCO signoffs, add the necessary templates (`CLA.md` or a sign-off checklist) and document how contributors should sign.
+
+6) Example quick steps to make the template your own
+
+- Fork the repo.
+- Update `LICENSE` (change copyright line and year).
+- Update `README.md` and `public/fallback/index.html` with your site name and contact info.
+- Replace `src/data/*` content with your portfolio data.
+- Update `package.json` `name` and `license` fields.
+
+---
+
+Keep the active `LICENSE` file in the repo for legal clarity; this `LICENSE.example` is only guidance and should not replace the real `LICENSE` file in downstream forks.

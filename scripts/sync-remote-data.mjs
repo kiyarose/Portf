@@ -1,14 +1,8 @@
 import { mkdir, rm, writeFile } from 'node:fs/promises'
 import { resolve } from 'node:path'
+import { PORTFOLIO_DATA_RESOURCES } from '../src/data/resources.mjs'
 
-const RESOURCES = [
-  'Socials',
-  'Experience',
-  'Education',
-  'Certifications',
-  'Projects',
-  'Skills'
-]
+const RESOURCES = PORTFOLIO_DATA_RESOURCES
 
 const OUTPUT_DIR = resolve(process.cwd(), 'public', '__remote-data')
 
@@ -33,24 +27,22 @@ async function main () {
     `[sync-remote-data] Syncing resources from ${remoteBaseUrl} to ${OUTPUT_DIR}`
   )
 
-  await Promise.all(
-    RESOURCES.map(async (resource) => {
-      const sourceUrl = `${remoteBaseUrl}/${resource}.json`
-      const response = await fetch(sourceUrl, {
-        headers: { Accept: 'application/json' }
-      })
-
-      if (!response.ok) {
-        throw new Error(
-          `[sync-remote-data] Failed to fetch ${resource}.json from ${sourceUrl} (status ${response.status})`
-        )
-      }
-
-      const payload = await response.text()
-      await writeFile(resolve(OUTPUT_DIR, `${resource}.json`), payload, 'utf8')
-      console.log(`[sync-remote-data] Synced ${resource}.json`)
+  for (const resource of RESOURCES) {
+    const sourceUrl = `${remoteBaseUrl}/${resource}.json`
+    const response = await fetch(sourceUrl, {
+      headers: { Accept: 'application/json' }
     })
-  )
+
+    if (!response.ok) {
+      throw new Error(
+        `[sync-remote-data] Failed to fetch ${resource}.json from ${sourceUrl} (status ${response.status})`
+      )
+    }
+
+    const payload = await response.text()
+    await writeFile(resolve(OUTPUT_DIR, `${resource}.json`), payload, 'utf8')
+    console.log(`[sync-remote-data] Synced ${resource}.json`)
+  }
 }
 
 main().catch((error) => {

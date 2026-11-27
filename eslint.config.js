@@ -48,8 +48,7 @@ const nodeConfig = {
   files: [
     '.lighthouserc.{js,cjs}',
     'src/tools/**/*.{js,cjs,mjs}',
-    'scripts/**/*.{js,cjs,mjs}',
-    'astro.config.mjs'
+    'scripts/**/*.{js,cjs,mjs}'
   ], // Support both .js and .cjs
   languageOptions: {
     ecmaVersion: 2020,
@@ -66,9 +65,6 @@ const browserScriptsConfig = {
     globals: {
       ...globals.browser
     }
-  },
-  rules: {
-    'no-redeclare': 'off'
   }
 }
 
@@ -84,7 +80,7 @@ const browserToolsTsConfig = {
 
 export default [
   {
-    ignores: ['dist', '.astro', 'src/assets/icon-bundle.generated.json']
+    ignores: ['dist']
   },
   browserScriptsConfig,
   browserToolsTsConfig,

@@ -7,7 +7,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        Outline the problem and desired outcome. Future-you will thank you for the clarity.
+        Outline the problem and desired outcome. I will thank you for the clarity.
   - type: textarea
     id: problem
     attributes:

@@ -22,7 +22,7 @@ body:
     attributes:
       label: "Affected pages or sections"
       description: "List routes, components, or assets that need updates."
-      placeholder: "Home hero copy, About bio, public/index.html gradient."
+      placeholder: "Home hero copy, About bio, public/fallback/index.html gradient."
     validations:
       required: true
   - type: textarea

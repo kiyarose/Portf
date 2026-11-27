@@ -26,6 +26,12 @@
 - Ensure licensing references match the BSD 3-Clause notice in the project root `LICENSE` (copyright © 2025, Kiya Rose).
 - Honor existing lint rules (avoid inline arrow handlers in JSX, limit nesting by extracting helpers, etc.).
 
+## Upstream template sync
+
+- Follow [`.github/UPSTREAM.md`](UPSTREAM.md) when merging [SillyLittleTech/Portf](https://github.com/SillyLittleTech/Portf).
+- Prefer **kiyarose** copies for paths in [`.github/upstream-sync.json`](upstream-sync.json) (`keepOurs`); use `npm run upstream:resolve-conflicts` after `git merge upstream/main`.
+- Preserve `data.kiya.cat` in security headers and kiyarose-specific deploy config (`wrangler.toml`, `.github/workflows/**`).
+
 ## Collaboration Notes
 
 - Favor small, composable helper components over deeply nested JSX trees (see `SiteHeader`/`SiteFooter` in `App.tsx`).

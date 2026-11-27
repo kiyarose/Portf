@@ -1,0 +1,85 @@
+name: Deploy to GitHub Pages
+
+# ---------------------------------------------------------------------------
+# TEMPLATE USERS – read before enabling this workflow
+# ---------------------------------------------------------------------------
+# This workflow builds the app with a sub-path base and deploys it to GitHub
+# Pages.  By default it targets /Portf/ (the showcase deployment at
+# https://projects.sillylittle.tech/Portf/).
+#
+# If you are using this as a template for your own project you will need to
+# update TWO values so that assets load from the correct path:
+#
+#   1. BASE_PATH (in the Build step below)
+#      Set this to "/<your-repo-name>/" — include both slashes.
+#      Example: if your repo is "github.com/jane/my-portfolio", use "/my-portfolio/".
+#      If you are deploying to a root domain (e.g. https://jane.github.io) or a
+#      custom domain pointed at the repo root, set BASE_PATH to "/" or
+#      remove the env block entirely.
+#
+#   2. The "base" value in astro.config.mjs
+#      Normally this is driven automatically by BASE_PATH above, so you
+#      only need to change it if you want to hard-code the path instead of
+#      using the environment variable.
+#
+# The navigation helper (src/utils/navigation.ts) reads import.meta.env.BASE_URL at
+# runtime and strips the prefix automatically — no other files need changing.
+# ---------------------------------------------------------------------------
+
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm clean-install --progress=false
+
+      - name: Build
+        # TEMPLATE USERS: change /Portf/ below to /<your-repo-name>/ — or
+        # remove the env block entirely when deploying to a root domain.
+        env:
+          BASE_PATH: /Portf/
+        run: npm run build:pages
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

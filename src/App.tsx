@@ -1,4 +1,4 @@
-import { Icon } from "./components/Icon";
+import { Icon } from "@iconify/react";
 import { useReducedMotion } from "framer-motion";
 import { useCallback } from "react";
 import { ScrollSpy } from "./components/ScrollSpy";
@@ -137,7 +137,7 @@ function LogoLink({ theme }: { theme: Theme }) {
         className="text-xl text-accent sm:text-2xl"
         aria-hidden="true"
       />
-      <AdminHint>Kiya Rose</AdminHint>
+      <AdminHint>Your Name</AdminHint>
     </a>
   );
 }

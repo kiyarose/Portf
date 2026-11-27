@@ -24,7 +24,6 @@ console.log()
 // Check that security-headers.config.ts exists
 console.log('🔍 Checking security-headers.config.ts...')
 const configPath = resolve(rootDir, 'security-headers.config.ts')
-// eslint-disable-next-line no-useless-assignment
 let configContent = ''
 try {
   configContent = readFileSync(configPath, 'utf-8')

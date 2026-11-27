@@ -1,4 +1,4 @@
-import { Icon } from "../components/Icon";
+import { Icon } from "@iconify/react";
 import { motion, useReducedMotion } from "framer-motion";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import type { ChangeEvent } from "react";
@@ -13,9 +13,7 @@ import {
 import { getSkillIcon } from "../data/skills";
 import { useTheme } from "../hooks/useTheme";
 import { useTranslation } from "../hooks/useTranslation";
-import { useHydrated } from "../hooks/useHydrated";
 import { useRemoteData } from "../hooks/useRemoteData";
-import { motionEntrance } from "../utils/motionSsr";
 import type { Theme } from "../providers/theme-context";
 import { themedClass } from "../utils/themeClass";
 import { cn } from "../utils/cn";
@@ -41,7 +39,6 @@ export function EducationSection() {
   );
 
   // Clamp activeIndex when educationEntries change
-  /* eslint-disable react-hooks/set-state-in-effect */
   useEffect(() => {
     setActiveIndex((current) => {
       if (educationEntries.length === 0) {
@@ -50,7 +47,6 @@ export function EducationSection() {
       return Math.min(current, educationEntries.length - 1);
     });
   }, [educationEntries]);
-  /* eslint-enable react-hooks/set-state-in-effect */
 
   const handleSelectChange = useCallback(
     (event: ChangeEvent<HTMLSelectElement>) => {
@@ -103,10 +99,9 @@ function EducationCard({
   theme,
   t,
 }: EducationCardProps) {
-  const timelineEntries = options.length > 0 ? options : educationFallback;
   const safeEntry =
-    timelineEntries.length > 0
-      ? timelineEntries[Math.min(activeIndex, timelineEntries.length - 1)]
+    options.length > 0
+      ? options[Math.min(activeIndex, options.length - 1)]
       : educationPlaceholder[0];
 
   if (!safeEntry) {
@@ -126,7 +121,7 @@ function EducationCard({
 
       <div className="flex flex-col gap-6 md:flex-row md:gap-10">
         <TimelineColumn
-          options={timelineEntries}
+          options={options}
           activeIndex={activeIndex}
           onChange={onChange}
           theme={theme}
@@ -212,7 +207,6 @@ function DetailsCard({
   variants,
   theme,
 }: DetailsCardProps) {
-  const hydrated = useHydrated();
   const containerSurface = themedClass(
     theme,
     "bg-accent/10 text-slate-700",
@@ -234,9 +228,9 @@ function DetailsCard({
     <div className="flex-1">
       <motion.div
         key={entry.school}
-        initial={motionEntrance(hydrated, prefersReducedMotion, "enter")}
-        animate={hydrated && !prefersReducedMotion ? "center" : undefined}
-        variants={hydrated && !prefersReducedMotion ? variants : undefined}
+        initial={prefersReducedMotion ? false : "enter"}
+        animate="center"
+        variants={prefersReducedMotion ? undefined : variants}
         transition={{ duration: 0.5, ease: "easeOut" }}
         className={cn("rounded-2xl p-6", containerSurface)}
       >

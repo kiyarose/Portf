@@ -119,7 +119,8 @@ function SkillsBoard({
   onDragEnd,
   debugAttributes,
 }: SkillsBoardProps) {
-  const developingSkills = new Set(["Gaining Med Admin skills"]);
+  // Default set of developing/in-progress skills. Edit or remove in your fork.
+  const developingSkills = new Set(["GraphQL"]);
 
   return (
     <DndContext
@@ -156,8 +157,10 @@ export function SkillsSection() {
       fallbackData: skillsFallback,
       placeholderData: skillsPlaceholder,
     });
+  // LocalStorage key for skills order. Rename if you fork the repo to avoid
+  // collisions with other installs in the same browser profile.
   const [skills, setSkills] = useLocalStorage<string[]>(
-    "kiya-skills-order",
+    "template-skills-order",
     skillsFallback,
   );
   const prefersReducedMotion = useReducedMotion() ?? false;

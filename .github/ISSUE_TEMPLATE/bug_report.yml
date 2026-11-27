@@ -8,7 +8,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        Thanks for logging a bug! Fill out the details below so future-you can knock it out fast.
+        Thanks for logging a bug! Fill out the details below so I can review it and knock it out fast.
   - type: input
     id: scope
     attributes:
