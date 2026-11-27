@@ -1,0 +1,43 @@
+{
+  "upstream": {
+    "owner": "SillyLittleTech",
+    "repo": "Portf",
+    "url": "https://github.com/SillyLittleTech/Portf.git",
+    "defaultBranch": "main"
+  },
+  "lastMergedUpstreamSha": null,
+  "lastMergedAt": null,
+  "keepOurs": [
+    "src/data/**",
+    "src/translations/**",
+    "public/data/**",
+    "README.md",
+    "CONTRIBUTING.md",
+    "SECURITY.md",
+    ".github/workflows/**",
+    ".github/UPSTREAM.md",
+    ".github/upstream-sync.json",
+    "wrangler.toml",
+    ".firebaserc",
+    "firebase.json",
+    "security-headers.config.ts",
+    "public/_headers",
+    "public/_redirects",
+    "public/404.html",
+    "scripts/publish-r2-data.mjs",
+    "scripts/generate-icon-bundle.mjs",
+    "vite.tools.config.mjs",
+    "vite-build-plugins.mjs",
+    "admin-assets/**",
+    "localTools/**"
+  ],
+  "verifyAfterMerge": {
+    "mustContain": {
+      "security-headers.config.ts": ["data.kiya.cat"]
+    }
+  },
+  "npmScripts": {
+    "status": "upstream:status",
+    "resolveConflicts": "upstream:resolve-conflicts"
+  }
+}

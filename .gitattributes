@@ -1,2 +1,26 @@
 # Auto detect text files and perform LF normalization
 * text=auto
+
+# kiyarose bespoke: prefer our copy on merge conflicts (requires: git config merge.ours.driver true)
+src/data/** merge=ours
+src/translations/** merge=ours
+public/data/** merge=ours
+README.md merge=ours
+CONTRIBUTING.md merge=ours
+SECURITY.md merge=ours
+.github/workflows/** merge=ours
+.github/UPSTREAM.md merge=ours
+.github/upstream-sync.json merge=ours
+wrangler.toml merge=ours
+.firebaserc merge=ours
+firebase.json merge=ours
+security-headers.config.ts merge=ours
+public/_headers merge=ours
+public/_redirects merge=ours
+public/404.html merge=ours
+scripts/publish-r2-data.mjs merge=ours
+scripts/generate-icon-bundle.mjs merge=ours
+vite.tools.config.mjs merge=ours
+vite-build-plugins.mjs merge=ours
+admin-assets/** merge=ours
+localTools/** merge=ours

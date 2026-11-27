@@ -22,6 +22,32 @@ git remote set-url upstream https://github.com/SillyLittleTech/Portf.git
 git fetch upstream
 ```
 
+## One-time: auto-keep bespoke files on merge
+
+Git can prefer **your** copy when both sides changed the same path. Enable once per clone:
+
+```bash
+git config merge.ours.driver true
+```
+
+Paths are listed in [`.gitattributes`](../.gitattributes) (`merge=ours`) and in [`.github/upstream-sync.json`](upstream-sync.json) (`keepOurs` globs).
+
+## Machine-readable manifest
+
+[`.github/upstream-sync.json`](upstream-sync.json) records the upstream remote, last merged upstream SHA, bespoke path globs, and post-merge checks (for example `data.kiya.cat` in `security-headers.config.ts`).
+
+After a successful sync PR, update `lastMergedUpstreamSha` and `lastMergedAt` in that file.
+
+## NPM helpers
+
+```bash
+npm run upstream:status              # commits ahead/behind (exit 1 if upstream has new commits)
+npm run upstream:status -- --stat    # include diff stat
+npm run upstream:status -- --json    # machine-readable output
+
+npm run upstream:resolve-conflicts   # after merge: git checkout --ours for keepOurs paths, then verify CSP markers
+```
+
 ## Safe sync workflow
 
 ```bash
@@ -29,7 +55,9 @@ git fetch upstream
 git checkout main
 git pull origin main
 git checkout -b sync/upstream-YYYYMMDD
+npm run upstream:status -- --stat    # optional: see what you are about to merge
 git merge upstream/main
+npm run upstream:resolve-conflicts   # then fix any remaining conflicts by hand
 ```
 
 Resolve conflicts:
@@ -48,7 +76,10 @@ Then:
 npm ci
 npm test
 npm run build
+npm run verify:security-headers
 ```
+
+Confirm `connect-src` still includes `https://data.kiya.cat` in [`security-headers.config.ts`](../security-headers.config.ts) and [`public/_headers`](../public/_headers). Update `lastMergedUpstreamSha` in [`upstream-sync.json`](upstream-sync.json).
 
 Open a PR on **kiyarose/Portf**; do not merge `upstream/main` straight to `main` without review.
 
