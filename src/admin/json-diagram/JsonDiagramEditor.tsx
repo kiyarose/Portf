@@ -48,11 +48,20 @@ function NodeEditModal({
         className="w-full max-w-xl rounded-3xl border border-slate-200/70 bg-white p-6 shadow-card dark:border-slate-700/60 dark:bg-slate-900"
         onClick={(event) => event.stopPropagation()}
       >
-        <motionSafeHeader
-          id="node-modal-title"
-          label={node.label}
-          node={node}
-        />
+        <div>
+          <h2
+            id="node-modal-title"
+            className="text-lg font-semibold text-slate-900 dark:text-slate-100"
+          >
+            {node.label || "Root"}
+          </h2>
+          <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+            <span className="rounded-full border border-accent/40 bg-accent/10 px-2 py-0.5 text-accent">
+              {node.type}
+            </span>
+            <span className="ml-2">{pathToDisplay(node.path)}</span>
+          </p>
+        </div>
         <textarea
           spellCheck={false}
           value={draft}
@@ -96,33 +105,6 @@ function NodeEditModal({
           </button>
         </div>
       </div>
-    </div>
-  );
-}
-
-function motionSafeHeader({
-  id,
-  label,
-  node,
-}: {
-  id: string;
-  label: string;
-  node: DiagramNode;
-}) {
-  return (
-    <div>
-      <h2
-        id={id}
-        className="text-lg font-semibold text-slate-900 dark:text-slate-100"
-      >
-        {label || "Root"}
-      </h2>
-      <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
-        <span className="rounded-full border border-accent/40 bg-accent/10 px-2 py-0.5 text-accent">
-          {node.type}
-        </span>
-        <span className="ml-2">{pathToDisplay(node.path)}</span>
-      </p>
     </div>
   );
 }

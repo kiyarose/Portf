@@ -1,4 +1,6 @@
-#!/usr/bin/env node
+/**
+ * @file Auto-resolves merge conflicts using keepOurs patterns from upstream-sync.json.
+ */
 import { execFileSync } from 'node:child_process'
 import { readFileSync, existsSync } from 'node:fs'
 import path from 'node:path'
@@ -39,6 +41,9 @@ function verifyMustContain (verifyAfterMerge) {
   }
 }
 
+/**
+ * @returns {number} shell exit code
+ */
 function main () {
   const manifest = loadUpstreamSyncManifest()
   const keepOurs = manifest.keepOurs ?? []
@@ -47,7 +52,7 @@ function main () {
   if (conflicted.length === 0) {
     console.log('No unmerged paths.')
     verifyMustContain(manifest.verifyAfterMerge)
-    return
+    return 0
   }
 
   let resolved = 0
@@ -69,14 +74,15 @@ function main () {
 
   if (remaining.length === 0) {
     verifyMustContain(manifest.verifyAfterMerge)
-  } else {
-    process.exit(1)
+    return 0
   }
+
+  return 1
 }
 
 try {
-  main()
+  process.exitCode = main()
 } catch (error) {
   console.error(error.message ?? error)
-  process.exit(1)
+  process.exitCode = 1
 }

@@ -184,9 +184,13 @@ function assignPositions(
   }
 
   if (node.visibleChildren.length > 0) {
-    const first = node.visibleChildren[0]!;
-    const last = node.visibleChildren[node.visibleChildren.length - 1]!;
-    node.x = (first.x + last.x) / 2;
+    const first = node.visibleChildren[0];
+    const last = node.visibleChildren[node.visibleChildren.length - 1];
+    if (first !== undefined && last !== undefined) {
+      node.x = (first.x + last.x) / 2;
+    } else {
+      node.x = center;
+    }
   } else {
     node.x = center;
   }

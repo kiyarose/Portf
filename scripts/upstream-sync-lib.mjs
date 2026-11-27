@@ -1,3 +1,6 @@
+/**
+ * @file Shared helpers for kiyarose upstream sync CLI scripts.
+ */
 import { readFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import path from 'node:path'

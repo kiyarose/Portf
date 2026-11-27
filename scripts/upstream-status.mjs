@@ -1,4 +1,6 @@
-#!/usr/bin/env node
+/**
+ * @file Reports how far the local fork is ahead/behind the upstream Portf repo.
+ */
 import { execFileSync } from 'node:child_process'
 import { loadUpstreamSyncManifest, repoRoot } from './upstream-sync-lib.mjs'
 
@@ -19,6 +21,9 @@ function hasUpstreamRemote () {
   }
 }
 
+/**
+ * @returns {number} shell exit code
+ */
 function main () {
   const manifest = loadUpstreamSyncManifest()
   const branch = branchArg ?? git('rev-parse', '--abbrev-ref', 'HEAD')
@@ -35,14 +40,14 @@ function main () {
     } else {
       console.error(message)
     }
-    process.exit(2)
+    return 2
   }
 
   try {
     git('fetch', 'upstream', manifest.upstream.defaultBranch)
   } catch (error) {
     console.error('git fetch upstream failed:', error.message ?? error)
-    process.exit(1)
+    return 1
   }
 
   const aheadOfUs = git(
@@ -91,9 +96,12 @@ function main () {
     }
   }
 
-  if (upstreamAhead > 0) {
-    process.exit(1)
-  }
+  return upstreamAhead > 0 ? 1 : 0
 }
 
-main()
+try {
+  process.exitCode = main()
+} catch (error) {
+  console.error(error.message ?? error)
+  process.exitCode = 1
+}
