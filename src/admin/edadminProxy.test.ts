@@ -29,9 +29,7 @@ describe("edadminProxy", () => {
     expect(normalizeDataBaseUrl("  ")).toBeNull();
   });
 
-  const accessRequest = (
-    init: RequestInit & { body?: string } = {},
-  ): Request =>
+  const accessRequest = (init: RequestInit & { body?: string } = {}): Request =>
     new Request("http://localhost/", {
       ...init,
       headers: {
