@@ -56,7 +56,7 @@ export function useAnimatedScroll(options: AnimatedScrollOptions = {}) {
         });
 
         // Trigger reflow to ensure style changes are applied
-        main.getBoundingClientRect();
+        void main.offsetHeight;
 
         // Phase 3: Fade in the target content with scale effect
         requestAnimationFrame(() => {

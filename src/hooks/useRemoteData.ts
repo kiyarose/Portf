@@ -2,9 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 
 // NOTE: Remote data is opt-in. Set VITE_REMOTE_DATA_URL to enable remote fetches.
 // When no URL is configured, components use their local fallback data directly.
-export function resolveRemoteDataBaseUrl(
-  rawUrl: string | undefined,
-): string | null {
+export function resolveRemoteDataBaseUrl(rawUrl: string | undefined): string | null {
   const normalized = (rawUrl ?? "").trim().replace(/\/$/, "");
   return normalized.length > 0 ? normalized : null;
 }
@@ -122,9 +120,7 @@ export function useRemoteData<TData>(
       };
     }
 
-    const cachedEntry = BYPASS_REMOTE_CACHE
-      ? null
-      : readCachedData<TData>(resource);
+    const cachedEntry = BYPASS_REMOTE_CACHE ? null : readCachedData<TData>(resource);
     const cacheIsFresh = cachedEntry
       ? isCacheFresh(cachedEntry.cachedAt)
       : false;
@@ -250,7 +246,9 @@ function parseRemotePayload<TData>(raw: string, resource: string): TData {
 function unwrapRemotePayload<TData>(payload: unknown, resource: string): TData {
   if (payload && typeof payload === "object" && !Array.isArray(payload)) {
     const source = payload as Record<string, unknown>;
-    const entries = Object.entries(source).filter(([key]) => key !== "__meta");
+    const entries = Object.entries(source).filter(
+      ([key]) => key !== "__meta",
+    );
 
     if (entries.length === 1) {
       return entries[0][1] as TData;
@@ -274,20 +272,12 @@ function unwrapRemotePayload<TData>(payload: unknown, resource: string): TData {
     const firstFallback = entries.find(([key]) =>
       key.toLowerCase().endsWith("fallback"),
     );
-    if (firstFallback?.[1] !== undefined) {
+    if (firstFallback && firstFallback[1] !== undefined) {
       return firstFallback[1] as TData;
     }
   }
 
   return payload as TData;
-}
-
-function trimTrailingBackslashes(line: string): string {
-  let end = line.length;
-  while (end > 0 && line.charCodeAt(end - 1) === 92) {
-    end -= 1;
-  }
-  return line.slice(0, end);
 }
 
 // Some upstream data files were saved from TextEdit and ship as RTF even though
@@ -360,9 +350,7 @@ function extractJsonFromRtf(raw: string): string | null {
         const hex = body.slice(index + 2, index + 4);
         if (/^[0-9a-fA-F]{2}$/.test(hex)) {
           const code = Number.parseInt(hex, 16);
-          result +=
-            cp1252Map[code] ??
-            String.fromCodePoint(Number.isFinite(code) ? code : 0);
+          result += cp1252Map[code] ?? String.fromCharCode(code);
           index += 3;
           continue;
         }
@@ -435,7 +423,7 @@ function extractJsonFromRtf(raw: string): string | null {
 
   sanitized = sanitized
     .split("\n")
-    .map((line) => trimTrailingBackslashes(line).trimEnd())
+    .map((line) => line.replace(/\\+$/u, "").trimEnd())
     .join("\n")
     .trim();
 

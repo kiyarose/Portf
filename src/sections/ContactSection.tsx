@@ -13,8 +13,7 @@ import { navigateTo } from "../utils/navigation";
 import { getCspNonce } from "../utils/getCspNonce";
 
 // Replace this with your public contact email or keep mailto-only behavior.
-const EMAIL =
-  (import.meta.env.VITE_PUBLIC_EMAIL as string) || "your.email@example.com";
+const EMAIL = (import.meta.env.VITE_PUBLIC_EMAIL as string) || "your.email@example.com";
 
 const STRICT_CORS_PATTERNS = ["cors", "cross-origin", "opaque response"];
 const GENERIC_CORS_PATTERNS = ["load failed", "failed to fetch"];
@@ -105,7 +104,7 @@ const loadTurnstile = (): Promise<void> => {
     return Promise.resolve();
   }
 
-  if (turnstilePromise !== null) {
+  if (turnstilePromise) {
     return turnstilePromise;
   }
 
@@ -627,19 +626,15 @@ function ContactForm({
     ],
   );
 
-  useEffect(() => {
-    if (!import.meta.env.DEV) {
-      return;
-    }
-    if (!pageclipApiKey) {
-      safeConsoleError("Contact form configuration error: API key not found");
-    }
-    if (!turnstileSiteKey) {
-      safeConsoleError(
-        "Contact form configuration error: Turnstile site key not found. Set VITE_TURNSTILE_SITE_KEY or VITE_TURNSTYLE_SITE.",
-      );
-    }
-  }, [pageclipApiKey, turnstileSiteKey]);
+  if (!pageclipApiKey) {
+    safeConsoleError("Contact form configuration error: API key not found");
+  }
+
+  if (!turnstileSiteKey) {
+    safeConsoleError(
+      "Contact form configuration error: Turnstile site key not found. Set VITE_TURNSTILE_SITE_KEY or VITE_TURNSTYLE_SITE.",
+    );
+  }
 
   return (
     <form

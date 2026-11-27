@@ -1,4 +1,4 @@
-import { useId } from "react";
+import { useId, useMemo } from "react";
 import { generateBuildLabel } from "../data/build";
 import { useTheme } from "../hooks/useTheme";
 import AdminHint from "./AdminHint";
@@ -8,7 +8,7 @@ import { themedClass } from "../utils/themeClass";
 export function SiteFooter() {
   const { theme } = useTheme();
   const currentYear = new Date().getFullYear();
-  const buildLabel = generateBuildLabel({ stableRenderSuffix: true });
+  const buildLabel = useMemo(() => generateBuildLabel(), []);
   const buildTooltipId = useId();
   const footerSurface = themedClass(
     theme,
@@ -66,10 +66,10 @@ function FooterBranding({
   const brandingColor = themedClass(theme, "text-slate-600", "text-slate-300");
   return (
     <span className={`inline-flex items-center gap-1 ${brandingColor}`}>
-      <span className="text-base text-accent">©</span>
-      <span>{currentYear}</span>
-      {/* Replace the name below with your display name. AdminHint supports a long-press link to an admin URL. */}
-      <AdminHint>Your Name</AdminHint>
+  <span className="text-base text-accent">©</span>
+  <span>{currentYear}</span>
+  {/* Replace the name below with your display name. AdminHint supports a long-press link to an admin URL. */}
+  <AdminHint>Your Name</AdminHint>
     </span>
   );
 }

@@ -84,10 +84,7 @@ export function formatEditorValue(value: unknown): string {
   return JSON.stringify(value, null, 2);
 }
 
-export function parseEditorValue(
-  rawValue: string,
-  currentValue: unknown,
-): unknown {
+export function parseEditorValue(rawValue: string, currentValue: unknown): unknown {
   const trimmed = rawValue.trim();
   if (trimmed === "") {
     return "";
@@ -184,13 +181,9 @@ function assignPositions(
   }
 
   if (node.visibleChildren.length > 0) {
-    const first = node.visibleChildren[0];
-    const last = node.visibleChildren[node.visibleChildren.length - 1];
-    if (first !== undefined && last !== undefined) {
-      node.x = (first.x + last.x) / 2;
-    } else {
-      node.x = center;
-    }
+    const first = node.visibleChildren[0]!;
+    const last = node.visibleChildren[node.visibleChildren.length - 1]!;
+    node.x = (first.x + last.x) / 2;
   } else {
     node.x = center;
   }
@@ -251,9 +244,7 @@ export function setValueAtPath(
       throw new Error("Invalid array path segment.");
     }
     clone[head] =
-      rest.length === 0
-        ? newValue
-        : setValueAtPath(clone[head], rest, newValue);
+      rest.length === 0 ? newValue : setValueAtPath(clone[head], rest, newValue);
     return clone;
   }
 
@@ -281,4 +272,95 @@ export function createDiagramFromData(
   const root = buildTree(data, "root", []);
   const nodes = layoutTree(root, collapsed);
   return { root, nodes };
+}
+
+export function getValueAtPath(
+  root: unknown,
+  path: JsonPathSegment[],
+): unknown {
+  let current: unknown = root;
+  for (const segment of path) {
+    if (current === null || current === undefined) {
+      return undefined;
+    }
+    if (typeof current !== "object") {
+      return undefined;
+    }
+    if (Array.isArray(current)) {
+      current =
+        typeof segment === "number" ? current[segment] : undefined;
+    } else {
+      current = (current as Record<string, unknown>)[segment as string];
+    }
+  }
+  return current;
+}
+
+export function addObjectProperty(
+  root: unknown,
+  parentPath: JsonPathSegment[],
+  key: string,
+  initialValue: unknown = "",
+): unknown {
+  const trimmed = key.trim();
+  if (!trimmed) {
+    throw new Error("Property name is required.");
+  }
+  const parent =
+    parentPath.length === 0 ? root : getValueAtPath(root, parentPath);
+  if (!parent || typeof parent !== "object" || Array.isArray(parent)) {
+    throw new Error("Parent must be a plain object.");
+  }
+  if (Object.prototype.hasOwnProperty.call(parent, trimmed)) {
+    throw new Error(`Property "${trimmed}" already exists.`);
+  }
+  return setValueAtPath(root, [...parentPath, trimmed], initialValue);
+}
+
+export function addArrayItem(
+  root: unknown,
+  arrayPath: JsonPathSegment[],
+  initialValue: unknown = "",
+): unknown {
+  const target =
+    arrayPath.length === 0 ? root : getValueAtPath(root, arrayPath);
+  if (!Array.isArray(target)) {
+    throw new Error("Target must be an array.");
+  }
+  const index = target.length;
+  return setValueAtPath(root, [...arrayPath, index], initialValue);
+}
+
+export function removeAtPath(
+  root: unknown,
+  path: JsonPathSegment[],
+): unknown {
+  if (path.length === 0) {
+    throw new Error("Cannot remove the root value.");
+  }
+  const parentPath = path.slice(0, -1);
+  const last = path[path.length - 1]!;
+  const parent =
+    parentPath.length === 0 ? root : getValueAtPath(root, parentPath);
+
+  if (Array.isArray(parent) && typeof last === "number") {
+    const clone = [...parent];
+    clone.splice(last, 1);
+    return parentPath.length === 0
+      ? clone
+      : setValueAtPath(root, parentPath, clone);
+  }
+
+  if (parent && typeof parent === "object" && !Array.isArray(parent)) {
+    const record = { ...(parent as Record<string, unknown>) };
+    if (typeof last !== "string" || !(last in record)) {
+      throw new Error("Property not found.");
+    }
+    delete record[last];
+    return parentPath.length === 0
+      ? record
+      : setValueAtPath(root, parentPath, record);
+  }
+
+  throw new Error("Cannot remove this path.");
 }

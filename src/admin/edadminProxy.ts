@@ -10,9 +10,13 @@ export type EdadminEnv = {
 
 export {
   EDADMIN_API_PREFIX,
+  EDADMIN_STAGE_HEADER,
   MAX_EDADMIN_BODY_BYTES,
   handleEdadminRequest,
   isEdadminEnabled,
+  jsonErrorResponse,
   normalizeDataBaseUrl,
   parseEdadminResource,
+  resolveAuthScheme,
+  resolveUpstreamToken,
 } from "../../functions/lib/edadminProxy.mjs";

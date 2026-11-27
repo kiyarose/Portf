@@ -1,14 +1,18 @@
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import clsx from "clsx";
+import { useTheme } from "../../hooks/useTheme";
 import {
   ROOT_KEY,
   NODE_HEIGHT,
   NODE_WIDTH,
+  addArrayItem,
+  addObjectProperty,
   createDiagramFromData,
   findNodeByPathKey,
   formatEditorValue,
   parseEditorValue,
   pathToDisplay,
+  removeAtPath,
   setValueAtPath,
   type DiagramNode,
 } from "./jsonTree";
@@ -18,10 +22,35 @@ const MIN_SCALE = 0.25;
 const MAX_SCALE = 4;
 const DIAGRAM_PADDING = 40;
 
+const DIAGRAM_THEME = {
+  light: {
+    nodeFill: "#ffffff",
+    nodeMutedFill: "rgba(148, 163, 184, 0.14)",
+    labelFill: "#0f172a",
+    summaryFill: "#64748b",
+    edgeStroke: "rgba(148, 163, 184, 0.55)",
+    nodeStroke: "rgba(148, 163, 184, 0.45)",
+  },
+  dark: {
+    nodeFill: "#1e293b",
+    nodeMutedFill: "rgba(51, 65, 85, 0.85)",
+    labelFill: "#f1f5f9",
+    summaryFill: "#94a3b8",
+    edgeStroke: "rgba(148, 163, 184, 0.4)",
+    nodeStroke: "rgba(148, 163, 184, 0.35)",
+  },
+} as const;
+
 type JsonDiagramEditorProps = {
   data: unknown;
   onChange: (next: unknown) => void;
   className?: string;
+};
+
+type ContextMenuState = {
+  x: number;
+  y: number;
+  node: DiagramNode | null;
 };
 
 function NodeEditModal({
@@ -72,9 +101,7 @@ function NodeEditModal({
           className="mt-4 min-h-[220px] w-full rounded-2xl border border-slate-200 bg-slate-50 p-4 font-mono text-sm text-slate-900 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100"
         />
         {error ? (
-          <p className="mt-2 text-sm text-rose-600 dark:text-rose-400">
-            {error}
-          </p>
+          <p className="mt-2 text-sm text-rose-600 dark:text-rose-400">{error}</p>
         ) : null}
         <div className="mt-4 flex flex-wrap justify-end gap-2">
           <button
@@ -109,16 +136,93 @@ function NodeEditModal({
   );
 }
 
+function ContextMenu({
+  menu,
+  onClose,
+  onAction,
+}: {
+  menu: ContextMenuState;
+  onClose: () => void;
+  onAction: (action: string) => void;
+}) {
+  const node = menu.node;
+  const value = node?.value;
+  const canAddProperty =
+    node &&
+    value !== null &&
+    typeof value === "object" &&
+    !Array.isArray(value);
+  const canAddArrayItem = node && Array.isArray(value);
+  const canDelete = node && node.path.length > 0;
+
+  return (
+    <>
+      <div className="fixed inset-0 z-40" onClick={onClose} onContextMenu={onClose} />
+      <div
+        className="fixed z-50 min-w-[168px] rounded-2xl border border-slate-200/80 bg-white py-1 shadow-card dark:border-slate-700 dark:bg-slate-900"
+        style={{ left: menu.x, top: menu.y }}
+        role="menu"
+      >
+        {node ? (
+          <>
+            <button
+              type="button"
+              className="block w-full px-4 py-2 text-left text-sm text-slate-800 hover:bg-slate-100 dark:text-slate-100 dark:hover:bg-slate-800"
+              onClick={() => onAction("edit")}
+            >
+              Edit value
+            </button>
+            {canAddProperty ? (
+              <button
+                type="button"
+                className="block w-full px-4 py-2 text-left text-sm text-slate-800 hover:bg-slate-100 dark:text-slate-100 dark:hover:bg-slate-800"
+                onClick={() => onAction("addProperty")}
+              >
+                Add property…
+              </button>
+            ) : null}
+            {canAddArrayItem ? (
+              <button
+                type="button"
+                className="block w-full px-4 py-2 text-left text-sm text-slate-800 hover:bg-slate-100 dark:text-slate-100 dark:hover:bg-slate-800"
+                onClick={() => onAction("addArrayItem")}
+              >
+                Add array item
+              </button>
+            ) : null}
+            {canDelete ? (
+              <button
+                type="button"
+                className="block w-full px-4 py-2 text-left text-sm text-rose-600 hover:bg-rose-50 dark:text-rose-400 dark:hover:bg-rose-950/40"
+                onClick={() => onAction("delete")}
+              >
+                Delete node
+              </button>
+            ) : null}
+          </>
+        ) : (
+          <p className="px-4 py-2 text-xs text-slate-500 dark:text-slate-400">
+            Right-click a node for actions
+          </p>
+        )}
+      </div>
+    </>
+  );
+}
+
 export default function JsonDiagramEditor({
   data,
   onChange,
   className,
 }: JsonDiagramEditorProps) {
+  const { theme } = useTheme();
+  const palette = DIAGRAM_THEME[theme];
   const containerRef = useRef<HTMLDivElement>(null);
   const [collapsed, setCollapsed] = useState<Map<string, boolean>>(
     () => new Map([[ROOT_KEY, false]]),
   );
   const [selectedKey, setSelectedKey] = useState<string | null>(null);
+  const [contextMenu, setContextMenu] = useState<ContextMenuState | null>(null);
   const [pan, setPan] = useState({ x: 0, y: 0, scale: INITIAL_SCALE });
   const dragRef = useRef<{
     active: boolean;
@@ -135,7 +239,7 @@ export default function JsonDiagramEditor({
 
   const bounds = useMemo(() => {
     if (nodes.length === 0) {
-      return { width: 400, height: 200 };
+      return { width: 400, height: 200, offsetX: 0, offsetY: 0 };
     }
     const xs = nodes.map((node) => node.x);
     const ys = nodes.map((node) => node.y);
@@ -151,9 +255,17 @@ export default function JsonDiagramEditor({
     };
   }, [nodes]);
 
-  const selectedNode = selectedKey
-    ? findNodeByPathKey(root, selectedKey)
-    : null;
+  const selectedNode = selectedKey ? findNodeByPathKey(root, selectedKey) : null;
+
+  useEffect(() => {
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setContextMenu(null);
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
 
   const toggleCollapsed = useCallback((pathKey: string) => {
     setCollapsed((current) => {
@@ -179,6 +291,51 @@ export default function JsonDiagramEditor({
     },
     [data, onChange, root],
   );
+
+  const runContextAction = useCallback(
+    (action: string) => {
+      const node = contextMenu?.node;
+      setContextMenu(null);
+      if (!node) {
+        return;
+      }
+      try {
+        if (action === "edit") {
+          setSelectedKey(node.pathKey);
+          return;
+        }
+        if (action === "addProperty") {
+          const key = window.prompt("New property name:");
+          if (!key) {
+            return;
+          }
+          onChange(addObjectProperty(data, node.path, key, ""));
+          return;
+        }
+        if (action === "addArrayItem") {
+          onChange(addArrayItem(data, node.path, ""));
+          return;
+        }
+        if (action === "delete") {
+          const label = pathToDisplay(node.path);
+          if (!window.confirm(`Delete ${label}?`)) {
+            return;
+          }
+          onChange(removeAtPath(data, node.path));
+          setSelectedKey(null);
+        }
+      } catch (error) {
+        window.alert(error instanceof Error ? error.message : "Action failed.");
+      }
+    },
+    [contextMenu?.node, data, onChange],
+  );
+
+  const openContextMenu = (event: React.MouseEvent, node: DiagramNode | null) => {
+    event.preventDefault();
+    event.stopPropagation();
+    setContextMenu({ x: event.clientX, y: event.clientY, node });
+  };
 
   const onPointerDown = (event: React.PointerEvent) => {
     if (event.button !== 0 && event.button !== 1) {
@@ -230,14 +387,11 @@ export default function JsonDiagramEditor({
     }
   }
 
-  const offsetX = bounds.offsetX ?? 0;
-  const offsetY = bounds.offsetY ?? 0;
-
   return (
     <div className={clsx("flex flex-col gap-3", className)}>
       <p className="text-xs text-slate-500 dark:text-slate-400">
-        {nodes.length} nodes — click a node to edit; double-click to expand or
-        collapse; drag background to pan; scroll to zoom.
+        {nodes.length} nodes — click to edit; right-click for add/delete;
+        double-click to expand/collapse; drag to pan; scroll to zoom.
       </p>
       <div
         ref={containerRef}
@@ -247,14 +401,11 @@ export default function JsonDiagramEditor({
         onPointerUp={onPointerUp}
         onPointerLeave={onPointerUp}
         onWheel={onWheel}
+        onContextMenu={(event) => openContextMenu(event, null)}
       >
-        <svg
-          className="h-full w-full touch-none"
-          role="img"
-          aria-label="JSON diagram"
-        >
+        <svg className="h-full w-full touch-none" role="img" aria-label="JSON diagram">
           <g transform={`translate(${pan.x} ${pan.y}) scale(${pan.scale})`}>
-            <g transform={`translate(${-offsetX} ${-offsetY})`}>
+            <g transform={`translate(${-bounds.offsetX} ${-bounds.offsetY})`}>
               {edges.map(({ from, to }) => (
                 <line
                   key={`${from.id}-${to.id}`}
@@ -262,7 +413,7 @@ export default function JsonDiagramEditor({
                   y1={from.y + NODE_HEIGHT / 2}
                   x2={to.x}
                   y2={to.y - NODE_HEIGHT / 2}
-                  stroke="rgba(148, 163, 184, 0.55)"
+                  stroke={palette.edgeStroke}
                   strokeWidth={2}
                 />
               ))}
@@ -276,6 +427,7 @@ export default function JsonDiagramEditor({
                     transform={`translate(${node.x - NODE_WIDTH / 2}, ${node.y})`}
                     className="cursor-pointer"
                     onClick={() => setSelectedKey(node.pathKey)}
+                    onContextMenu={(event) => openContextMenu(event, node)}
                     onDoubleClick={(event) => {
                       event.stopPropagation();
                       if (node.children.length > 0) {
@@ -289,15 +441,13 @@ export default function JsonDiagramEditor({
                       rx={18}
                       fill={
                         isSelected
-                          ? "rgba(249, 115, 22, 0.18)"
+                          ? "rgba(249, 115, 22, 0.22)"
                           : isCollapsed
-                            ? "rgba(148, 163, 184, 0.12)"
-                            : "white"
+                            ? palette.nodeMutedFill
+                            : palette.nodeFill
                       }
                       stroke={
-                        isSelected
-                          ? "rgb(236, 72, 153)"
-                          : "rgba(148, 163, 184, 0.45)"
+                        isSelected ? "rgb(236, 72, 153)" : palette.nodeStroke
                       }
                       strokeWidth={isSelected ? 2 : 1}
                     />
@@ -305,7 +455,9 @@ export default function JsonDiagramEditor({
                       x={NODE_WIDTH / 2}
                       y={22}
                       textAnchor="middle"
-                      className="fill-slate-900 text-[11px] font-semibold dark:fill-slate-100"
+                      fill={palette.labelFill}
+                      fontSize={11}
+                      fontWeight={600}
                     >
                       {node.label}
                     </text>
@@ -313,7 +465,8 @@ export default function JsonDiagramEditor({
                       x={NODE_WIDTH / 2}
                       y={42}
                       textAnchor="middle"
-                      className="fill-slate-500 text-[10px] dark:fill-slate-400"
+                      fill={palette.summaryFill}
+                      fontSize={10}
                     >
                       {node.summary}
                     </text>
@@ -324,6 +477,14 @@ export default function JsonDiagramEditor({
           </g>
         </svg>
       </div>
+
+      {contextMenu ? (
+        <ContextMenu
+          menu={contextMenu}
+          onClose={() => setContextMenu(null)}
+          onAction={runContextAction}
+        />
+      ) : null}
 
       {selectedNode ? (
         <NodeEditModal

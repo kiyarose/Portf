@@ -12,9 +12,7 @@ type ViewMode = "visual" | "source";
 
 export function DataAdminApp() {
   const enabled = isAdminEditorEnabled();
-  const [resource, setResource] = useState<string>(
-    PORTFOLIO_DATA_RESOURCES[0] ?? "Projects",
-  );
+  const [resource, setResource] = useState<string>(PORTFOLIO_DATA_RESOURCES[0] ?? "Projects");
   const [rawJson, setRawJson] = useState("");
   const [parsed, setParsed] = useState<unknown | null>(null);
   const [viewMode, setViewMode] = useState<ViewMode>("visual");
@@ -75,10 +73,13 @@ export function DataAdminApp() {
     }
   }, [parseError, rawJson, resource]);
 
-  const handleVisualChange = useCallback((next: unknown) => {
-    setParsed(next);
-    setRawJson(JSON.stringify(next, null, 2));
-  }, []);
+  const handleVisualChange = useCallback(
+    (next: unknown) => {
+      setParsed(next);
+      setRawJson(JSON.stringify(next, null, 2));
+    },
+    [],
+  );
 
   if (!enabled) {
     return (
@@ -141,10 +142,7 @@ export function DataAdminApp() {
             </select>
           </label>
 
-          <motionButton
-            onClick={handleLoad}
-            disabled={status.kind === "loading"}
-          >
+          <motionButton onClick={handleLoad} disabled={status.kind === "loading"}>
             Reload
           </motionButton>
           <motionButton

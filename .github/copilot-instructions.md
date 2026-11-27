@@ -1,36 +1,47 @@
-# Copilot Instructions
+# Copilot / AI instructions
 
-## Style & Architecture
+## Architecture
 
-- Keep the interface sleek and minimal with rounded Material-style cards, soft shadows, and translucent layers when depth is needed.
-- Accent colors lean warm orange/pink (`#f97316` / `#ec4899`) in light mode while dark mode stays slate—mirror those tones in new UI or gradients.
-- Use rounded Material Symbols for navigation, section headers, and social chips so iconography stays cohesive.
-- Compose Tailwind utility classes directly in JSX; components follow PascalCase, hooks use camelCase, and class names remain lowercase-kebab.
-- Respect `prefers-reduced-motion`, keeping Framer Motion animations subtle (short fade/slide transitions) and providing fallbacks for reduced motion preferences.
-- Maintain the light/dark theme toggle with animated sun/moon icons and ensure contrast targets accessibility best practices.
-- Apply the `.font-kiya` (Patrick Hand) accent whenever “Kiya Rose” appears in UI copy.
-- Keep the footer’s legal line consistent: dynamic current year, typographic © symbol, `.font-kiya` "Kiya Rose", and the “Crafted with React, Tailwind CSS, and Firebase.” tag.
-- Privacy and legal copy should source their “Last updated” value from `getBuildUpdatedAt()` in `src/data/build.ts` so the date reflects the current build—no hard-coded timestamps.
-- Everything should be in Canadian English or French English when possible, when there are conflicting versions of a singular term use the more specific one. (For example cheque instead of check)
+- Astro + React + TypeScript portfolio template.
+- Astro routes live in `src/pages/` (`index.astro`, `privacy-policy.astro`).
+- Main UI and section composition remain in React (`src/App.tsx`, `src/sections/*`).
+- Local content lives in `src/data/*` and translations in `src/translations/*`.
 
-## Environment Variables
+## Core conventions
 
-- Secrets use the `VITE_` prefix; note that `VITE_TURNSTYLE_SITE` (missing the second "t") is intentional and should not be renamed to `VITE_TURNSTILE_SITE`.
+- Keep the current visual layout and section order unless explicitly asked to redesign.
+- Prefer small, focused edits; preserve accessibility and reduced-motion behavior.
+- Use Tailwind utility classes in JSX and keep Material-like rounded card styling.
+- Use `.font-kiya` for the display-name accent style.
 
-## Quality Expectations
+## Remote data contract
 
-- Prefer fixes that resolve lint warnings, TypeScript errors, and obvious UX problems rather than adding placeholders.
-- When you touch code, scan the surrounding logic for latent bugs or smells and address them when feasible.
-- Align fixes with the guidance used by DeepSource, CodeFactor, and SonarQube: eliminate dead code, handle edge cases, simplify complex conditionals, and tighten null/undefined guards.
-- Preserve Firebase secrets by loading them from environment configuration—never commit credentials or hard-coded API keys.
-- Ensure licensing references match the BSD 3-Clause notice in the project root `LICENSE` (copyright © 2025, Kiya Rose).
-- Honor existing lint rules (avoid inline arrow handlers in JSX, limit nesting by extracting helpers, etc.).
+- `VITE_REMOTE_DATA_URL` enables remote JSON fetches. When set at build time, production fetches `${VITE_REMOTE_DATA_URL}/{Resource}.json` from the CDN (not only same-origin `__remote-data`).
+- Set it in Cloudflare Pages production so live data does not depend on `dist/__remote-data` copies.
+- If no remote URL is set, use local fallback data only.
+- On remote fetch failure, show placeholder data (do not silently swap to local fallback).
+- Keep this behavior centered in `src/hooks/useRemoteData.ts`.
+- Optional `/admin/edit` editor is gated by build flag `PF_ALLOW_NOEDIT=1`; saves go through `functions/api/edadmin/` with server secret `PF_EDADMIN_TOKEN`. Protect `/admin/*` with Cloudflare Access before enabling.
 
 ## Upstream template sync
 
 - Follow [`.github/UPSTREAM.md`](UPSTREAM.md) when merging [SillyLittleTech/Portf](https://github.com/SillyLittleTech/Portf).
 - Prefer **kiyarose** copies per [`.github/upstream-sync.json`](upstream-sync.json) (`keepOurs`); after `git merge upstream/main`, run `node scripts/resolve-upstream-conflicts.mjs` if `package.json` conflicts break `npm run`. Use `upstream:import-code` or `upstream:status -- --code-only` for allowlisted code-only sync.
 - Preserve `data.kiya.cat` in security headers and kiyarose-specific deploy config (`wrangler.toml`, `.github/workflows/**`).
+
+## Build and test commands
+
+- Install: `npm ci`
+- Dev: `npm run dev`
+- Lint/type check: `npm run lint`
+- Unit tests: `npm run test`
+- E2E tests: `npm run test:e2e`
+- Build: `npm run build`
+
+## Deploy targets
+
+- Cloudflare Pages: output `dist/`, config in `wrangler.toml`, headers in `public/_headers`.
+- GitHub Pages: use `npm run build:pages` with `BASE_PATH=/your-repo-name/`.
 
 ## Collaboration Notes
 
@@ -45,9 +56,11 @@
 - When you adjust repository guidance, update both `AGENTS.md` and this file so instructions stay in sync.
 - **DO NOT create random `.md` files** in the repository root. All technical documentation should be consolidated into `AGENTS.md` or this file (`.github/copilot-instructions.md`). The only `.md` files that should exist in the root are: `README.md`, `LICENSE` (if markdown), `CONTRIBUTING.md`, `SECURITY.md`, and `AGENTS.md`.
 
-## Security & ZAP Scanning
+## Security
 
-- All security headers are centrally configured in `security-headers.config.ts` and deployed via `public/_headers` (Cloudflare Pages), `firebase.json` (Firebase Hosting), and `vite.config.ts` (local preview).
+- Keep security headers centralized in `security-headers.config.ts`.
+- Keep parity checks working via `npm run verify:security-headers`.
+- `script-src` must include `'unsafe-inline'` after the Astro migration: Astro emits inline boot scripts for `client:load` islands and the theme flash-prevention script in `BaseLayout.astro`.
 - The ZAP workflow scans `https://kiya.cat` nightly; check `.zap-ignore` for known/accepted alerts.
 - When ZAP reports issues, verify headers are in `public/_headers` and deployed properly before adding to `.zap-ignore`.
 - Use `safeConsoleWarn()` and `safeConsoleError()` from `src/utils/errorSanitizer.ts` instead of raw console methods to prevent information disclosure.
