@@ -39,11 +39,9 @@ describe("jsonTree", () => {
     const root = { items: [{ title: "A" }] };
     const withKey = addObjectProperty(root, [], "newKey", "x");
     expect((withKey as { newKey: string }).newKey).toBe("x");
-    const withItem = addArrayItem(
-      { list: ["a"] },
-      ["list"],
-      "b",
-    ) as { list: string[] };
+    const withItem = addArrayItem({ list: ["a"] }, ["list"], "b") as {
+      list: string[];
+    };
     expect(withItem.list).toEqual(["a", "b"]);
   });
 

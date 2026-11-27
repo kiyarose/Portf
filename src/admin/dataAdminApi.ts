@@ -1,17 +1,18 @@
 import { PORTFOLIO_DATA_RESOURCES } from "../data/resources";
-import {
-  formatEdadminSaveError,
-  parseEdadminErrorResponse,
-} from "./saveError";
+import { formatEdadminSaveError, parseEdadminErrorResponse } from "./saveError";
 
 export { PORTFOLIO_DATA_RESOURCES };
 
 export function isAdminEditorEnabled(): boolean {
-  return typeof __PF_ALLOW_NOEDIT__ !== "undefined" && __PF_ALLOW_NOEDIT__ === true;
+  return (
+    typeof __PF_ALLOW_NOEDIT__ !== "undefined" && __PF_ALLOW_NOEDIT__ === true
+  );
 }
 
 export function resolveResourceReadUrl(resource: string): string {
-  const remoteBase = (import.meta.env.VITE_REMOTE_DATA_URL as string | undefined)
+  const remoteBase = (
+    import.meta.env.VITE_REMOTE_DATA_URL as string | undefined
+  )
     ?.trim()
     .replace(/\/$/, "");
 

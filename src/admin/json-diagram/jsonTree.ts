@@ -84,7 +84,10 @@ export function formatEditorValue(value: unknown): string {
   return JSON.stringify(value, null, 2);
 }
 
-export function parseEditorValue(rawValue: string, currentValue: unknown): unknown {
+export function parseEditorValue(
+  rawValue: string,
+  currentValue: unknown,
+): unknown {
   const trimmed = rawValue.trim();
   if (trimmed === "") {
     return "";
@@ -244,7 +247,9 @@ export function setValueAtPath(
       throw new Error("Invalid array path segment.");
     }
     clone[head] =
-      rest.length === 0 ? newValue : setValueAtPath(clone[head], rest, newValue);
+      rest.length === 0
+        ? newValue
+        : setValueAtPath(clone[head], rest, newValue);
     return clone;
   }
 
@@ -287,8 +292,7 @@ export function getValueAtPath(
       return undefined;
     }
     if (Array.isArray(current)) {
-      current =
-        typeof segment === "number" ? current[segment] : undefined;
+      current = typeof segment === "number" ? current[segment] : undefined;
     } else {
       current = (current as Record<string, unknown>)[segment as string];
     }
@@ -331,10 +335,7 @@ export function addArrayItem(
   return setValueAtPath(root, [...arrayPath, index], initialValue);
 }
 
-export function removeAtPath(
-  root: unknown,
-  path: JsonPathSegment[],
-): unknown {
+export function removeAtPath(root: unknown, path: JsonPathSegment[]): unknown {
   if (path.length === 0) {
     throw new Error("Cannot remove the root value.");
   }

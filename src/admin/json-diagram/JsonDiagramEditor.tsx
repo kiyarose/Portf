@@ -101,7 +101,9 @@ function NodeEditModal({
           className="mt-4 min-h-[220px] w-full rounded-2xl border border-slate-200 bg-slate-50 p-4 font-mono text-sm text-slate-900 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100"
         />
         {error ? (
-          <p className="mt-2 text-sm text-rose-600 dark:text-rose-400">{error}</p>
+          <p className="mt-2 text-sm text-rose-600 dark:text-rose-400">
+            {error}
+          </p>
         ) : null}
         <div className="mt-4 flex flex-wrap justify-end gap-2">
           <button
@@ -157,7 +159,11 @@ function ContextMenu({
 
   return (
     <>
-      <div className="fixed inset-0 z-40" onClick={onClose} onContextMenu={onClose} />
+      <div
+        className="fixed inset-0 z-40"
+        onClick={onClose}
+        onContextMenu={onClose}
+      />
       <div
         className="fixed z-50 min-w-[168px] rounded-2xl border border-slate-200/80 bg-white py-1 shadow-card dark:border-slate-700 dark:bg-slate-900"
         style={{ left: menu.x, top: menu.y }}
@@ -255,7 +261,9 @@ export default function JsonDiagramEditor({
     };
   }, [nodes]);
 
-  const selectedNode = selectedKey ? findNodeByPathKey(root, selectedKey) : null;
+  const selectedNode = selectedKey
+    ? findNodeByPathKey(root, selectedKey)
+    : null;
 
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
@@ -331,7 +339,10 @@ export default function JsonDiagramEditor({
     [contextMenu?.node, data, onChange],
   );
 
-  const openContextMenu = (event: React.MouseEvent, node: DiagramNode | null) => {
+  const openContextMenu = (
+    event: React.MouseEvent,
+    node: DiagramNode | null,
+  ) => {
     event.preventDefault();
     event.stopPropagation();
     setContextMenu({ x: event.clientX, y: event.clientY, node });
@@ -403,7 +414,11 @@ export default function JsonDiagramEditor({
         onWheel={onWheel}
         onContextMenu={(event) => openContextMenu(event, null)}
       >
-        <svg className="h-full w-full touch-none" role="img" aria-label="JSON diagram">
+        <svg
+          className="h-full w-full touch-none"
+          role="img"
+          aria-label="JSON diagram"
+        >
           <g transform={`translate(${pan.x} ${pan.y}) scale(${pan.scale})`}>
             <g transform={`translate(${-bounds.offsetX} ${-bounds.offsetY})`}>
               {edges.map(({ from, to }) => (
