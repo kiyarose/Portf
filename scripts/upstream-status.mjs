@@ -2,19 +2,20 @@
  * @file Reports how far the local fork is ahead/behind the upstream Portf repo.
  */
 import { execFileSync } from 'node:child_process'
-import { loadUpstreamSyncManifest, repoRoot } from './upstream-sync-lib.mjs'
+import {
+  GIT_EXECUTABLE,
+  loadUpstreamSyncManifest,
+  repoRoot
+} from './upstream-sync-lib.mjs'
 
 const jsonMode = process.argv.includes('--json')
 const statMode = process.argv.includes('--stat')
 const branchArg = process.argv.find((a) => a.startsWith('--branch='))?.slice(9)
-const trustedGitPath =
-  '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'
 
 function git (...args) {
-  return execFileSync('git', args, {
+  return execFileSync(GIT_EXECUTABLE, args, {
     cwd: repoRoot,
-    encoding: 'utf8',
-    env: { ...process.env, PATH: trustedGitPath }
+    encoding: 'utf8'
   }).trim()
 }
 

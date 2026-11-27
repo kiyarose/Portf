@@ -25,7 +25,13 @@ export function parseEdadminResource (resource) {
   if (!resource || typeof resource !== 'string') {
     return null
   }
-  const decoded = decodeURIComponent(resource).replace(/\.json$/i, '')
+  let decoded
+  try {
+    decoded = decodeURIComponent(resource)
+  } catch {
+    return null
+  }
+  decoded = decoded.replace(/\.json$/i, '')
   if (!/^[A-Za-z][A-Za-z0-9]*$/.test(decoded)) {
     return null
   }
@@ -57,6 +63,11 @@ export async function handleEdadminRequest (request, resourceName, env) {
       status: 405,
       headers: { Allow: 'PUT' }
     })
+  }
+
+  const accessJwt = request.headers.get('Cf-Access-Jwt-Assertion')?.trim()
+  if (!accessJwt) {
+    return new Response('Unauthorized', { status: 401 })
   }
 
   const resource = parseEdadminResource(resourceName)

@@ -5,19 +5,16 @@ import { execFileSync } from 'node:child_process'
 import { readFileSync, existsSync } from 'node:fs'
 import path from 'node:path'
 import {
+  GIT_EXECUTABLE,
   loadUpstreamSyncManifest,
   matchesKeepOurs,
   repoRoot
 } from './upstream-sync-lib.mjs'
 
-const trustedGitPath =
-  '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'
-
 function git (...args) {
-  return execFileSync('git', args, {
+  return execFileSync(GIT_EXECUTABLE, args, {
     cwd: repoRoot,
-    encoding: 'utf8',
-    env: { ...process.env, PATH: trustedGitPath }
+    encoding: 'utf8'
   }).trim()
 }
 

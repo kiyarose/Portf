@@ -1,4 +1,12 @@
-import resourceList from "./portfolio-resources.json" with { type: "json" };
+/** Keep in sync with ./portfolio-resources.json */
+const resourceList = [
+  "Socials",
+  "Experience",
+  "Education",
+  "Certifications",
+  "Projects",
+  "Skills",
+];
 
 export const PORTFOLIO_DATA_RESOURCES = Object.freeze([...resourceList]);
 
