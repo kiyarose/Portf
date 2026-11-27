@@ -14,7 +14,7 @@ function git (...args) {
   return execFileSync('git', args, {
     cwd: repoRoot,
     encoding: 'utf8',
-    env: { ...process.env, PATH: trustedGitPath },
+    env: { ...process.env, PATH: trustedGitPath }
   }).trim()
 }
 

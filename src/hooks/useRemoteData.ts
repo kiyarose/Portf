@@ -361,7 +361,8 @@ function extractJsonFromRtf(raw: string): string | null {
         if (/^[0-9a-fA-F]{2}$/.test(hex)) {
           const code = Number.parseInt(hex, 16);
           result +=
-            cp1252Map[code] ?? String.fromCodePoint(Number.isFinite(code) ? code : 0);
+            cp1252Map[code] ??
+            String.fromCodePoint(Number.isFinite(code) ? code : 0);
           index += 3;
           continue;
         }
