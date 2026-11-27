@@ -138,6 +138,116 @@ function NodeEditModal({
   );
 }
 
+function NewPropertyModal({
+  onClose,
+  onApply,
+}: {
+  onClose: () => void;
+  onApply: (key: string) => void;
+}) {
+  const [keyName, setKeyName] = useState("");
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4 backdrop-blur-sm"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="new-property-title"
+      onClick={onClose}
+    >
+      <div
+        className="w-full max-w-md rounded-3xl border border-slate-200/70 bg-white p-6 shadow-card dark:border-slate-700/60 dark:bg-slate-900"
+        onClick={(event) => event.stopPropagation()}
+      >
+        <h3
+          id="new-property-title"
+          className="text-lg font-semibold text-slate-900 dark:text-slate-100"
+        >
+          New property name
+        </h3>
+        <input
+          type="text"
+          value={keyName}
+          onChange={(event) => setKeyName(event.target.value)}
+          className="mt-4 w-full rounded-2xl border border-slate-200 bg-white px-4 py-2 text-sm text-slate-900 dark:border-slate-600 dark:bg-slate-950 dark:text-slate-100"
+          autoFocus
+        />
+        <div className="mt-4 flex justify-end gap-2">
+          <button
+            type="button"
+            onClick={onClose}
+            className="rounded-full px-4 py-2 text-sm text-slate-600 dark:text-slate-300"
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              const trimmed = keyName.trim();
+              if (trimmed) {
+                onApply(trimmed);
+              }
+            }}
+            className="rounded-full bg-accent px-4 py-2 text-sm font-medium text-white"
+          >
+            Add
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function DeleteConfirmModal({
+  label,
+  onClose,
+  onConfirm,
+}: {
+  label: string;
+  onClose: () => void;
+  onConfirm: () => void;
+}) {
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4 backdrop-blur-sm"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="delete-node-title"
+      onClick={onClose}
+    >
+      <div
+        className="w-full max-w-md rounded-3xl border border-slate-200/70 bg-white p-6 shadow-card dark:border-slate-700/60 dark:bg-slate-900"
+        onClick={(event) => event.stopPropagation()}
+      >
+        <h3
+          id="delete-node-title"
+          className="text-lg font-semibold text-slate-900 dark:text-slate-100"
+        >
+          Delete node?
+        </h3>
+        <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">
+          Delete {label}? This cannot be undone.
+        </p>
+        <div className="mt-4 flex justify-end gap-2">
+          <button
+            type="button"
+            onClick={onClose}
+            className="rounded-full px-4 py-2 text-sm text-slate-600 dark:text-slate-300"
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            onClick={onConfirm}
+            className="rounded-full bg-rose-600 px-4 py-2 text-sm font-medium text-white"
+          >
+            Delete
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function ContextMenu({
   menu,
   onClose,
@@ -229,6 +339,9 @@ export default function JsonDiagramEditor({
   );
   const [selectedKey, setSelectedKey] = useState<string | null>(null);
   const [contextMenu, setContextMenu] = useState<ContextMenuState | null>(null);
+  const [propertyTarget, setPropertyTarget] = useState<DiagramNode | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<DiagramNode | null>(null);
+  const [actionError, setActionError] = useState<string | null>(null);
   const [pan, setPan] = useState({ x: 0, y: 0, scale: INITIAL_SCALE });
   const dragRef = useRef<{
     active: boolean;
@@ -313,12 +426,7 @@ export default function JsonDiagramEditor({
           return;
         }
         if (action === "addProperty") {
-          // deepcode ignore JS-0052: opt-in admin editor uses native prompt
-          const key = window.prompt("New property name:");
-          if (!key) {
-            return;
-          }
-          onChange(addObjectProperty(data, node.path, key, ""));
+          setPropertyTarget(node);
           return;
         }
         if (action === "addArrayItem") {
@@ -326,17 +434,10 @@ export default function JsonDiagramEditor({
           return;
         }
         if (action === "delete") {
-          const label = pathToDisplay(node.path);
-          // deepcode ignore JS-0052: opt-in admin editor uses native confirm
-          if (!window.confirm(`Delete ${label}?`)) {
-            return;
-          }
-          onChange(removeAtPath(data, node.path));
-          setSelectedKey(null);
+          setDeleteTarget(node);
         }
       } catch (error) {
-        // deepcode ignore JS-0052: opt-in admin editor uses native alert
-        window.alert(error instanceof Error ? error.message : "Action failed.");
+        setActionError(error instanceof Error ? error.message : "Action failed.");
       }
     },
     [contextMenu?.node, data, onChange],
@@ -407,6 +508,14 @@ export default function JsonDiagramEditor({
         {nodes.length} nodes — click to edit; right-click for add/delete;
         double-click to expand/collapse; drag to pan; scroll to zoom.
       </p>
+      {actionError ? (
+        <p
+          className="rounded-2xl border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-800 dark:border-rose-900 dark:bg-rose-950/40 dark:text-rose-200"
+          role="alert"
+        >
+          {actionError}
+        </p>
+      ) : null}
       <div
         ref={containerRef}
         className="relative h-[min(520px,60vh)] overflow-hidden rounded-3xl border border-slate-200/70 bg-gradient-to-br from-slate-50 to-white shadow-inner dark:border-slate-700 dark:from-slate-950 dark:to-slate-900"
@@ -511,6 +620,44 @@ export default function JsonDiagramEditor({
           onApply={(value) => {
             applyNodeEdit(selectedNode.pathKey, value);
             setSelectedKey(null);
+          }}
+        />
+      ) : null}
+
+      {propertyTarget ? (
+        <NewPropertyModal
+          onClose={() => setPropertyTarget(null)}
+          onApply={(key) => {
+            try {
+              onChange(addObjectProperty(data, propertyTarget.path, key, ""));
+              setPropertyTarget(null);
+              setActionError(null);
+            } catch (error) {
+              setActionError(
+                error instanceof Error ? error.message : "Action failed.",
+              );
+              setPropertyTarget(null);
+            }
+          }}
+        />
+      ) : null}
+
+      {deleteTarget ? (
+        <DeleteConfirmModal
+          label={pathToDisplay(deleteTarget.path)}
+          onClose={() => setDeleteTarget(null)}
+          onConfirm={() => {
+            try {
+              onChange(removeAtPath(data, deleteTarget.path));
+              setSelectedKey(null);
+              setDeleteTarget(null);
+              setActionError(null);
+            } catch (error) {
+              setActionError(
+                error instanceof Error ? error.message : "Action failed.",
+              );
+              setDeleteTarget(null);
+            }
           }}
         />
       ) : null}

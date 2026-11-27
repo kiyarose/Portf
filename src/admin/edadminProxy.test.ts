@@ -77,8 +77,8 @@ describe("edadminProxy", () => {
   });
 
   it("forwards upstream 401 with structured body", async () => {
-    const fetchImpl = vi.fn(
-      async () => new Response("denied", { status: 401 }),
+    const fetchImpl = vi.fn(() =>
+      Promise.resolve(new Response("denied", { status: 401 })),
     );
     const response = await handleEdadminRequest(
       new Request("http://localhost/", { method: "PUT", body: "{}" }),

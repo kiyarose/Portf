@@ -358,11 +358,11 @@ export function removeAtPath(root: unknown, path: JsonPathSegment[]): unknown {
   }
 
   if (parent && typeof parent === "object" && !Array.isArray(parent)) {
-    const record = { ...(parent as Record<string, unknown>) };
-    if (typeof last !== "string" || !(last in record)) {
+    const source = parent as Record<string, unknown>;
+    if (typeof last !== "string" || !Object.hasOwn(source, last)) {
       throw new Error("Property not found.");
     }
-    delete record[last];
+    const { [last]: _removed, ...record } = source;
     return parentPath.length === 0
       ? record
       : setValueAtPath(root, parentPath, record);
