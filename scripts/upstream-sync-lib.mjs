@@ -1,6 +1,7 @@
 /**
  * @file Shared helpers for kiyarose upstream sync CLI scripts.
  */
+import { execFileSync } from 'node:child_process'
 import { readFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import path from 'node:path'
@@ -24,7 +25,45 @@ function escapeRegexLiteral (segment) {
   return segment.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 }
 
-export const GIT_EXECUTABLE = '/usr/bin/git'
+export const GIT_EXECUTABLE = process.env.GIT_EXECUTABLE ?? 'git'
+
+/**
+ * @param {...string} args
+ */
+export function gitAtRepo (...args) {
+  return execFileSync(GIT_EXECUTABLE, args, {
+    cwd: repoRoot,
+    encoding: 'utf8'
+  }).trim()
+}
+
+function normalizeGitRemoteUrl (url) {
+  return url
+    .replace(/\.git$/, '')
+    .replace(/^git@github\.com:/, 'https://github.com/')
+    .replace(/\/$/, '')
+    .toLowerCase()
+}
+
+/**
+ * Ensure the local clone has `upstream` pointing at the manifest URL (per-clone setup).
+ * @param {{ upstream: { url: string } }} manifest
+ * @returns {'added' | 'updated' | 'ok'}
+ */
+export function ensureUpstreamRemote (manifest) {
+  const url = manifest.upstream.url
+  const remotes = gitAtRepo('remote').split('\n').filter(Boolean)
+  if (!remotes.includes('upstream')) {
+    gitAtRepo('remote', 'add', 'upstream', url)
+    return 'added'
+  }
+  const current = gitAtRepo('remote', 'get-url', 'upstream')
+  if (normalizeGitRemoteUrl(current) !== normalizeGitRemoteUrl(url)) {
+    gitAtRepo('remote', 'set-url', 'upstream', url)
+    return 'updated'
+  }
+  return 'ok'
+}
 
 export function globMatch (pattern, filePath) {
   const normalized = filePath.replaceAll('\\', '/')

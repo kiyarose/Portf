@@ -4,12 +4,14 @@
 import { execFileSync } from 'node:child_process'
 import {
   GIT_EXECUTABLE,
+  ensureUpstreamRemote,
   loadUpstreamSyncManifest,
   repoRoot
 } from './upstream-sync-lib.mjs'
 
 const jsonMode = process.argv.includes('--json')
 const statMode = process.argv.includes('--stat')
+const skipRemoteSetup = process.argv.includes('--skip-remote-setup')
 const branchArg = process.argv.find((a) => a.startsWith('--branch='))?.slice(9)
 
 function git (...args) {
@@ -37,17 +39,36 @@ function main () {
   const upstreamRef = `upstream/${manifest.upstream.defaultBranch}`
 
   if (!hasUpstreamRemote()) {
-    const message =
-      'No `upstream` remote. Run: git remote add upstream ' +
-      manifest.upstream.url
-    if (jsonMode) {
-      console.log(
-        JSON.stringify({ error: message, upstreamAhead: null }, null, 2)
-      )
-    } else {
-      console.error(message)
+    if (skipRemoteSetup) {
+      const message =
+        'No `upstream` remote. Run: npm run upstream:setup (or: git remote add upstream ' +
+        manifest.upstream.url +
+        ')'
+      if (jsonMode) {
+        console.log(
+          JSON.stringify({ error: message, upstreamAhead: null }, null, 2)
+        )
+      } else {
+        console.error(message)
+      }
+      return 2
     }
-    return 2
+    const setup = ensureUpstreamRemote(manifest)
+    if (setup === 'added') {
+      const note = `Added git remote \`upstream\` → ${manifest.upstream.url}`
+      if (jsonMode) {
+        console.error(note)
+      } else {
+        console.log(note)
+      }
+    } else if (setup === 'updated') {
+      const note = `Updated \`upstream\` remote URL → ${manifest.upstream.url}`
+      if (jsonMode) {
+        console.error(note)
+      } else {
+        console.log(note)
+      }
+    }
   }
 
   try {

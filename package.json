@@ -27,6 +27,7 @@
     "data:to-ts": "node src/tools/data-converter.mjs to-ts",
     "data:publish": "node scripts/publish-r2-data.mjs",
     "data:sync:remote": "node scripts/sync-remote-data.mjs",
+    "upstream:setup": "node scripts/upstream-setup.mjs",
     "upstream:status": "node scripts/upstream-status.mjs",
     "upstream:resolve-conflicts": "node scripts/resolve-upstream-conflicts.mjs"
   },
