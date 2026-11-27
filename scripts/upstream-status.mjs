@@ -4,7 +4,7 @@ import { loadUpstreamSyncManifest, repoRoot } from "./upstream-sync-lib.mjs";
 
 const jsonMode = process.argv.includes("--json");
 const statMode = process.argv.includes("--stat");
-const branch = process.argv.find((a) => a.startsWith("--branch="))?.slice(9) ?? "main";
+const branchArg = process.argv.find((a) => a.startsWith("--branch="))?.slice(9);
 
 function git (...args) {
   return execFileSync("git", args, { cwd: repoRoot, encoding: "utf8" }).trim();
@@ -21,6 +21,7 @@ function hasUpstreamRemote () {
 
 function main () {
   const manifest = loadUpstreamSyncManifest();
+  const branch = branchArg ?? git("rev-parse", "--abbrev-ref", "HEAD");
   const upstreamRef = `upstream/${manifest.upstream.defaultBranch}`;
 
   if (!hasUpstreamRemote()) {
@@ -45,7 +46,8 @@ function main () {
   const aheadOfUs = git("rev-list", "--count", "--left-right", `${branch}...${upstreamRef}`)
     .split(/\s+/)
     .map(Number);
-  const [upstreamAhead, forkAhead] = aheadOfUs.length >= 2 ? aheadOfUs : [0, 0];
+  // left = commits only on branch (first), right = commits only on upstream (second)
+  const [forkAhead, upstreamAhead] = aheadOfUs.length >= 2 ? aheadOfUs : [0, 0];
 
   const upstreamOnly = git("log", "--oneline", `${branch}..${upstreamRef}`);
   const forkOnly = git("log", "--oneline", `${upstreamRef}..${branch}`);
