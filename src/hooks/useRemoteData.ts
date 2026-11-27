@@ -274,12 +274,20 @@ function unwrapRemotePayload<TData>(payload: unknown, resource: string): TData {
     const firstFallback = entries.find(([key]) =>
       key.toLowerCase().endsWith("fallback"),
     );
-    if (firstFallback && firstFallback[1] !== undefined) {
+    if (firstFallback?.[1] !== undefined) {
       return firstFallback[1] as TData;
     }
   }
 
   return payload as TData;
+}
+
+function trimTrailingBackslashes(line: string): string {
+  let end = line.length;
+  while (end > 0 && line.charCodeAt(end - 1) === 92) {
+    end -= 1;
+  }
+  return line.slice(0, end);
 }
 
 // Some upstream data files were saved from TextEdit and ship as RTF even though
@@ -352,7 +360,8 @@ function extractJsonFromRtf(raw: string): string | null {
         const hex = body.slice(index + 2, index + 4);
         if (/^[0-9a-fA-F]{2}$/.test(hex)) {
           const code = Number.parseInt(hex, 16);
-          result += cp1252Map[code] ?? String.fromCharCode(code);
+          result +=
+            cp1252Map[code] ?? String.fromCodePoint(Number.isFinite(code) ? code : 0);
           index += 3;
           continue;
         }
@@ -425,7 +434,7 @@ function extractJsonFromRtf(raw: string): string | null {
 
   sanitized = sanitized
     .split("\n")
-    .map((line) => line.replace(/\\+$/u, "").trimEnd())
+    .map((line) => trimTrailingBackslashes(line).trimEnd())
     .join("\n")
     .trim();
 

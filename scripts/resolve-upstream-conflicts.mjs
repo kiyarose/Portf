@@ -10,8 +10,15 @@ import {
   repoRoot
 } from './upstream-sync-lib.mjs'
 
+const trustedGitPath =
+  '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'
+
 function git (...args) {
-  return execFileSync('git', args, { cwd: repoRoot, encoding: 'utf8' }).trim()
+  return execFileSync('git', args, {
+    cwd: repoRoot,
+    encoding: 'utf8',
+    env: { ...process.env, PATH: trustedGitPath },
+  }).trim()
 }
 
 function unmergedPaths () {
