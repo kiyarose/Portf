@@ -107,62 +107,60 @@ function NodeEditModal({
       onClose={onClose}
       panelClassName="max-w-xl"
     >
-        <div>
-          <h2
-            id="node-modal-title"
-            className="text-lg font-semibold text-slate-900 dark:text-slate-100"
-          >
-            {node.label || "Root"}
-          </h2>
-          <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
-            <span className="rounded-full border border-accent/40 bg-accent/10 px-2 py-0.5 text-accent">
-              {node.type}
-            </span>
-            <span className="ml-2">{pathToDisplay(node.path)}</span>
-          </p>
-        </div>
-        <textarea
-          spellCheck={false}
-          value={draft}
-          onChange={(event) => {
-            setDraft(event.target.value);
-            setError(null);
+      <div>
+        <h2
+          id="node-modal-title"
+          className="text-lg font-semibold text-slate-900 dark:text-slate-100"
+        >
+          {node.label || "Root"}
+        </h2>
+        <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+          <span className="rounded-full border border-accent/40 bg-accent/10 px-2 py-0.5 text-accent">
+            {node.type}
+          </span>
+          <span className="ml-2">{pathToDisplay(node.path)}</span>
+        </p>
+      </div>
+      <textarea
+        spellCheck={false}
+        value={draft}
+        onChange={(event) => {
+          setDraft(event.target.value);
+          setError(null);
+        }}
+        className="mt-4 min-h-[220px] w-full rounded-2xl border border-slate-200 bg-slate-50 p-4 font-mono text-sm text-slate-900 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100"
+      />
+      {error ? (
+        <p className="mt-2 text-sm text-rose-600 dark:text-rose-400">{error}</p>
+      ) : null}
+      <div className="mt-4 flex flex-wrap justify-end gap-2">
+        <button
+          type="button"
+          onClick={onClose}
+          className="rounded-full px-4 py-2 text-sm text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
+        >
+          Cancel
+        </button>
+        <button
+          type="button"
+          onClick={() => {
+            try {
+              parseEditorValue(draft, node.value);
+              onApply(draft);
+              setError(null);
+            } catch (applyError) {
+              setError(
+                applyError instanceof Error
+                  ? applyError.message
+                  : "Invalid value",
+              );
+            }
           }}
-          className="mt-4 min-h-[220px] w-full rounded-2xl border border-slate-200 bg-slate-50 p-4 font-mono text-sm text-slate-900 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100"
-        />
-        {error ? (
-          <p className="mt-2 text-sm text-rose-600 dark:text-rose-400">
-            {error}
-          </p>
-        ) : null}
-        <div className="mt-4 flex flex-wrap justify-end gap-2">
-          <button
-            type="button"
-            onClick={onClose}
-            className="rounded-full px-4 py-2 text-sm text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
-          >
-            Cancel
-          </button>
-          <button
-            type="button"
-            onClick={() => {
-              try {
-                parseEditorValue(draft, node.value);
-                onApply(draft);
-                setError(null);
-              } catch (applyError) {
-                setError(
-                  applyError instanceof Error
-                    ? applyError.message
-                    : "Invalid value",
-                );
-              }
-            }}
-            className="rounded-full bg-accent px-4 py-2 text-sm font-medium text-white shadow-sm hover:opacity-95"
-          >
-            Apply
-          </button>
-        </div>
+          className="rounded-full bg-accent px-4 py-2 text-sm font-medium text-white shadow-sm hover:opacity-95"
+        >
+          Apply
+        </button>
+      </div>
     </AdminModalShell>
   );
 }
@@ -187,40 +185,40 @@ function NewPropertyModal({
       onClose={onClose}
       panelClassName="max-w-md"
     >
-        <h3
-          id="new-property-title"
-          className="text-lg font-semibold text-slate-900 dark:text-slate-100"
+      <h3
+        id="new-property-title"
+        className="text-lg font-semibold text-slate-900 dark:text-slate-100"
+      >
+        New property name
+      </h3>
+      <input
+        ref={inputRef}
+        type="text"
+        value={keyName}
+        onChange={(event) => setKeyName(event.target.value)}
+        className="mt-4 w-full rounded-2xl border border-slate-200 bg-white px-4 py-2 text-sm text-slate-900 dark:border-slate-600 dark:bg-slate-950 dark:text-slate-100"
+      />
+      <div className="mt-4 flex justify-end gap-2">
+        <button
+          type="button"
+          onClick={onClose}
+          className="rounded-full px-4 py-2 text-sm text-slate-600 dark:text-slate-300"
         >
-          New property name
-        </h3>
-        <input
-          ref={inputRef}
-          type="text"
-          value={keyName}
-          onChange={(event) => setKeyName(event.target.value)}
-          className="mt-4 w-full rounded-2xl border border-slate-200 bg-white px-4 py-2 text-sm text-slate-900 dark:border-slate-600 dark:bg-slate-950 dark:text-slate-100"
-        />
-        <div className="mt-4 flex justify-end gap-2">
-          <button
-            type="button"
-            onClick={onClose}
-            className="rounded-full px-4 py-2 text-sm text-slate-600 dark:text-slate-300"
-          >
-            Cancel
-          </button>
-          <button
-            type="button"
-            onClick={() => {
-              const trimmed = keyName.trim();
-              if (trimmed) {
-                onApply(trimmed);
-              }
-            }}
-            className="rounded-full bg-accent px-4 py-2 text-sm font-medium text-white"
-          >
-            Add
-          </button>
-        </div>
+          Cancel
+        </button>
+        <button
+          type="button"
+          onClick={() => {
+            const trimmed = keyName.trim();
+            if (trimmed) {
+              onApply(trimmed);
+            }
+          }}
+          className="rounded-full bg-accent px-4 py-2 text-sm font-medium text-white"
+        >
+          Add
+        </button>
+      </div>
     </AdminModalShell>
   );
 }
@@ -240,31 +238,31 @@ function DeleteConfirmModal({
       onClose={onClose}
       panelClassName="max-w-md"
     >
-        <h3
-          id="delete-node-title"
-          className="text-lg font-semibold text-slate-900 dark:text-slate-100"
+      <h3
+        id="delete-node-title"
+        className="text-lg font-semibold text-slate-900 dark:text-slate-100"
+      >
+        Delete node?
+      </h3>
+      <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">
+        Delete {label}? This cannot be undone.
+      </p>
+      <div className="mt-4 flex justify-end gap-2">
+        <button
+          type="button"
+          onClick={onClose}
+          className="rounded-full px-4 py-2 text-sm text-slate-600 dark:text-slate-300"
         >
-          Delete node?
-        </h3>
-        <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">
-          Delete {label}? This cannot be undone.
-        </p>
-        <div className="mt-4 flex justify-end gap-2">
-          <button
-            type="button"
-            onClick={onClose}
-            className="rounded-full px-4 py-2 text-sm text-slate-600 dark:text-slate-300"
-          >
-            Cancel
-          </button>
-          <button
-            type="button"
-            onClick={onConfirm}
-            className="rounded-full bg-rose-600 px-4 py-2 text-sm font-medium text-white"
-          >
-            Delete
-          </button>
-        </div>
+          Cancel
+        </button>
+        <button
+          type="button"
+          onClick={onConfirm}
+          className="rounded-full bg-rose-600 px-4 py-2 text-sm font-medium text-white"
+        >
+          Delete
+        </button>
+      </div>
     </AdminModalShell>
   );
 }
